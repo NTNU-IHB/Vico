@@ -1,0 +1,9 @@
+plugins {
+    id 'kotlin'
+}
+
+dependencies {
+
+    //api group: 'org.joml', name: 'joml', version: '1.9.24'
+
+}
