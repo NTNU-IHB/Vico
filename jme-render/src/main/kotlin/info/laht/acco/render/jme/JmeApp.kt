@@ -20,8 +20,8 @@ internal class JmeApp(
     private var initialized = lock.newCondition()
 
     private val root = Node()
-    val renderSystem: JmeInternalRenderSystem by lazy {
-        JmeInternalRenderSystem(root, assetManager)
+    val renderSystem: JmeRenderSystem by lazy {
+        JmeRenderSystem(root, assetManager)
     }
 
     override fun start() {

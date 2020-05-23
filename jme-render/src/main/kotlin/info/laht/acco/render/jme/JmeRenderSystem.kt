@@ -12,7 +12,7 @@ import info.laht.acco.render.GeometryComponent
 import info.laht.acco.render.jme.objects.RenderNode
 
 
-internal class JmeInternalRenderSystem(
+internal class JmeRenderSystem(
     private val root: Node,
     private val assetManager: AssetManager
 ) : IteratingSystem(
