@@ -585,7 +585,7 @@ class Matrix4(
                 LOG.warn(msg)
             }
 
-            return this.identity()
+            return this.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
         }
 
@@ -910,10 +910,8 @@ class Matrix4(
         return elements.contentHashCode()
     }
 
-
     override fun toString(): String {
-        return "Matrix4(" +
-                ")"
+        return "Matrix4($elements)"
     }
 
     private companion object {

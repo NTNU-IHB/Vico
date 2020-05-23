@@ -18,7 +18,7 @@ private typealias Cache<E> = HashMap<ValueReference, E>
 
 class SlaveComponent(
     private val slave: SlaveInstance,
-    val decimationFactor: Int
+    val decimationFactor: Int = 1
 ) : SlaveInstance by slave, Component, Comparable<SlaveComponent> {
 
     private var initialized = false
@@ -38,6 +38,9 @@ class SlaveComponent(
     private val booleanVariablesToFetch = mutableSetOf<ValueReference>()
     private val stringVariablesToFetch = mutableSetOf<ValueReference>()
 
+    init {
+        require(decimationFactor > 0)
+    }
 
     override fun exitInitializationMode(): Boolean {
         return slave.exitInitializationMode().also {
@@ -52,36 +55,80 @@ class SlaveComponent(
         }
     }
 
-    override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
-        TODO("Not yet implemented")
-    }
-
     override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {
-        TODO("Not yet implemented")
+        require(vr.size == ref.size)
+        for (i in vr.indices) {
+            integerGetCache.also { cache ->
+                check(vr[i], VariableType.INTEGER, cache)
+                ref[i] = cache[vr[i]]!!
+            }
+        }
+        return FmiStatus.OK
     }
 
     override fun read(vr: ValueReferences, ref: RealArray): FmiStatus {
-        TODO("Not yet implemented")
+        require(vr.size == ref.size)
+        for (i in vr.indices) {
+            realGetCache.also { cache ->
+                check(vr[i], VariableType.REAL, cache)
+                ref[i] = cache[vr[i]]!!
+            }
+        }
+        return FmiStatus.OK
     }
 
     override fun read(vr: ValueReferences, ref: StringArray): FmiStatus {
-        TODO("Not yet implemented")
+        require(vr.size == ref.size)
+        for (i in vr.indices) {
+            stringGetCache.also { cache ->
+                check(vr[i], VariableType.STRING, cache)
+                ref[i] = cache[vr[i]]!!
+            }
+        }
+        return FmiStatus.OK
     }
 
-    override fun write(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        TODO("Not yet implemented")
+    override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
+        require(vr.size == ref.size)
+        for (i in vr.indices) {
+            booleanGetCache.also { cache ->
+                check(vr[i], VariableType.BOOLEAN, cache)
+                ref[i] = cache[vr[i]]!!
+            }
+        }
+        return FmiStatus.OK
     }
 
     override fun write(vr: ValueReferences, value: IntArray): FmiStatus {
-        TODO("Not yet implemented")
+        require(vr.size == value.size)
+        for (i in vr.indices) {
+            integerSetCache[vr[i]] = value[i]
+        }
+        return FmiStatus.OK
     }
 
     override fun write(vr: ValueReferences, value: RealArray): FmiStatus {
-        TODO("Not yet implemented")
+        require(vr.size == value.size)
+        for (i in vr.indices) {
+            realSetCache[vr[i]] = value[i]
+        }
+        return FmiStatus.OK
     }
 
     override fun write(vr: ValueReferences, value: StringArray): FmiStatus {
-        TODO("Not yet implemented")
+        require(vr.size == value.size)
+        for (i in vr.indices) {
+            stringSetCache[vr[i]] = value[i]
+        }
+        return FmiStatus.OK
+    }
+
+    override fun write(vr: ValueReferences, value: BooleanArray): FmiStatus {
+        require(vr.size == value.size)
+        for (i in vr.indices) {
+            booleanSetCache[vr[i]] = value[i]
+        }
+        return FmiStatus.OK
     }
 
     fun retrieveCachedGets() {
@@ -189,6 +236,13 @@ class SlaveComponent(
         listOf(realSetCache, integerSetCache, booleanSetCache, stringSetCache).forEach { it.clear() }
     }
 
+    private fun check(ref: ValueReference, type: VariableType, cache: MutableMap<*, *>) {
+        check(ref in cache) {
+            val v = modelDescription.modelVariables.getByValueReference(ref, type)
+            "Variable with valueReference=$ref " +
+                    "has not been marked for reading for slave named '${slave.instanceName}'!"
+        }
+    }
 
     fun getVariablesMarkedForReading(): List<ScalarVariable> {
         val modelVariables = modelDescription.modelVariables

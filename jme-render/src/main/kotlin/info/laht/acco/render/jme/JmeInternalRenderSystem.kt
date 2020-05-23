@@ -25,15 +25,11 @@ internal class JmeInternalRenderSystem(
 
     override fun entityAdded(entity: Entity) {
         val geometry = entity.getComponent(GeometryComponent::class.java)
-        val transform = entity.getComponent(TransformComponent::class.java)
-        val node = map.computeIfAbsent(entity) {
+        map.computeIfAbsent(entity) {
             geometry.createGeometry(assetManager).also {
                 root.attachChild(it)
             }
         }
-        node.localRotation.set(transform.getWorldQuaternion(tmpQuat))
-        node.localTranslation.set(transform.getWorldPosition(tmpVec))
-        node.forceRefresh(true, true, true)
     }
 
     override fun entityRemoved(entity: Entity) {
@@ -46,7 +42,7 @@ internal class JmeInternalRenderSystem(
 
         val transform = entity.getComponent(TransformComponent::class.java)
 
-        node.localRotation.set(transform.quaternion)
+        node.localRotation.set(transform.getWorldQuaternion(tmpQuat))
         node.localTranslation.set(transform.getWorldPosition(tmpVec))
         node.forceRefresh(true, true, true)
 

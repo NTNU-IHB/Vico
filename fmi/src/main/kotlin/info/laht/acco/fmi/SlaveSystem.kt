@@ -13,12 +13,11 @@ class SlaveSystem(
     priority: Int = 0
 ) : System(Family.all(SlaveComponent::class.java).build(), decimationFactor, priority) {
 
+    private val connections: MutableMap<SlaveComponent, MutableList<Connection<*>>> = mutableMapOf()
     private val groups: SortedMap<Int, MutableList<SlaveComponent>> = TreeMap(Comparator { o1, o2 -> o2.compareTo(o1) })
 
     private val slaves: List<SlaveComponent>
         get() = groups.flatMap { it.value }
-
-    private val connections = mutableListOf<Connection<*>>()
 
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent(SlaveComponent::class.java)
@@ -35,7 +34,7 @@ class SlaveSystem(
         for (i in slaves.indices) {
             writeAllVariables(slaves)
             readAllVariables(slaves)
-            connections.forEach { c -> c.transferData() }
+            connections.values.flatten().forEach { c -> c.transferData() }
         }
         slaves.forEach { slave ->
             slave.exitInitializationMode()
@@ -43,24 +42,29 @@ class SlaveSystem(
         readAllVariables(slaves)
     }
 
-    override fun step(currentTime: Double, baseStepSize: Double) {
-        val stepSize = baseStepSize * groups.firstKey()
-        val endTime = currentTime + stepSize
+    override fun step(currentTime: Double, stepSize: Double) {
+        val biggestStepSize = stepSize * groups.firstKey()
+        val endTime = currentTime + biggestStepSize
         groups.forEach { (decimationFactor, slaveGroup) ->
             slaveGroup.forEach { slave ->
                 var t = currentTime
-                val dt = baseStepSize * decimationFactor
+                val dt = stepSize * decimationFactor
                 do {
+                    slave.transferCachedSets()
                     slave.doStep(dt)
+                    slave.retrieveCachedGets()
+                    connections[slave]?.forEach { c ->
+                        c.transferData()
+                    }
                     t += dt
                 } while (t < endTime)
             }
         }
-        connections.forEach { c -> c.transferData() }
+
     }
 
     fun addConnection(connection: Connection<*>) {
-        connections.add(connection)
+        connections.computeIfAbsent(connection.sourceSlave) { mutableListOf(connection) }
     }
 
     private fun readAllVariables(slaves: List<SlaveComponent>) {

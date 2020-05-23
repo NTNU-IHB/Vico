@@ -1,0 +1,9 @@
+plugins {
+    id 'kotlin'
+}
+
+dependencies {
+
+    api project(':fmi')
+
+}

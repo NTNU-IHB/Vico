@@ -24,6 +24,7 @@ abstract class System(
     internal fun initialize(engine: Engine) {
         this.nullableEngine = engine
         entities.forEach { entityAdded(it) }
+        init()
     }
 
     protected open fun init() {}

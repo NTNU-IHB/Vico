@@ -364,7 +364,7 @@ class TransformComponent : Component {
     /**
      * Updates global transform of the object and its children.
      */
-    fun updateMatrixWorld(force: Boolean) {
+    fun updateMatrixWorld(force: Boolean = false) {
 
         if (this.matrixAutoUpdate) {
             this.updateMatrix()

@@ -38,14 +38,18 @@ class Engine(
             init()
         }
 
-        currentTime += systemManager.step(currentTime, baseStepSize)
-        iterations++
+        for (i in 0 until numSteps) {
 
-        connections.forEach {
-            it.transferData()
+            currentTime += systemManager.step(currentTime, baseStepSize)
+            iterations++
+
+            connections.forEach {
+                it.transferData()
+            }
+
+            ctx.emptyQueue()
         }
 
-        ctx.emptyQueue()
     }
 
     fun addConnection(connection: Connection<*, *>) {

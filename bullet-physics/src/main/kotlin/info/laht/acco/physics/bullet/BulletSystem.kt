@@ -1,6 +1,7 @@
 package info.laht.acco.physics.bullet
 
 import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher
@@ -11,17 +12,20 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
+import info.laht.acco.components.TransformComponent
 import info.laht.acco.core.Entity
 import info.laht.acco.core.Family
 import info.laht.acco.core.IteratingSystem
 import info.laht.acco.physics.ColliderComponent
 import info.laht.acco.physics.RigidBodyComponent
-import info.laht.acco.render.TransformComponent
 
 
 class BulletSystem : IteratingSystem(
     Family.all(TransformComponent::class.java).one(RigidBodyComponent::class.java).build()
 ) {
+
+    private val tmpVec = Vector3()
+    private val tmpQuat = Quaternion()
 
     private val world: btDiscreteDynamicsWorld
     private val rbMap = mutableMapOf<Entity, btRigidBody>()
@@ -59,7 +63,7 @@ class BulletSystem : IteratingSystem(
             btEmptyShape() to 1f
         }
 
-        val motionState = btDefaultMotionState(Matrix4(tc.getWorld().convert()))
+        val motionState = btDefaultMotionState(Matrix4().copy(tc.matrixWorld))
         rbMap[entity] = btRigidBody(mass, motionState, shape).also {
             world.addRigidBody(it)
         }
@@ -76,9 +80,13 @@ class BulletSystem : IteratingSystem(
         val tc = entity.getComponent(TransformComponent::class.java)
 
         rbMap[entity]?.also { rb ->
-            val rc = entity.getComponent(RigidBodyComponent::class.java)
-            tc.setLocal(rb.worldTransform.convert())
-            println(rb.worldTransform.convert())
+            rb.worldTransform.getTranslation(tmpVec).also {
+                tc.position.copy(tc.worldToLocal(it.convert()))
+                println(tc.worldToLocal(info.laht.acco.math.Vector3.Y.clone()))
+            }
+            /* rb.worldTransform.getRotation(tmpQuat).also {
+                 tc.quaternion.copy(tmpQuat.convert())
+             }*/
         }
 
     }
