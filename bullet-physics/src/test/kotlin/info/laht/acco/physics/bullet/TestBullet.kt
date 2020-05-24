@@ -23,8 +23,6 @@ fun main() {
             engine.addEntity(e)
         }
 
-
-
         engine.addSystem(BulletSystem())
 
         JmeEngineRunner(engine).apply {
