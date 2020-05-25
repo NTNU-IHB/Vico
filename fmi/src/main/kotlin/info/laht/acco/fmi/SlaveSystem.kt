@@ -34,7 +34,9 @@ class SlaveSystem(
         for (i in slaves.indices) {
             writeAllVariables(slaves)
             readAllVariables(slaves)
-            connections.values.flatten().forEach { c -> c.transferData() }
+            connections.values.flatten().forEach { c ->
+                c.transferData()
+            }
         }
         slaves.forEach { slave ->
             slave.exitInitializationMode()
@@ -46,19 +48,21 @@ class SlaveSystem(
         val biggestStepSize = stepSize * groups.firstKey()
         val endTime = currentTime + biggestStepSize
         groups.forEach { (decimationFactor, slaveGroup) ->
-            slaveGroup.forEach { slave ->
-                var t = currentTime
-                val dt = stepSize * decimationFactor
-                do {
+            var t = currentTime
+            val dt = stepSize * decimationFactor
+            do {
+                slaveGroup.parallelStream().forEach { slave ->
                     slave.transferCachedSets()
                     slave.doStep(dt)
                     slave.retrieveCachedGets()
+                }
+                slaveGroup.forEach { slave ->
                     connections[slave]?.forEach { c ->
                         c.transferData()
                     }
-                    t += dt
-                } while (t < endTime)
-            }
+                }
+                t += dt
+            } while (t < endTime)
         }
 
     }
