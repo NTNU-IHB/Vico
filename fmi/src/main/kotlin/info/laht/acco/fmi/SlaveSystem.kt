@@ -22,8 +22,7 @@ class SlaveSystem(
     private val slaves: List<SlaveComponent>
         get() = groups.flatMap { it.value }
 
-    @JvmOverloads
-    fun setupLogging(resultDir: File = File(".")) {
+    fun setupLogging(resultDir: File? = null) {
         logger = SlaveLogger(resultDir)
     }
 

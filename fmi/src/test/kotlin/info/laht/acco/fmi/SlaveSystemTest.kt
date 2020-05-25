@@ -7,6 +7,7 @@ import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.TestFmus
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.io.File
 
 internal class SlaveSystemTest {
 
@@ -16,7 +17,11 @@ internal class SlaveSystemTest {
         Engine(1.0 / 100).use { engine ->
 
             val slaveSystem = SlaveSystem()
-            slaveSystem.setupLogging()
+            val resultDir = File("build/results").also {
+                it.deleteRecursively()
+                slaveSystem.setupLogging(it)
+            }
+
             engine.addSystem(slaveSystem)
 
             val slaveEntity = Entity("")
@@ -32,6 +37,8 @@ internal class SlaveSystemTest {
             Assertions.assertEquals(1.0, slave.readReal("h").value, 1e-6)
             engine.step(100)
             Assertions.assertTrue(slave.readReal("h").value > 0)
+
+            Assertions.assertTrue(resultDir.listFiles()?.size ?: 0 > 0)
 
         }
 

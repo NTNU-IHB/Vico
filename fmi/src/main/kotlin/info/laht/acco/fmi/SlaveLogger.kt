@@ -15,12 +15,17 @@ import java.util.*
 
 
 class SlaveLogger(
-    private val targetDir: File = File(".")
+    targetDir: File? = null
 ) : Closeable {
 
-    var separator = ", "
-    var decimalPoints = 6
+    var separator: String = ", "
+    var decimalPoints: Int = 6
+    val targetDir: File = targetDir ?: File(".")
     private val loggers: MutableMap<SlaveComponent, Logger> = mutableMapOf()
+
+    init {
+        this.targetDir.mkdirs()
+    }
 
     fun setup(slave: SlaveComponent) {
         loggers[slave] = Logger(slave, emptyList()).also {
