@@ -21,13 +21,13 @@ abstract class System(
         engine.entityManager.getEntitiesFor(family)
     }
 
-    internal fun initialize(engine: Engine) {
+    internal fun initialize(engine: Engine, currentTime: Double) {
         this.nullableEngine = engine
         entities.forEach { entityAdded(it) }
-        init()
+        init(currentTime)
     }
 
-    protected open fun init() {}
+    protected open fun init(currentTime: Double) {}
 
     protected open fun entityAdded(entity: Entity) {}
 

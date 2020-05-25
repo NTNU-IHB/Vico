@@ -5,6 +5,7 @@ import info.laht.acco.core.Family
 import info.laht.acco.core.System
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.io.File
 import java.util.*
 
 
@@ -13,22 +14,30 @@ class SlaveSystem(
     priority: Int = 0
 ) : System(Family.all(SlaveComponent::class.java).build(), decimationFactor, priority) {
 
+    private var logger: SlaveLogger? = null
+
     private val connections: MutableMap<SlaveComponent, MutableList<Connection<*>>> = mutableMapOf()
     private val groups: SortedMap<Int, MutableList<SlaveComponent>> = TreeMap(Comparator { o1, o2 -> o2.compareTo(o1) })
 
     private val slaves: List<SlaveComponent>
         get() = groups.flatMap { it.value }
 
+    @JvmOverloads
+    fun setupLogging(resultDir: File = File(".")) {
+        logger = SlaveLogger(resultDir)
+    }
+
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent(SlaveComponent::class.java)
         groups.computeIfAbsent(slave.decimationFactor) {
             mutableListOf()
         }.add(slave)
+        logger?.setup(slave)
     }
 
-    override fun init() {
-        slaves.forEach { slave ->
-            slave.setup()
+    override fun init(currentTime: Double) {
+        slaves.parallelStream().forEach { slave ->
+            slave.setup(currentTime)
             slave.enterInitializationMode()
         }
         for (i in slaves.indices) {
@@ -38,10 +47,16 @@ class SlaveSystem(
                 c.transferData()
             }
         }
-        slaves.forEach { slave ->
+        slaves.parallelStream().forEach { slave ->
             slave.exitInitializationMode()
         }
         readAllVariables(slaves)
+
+        logger?.also { logger ->
+            slaves.parallelStream().forEach { slave ->
+                logger.postInit(slave, currentTime)
+            }
+        }
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
@@ -55,6 +70,7 @@ class SlaveSystem(
                     slave.transferCachedSets()
                     slave.doStep(dt)
                     slave.retrieveCachedGets()
+                    logger?.postStep(slave, currentTime)
                 }
                 slaveGroup.forEach { slave ->
                     connections[slave]?.forEach { c ->
@@ -64,7 +80,6 @@ class SlaveSystem(
                 t += dt
             } while (t < endTime)
         }
-
     }
 
     fun addConnection(connection: Connection<*>) {
@@ -96,6 +111,7 @@ class SlaveSystem(
             slave.terminate()
             slave.close()
         }
+        logger?.close()
     }
 
 }

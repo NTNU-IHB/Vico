@@ -15,9 +15,9 @@ class SystemManager private constructor(
     internal constructor(ctx: EngineContext)
             : this(ctx, TreeMap(Comparator<Int> { o1, o2 -> o2.compareTo(o1) }))
 
-    fun initialize(engine: Engine) {
+    fun initialize(engine: Engine, currentTime: Double) {
         groups.flatMap { it.value }.forEach { system ->
-            system.initialize(engine)
+            system.initialize(engine, currentTime)
         }
     }
 

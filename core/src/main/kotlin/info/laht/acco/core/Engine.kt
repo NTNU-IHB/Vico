@@ -23,7 +23,7 @@ class Engine(
 
     fun init() {
         if (!initialized.getAndSet(true)) {
-            systemManager.initialize(this)
+            systemManager.initialize(this, currentTime)
             connections.forEach {
                 it.transferData()
             }

@@ -22,6 +22,8 @@ class SlaveComponent(
 ) : SlaveInstance by slave, Component, Comparable<SlaveComponent> {
 
     private var initialized = false
+    var stepCount = 0L
+        private set
 
     private val integerSetCache by lazy { Cache<Int>() }
     private val realSetCache by lazy { Cache<Double>() }
@@ -45,6 +47,12 @@ class SlaveComponent(
     override fun exitInitializationMode(): Boolean {
         return slave.exitInitializationMode().also {
             initialized = true
+        }
+    }
+
+    override fun doStep(stepSize: Double): Boolean {
+        return slave.doStep(stepSize).also { status ->
+            if (status) stepCount++
         }
     }
 

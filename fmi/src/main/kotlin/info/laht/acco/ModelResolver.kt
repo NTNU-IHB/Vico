@@ -1,5 +1,7 @@
 package info.laht.acco
 
+import info.laht.acco.fmi.FmuResolver
+import info.laht.acco.fmi.fmuproxy.ProxyResolver
 import java.io.File
 import java.net.URI
 
@@ -9,7 +11,9 @@ interface ModelResolver {
 
     companion object {
 
-        private val resolvers = mutableSetOf<ModelResolver>()
+        private val resolvers: MutableSet<ModelResolver> = mutableSetOf(
+            FmuResolver(), ProxyResolver()
+        )
 
         init {
 

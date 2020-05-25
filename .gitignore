@@ -42,3 +42,6 @@ local.properties
 # natives
 *.dll
 *.so
+
+# csv files
+*.csv
