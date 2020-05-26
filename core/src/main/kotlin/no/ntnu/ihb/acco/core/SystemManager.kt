@@ -22,6 +22,8 @@ class SystemManager private constructor(
     }
 
     fun step(currentTime: Double, baseStepSize: Double): Double {
+        if (groups.isEmpty()) return baseStepSize
+
         val stepSize = baseStepSize * groups.firstKey()
         val endTime = currentTime + stepSize
         groups.forEach { (decimationFactor, systemGroup) ->
