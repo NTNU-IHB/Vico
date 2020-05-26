@@ -11,8 +11,8 @@ subprojects {
 
     apply plugin: 'java-library'
 
-    group 'org.example'
-    version '1.0-SNAPSHOT'
+    group 'no.ntnu.ihb.acco'
+    version '0.1-SNAPSHOT'
 
     repositories {
         mavenCentral()

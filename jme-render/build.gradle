@@ -2,6 +2,8 @@ plugins {
     id 'kotlin'
 }
 
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+
 dependencies {
 
     api project(':core')
