@@ -4,18 +4,15 @@ import java.io.Closeable
 import java.util.*
 
 
-class SystemManager private constructor(
-    private val ctx: EngineContext,
-    private val groups: SortedMap<Int, MutableList<System>>
+class SystemManager(
+    private val engine: Engine
 ) : Closeable {
 
     val systems: List<System>
         get() = groups.flatMap { it.value }
 
+    private val groups = TreeMap<Int, MutableList<System>>(Comparator { o1, o2 -> o2.compareTo(o1) })
     private val systemMap: MutableMap<Class<out System>, System> = mutableMapOf()
-
-    internal constructor(ctx: EngineContext)
-            : this(ctx, TreeMap(Comparator<Int> { o1, o2 -> o2.compareTo(o1) }))
 
     @Suppress("UNCHECKED_CAST")
     fun <E : System> get(systemClass: Class<E>): E {
@@ -23,9 +20,9 @@ class SystemManager private constructor(
             ?: throw IllegalStateException("No system of type $systemClass registered!")
     }
 
-    fun initialize(engine: Engine, currentTime: Double) {
-        groups.flatMap { it.value }.forEach { system ->
-            system.initialize(engine, currentTime)
+    fun initialize(currentTime: Double) {
+        systems.forEach { system ->
+            system.initialize(currentTime)
         }
     }
 
@@ -51,7 +48,7 @@ class SystemManager private constructor(
     }
 
     fun add(system: System) {
-        ctx.safeContext { internalAdd(system) }
+        engine.safeContext { internalAdd(system) }
     }
 
     private fun internalAdd(system: System) {
@@ -60,10 +57,11 @@ class SystemManager private constructor(
         }
         systems.add(system)
         systemMap[system::class.java] = system
+        system.addedToEngine(engine)
     }
 
     fun remove(system: Class<out System>) {
-        ctx.safeContext { internalRemove(system) }
+        engine.safeContext { internalRemove(system) }
     }
 
     private fun internalRemove(system: Class<out System>) {
@@ -73,7 +71,7 @@ class SystemManager private constructor(
     }
 
     override fun close() {
-        groups.flatMap { it.value }.forEach { it.close() }
+        systems.forEach { it.close() }
     }
 
 }

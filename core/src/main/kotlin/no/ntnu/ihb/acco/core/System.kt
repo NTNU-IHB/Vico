@@ -17,13 +17,22 @@ abstract class System(
     val interval: Double
         get() = engine.baseStepSize * decimationFactor
 
-    val entities by lazy {
-        engine.entityManager.getEntitiesFor(family)
+    protected lateinit var entities: Set<Entity>
+
+    fun addedToEngine(engine: Engine) {
+        this._engine = engine
+        entities = engine.entityManager.getEntitiesFor(family).apply {
+            addObserver = {
+                entityAdded(it)
+            }
+            removeObserver = {
+                entityRemoved(it)
+            }
+            forEach { entityAdded(it) }
+        }
     }
 
-    internal fun initialize(engine: Engine, currentTime: Double) {
-        this._engine = engine
-        entities.forEach { entityAdded(it) }
+    internal fun initialize(currentTime: Double) {
         init(currentTime)
     }
 
@@ -62,8 +71,9 @@ abstract class IteratingSystem(
 
 abstract class ParallelIteratingSystem(
     family: Family,
-    decimationFactor: Int = 1
-) : System(family, decimationFactor) {
+    decimationFactor: Int = 1,
+    priority: Int = 0
+) : System(family, decimationFactor, priority) {
 
     override fun step(currentTime: Double, stepSize: Double) {
         entities.parallelStream().forEach { e ->

@@ -1,6 +1,7 @@
 package no.ntnu.ihb.acco.core
 
 import java.io.Closeable
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 class Engine(
@@ -18,10 +19,10 @@ class Engine(
 
     private val initialized = AtomicBoolean()
     private val closed = AtomicBoolean()
+    private val queue: Queue<() -> Unit> = ArrayDeque()
 
-    private val ctx = EngineContext(initialized)
-    val entityManager = EntityManager(ctx)
-    val systemManager = SystemManager(ctx)
+    val entityManager = EntityManager(this)
+    val systemManager = SystemManager(this)
 
     private val connections = mutableListOf<Connection<*, *>>()
 
@@ -29,7 +30,7 @@ class Engine(
 
     fun init() {
         if (!initialized.getAndSet(true)) {
-            systemManager.initialize(this, currentTime)
+            systemManager.initialize(currentTime)
             connections.forEach {
                 it.transferData()
             }
@@ -53,7 +54,7 @@ class Engine(
                 it.transferData()
             }
 
-            ctx.emptyQueue()
+            emptyQueue()
         }
 
     }
@@ -70,6 +71,22 @@ class Engine(
 
     fun addEntity(entity: Entity, vararg entities: Entity) = entityManager.addEntity(entity, *entities)
     fun removeEntity(entity: Entity, vararg entities: Entity) = entityManager.removeEntity(entity, *entities)
+
+
+    internal fun safeContext(task: () -> Unit) {
+        if (initialized.get()) {
+            queue.add(task)
+        } else {
+            task.invoke()
+        }
+    }
+
+    private fun emptyQueue() {
+        while (!queue.isEmpty()) {
+            queue.poll().invoke()
+        }
+    }
+
 
     override fun close() {
         if (!closed.getAndSet(true)) {

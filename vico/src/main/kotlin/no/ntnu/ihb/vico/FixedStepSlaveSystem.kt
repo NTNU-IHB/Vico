@@ -5,10 +5,14 @@ import kotlinx.coroutines.runBlocking
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
+import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import no.ntnu.ihb.fmi4j.writeBoolean
 import no.ntnu.ihb.fmi4j.writeInteger
 import no.ntnu.ihb.fmi4j.writeReal
 import no.ntnu.ihb.fmi4j.writeString
+import no.ntnu.ihb.vico.structure.Connection
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -33,14 +37,19 @@ class FixedStepSlaveSystem(
     private val connections: MutableMap<SlaveComponent, MutableList<SlaveConnection<*>>> = mutableMapOf()
     private val groups: SortedMap<Int, MutableList<SlaveComponent>> = TreeMap(Comparator { o1, o2 -> o2.compareTo(o1) })
 
-    private val slaves: List<SlaveComponent>
+    internal val slaves: List<SlaveComponent>
         get() = groups.flatMap { it.value }
+
+    private val pendingConnections = mutableListOf<Connection>()
 
     fun setupLogging(resultDir: File? = null) {
         logger = SlaveLogger(resultDir)
     }
 
+    fun getSlave(name: String) = slaves.first { it.instanceName == name }
+
     override fun entityAdded(entity: Entity) {
+
         val slaveComponent = entity.getComponent(SlaveComponent::class.java)
         val slaveDecimationFactor = calculateStepFactor(slaveComponent, engine.baseStepSize * decimationFactor)
 
@@ -52,11 +61,31 @@ class FixedStepSlaveSystem(
             it.stringParameters.forEach { p -> slaveComponent.writeString(p.name, p.value) }
         }
         logger?.setup(slaveComponent)
-
     }
 
     override fun init(currentTime: Double) {
+
+        pendingConnections.forEach { c ->
+            val source = slaves.first { it.instanceName == c.source.instanceName }
+            val target = slaves.first { it.instanceName == c.target.instanceName }
+            when (c.sourceVariable.type) {
+                VariableType.INTEGER, VariableType.ENUMERATION -> {
+                    IntegerConnection(
+                        source,
+                        c.sourceVariable as IntegerVariable,
+                        target,
+                        c.targetVariable as IntegerVariable
+                    )
+                }
+                VariableType.REAL -> {
+                    RealConnection(source, c.sourceVariable as RealVariable, target, c.targetVariable as RealVariable)
+                }
+                else -> TODO()
+            }
+        }
+
         slaves.parallelStream().forEach { slave ->
+            logger?.setup(slave)
             slave.setupExperiment(currentTime)
             slave.enterInitializationMode()
         }
@@ -100,6 +129,10 @@ class FixedStepSlaveSystem(
                 t += dt
             } while (t < endTime)
         }
+    }
+
+    fun addConnection(connection: Connection) {
+        pendingConnections.add(connection)
     }
 
     fun addConnection(connection: SlaveConnection<*>) {

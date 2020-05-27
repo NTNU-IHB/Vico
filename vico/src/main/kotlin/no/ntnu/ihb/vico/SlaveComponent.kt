@@ -254,7 +254,7 @@ class SlaveComponent(
     private fun check(ref: ValueReference, type: VariableType, cache: MutableMap<*, *>) {
         check(ref in cache) {
             //val v = modelDescription.modelVariables.getByValueReference(ref, type)
-            "Variable with valueReference=$ref and type=$type" +
+            "Variable with valueReference=$ref and type=$type " +
                     "has not been marked for reading for slave named '${slave.instanceName}'!"
         }
     }
@@ -367,6 +367,10 @@ class SlaveComponent(
             "ParameterSet '$name' has already been added to component '${modelDescription.modelName}'!"
         }
         parameterSets[name] = parameterSet
+    }
+
+    override fun toString(): String {
+        return "SlaveComponent(instanceName=$instanceName)"
     }
 
     private companion object {

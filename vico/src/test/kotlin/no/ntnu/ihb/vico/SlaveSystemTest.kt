@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.RealParameter
 import org.junit.jupiter.api.Assertions
@@ -24,12 +25,14 @@ internal class SlaveSystemTest {
             engine.addSystem(slaveSystem)
 
             val slaveEntity = Entity("BouncingBall")
-            val model = ModelResolver.resolve(TestFmus.get("fmus/1.0/BouncingBall.fmu"))
-            SlaveComponent(model, "bouncingBall").apply {
+            val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
+            SlaveComponent(model.instantiate("bouncingBall")).apply {
                 addParameterSet("default", listOf(RealParameter("h", 2.0)))
                 slaveEntity.addComponent(this)
             }
             engine.addEntity(slaveEntity)
+
+            engine.addSystem(SlaveLoggingSystem(File("build/results2")))
 
             engine.init()
 
@@ -57,9 +60,14 @@ internal class SlaveSystemTest {
                 engine.systemManager.get(FixedStepSlaveSystem::class.java).setupLogging(it)
             }
 
+            engine.addSystem(SlaveLoggingSystem(File("build/results2")))
+
+            println(engine.systemManager.get(FixedStepSlaveSystem::class.java).slaves)
+
             engine.step(100)
 
             Assertions.assertTrue(resultDir.listFiles()?.size ?: 0 > 0)
+
 
         }
 

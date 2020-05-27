@@ -1,13 +1,15 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.util.ObservableSet
+
 
 class EntityManager internal constructor(
-    private val ctx: EngineContext
+    private val engine: Engine
 ) : Iterable<Entity> {
 
     private val entities = mutableListOf<Entity>()
     private val entityListeners = mutableListOf<EntityListener>()
-    private val families = mutableMapOf<Family, MutableSet<Entity>>()
+    private val families = mutableMapOf<Family, ObservableSet<Entity>>()
 
     fun createEntity(name: String): Entity {
         return Entity(name)
@@ -22,12 +24,12 @@ class EntityManager internal constructor(
         return entities.filter { it.tag == tag }
     }
 
-    fun getEntitiesFor(family: Family): Set<Entity> {
-        return families.computeIfAbsent(family) { entities.filter { family.test(it) }.toMutableSet() }
+    fun getEntitiesFor(family: Family): ObservableSet<Entity> {
+        return families.computeIfAbsent(family) { ObservableSet(entities.filter { family.test(it) }.toMutableSet()) }
     }
 
     fun addEntity(entity: Entity, vararg entities: Entity) {
-        ctx.safeContext {
+        engine.safeContext {
             internalAddEntity(entity)
             entities.forEach { internalAddEntity(it) }
         }
@@ -51,7 +53,7 @@ class EntityManager internal constructor(
     }
 
     fun removeEntity(entity: Entity, vararg entities: Entity) {
-        ctx.safeContext {
+        engine.safeContext {
             internalRemoveEntity(entity)
             entities.forEach {
                 internalRemoveEntity(it)
@@ -71,18 +73,6 @@ class EntityManager internal constructor(
         }
     }
 
-    /*fun add(entityListener: EntityListener, family: Family = Family.empty) {
-        ctx.safeContext {
-            entityListeners.add(entityListener)
-            families.putIfAbsent(family, mutableListOf())
-        }
-    }
-
-    fun remove(entityListener: EntityListener) {
-        ctx.safeContext { entityListeners.remove(entityListener) }
-    }*/
-
-
     private fun updateFamilyMemberShip(entity: Entity) {
         families.forEach { (family, entities) ->
             if (family.test(entity)) {
@@ -93,14 +83,14 @@ class EntityManager internal constructor(
         }
     }
 
-    private fun ensureUnique(name: String): String {
-        var i = 1
-        var uniqueName = name
-        while (entities.find { it.name == uniqueName } != null) {
-            uniqueName += "(${i++})"
-        }
-        return uniqueName
-    }
+    /* private fun ensureUnique(name: String): String {
+         var i = 1
+         var uniqueName = name
+         while (entities.find { it.name == uniqueName } != null) {
+             uniqueName += "(${i++})"
+         }
+         return uniqueName
+     }*/
 
 
     override fun iterator(): Iterator<Entity> {

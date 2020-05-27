@@ -1,6 +1,10 @@
 package no.ntnu.ihb.vico.structure
 
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.vico.FixedStepSlaveSystem
 import no.ntnu.ihb.vico.Model
+import no.ntnu.ihb.vico.SlaveComponent
 
 class SystemStructure @JvmOverloads constructor(
     val name: String? = null
@@ -40,6 +44,25 @@ class SystemStructure @JvmOverloads constructor(
 
     fun addComponent(component: Component) {
         check(components.add(component)) { "$component has already been added" }
+    }
+
+    fun apply(engine: Engine) {
+
+        components.forEach { c ->
+            Entity(c.instanceName).apply {
+                addComponent(SlaveComponent(c.instantiate()))
+                engine.addEntity(this)
+            }
+        }
+
+        val algorithm = FixedStepSlaveSystem()
+        connections.forEach { c ->
+            algorithm.addConnection(c)
+        }
+
+        engine.addSystem(algorithm)
+
+
     }
 
 }
