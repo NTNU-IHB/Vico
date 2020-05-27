@@ -6,23 +6,10 @@ import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 
 typealias RealModifier = (Double) -> Double
 
-class ComponentConnection(
+sealed class SlaveConnection<E : ScalarVariable>(
     val sourceSlave: SlaveComponent,
-    val sourceVariable: ScalarVariable,
-    val targetSlave: SlaveComponent,
-    val targetVariable: ScalarVariable
-) {
-
-    init {
-        require(sourceVariable.type == targetVariable.type)
-    }
-
-}
-
-sealed class Connection<E : ScalarVariable>(
-    val sourceSlave: SlaveWrapper,
     val sourceVariable: E,
-    val targetSlave: SlaveWrapper,
+    val targetSlave: SlaveComponent,
     val targetVariable: E
 ) {
 
@@ -33,11 +20,11 @@ sealed class Connection<E : ScalarVariable>(
 }
 
 class IntegerConnection(
-    sourceSlave: SlaveWrapper,
+    sourceSlave: SlaveComponent,
     sourceVariable: IntegerVariable,
-    targetSlave: SlaveWrapper,
+    targetSlave: SlaveComponent,
     targetVariable: IntegerVariable
-) : Connection<IntegerVariable>(
+) : SlaveConnection<IntegerVariable>(
     sourceSlave, sourceVariable, targetSlave, targetVariable
 ) {
 
@@ -50,11 +37,11 @@ class IntegerConnection(
 }
 
 class RealConnection(
-    sourceSlave: SlaveWrapper,
+    sourceSlave: SlaveComponent,
     sourceVariable: RealVariable,
-    targetSlave: SlaveWrapper,
+    targetSlave: SlaveComponent,
     targetVariable: RealVariable
-) : Connection<RealVariable>(
+) : SlaveConnection<RealVariable>(
     sourceSlave, sourceVariable, targetSlave, targetVariable
 ) {
 
@@ -73,11 +60,11 @@ class RealConnection(
 }
 
 class BooleanConnection(
-    sourceSlave: SlaveWrapper,
+    sourceSlave: SlaveComponent,
     sourceVariable: BooleanVariable,
-    targetSlave: SlaveWrapper,
+    targetSlave: SlaveComponent,
     targetVariable: BooleanVariable
-) : Connection<BooleanVariable>(
+) : SlaveConnection<BooleanVariable>(
     sourceSlave, sourceVariable, targetSlave, targetVariable
 ) {
 
@@ -90,11 +77,11 @@ class BooleanConnection(
 }
 
 class StringConnection(
-    sourceSlave: SlaveWrapper,
+    sourceSlave: SlaveComponent,
     sourceVariable: StringVariable,
-    targetSlave: SlaveWrapper,
+    targetSlave: SlaveComponent,
     targetVariable: StringVariable
-) : Connection<StringVariable>(
+) : SlaveConnection<StringVariable>(
     sourceSlave, sourceVariable, targetSlave, targetVariable
 ) {
 

@@ -1,5 +1,5 @@
 package no.ntnu.ihb.acco.core
 
-typealias CompoenentClass = Class<out Component>
+typealias ComponentClass = Class<out Component>
 
 interface Component

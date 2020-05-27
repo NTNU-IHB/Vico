@@ -1,9 +1,7 @@
 package no.ntnu.ihb.vico.ssp
 
 import no.ntnu.ihb.fmi4j.util.extractContentTo
-import no.ntnu.ihb.vico.ComponentConnection
 import no.ntnu.ihb.vico.ModelResolver
-import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.ssp.jaxb.SystemStructureDescription
 import no.ntnu.ihb.vico.ssp.jaxb.TComponent
 import no.ntnu.ihb.vico.structure.*
@@ -15,7 +13,7 @@ import java.net.URI
 import java.nio.file.Files
 import javax.xml.bind.JAXB
 
-private typealias Components = Map<String, SlaveComponent>
+private typealias Components = Map<String, Component>
 
 private const val DEFAULT_SSD_FILENAME = "SystemStructure.ssd"
 private const val VICO_NAMESPACE = "com.github.ntnu-ihb.vico"
@@ -110,7 +108,7 @@ class SSPLoader @JvmOverloads constructor(
         }.associateBy { it.instanceName }
     }
 
-    private fun parseParameterBindings(c: TComponent, component: SlaveComponent) {
+    private fun parseParameterBindings(c: TComponent, component: Component) {
         c.parameterBindings?.parameterBinding?.forEach { binding ->
             if (binding.source != null) {
                 val parameterSet = JAXB.unmarshal(
@@ -139,7 +137,7 @@ class SSPLoader @JvmOverloads constructor(
         return ParameterSet(parameters)
     }
 
-    private fun parseComponent(c: TComponent): SlaveComponent {
+    private fun parseComponent(c: TComponent): Component {
         var uri = URI(c.source)
         if (!uri.isAbsolute) {
             uri = URI("${ssdFile.parentFile.absoluteFile.toURI()}/${c.source}")
@@ -158,13 +156,13 @@ class SSPLoader @JvmOverloads constructor(
             }
         }
         val model = ModelResolver.resolve(ssdFile.parentFile, uri)
-        return SlaveComponent(model, c.name, stepSizeHint)
+        return Component(model, c.name, stepSizeHint)
     }
 
     private fun parseConnections(
         ssd: SystemStructureDescription,
         components: Components
-    ): List<ComponentConnection> {
+    ): List<Connection> {
         return ssd.system.connections?.connection?.map { c ->
 
             val startComponent = components[c.startElement]
@@ -178,7 +176,7 @@ class SSPLoader @JvmOverloads constructor(
             val startVariable = startComponent.modelDescription.getVariableByName(startConnector.name)
             val endVariable = endComponent.modelDescription.getVariableByName(endConnector.name)
 
-            ComponentConnection(startComponent, startVariable, endComponent, endVariable)
+            Connection(startComponent, startVariable, endComponent, endVariable)
 
         } ?: emptyList()
     }

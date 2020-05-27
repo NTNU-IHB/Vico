@@ -1,9 +1,13 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.util.Clock
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.System
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.FutureTask
 import java.util.concurrent.atomic.AtomicBoolean
 
 interface EngineRunner {
@@ -53,23 +57,77 @@ abstract class AbstractEngineRunner(
 
 }
 
+private typealias Predicate = ((Engine) -> Boolean)
+
 class HeadlessEngineRunner(
     engine: Engine
 ) : AbstractEngineRunner(engine) {
 
-    var stop = AtomicBoolean()
+    private var thread: Thread? = null
+    private var stop = AtomicBoolean(false)
+
+    private var predicate: Predicate? = null
+
+    val isStarted: Boolean
+        get() {
+            return thread != null
+        }
 
     override fun start() {
+        if (this.thread == null) {
+            this.stop.set(false)
+            this.thread = Thread(Runner()).apply { start() }
+        } else {
+            throw IllegalStateException("Start can only be invoked once!")
+        }
+    }
 
+    fun runWhile(predicate: Predicate): Future<Unit> {
+        check(!isStarted && this.predicate == null)
+        this.predicate = predicate
+        val executor = Executors.newCachedThreadPool()
+        return FutureTask<Unit> {
+            start()
+            this.thread!!.join()
+            executor.shutdown()
+        }.also {
+            executor.submit(it)
+        }
+    }
+
+    fun runUntil(timePoint: Number): Future<Unit> {
+        val doubleTimePoint = timePoint.toDouble()
+        return runWhile(
+            predicate = { it.currentTime >= doubleTimePoint }
+        )
+    }
+
+    fun runFor(time: Number): Future<Unit> {
+        val doubleTime = time.toDouble()
+        return runWhile(
+            predicate = { it.currentTime + it.startTime >= doubleTime }
+        )
     }
 
     override fun stop() {
-
+        thread?.also {
+            stop.set(true)
+            it.join()
+        }
     }
 
     private inner class Runner : Runnable {
 
         override fun run() {
+
+            val inputThread = ConsoleInputReader().apply { start() }
+            val clock = Clock()
+            while (!stop.get() && predicate?.invoke(engine) != true) {
+                stepEngine(clock.getDelta())
+            }
+            stop.set(true)
+            inputThread.interrupt()
+            inputThread.join()
 
         }
 

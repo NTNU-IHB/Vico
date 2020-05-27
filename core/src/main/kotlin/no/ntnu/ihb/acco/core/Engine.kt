@@ -4,10 +4,14 @@ import java.io.Closeable
 import java.util.concurrent.atomic.AtomicBoolean
 
 class Engine(
-    val baseStepSize: Double = 1.0 / 100
+    startTime: Double? = null,
+    baseStepSize: Double? = null
 ) : Closeable {
 
-    var currentTime = 0.0
+    val startTime = startTime ?: 0.0
+    val baseStepSize = baseStepSize ?: 1.0 / 100
+
+    var currentTime = this.startTime
         private set
     var iterations = 0L
         private set
@@ -21,6 +25,8 @@ class Engine(
 
     private val connections = mutableListOf<Connection<*, *>>()
 
+    constructor(baseStepSize: Double) : this(null, baseStepSize)
+
     fun init() {
         if (!initialized.getAndSet(true)) {
             systemManager.initialize(this, currentTime)
@@ -31,9 +37,9 @@ class Engine(
     }
 
     fun step(numSteps: Int = 1) {
+        require(numSteps > 0) { "Parameter 'numSteps' must be >= 1! Was: $numSteps" }
         check(!closed.get()) { "Engine has been closed!" }
 
-        require(numSteps > 0)
         if (!initialized.get()) {
             init()
         }
@@ -60,14 +66,10 @@ class Engine(
     fun getEntitiesFor(family: Family) = entityManager.getEntitiesFor(family)
 
     fun addSystem(system: System) = systemManager.add(system)
-    fun removeSystem(system: System) = systemManager.remove(system)
+    fun removeSystem(system: Class<out System>) = systemManager.remove(system)
 
     fun addEntity(entity: Entity, vararg entities: Entity) = entityManager.addEntity(entity, *entities)
     fun removeEntity(entity: Entity, vararg entities: Entity) = entityManager.removeEntity(entity, *entities)
-
-    /* fun addEntityListener(listener: EntityListener, family: Family = emptyFamily) {
-         TODO()
-     }*/
 
     override fun close() {
         if (!closed.getAndSet(true)) {

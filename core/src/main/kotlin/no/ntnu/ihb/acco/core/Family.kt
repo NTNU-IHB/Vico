@@ -3,29 +3,11 @@ package no.ntnu.ihb.acco.core
 import java.util.function.Predicate
 
 
-private typealias ComponentClass = Class<out Component>
-
 class Family private constructor(
     private val all: List<ComponentClass>,
     private val one: List<ComponentClass>,
     private val exclude: List<ComponentClass>
 ) : Predicate<Entity> {
-
-    /* val entities = mutableListOf<Entity>()
-
-     private fun addEntityAndReturnTrue(entity: Entity): Boolean {
-         if (entity !in entities) {
-             entities.add(entity)
-         }
-         return true
-     }
-
-     private fun removeEntityAndReturnFalse(entity: Entity): Boolean {
-         if (entity in entities) {
-             entities.remove(entity)
-         }
-         return false
-     }*/
 
     override fun test(entity: Entity): Boolean {
 

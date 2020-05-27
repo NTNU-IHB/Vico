@@ -12,8 +12,16 @@ class SystemManager private constructor(
     val systems: List<System>
         get() = groups.flatMap { it.value }
 
+    private val systemMap: MutableMap<Class<out System>, System> = mutableMapOf()
+
     internal constructor(ctx: EngineContext)
             : this(ctx, TreeMap(Comparator<Int> { o1, o2 -> o2.compareTo(o1) }))
+
+    @Suppress("UNCHECKED_CAST")
+    fun <E : System> get(systemClass: Class<E>): E {
+        return systemMap[systemClass] as E?
+            ?: throw IllegalStateException("No system of type $systemClass registered!")
+    }
 
     fun initialize(engine: Engine, currentTime: Double) {
         groups.flatMap { it.value }.forEach { system ->
@@ -47,18 +55,21 @@ class SystemManager private constructor(
     }
 
     private fun internalAdd(system: System) {
-        groups.computeIfAbsent(system.decimationFactor) {
+        val systems = groups.computeIfAbsent(system.decimationFactor) {
             mutableListOf()
-        }.add(system)
-        groups
+        }
+        systems.add(system)
+        systemMap[system::class.java] = system
     }
 
-    fun remove(system: System) {
+    fun remove(system: Class<out System>) {
         ctx.safeContext { internalRemove(system) }
     }
 
-    private fun internalRemove(system: System) {
-        groups[system.decimationFactor]?.remove(system)
+    private fun internalRemove(system: Class<out System>) {
+        systemMap.remove(system)?.also {
+            groups[it.decimationFactor]?.remove(it)
+        }
     }
 
     override fun close() {

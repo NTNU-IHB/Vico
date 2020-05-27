@@ -8,9 +8,9 @@ abstract class System(
     val priority: Int = 0
 ) : Comparable<System>, Closeable {
 
-    private var nullableEngine: Engine? = null
+    private var _engine: Engine? = null
     protected val engine: Engine
-        get() = nullableEngine ?: throw IllegalStateException("System is not affiliated with an Engine!")
+        get() = _engine ?: throw IllegalStateException("System is not affiliated with an Engine!")
 
     var enabled = true
 
@@ -22,7 +22,7 @@ abstract class System(
     }
 
     internal fun initialize(engine: Engine, currentTime: Double) {
-        this.nullableEngine = engine
+        this._engine = engine
         entities.forEach { entityAdded(it) }
         init(currentTime)
     }

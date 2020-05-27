@@ -3,6 +3,7 @@ package no.ntnu.ihb.acco.core
 interface ComponentListener {
 
     fun componentAdded(component: Component)
+
     fun componentRemoved(component: Component)
 
 }

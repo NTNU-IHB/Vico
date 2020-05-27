@@ -1,18 +1,6 @@
 package no.ntnu.ihb.vico
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.SlaveInstance
-import no.ntnu.ihb.fmi4j.modeldescription.RealArray
-import no.ntnu.ihb.fmi4j.modeldescription.StringArray
-import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
-import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
+/*
 private typealias Cache<E> = HashMap<ValueReference, E>
 
 class SlaveWrapper(
@@ -37,6 +25,11 @@ class SlaveWrapper(
     private val realVariablesToFetch = mutableSetOf<ValueReference>()
     private val booleanVariablesToFetch = mutableSetOf<ValueReference>()
     private val stringVariablesToFetch = mutableSetOf<ValueReference>()
+
+    private val overriddenIntegers = mutableMapOf<ValueReference, Int>()
+    private val overriddenReals = mutableMapOf<ValueReference, Double>()
+    private val overriddenBooleans = mutableMapOf<ValueReference, Boolean>()
+    private val overriddenStrings = mutableMapOf<ValueReference, String>()
 
     override fun exitInitializationMode(): Boolean {
         return slave.exitInitializationMode().also {
@@ -143,9 +136,9 @@ class SlaveWrapper(
                     set(refs[i], values[i])
                 }
             }
-            /*overriddenIntegers.forEach { (valueRef, value) ->
+            overriddenIntegers.forEach { (valueRef, value) ->
                 integerGetCache[valueRef] = value
-            }*/
+            }
         }
         if (realVariablesToFetch.isNotEmpty()) {
             with(realGetCache) {
@@ -155,15 +148,17 @@ class SlaveWrapper(
                 for (i in refs.indices) {
                     val vr = refs[i]
                     val value = values[i]
-                    /*realModifiers[vr]?.forEach {
+                    */
+/*realModifiers[vr]?.forEach {
                         value = it.apply(value)
-                    }*/
+                    }*//*
+
                     set(vr, value)
                 }
             }
-            /*overriddenReals.forEach { (valueRef, value) ->
+            overriddenReals.forEach { (valueRef, value) ->
                 realGetCache[valueRef] = value
-            }*/
+            }
         }
         if (booleanVariablesToFetch.isNotEmpty()) {
             with(booleanGetCache) {
@@ -174,9 +169,9 @@ class SlaveWrapper(
                     set(refs[i], values[i])
                 }
             }
-            /*overriddenBooleans.forEach { (valueRef, value) ->
+            overriddenBooleans.forEach { (valueRef, value) ->
                 booleanGetCache[valueRef] = value
-            }*/
+            }
         }
         if (stringVariablesToFetch.isNotEmpty()) {
             with(stringGetCache) {
@@ -187,9 +182,9 @@ class SlaveWrapper(
                     set(refs[i], values[i])
                 }
             }
-            /*overriddenStrings.forEach { (valueRef, value) ->
+            overriddenStrings.forEach { (valueRef, value) ->
                 stringGetCache[valueRef] = value
-            }*/
+            }
         }
 
     }
@@ -299,8 +294,51 @@ class SlaveWrapper(
         }
     }
 
+    private fun checkCausalityForOverride(vr: ValueReference, type: VariableType) {
+        val causality = modelDescription.modelVariables.getByValueReference(vr, type).first().causality
+        check(causality == Causality.CALCULATED_PARAMETER || causality == Causality.OUTPUT)
+        { "Override can only be performed on variables with causality OUTPUT or CALCULATED_PARAMETER" }
+    }
+
+     fun overrideInteger(vr: ValueReference, value: Int) {
+        checkCausalityForOverride(vr, VariableType.INTEGER)
+        overriddenIntegers[vr] = value
+    }
+
+    fun stopOverrideInteger(vr: ValueReference) {
+        overriddenIntegers.remove(vr)
+    }
+
+    fun overrideReal(vr: ValueReference, value: Double) {
+        checkCausalityForOverride(vr, VariableType.REAL)
+        overriddenReals[vr] = value
+    }
+
+    fun stopOverrideReal(vr: ValueReference) {
+        overriddenReals.remove(vr)
+    }
+
+    fun overrideBoolean(vr: ValueReference, value: Boolean) {
+        checkCausalityForOverride(vr, VariableType.BOOLEAN)
+        overriddenBooleans[vr] = value
+    }
+
+    fun stopOverrideBoolean(vr: ValueReference) {
+        overriddenBooleans.remove(vr)
+    }
+
+    fun overrideString(vr: ValueReference, value: String) {
+        checkCausalityForOverride(vr, VariableType.STRING)
+        overriddenStrings[vr] = value
+    }
+
+    fun stopOverrideString(vr: ValueReference) {
+        overriddenStrings.remove(vr)
+    }
+
     private companion object {
         private val LOG: Logger = LoggerFactory.getLogger(SlaveWrapper::class.java)
     }
 
 }
+*/

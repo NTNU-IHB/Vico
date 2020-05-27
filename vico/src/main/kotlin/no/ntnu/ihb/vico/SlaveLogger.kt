@@ -21,25 +21,25 @@ class SlaveLogger(
     var separator: String = ", "
     var decimalPoints: Int = 6
     val targetDir: File = targetDir ?: File(".")
-    private val loggers: MutableMap<SlaveWrapper, Logger> = mutableMapOf()
+    private val loggers: MutableMap<SlaveComponent, Logger> = mutableMapOf()
 
     init {
         this.targetDir.mkdirs()
     }
 
-    fun setup(slave: SlaveWrapper) {
+    fun setup(slave: SlaveComponent) {
         loggers[slave] = Logger(slave, emptyList()).also {
             it.writeHeader()
         }
     }
 
-    fun postInit(slave: SlaveWrapper, currentTime: Double) {
+    fun postInit(slave: SlaveComponent, currentTime: Double) {
         loggers[slave]?.also {
             it.writeLine(currentTime)
         }
     }
 
-    fun postStep(slave: SlaveWrapper, currentTime: Double) {
+    fun postStep(slave: SlaveComponent, currentTime: Double) {
         loggers[slave]?.also {
             it.writeLine(currentTime)
         }
@@ -50,7 +50,7 @@ class SlaveLogger(
     }
 
     private inner class Logger(
-        private val slave: SlaveWrapper,
+        private val slave: SlaveComponent,
         variables: List<ScalarVariable>,
         staticFileNames: Boolean = false
     ) : Closeable {
@@ -76,6 +76,7 @@ class SlaveLogger(
             }
         }
 
+        @Suppress("IMPLICIT_CAST_TO_ANY")
         fun writeLine(currentTime: Double) {
             variables.map {
                 when (it.type) {
