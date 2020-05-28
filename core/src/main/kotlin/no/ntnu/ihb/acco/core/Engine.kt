@@ -4,7 +4,7 @@ import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-class Engine(
+class Engine @JvmOverloads constructor(
     startTime: Double? = null,
     baseStepSize: Double? = null
 ) : Closeable {

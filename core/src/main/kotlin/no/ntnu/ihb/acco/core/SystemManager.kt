@@ -37,7 +37,6 @@ class SystemManager(
         groups.forEach { (decimationFactor, systemGroup) ->
             systemGroup.forEach { system ->
                 if (system.enabled) {
-
                     var t = currentTime
                     val dt = baseStepSize * decimationFactor
                     do {

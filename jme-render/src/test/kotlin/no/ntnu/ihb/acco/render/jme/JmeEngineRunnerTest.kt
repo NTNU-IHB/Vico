@@ -1,12 +1,15 @@
 package no.ntnu.ihb.acco.render.jme
 
 import no.ntnu.ihb.acco.components.TransformComponent
-import no.ntnu.ihb.acco.components.transform
-import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.core.Component
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.shape.BoxShape
 import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.systems.IteratingSystem
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -17,7 +20,7 @@ private data class SineMoverComponent(
     var phi: Double = 0.0
 ) : Component {
 
-    fun get(t: Double) = A * sin(TWO_PHI * f * t + phi)
+    fun compute(t: Double) = A * sin(TWO_PHI * f * t + phi)
 
     private companion object {
         private const val TWO_PHI = 2 * PI
@@ -33,7 +36,7 @@ private class SineMoverSystem : IteratingSystem(
         val sc = entity.getComponent(SineMoverComponent::class.java)
         val tc = entity.getComponent(TransformComponent::class.java)
 
-        tc.position.y = sc.get(currentTime)
+        tc.position.y = sc.compute(currentTime)
 
     }
 
@@ -62,8 +65,8 @@ fun main() {
             })
             e.addComponent(SineMoverComponent(f = 0.5))
             engine.addEntity(e)
-            engine.getEntityByName("e1").transform
-                .attach(e.transform)
+            /*engine.getEntityByName("e1").transform
+                .attach(e.transform)*/
         }
 
         engine.addSystem(SineMoverSystem())
