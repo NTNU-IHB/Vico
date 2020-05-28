@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ssd:SystemStructureDescription xmlns:ssd="http://ssp-standard.org/SSP1/SystemStructureDescription"
+                                xmlns:ssc="http://ssp-standard.org/SSP1/SystemStructureCommon"
+                                xmlns:ssv="http://ssp-standard.org/SSP1/SystemStructureParameterValues"
+                                xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/Vico"
+                                name="test1"
+                                version="1.0">
+
+
+    <ssd:System name="test1" description="Just a test">
+
+        <ssd:Elements>
+            <ssd:Component name="bouncingBall"
+                           source="fmu-proxy://localhost:9090?file=../../../../test-fmus/fmus/1.0/BouncingBall.fmu">
+
+                <ssd:Connectors>
+                    <ssd:Connector name="h" kind="output">
+                        <ssc:Real/>
+                    </ssd:Connector>
+                </ssd:Connectors>
+
+                <ssd:ParameterBindings>
+                    <ssd:ParameterBinding>
+                        <ssd:ParameterValues>
+                            <ssv:ParameterSet version="1.0" name="initial_values">
+                                <ssv:Parameters>
+                                    <ssv:Parameter name="h">
+                                        <ssv:Real value="2.0"/>
+                                    </ssv:Parameter>
+                                </ssv:Parameters>
+                            </ssv:ParameterSet>
+                        </ssd:ParameterValues>
+                    </ssd:ParameterBinding>
+                </ssd:ParameterBindings>
+
+                <ssd:Annotations>
+                    <ssc:Annotation type="com.github.ntnu-ihb.vico">
+                        <vico:StepSizeHint value="1e-2"/>
+                    </ssc:Annotation>
+                </ssd:Annotations>
+
+            </ssd:Component>
+        </ssd:Elements>
+
+    </ssd:System>
+
+    <ssd:DefaultExperiment startTime="0.0" stopTime="10">
+        <ssd:Annotations>
+            <ssc:Annotation type="com.github.ntnu-ihb.vico">
+                <vico:Algorithm>
+                    <vico:FixedStepAlgorithm baseStepSize="1e-2"/>
+                </vico:Algorithm>
+            </ssc:Annotation>
+        </ssd:Annotations>
+    </ssd:DefaultExperiment>
+
+</ssd:SystemStructureDescription>

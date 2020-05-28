@@ -1,0 +1,15 @@
+plugins {
+    id 'kotlin'
+}
+
+dependencies {
+
+    api project(':core')
+    api project(':vico')
+    api project(':jme-render')
+
+    compile group: 'info.picocli', name: 'picocli', version: '4.1.1'
+
+    testImplementation project(':test-data')
+    
+}
