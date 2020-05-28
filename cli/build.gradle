@@ -1,5 +1,7 @@
 plugins {
     id 'kotlin'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
 dependencies {
@@ -12,4 +14,20 @@ dependencies {
 
     testImplementation project(':test-data')
     
+}
+
+shadowJar {
+    archiveBaseName.set('vico')
+    archiveVersion.set(null)
+    version(null)
+}
+
+distributions {
+    main {
+        baseName('vico')
+    }
+}
+
+startScripts {
+    applicationName = 'vico'
 }

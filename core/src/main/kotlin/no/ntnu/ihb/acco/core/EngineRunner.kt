@@ -23,8 +23,6 @@ abstract class AbstractEngineRunner(
 ) : EngineRunner {
 
     val paused = AtomicBoolean(false)
-    var timePaused = 0.0
-        private set
 
     var wallClock = 0.0
         private set
@@ -35,23 +33,28 @@ abstract class AbstractEngineRunner(
     var enableRealTimeTarget = true
     var actualRealTimeFactor = Double.NaN
 
-    protected fun stepEngine(deltaTime: Double) {
+    protected fun stepEngine(deltaTime: Double): Boolean {
 
+        var stepOccurred = false
         if (paused.get()) {
-            timePaused += deltaTime
+            return false
         }
 
         if (enableRealTimeTarget) {
             val diff = (simulationClock / targetRealTimeFactor) - wallClock
             if (diff <= 0) {
                 engine.step()
+                stepOccurred = true
             }
         } else {
             engine.step()
+            stepOccurred = true
         }
 
         wallClock += deltaTime
         actualRealTimeFactor = simulationClock / wallClock
+
+        return stepOccurred
 
     }
 
@@ -125,8 +128,9 @@ class HeadlessEngineRunner(
             val inputThread = ConsoleInputReader().apply { start() }
             val clock = Clock()
             while (!stop.get() && predicate?.invoke(engine) != true) {
-                stepEngine(clock.getDelta())
-                callback?.invoke()
+                if (stepEngine(clock.getDelta())) {
+                    callback?.invoke()
+                }
             }
             stop.set(true)
             inputThread.interrupt()

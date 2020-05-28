@@ -1,9 +1,15 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.vico.SlaveSystem
+import no.ntnu.ihb.vico.log.SlaveLogger
+import no.ntnu.ihb.vico.ssp.SSPLoader
+import no.ntnu.ihb.vico.structure.SystemStructure
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
+import kotlin.time.ExperimentalTime
 
 @CommandLine.Command(
     name = "simulate-ssp",
@@ -27,7 +33,7 @@ class SimulateSsp : Runnable {
         names = ["-dt", "--stepSize"],
         description = ["BaseStepSize for the FixedStepAlgorithm. Required if an algorithm is not specified in the SSP. Overrides any algorithm specified in the SSP."]
     )
-    private var baseStepSize: Double? = null
+    private var baseStepSize: Double = -1.0
 
     @CommandLine.Option(
         names = ["-rtf", "--realTimeFactor"],
@@ -60,70 +66,43 @@ class SimulateSsp : Runnable {
     )
     private lateinit var sspFile: File
 
+    @ExperimentalTime
     override fun run() {
 
-/*
-            val loader = SSPLoader(sspFile)
-            val structure: SystemStructure = loader.load()
-            val start: Double = startTime ?: structure.defaultExperiment?.startTime ?: 0.0
-            val stop = stopTime ?: structure.defaultExperiment?.stopTime
-            ?: throw Error("No stopTime provided as input, nor has one been specified in the SSP!")
-            val algorithm = baseStepSize?.let { FixedStepMaster(it) } ?: structure.defaultExperiment?.algorithm
-            ?: throw Error("No baseStepSize provided as input, nor has an algorithm been specified in the SSP!")
+        require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
 
-            require(start < stop) { "stop > start!" }
+        val loader = SSPLoader(sspFile)
+        val structure: SystemStructure = loader.load()
+        val start: Double = startTime ?: structure.defaultExperiment?.startTime ?: 0.0
+        val stop = stopTime ?: structure.defaultExperiment?.stopTime
+        ?: throw Error("No stopTime provided as input, nor has one been specified in the SSP!")
 
-            ExecutionBuilder(structure).apply {
-                startTime(start)
-                algorithm(algorithm)
-            }.build().use { exec ->
+        require(start < stop) { "stop=$stop > start=$start!" }
 
-                relativeLogConfigPath?.also { configPath ->
-                    val logConfig = File(loader.ssdFile.parent, configPath)
-                    if (!logConfig.exists()) throw NoSuchFileException(logConfig)
-                    exec.addListener(CsvVariableWriter(logConfig, resultDir))
-                } ?: run {
-                    exec.addListener(CsvVariableWriter(null, resultDir))
-                }
+        Engine(baseStepSize).use { engine ->
 
-                relativeChartConfigPath?.also { configPath ->
-                    val chartConfig = File(loader.ssdFile.parent, configPath)
-                    if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
-                    ChartLoader.load(chartConfig).forEach { chart ->
-                        exec.addListener(chart)
-                    }
-                }
+            structure.apply(engine)
+            val slaveSystem = engine.getSystem(SlaveSystem::class.java)
 
-                val totalSimulationTime = stop - start
-                val stepSize = (exec.algorithm as FixedStepMaster).baseStepSize
-                val numSteps = (totalSimulationTime / stepSize).toLong()
-                val aTenth = numSteps / 10
+            relativeLogConfigPath?.also { configPath ->
+                val logConfig = File(loader.ssdFile.parent, configPath)
+                if (!logConfig.exists()) throw NoSuchFileException(logConfig)
+                slaveSystem.addListener(SlaveLogger(logConfig, resultDir))
+            } ?: run {
+                slaveSystem.addListener(SlaveLogger(null, resultDir))
+            }
 
-                val runner = ExecutionRunner(exec)
+            /* relativeChartConfigPath?.also { configPath ->
+                 val chartConfig = File(loader.ssdFile.parent, configPath)
+                 if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
+                 ChartLoader.load(chartConfig).forEach { chart ->
+                     exec.addListener(chart)
+                 }
+             }*/
 
-                targetRealtimeFactor?.also {
-                    runner.targetRealTimeFactor = it
-                } ?: run {
-                    runner.enableRealTimeTarget.set(false)
-                }
-                runner.callback = {
-                    val i = exec.stepNumber
-                    if (i != 0L && i % aTenth == 0L || i == numSteps) {
-                        val percentComplete = i / numSteps.toDouble() * 100
-                        LOG.info(
-                            "{}% complete, simulated {}s in {}s, target RTF={}, actual RTF={}",
-                            percentComplete,
-                            runner.simulationClock.formatForOutput(),
-                            runner.wallClock.formatForOutput(),
-                            if (runner.enableRealTimeTarget.get()) runner.targetRealTimeFactor else "unbounded",
-                            runner.actualRealTimeFactor.formatForOutput()
-                        )
+            runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
 
-                    }
-                }
-                runner.runUntil(stop).get()
-
-            }*/
+        }
 
     }
 

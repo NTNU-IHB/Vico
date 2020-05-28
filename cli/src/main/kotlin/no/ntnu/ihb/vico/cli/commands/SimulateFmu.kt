@@ -1,8 +1,6 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.HeadlessEngineRunner
-import no.ntnu.ihb.acco.util.formatForOutput
 import no.ntnu.ihb.vico.ModelResolver
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.log.SlaveLogger
@@ -12,7 +10,6 @@ import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
 import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 
 @CommandLine.Command(name = "simulate-fmu", description = ["Simulate a single FMU"])
@@ -77,7 +74,7 @@ class SimulateFmu : Runnable {
         val modelName = model.modelDescription.modelName
 
         require(startTime < stopTime) { "stopTime=$stopTime > startTime=$startTime!" }
-        require(baseStepSize > 0)
+        require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
 
         Engine(baseStepSize).use { engine ->
 
@@ -95,38 +92,7 @@ class SimulateFmu : Runnable {
                 slaveSystem.addListener(SlaveLogger(null, resultDir))
             }
 
-            val runner = HeadlessEngineRunner(engine)
-
-            val totalSimulationTime = stopTime - startTime
-            val numSteps = (totalSimulationTime / baseStepSize).toLong()
-            val aTenth = numSteps / 10
-
-            targetRealtimeFactor?.also {
-                runner.targetRealTimeFactor = it
-            } ?: run {
-                runner.enableRealTimeTarget = false
-            }
-            runner.callback = {
-                val i = engine.iterations
-                if (i != 0L && i % aTenth == 0L || i == numSteps) {
-                    val percentComplete = i / numSteps.toDouble() * 100
-                    LOG.info(
-                        "{}% complete, simulated {}s in {}s, target RTF={}, actual RTF={}",
-                        percentComplete,
-                        runner.simulationClock.formatForOutput(),
-                        runner.wallClock.formatForOutput(),
-                        if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded",
-                        runner.actualRealTimeFactor.formatForOutput()
-                    )
-
-                }
-            }
-
-            measureTime {
-                runner.runUntil(stopTime).get()
-            }.also { t ->
-                LOG.info("Simulation finished. Simulated ${totalSimulationTime}s in ${t.inSeconds}s.. ")
-            }
+            runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)
 
         }
 
