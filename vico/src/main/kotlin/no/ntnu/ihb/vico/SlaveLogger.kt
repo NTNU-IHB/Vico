@@ -16,7 +16,7 @@ import java.util.*
 
 class SlaveLogger(
     targetDir: File? = null
-) : Closeable {
+) : SlaveSystemAdapter() {
 
     var separator: String = ", "
     var decimalPoints: Int = 6
@@ -27,21 +27,21 @@ class SlaveLogger(
         this.targetDir.mkdirs()
     }
 
-    fun setup(slave: SlaveComponent) {
+    override fun slaveAdded(slave: SlaveComponent) {
         loggers[slave] = Logger(slave, emptyList()).also {
             it.writeHeader()
         }
     }
 
-    fun postInit(slave: SlaveComponent, currentTime: Double) {
-        loggers[slave]?.also {
-            it.writeLine(currentTime)
+    override fun postInit(currentTime: Double) {
+        loggers.values.forEach { logger ->
+            logger.writeLine(currentTime)
         }
     }
 
-    fun postStep(slave: SlaveComponent, currentTime: Double) {
-        loggers[slave]?.also {
-            it.writeLine(currentTime)
+    override fun postStep(currentTime: Double) {
+        loggers.values.forEach { logger ->
+            logger.writeLine(currentTime)
         }
     }
 

@@ -5,11 +5,11 @@ import com.jme3.scene.Node
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.IteratingSystem
 import no.ntnu.ihb.acco.math.Quaternion
 import no.ntnu.ihb.acco.math.Vector3
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
+import no.ntnu.ihb.acco.systems.IteratingSystem
 
 
 internal class JmeRenderSystem(

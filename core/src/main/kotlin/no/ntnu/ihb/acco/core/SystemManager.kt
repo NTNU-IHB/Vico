@@ -1,5 +1,7 @@
 package no.ntnu.ihb.acco.core
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.util.*
 
@@ -11,7 +13,7 @@ class SystemManager(
     val systems: List<System>
         get() = groups.flatMap { it.value }
 
-    private val groups = TreeMap<Int, MutableList<System>>(Comparator { o1, o2 -> o2.compareTo(o1) })
+    private val groups = TreeMap<Long, MutableList<System>>(Comparator { o1, o2 -> o2.compareTo(o1) })
     private val systemMap: MutableMap<Class<out System>, System> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
@@ -22,6 +24,7 @@ class SystemManager(
 
     fun initialize(currentTime: Double) {
         systems.forEach { system ->
+            LOG.debug("Initializing system ${system::class.java}")
             system.initialize(currentTime)
         }
     }
@@ -29,22 +32,23 @@ class SystemManager(
     fun step(currentTime: Double, baseStepSize: Double): Double {
         if (groups.isEmpty()) return baseStepSize
 
-        val stepSize = baseStepSize * groups.firstKey()
-        val endTime = currentTime + stepSize
+        val largestSystemStepSize = baseStepSize * groups.lastKey()
+        val endOfStepTime = currentTime + largestSystemStepSize
         groups.forEach { (decimationFactor, systemGroup) ->
             systemGroup.forEach { system ->
                 if (system.enabled) {
+
                     var t = currentTime
                     val dt = baseStepSize * decimationFactor
                     do {
                         system.step(t, dt)
                         t += dt
-                    } while (t < endTime)
+                    } while (t < endOfStepTime)
                 }
             }
         }
 
-        return stepSize
+        return largestSystemStepSize
     }
 
     fun add(system: System) {
@@ -52,10 +56,9 @@ class SystemManager(
     }
 
     private fun internalAdd(system: System) {
-        val systems = groups.computeIfAbsent(system.decimationFactor) {
+        groups.computeIfAbsent(system.decimationFactor) {
             mutableListOf()
-        }
-        systems.add(system)
+        }.add(system)
         systemMap[system::class.java] = system
         system.addedToEngine(engine)
     }
@@ -72,6 +75,10 @@ class SystemManager(
 
     override fun close() {
         systems.forEach { it.close() }
+    }
+
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(SystemManager::class.java)
     }
 
 }

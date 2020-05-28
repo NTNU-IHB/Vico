@@ -15,12 +15,12 @@ import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.IteratingSystem
+import no.ntnu.ihb.acco.core.System
 import no.ntnu.ihb.acco.physics.ColliderComponent
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
 
 
-class BulletSystem : IteratingSystem(
+class BulletSystem : System(
     Family.all(TransformComponent::class.java).one(RigidBodyComponent::class.java).build()
 ) {
 
@@ -48,7 +48,20 @@ class BulletSystem : IteratingSystem(
 
     override fun step(currentTime: Double, stepSize: Double) {
         world.stepSimulation(stepSize.toFloat())
-        super.step(currentTime, stepSize)
+        entities.forEach { entity ->
+
+            val tc = entity.getComponent(TransformComponent::class.java)
+
+            rbMap[entity]?.also { rb ->
+                rb.worldTransform.getTranslation(tmpVec).also {
+                    tc.position.copy(tc.worldToLocal(it.convert()))
+                    println(tc.worldToLocal(no.ntnu.ihb.acco.math.Vector3.Y.clone()))
+                }
+                /* rb.worldTransform.getRotation(tmpQuat).also {
+                     tc.quaternion.copy(tmpQuat.convert())
+                 }*/
+            }
+        }
     }
 
     override fun entityAdded(entity: Entity) {
@@ -73,22 +86,6 @@ class BulletSystem : IteratingSystem(
         rbMap[entity]?.also {
             world.removeRigidBody(it)
         }
-    }
-
-    override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
-
-        val tc = entity.getComponent(TransformComponent::class.java)
-
-        rbMap[entity]?.also { rb ->
-            rb.worldTransform.getTranslation(tmpVec).also {
-                tc.position.copy(tc.worldToLocal(it.convert()))
-                println(tc.worldToLocal(no.ntnu.ihb.acco.math.Vector3.Y.clone()))
-            }
-            /* rb.worldTransform.getRotation(tmpQuat).also {
-                 tc.quaternion.copy(tmpQuat.convert())
-             }*/
-        }
-
     }
 
     override fun close() {

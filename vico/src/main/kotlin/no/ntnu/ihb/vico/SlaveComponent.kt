@@ -253,8 +253,8 @@ class SlaveComponent(
 
     private fun check(ref: ValueReference, type: VariableType, cache: MutableMap<*, *>) {
         check(ref in cache) {
-            //val v = modelDescription.modelVariables.getByValueReference(ref, type)
-            "Variable with valueReference=$ref and type=$type " +
+            val v = modelDescription.modelVariables.getByValueReference(ref, type)
+            "Variable with valueReference=$ref, type=$type and possible variable names=${v.map { it.name }} " +
                     "has not been marked for reading for slave named '${slave.instanceName}'!"
         }
     }
@@ -294,7 +294,7 @@ class SlaveComponent(
                 if (initialized) {
                     markedForReadingPostInitAction(v)
                 }
-                LOG.debug("Variable '${instanceName}.${v.name}' marked for reading.")
+                LOG.trace("Variable '${instanceName}.${v.name}' marked for reading.")
             }
         }
     }

@@ -4,20 +4,29 @@ import java.io.Closeable
 
 abstract class System(
     private val family: Family,
-    val decimationFactor: Int = 1,
-    val priority: Int = 0
+    decimationFactor: Long? = null,
+    priority: Int? = null
 ) : Comparable<System>, Closeable {
+
+    val priority = priority ?: 0
+    val decimationFactor = decimationFactor ?: 1
 
     private var _engine: Engine? = null
     protected val engine: Engine
         get() = _engine ?: throw IllegalStateException("System is not affiliated with an Engine!")
 
-    var enabled = true
+    val addedToEngine: Boolean
+        get() = _engine != null
 
+    var enabled = true
+    var initialized = false
+        private set
     val interval: Double
         get() = engine.baseStepSize * decimationFactor
 
     protected lateinit var entities: Set<Entity>
+
+    constructor(family: Family) : this(family, null, null)
 
     fun addedToEngine(engine: Engine) {
         this._engine = engine
@@ -33,14 +42,17 @@ abstract class System(
     }
 
     internal fun initialize(currentTime: Double) {
+        if (initialized) throw IllegalStateException()
         init(currentTime)
+        initialized = true
     }
 
-    protected open fun init(currentTime: Double) {}
 
     protected open fun entityAdded(entity: Entity) {}
 
     protected open fun entityRemoved(entity: Entity) {}
+
+    protected open fun init(currentTime: Double) {}
 
     abstract fun step(currentTime: Double, stepSize: Double)
 
@@ -51,35 +63,4 @@ abstract class System(
         return if (compare == 0) priority.compareTo(other.priority) else compare
     }
 
-}
-
-abstract class IteratingSystem(
-    family: Family,
-    decimationFactor: Int = 1,
-    priority: Int = 0
-) : System(family, decimationFactor, priority) {
-
-    override fun step(currentTime: Double, stepSize: Double) {
-        entities.forEach { e ->
-            processEntity(e, currentTime, stepSize)
-        }
-    }
-
-    protected abstract fun processEntity(entity: Entity, currentTime: Double, stepSize: Double)
-
-}
-
-abstract class ParallelIteratingSystem(
-    family: Family,
-    decimationFactor: Int = 1,
-    priority: Int = 0
-) : System(family, decimationFactor, priority) {
-
-    override fun step(currentTime: Double, stepSize: Double) {
-        entities.parallelStream().forEach { e ->
-            processEntity(e, currentTime, stepSize)
-        }
-    }
-
-    protected abstract fun processEntity(entity: Entity, currentTime: Double, stepSize: Double)
 }

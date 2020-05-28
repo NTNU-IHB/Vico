@@ -3,6 +3,7 @@ package no.ntnu.ihb.vico
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.fmi4j.readReal
+import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.RealParameter
 import org.junit.jupiter.api.Assertions
@@ -16,10 +17,10 @@ internal class SlaveSystemTest {
 
         Engine(1.0 / 100).use { engine ->
 
-            val slaveSystem = FixedStepSlaveSystem()
+            val slaveSystem = SlaveSystem(FixedStepMaster())
             val resultDir = File("build/results").also {
                 it.deleteRecursively()
-                slaveSystem.setupLogging(it)
+                slaveSystem.addListener(SlaveLogger(it))
             }
 
             engine.addSystem(slaveSystem)
@@ -31,8 +32,6 @@ internal class SlaveSystemTest {
                 slaveEntity.addComponent(this)
             }
             engine.addEntity(slaveEntity)
-
-            engine.addSystem(SlaveLoggingSystem(File("build/results2")))
 
             engine.init()
 
@@ -57,17 +56,12 @@ internal class SlaveSystemTest {
             SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load().apply(engine)
             val resultDir = File("build/results").also {
                 it.deleteRecursively()
-                engine.systemManager.get(FixedStepSlaveSystem::class.java).setupLogging(it)
+                engine.systemManager.get(SlaveSystem::class.java).addListener(SlaveLogger(it))
             }
-
-            engine.addSystem(SlaveLoggingSystem(File("build/results2")))
-
-            println(engine.systemManager.get(FixedStepSlaveSystem::class.java).slaves)
 
             engine.step(100)
 
             Assertions.assertTrue(resultDir.listFiles()?.size ?: 0 > 0)
-
 
         }
 

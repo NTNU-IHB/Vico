@@ -2,9 +2,10 @@ package no.ntnu.ihb.vico.structure
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.vico.FixedStepSlaveSystem
-import no.ntnu.ihb.vico.Model
-import no.ntnu.ihb.vico.SlaveComponent
+import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
+import no.ntnu.ihb.vico.*
 
 class SystemStructure @JvmOverloads constructor(
     val name: String? = null
@@ -55,12 +56,29 @@ class SystemStructure @JvmOverloads constructor(
             }
         }
 
-        val algorithm = FixedStepSlaveSystem()
-        connections.forEach { c ->
-            algorithm.addConnection(c)
-        }
+        val system = SlaveSystem()
+        engine.addSystem(system)
 
-        engine.addSystem(algorithm)
+        connections.forEach { c ->
+            val slaves = system.slaves
+            val source = slaves.first { it.instanceName == c.source.instanceName }
+            val target = slaves.first { it.instanceName == c.target.instanceName }
+            when (c.sourceVariable.type) {
+                VariableType.INTEGER, VariableType.ENUMERATION -> {
+                    IntegerConnection(
+                        source, c.sourceVariable as IntegerVariable,
+                        target, c.targetVariable as IntegerVariable
+                    )
+                }
+                VariableType.REAL -> {
+                    RealConnection(
+                        source, c.sourceVariable as RealVariable,
+                        target, c.targetVariable as RealVariable
+                    )
+                }
+                else -> TODO()
+            }
+        }
 
 
     }

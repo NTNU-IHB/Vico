@@ -1,35 +1,107 @@
 package no.ntnu.ihb.vico
 
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
-import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import no.ntnu.ihb.fmi4j.writeBoolean
 import no.ntnu.ihb.fmi4j.writeInteger
 import no.ntnu.ihb.fmi4j.writeReal
 import no.ntnu.ihb.fmi4j.writeString
-import no.ntnu.ihb.vico.structure.Connection
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import java.io.File
-import java.util.*
-import kotlin.math.ceil
-import kotlin.math.max
+import no.ntnu.ihb.vico.master.FixedStepMaster
+import no.ntnu.ihb.vico.master.MasterAlgorithm
 
-abstract class AbstractSlaveSystem(
-    decimationFactor: Int = 1,
-    priority: Int = 0,
-    family: Family = Family.all(SlaveComponent::class.java).build()
-) : System(family, decimationFactor, priority)
+typealias Slaves = List<SlaveComponent>
+typealias SlaveConnections = Map<SlaveComponent, List<SlaveConnection<*>>>
+typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
 
-class FixedStepSlaveSystem(
-    decimationFactor: Int = 1,
+
+class SlaveSystem(
+    private val algorithm: MasterAlgorithm = FixedStepMaster(),
+    decimationFactor: Long = 1,
     priority: Int = 0
-) : AbstractSlaveSystem(decimationFactor, priority) {
+) : System(Family.all(SlaveComponent::class.java).build(), decimationFactor, priority) {
+
+    var parameterSet: String = "default"
+
+    private val _slaves = mutableListOf<SlaveComponent>()
+    val slaves: List<SlaveComponent> = _slaves
+    private val listeners = mutableListOf<SlaveSystemListener>()
+    private val connections: MutableMap<SlaveComponent, MutableList<SlaveConnection<*>>> = mutableMapOf()
+
+    private val slaveStepCallback: SlaveStepCallback = {
+        listeners.forEach { l -> l.postSlaveStep(it.first, it.second) }
+    }
+
+    init {
+        // algorithm.assignedToSystem(this)
+    }
+
+    fun getSlave(name: String) = _slaves.first { it.instanceName == name }
+
+    override fun entityAdded(entity: Entity) {
+        val slave = entity.getComponent(SlaveComponent::class.java)
+        slave.getParameterSet(parameterSet)?.also {
+            it.integerParameters.forEach { p -> slave.writeInteger(p.name, p.value) }
+            it.realParameters.forEach { p -> slave.writeReal(p.name, p.value) }
+            it.booleanParameters.forEach { p -> slave.writeBoolean(p.name, p.value) }
+            it.stringParameters.forEach { p -> slave.writeString(p.name, p.value) }
+        }
+        _slaves.add(slave)
+        algorithm.slaveAdded(slave)
+        listeners.forEach { l -> l.slaveAdded(slave) }
+    }
+
+    override fun entityRemoved(entity: Entity) {
+        val slave = entity.getComponent(SlaveComponent::class.java)
+        _slaves.remove(slave)
+        algorithm.slaveRemoved(slave)
+        listeners.forEach { l -> l.slaveRemoved(slave) }
+    }
+
+    override fun init(currentTime: Double) {
+        algorithm.init(currentTime, connections)
+        listeners.forEach { l -> l.postInit(currentTime) }
+    }
+
+    override fun step(currentTime: Double, stepSize: Double) {
+        algorithm.step(currentTime, stepSize, connections, slaveStepCallback)
+        listeners.forEach { l -> l.postStep(currentTime + stepSize) }
+    }
+
+    /* fun addConnection(connection: Connection) {
+         pendingConnections.add(connection)
+     }*/
+
+    fun addConnection(connection: SlaveConnection<*>) = apply {
+        connections.computeIfAbsent(connection.sourceSlave) { mutableListOf() }.add(connection)
+    }
+
+    fun addListener(listener: SlaveSystemListener) = apply {
+        listeners.add(listener)
+        if (addedToEngine) {
+            slaves.forEach { slave ->
+                listener.slaveAdded(slave)
+            }
+        }
+    }
+
+    override fun close() {
+        _slaves.forEach { slave ->
+            slave.terminate()
+        }
+        listeners.forEach { l -> l.postTerminate() }
+        _slaves.forEach { slave ->
+            slave.close()
+        }
+        listeners.forEach { l -> l.close() }
+    }
+}
+
+/*
+class FixedStepSlaveSystem(
+    decimationFactor: Long = 1,
+    priority: Int = 0
+) : SlaveSystem(decimationFactor, priority) {
 
     var parameterSet: String = "default"
     private var logger: SlaveLogger? = null
@@ -185,3 +257,4 @@ class FixedStepSlaveSystem(
     }
 
 }
+*/

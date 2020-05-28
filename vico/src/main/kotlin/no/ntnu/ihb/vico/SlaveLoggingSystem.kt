@@ -1,24 +1,10 @@
 package no.ntnu.ihb.vico
 
-import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.ParallelIteratingSystem
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
-import no.ntnu.ihb.fmi4j.readBoolean
-import no.ntnu.ihb.fmi4j.readInteger
-import no.ntnu.ihb.fmi4j.readReal
-import no.ntnu.ihb.fmi4j.readString
-import java.io.BufferedWriter
-import java.io.Closeable
-import java.io.File
-import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.*
+/*
 
 class SlaveLoggingSystem(
     val targetDir: File,
-    decimationFactor: Int = 1
+    decimationFactor: Long = 1
 ) : ParallelIteratingSystem(Family.all(SlaveComponent::class.java).build(), decimationFactor, 1) {
 
     var separator: String = ", "
@@ -39,7 +25,6 @@ class SlaveLoggingSystem(
 
     override fun init(currentTime: Double) {
         entities.forEach { entity ->
-            val slave = entity.getComponent(SlaveComponent::class.java)
             loggers[entity]?.also {
                 it.writeLine(currentTime)
             }
@@ -77,7 +62,7 @@ class SlaveLoggingSystem(
 
         fun writeHeader() {
             variables.joinToString(separator, "time, stepNumber, ", "\n") {
-                "${it.name} [${it.valueReference} ${it.type} ${it.causality}]"
+                "${it.name} [${it.valueReference} ${it.type} ${it.causality ?: Causality.UNKNOWN}]"
             }.also {
                 writer.write(it)
             }
@@ -113,3 +98,4 @@ class SlaveLoggingSystem(
     }
 
 }
+*/
