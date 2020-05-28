@@ -1,4 +1,5 @@
 plugins {
+    id 'java'
     id 'kotlin'
 }
 
@@ -13,7 +14,7 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.6'
 
-    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    api group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.2'
     implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 

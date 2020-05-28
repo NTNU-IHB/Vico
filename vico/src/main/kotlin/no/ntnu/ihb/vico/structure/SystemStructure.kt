@@ -2,9 +2,7 @@ package no.ntnu.ihb.vico.structure
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.vico.*
 
 class SystemStructure @JvmOverloads constructor(
@@ -76,10 +74,21 @@ class SystemStructure @JvmOverloads constructor(
                         target, c.targetVariable as RealVariable
                     )
                 }
+                VariableType.BOOLEAN -> {
+                    BooleanConnection(
+                        source, c.sourceVariable as BooleanVariable,
+                        target, c.targetVariable as BooleanVariable
+                    )
+                }
+                VariableType.STRING -> {
+                    StringConnection(
+                        source, c.sourceVariable as StringVariable,
+                        target, c.targetVariable as StringVariable
+                    )
+                }
                 else -> TODO()
             }
         }
-
 
     }
 

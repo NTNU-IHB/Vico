@@ -31,8 +31,8 @@ abstract class AbstractEngineRunner(
     val simulationClock: Double
         get() = engine.currentTime
 
-    val targetRealTimeFactor = 1.0
-    val enableRealTimeTarget = AtomicBoolean(true)
+    var targetRealTimeFactor = 1.0
+    var enableRealTimeTarget = true
     var actualRealTimeFactor = Double.NaN
 
     protected fun stepEngine(deltaTime: Double) {
@@ -41,7 +41,7 @@ abstract class AbstractEngineRunner(
             timePaused += deltaTime
         }
 
-        if (enableRealTimeTarget.get()) {
+        if (enableRealTimeTarget) {
             val diff = (simulationClock / targetRealTimeFactor) - wallClock
             if (diff <= 0) {
                 engine.step()
@@ -58,6 +58,7 @@ abstract class AbstractEngineRunner(
 }
 
 private typealias Predicate = ((Engine) -> Boolean)
+private typealias Callback = () -> Unit
 
 class HeadlessEngineRunner(
     engine: Engine
@@ -66,6 +67,7 @@ class HeadlessEngineRunner(
     private var thread: Thread? = null
     private var stop = AtomicBoolean(false)
 
+    var callback: Callback? = null
     private var predicate: Predicate? = null
 
     val isStarted: Boolean
@@ -124,6 +126,7 @@ class HeadlessEngineRunner(
             val clock = Clock()
             while (!stop.get() && predicate?.invoke(engine) != true) {
                 stepEngine(clock.getDelta())
+                callback?.invoke()
             }
             stop.set(true)
             inputThread.interrupt()
@@ -157,8 +160,8 @@ class HeadlessEngineRunner(
                 }
                 when (input) {
                     "r" -> {
-                        enableRealTimeTarget.set(!enableRealTimeTarget.get())
-                        if (enableRealTimeTarget.get()) {
+                        enableRealTimeTarget = !enableRealTimeTarget
+                        if (enableRealTimeTarget) {
                             println("Realtime target enabled, rtf=$targetRealTimeFactor")
                         } else {
                             println("Realtime target disabled")

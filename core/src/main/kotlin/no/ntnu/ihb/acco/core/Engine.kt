@@ -63,6 +63,8 @@ class Engine @JvmOverloads constructor(
         connections.add(connection)
     }
 
+    fun <E : System> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
+
     fun getEntityByName(name: String) = entityManager.getEntityByName(name)
     fun getEntitiesFor(family: Family) = entityManager.getEntitiesFor(family)
 

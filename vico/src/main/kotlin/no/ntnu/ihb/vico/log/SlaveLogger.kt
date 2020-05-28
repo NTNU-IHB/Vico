@@ -1,20 +1,26 @@
-package no.ntnu.ihb.vico
+package no.ntnu.ihb.vico.log
 
+import no.ntnu.ihb.acco.util.formatForOutput
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import no.ntnu.ihb.fmi4j.readBoolean
 import no.ntnu.ihb.fmi4j.readInteger
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.fmi4j.readString
+import no.ntnu.ihb.vico.SlaveComponent
+import no.ntnu.ihb.vico.SlaveSystemAdapter
+import no.ntnu.ihb.vico.log.jaxb.TLogConfig
 import java.io.BufferedWriter
 import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.xml.bind.JAXB
 
 
-class SlaveLogger(
+class SlaveLogger @JvmOverloads constructor(
+    config: TLogConfig? = null,
     targetDir: File? = null
 ) : SlaveSystemAdapter() {
 
@@ -22,6 +28,10 @@ class SlaveLogger(
     var decimalPoints: Int = 6
     val targetDir: File = targetDir ?: File(".")
     private val loggers: MutableMap<SlaveComponent, Logger> = mutableMapOf()
+
+    constructor(configFile: File, targetDir: File? = null) : this(
+        JAXB.unmarshal(configFile, TLogConfig::class.java), targetDir
+    )
 
     init {
         this.targetDir.mkdirs()
@@ -97,10 +107,6 @@ class SlaveLogger(
         override fun close() {
             writer.flush()
             writer.close()
-        }
-
-        private fun Double.formatForOutput(decimalPoints: Int = 4): String {
-            return String.format(Locale.US, "%.${decimalPoints}f", this)
         }
 
     }
