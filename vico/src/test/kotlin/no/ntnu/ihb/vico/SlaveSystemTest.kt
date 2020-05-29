@@ -21,7 +21,7 @@ internal class SlaveSystemTest {
             val slaveSystem = SlaveSystem(FixedStepMaster())
             val resultDir = File("build/results").also {
                 it.deleteRecursively()
-                slaveSystem.addListener(SlaveLogger(it))
+                slaveSystem.addListener(SlaveLogger(null, it))
             }
 
             engine.addSystem(slaveSystem)
@@ -58,9 +58,7 @@ internal class SlaveSystemTest {
             val resultDir = File("build/results").also {
                 it.deleteRecursively()
                 engine.systemManager.get(SlaveSystem::class.java).addListener(
-                    SlaveLogger(
-                        it
-                    )
+                    SlaveLogger(null, it)
                 )
             }
 

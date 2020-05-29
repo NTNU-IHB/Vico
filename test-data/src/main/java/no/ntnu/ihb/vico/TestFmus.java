@@ -5,7 +5,11 @@ import java.io.File;
 public class TestFmus {
 
     public static File get(String path) {
-        return new File("../test-data/data/fmus", path).getAbsoluteFile();
+        File projectFolder = new File(".").getAbsoluteFile();
+        while (!projectFolder.getName().equals("acco")) {
+            projectFolder = projectFolder.getParentFile();
+        }
+        return new File(projectFolder, "test-data/data/fmus" + File.separator + path).getAbsoluteFile();
     }
 
 }

@@ -1,0 +1,44 @@
+package no.ntnu.ihb.vico
+
+import no.ntnu.ihb.acco.components.TransformComponent
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.render.GeometryComponent
+import no.ntnu.ihb.acco.render.jme.JmeEngineRunner
+import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.fmi4j.writeReal
+import no.ntnu.ihb.vico.master.FixedStepMaster
+
+fun main() {
+
+    Engine(1.0 / 100).also { engine ->
+
+        engine.addSystem(SlaveSystem(FixedStepMaster()))
+        engine.addSystem(SlaveTransformSystem())
+
+        Entity("BouncingBall").also { slaveEntity ->
+            val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
+            SlaveComponent(model.instantiate("bouncingBall_")).apply {
+                writeReal("h", 10.0)
+                slaveEntity.addComponent(this)
+            }
+            SlaveTransform(yRef = "h").apply {
+                slaveEntity.addComponent(this)
+            }
+            TransformComponent().apply {
+                slaveEntity.addComponent(this)
+            }
+            GeometryComponent(SphereShape()).apply {
+                slaveEntity.addComponent(this)
+            }
+            engine.addEntity(slaveEntity)
+        }
+
+        JmeEngineRunner(engine).apply {
+
+            start()
+
+        }
+
+    }
+}

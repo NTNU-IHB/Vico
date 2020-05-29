@@ -12,7 +12,7 @@ class SystemStructure @JvmOverloads constructor(
 ) {
 
     private val components = mutableSetOf<Component>()
-    private val connections = mutableSetOf<SspConnection<*>>()
+    private val connections = mutableSetOf<Connection<*>>()
     var defaultExperiment: DefaultExperiment? = null
 
     private fun getComponent(instanceName: String): Component {
@@ -33,20 +33,20 @@ class SystemStructure @JvmOverloads constructor(
 
         check(sourceVariable.type == targetVariable.type)
 
-        val connection: SspConnection<*> = when (sourceVariable.type) {
-            VariableType.INTEGER, VariableType.ENUMERATION -> SspIntegerConnection(
+        val connection: Connection<*> = when (sourceVariable.type) {
+            VariableType.INTEGER, VariableType.ENUMERATION -> IntegerConnection(
                 sourceComponent, sourceVariable as IntegerVariable,
                 targetComponent, targetVariable as IntegerVariable
             )
-            VariableType.REAL -> SspRealConnection(
+            VariableType.REAL -> RealConnection(
                 sourceComponent, sourceVariable as RealVariable,
                 targetComponent, targetVariable as RealVariable
             )
-            VariableType.STRING -> SspStringConnection(
+            VariableType.STRING -> StringConnection(
                 sourceComponent, sourceVariable as StringVariable,
                 targetComponent, targetVariable as StringVariable
             )
-            VariableType.BOOLEAN -> SspBooleanConnection(
+            VariableType.BOOLEAN -> BooleanConnection(
                 sourceComponent, sourceVariable as BooleanVariable,
                 targetComponent, targetVariable as BooleanVariable
             )
@@ -55,7 +55,7 @@ class SystemStructure @JvmOverloads constructor(
         addConnection(connection)
     }
 
-    fun addConnection(connection: SspConnection<*>) = apply {
+    fun addConnection(connection: Connection<*>) = apply {
         check(connections.add(connection)) { "Connection already exists!" }
     }
 

@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.ssp
 
+import no.ntnu.ihb.acco.core.LinearTransform
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.fmi4j.util.extractContentTo
 import no.ntnu.ihb.vico.ModelResolver
@@ -57,11 +58,11 @@ class SSPLoader @JvmOverloads constructor(
         val ssd = JAXB.unmarshal(ssdFile, SystemStructureDescription::class.java)
         val components = parseComponents(ssd)
         val structure = SystemStructure(ssd.name).apply {
-            components.values.forEach {
-                addComponent(it)
+            components.values.forEach { component ->
+                addComponent(component)
             }
-            parseConnections(ssd, components).forEach {
-                addConnection(it)
+            parseConnections(ssd, components).forEach { connection ->
+                addConnection(connection)
             }
             parseDefaultExperiment(ssd)?.also { defaultExperiment = it }
         }
@@ -163,7 +164,7 @@ class SSPLoader @JvmOverloads constructor(
     private fun parseConnections(
         ssd: SystemStructureDescription,
         components: Components
-    ): List<SspConnection<*>> {
+    ): List<Connection<*>> {
         return ssd.system.connections?.connection?.map { c ->
 
             val startComponent = components[c.startElement]
@@ -180,19 +181,23 @@ class SSPLoader @JvmOverloads constructor(
             require(startVariable.type == endVariable.type)
 
             when (startVariable.type) {
-                VariableType.INTEGER, VariableType.ENUMERATION -> SspIntegerConnection(
+                VariableType.INTEGER, VariableType.ENUMERATION -> IntegerConnection(
                     startComponent, startVariable as IntegerVariable,
                     endComponent, endVariable as IntegerVariable
                 )
-                VariableType.REAL -> SspRealConnection(
+                VariableType.REAL -> RealConnection(
                     startComponent, startVariable as RealVariable,
                     endComponent, endVariable as RealVariable
-                )
-                VariableType.STRING -> SspStringConnection(
+                ).also { realConnection ->
+                    c.linearTransformation?.also { t ->
+                        realConnection.modifiers.add(LinearTransform(t.factor, t.offset))
+                    }
+                }
+                VariableType.STRING -> StringConnection(
                     startComponent, startVariable as StringVariable,
                     endComponent, endVariable as StringVariable
                 )
-                VariableType.BOOLEAN -> SspBooleanConnection(
+                VariableType.BOOLEAN -> BooleanConnection(
                     startComponent, startVariable as BooleanVariable,
                     endComponent, endVariable as BooleanVariable
                 )
