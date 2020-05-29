@@ -20,14 +20,14 @@ import javax.xml.bind.JAXB
 
 
 class SlaveLogger @JvmOverloads constructor(
-    config: TLogConfig? = null,
+    private val logConfig: TLogConfig? = null,
     targetDir: File? = null
 ) : SlaveSystemAdapter() {
 
     var separator: String = ", "
     var decimalPoints: Int = 6
     val targetDir: File = targetDir ?: File(".")
-    private val loggers: MutableMap<SlaveComponent, Logger> = mutableMapOf()
+    private val loggers: MutableMap<String, Logger> = mutableMapOf()
 
     constructor(configFile: File, targetDir: File? = null) : this(
         JAXB.unmarshal(configFile, TLogConfig::class.java), targetDir
@@ -35,10 +35,32 @@ class SlaveLogger @JvmOverloads constructor(
 
     init {
         this.targetDir.mkdirs()
+
+        logConfig?.components?.component?.also {
+            mutableSetOf<String>().apply {
+                for (key in it) {
+                    check(add(key.name)) { "Duplicate component in log configuration: '${key.name}'" }
+                }
+            }
+        }
+
     }
 
     override fun slaveAdded(slave: SlaveComponent) {
-        loggers[slave] = Logger(slave, emptyList()).also {
+        if (logConfig == null) {
+            loggers[slave.instanceName] = Logger(slave, emptyList(), 1)
+        } else {
+            val logInfo = logConfig.components?.component?.associateBy { it.name } ?: mutableMapOf()
+            logInfo[slave.instanceName]?.also { component ->
+                val decimationFactor = component.decimationFactor
+                require(decimationFactor >= 1)
+                val variables = component.variable.map { v ->
+                    slave.modelDescription.getVariableByName(v.name)
+                }
+                loggers[slave.instanceName] = Logger(slave, variables, decimationFactor)
+            }
+        }
+        loggers[slave.instanceName]?.also {
             it.writeHeader()
         }
     }
@@ -62,6 +84,7 @@ class SlaveLogger @JvmOverloads constructor(
     private inner class Logger(
         private val slave: SlaveComponent,
         variables: List<ScalarVariable>,
+        private val decimationFactor: Int,
         staticFileNames: Boolean = false
     ) : Closeable {
 
@@ -88,19 +111,21 @@ class SlaveLogger @JvmOverloads constructor(
 
         @Suppress("IMPLICIT_CAST_TO_ANY")
         fun writeLine(currentTime: Double) {
-            variables.map {
-                when (it.type) {
-                    VariableType.INTEGER, VariableType.ENUMERATION -> slave.readInteger(it.valueReference).value
-                    VariableType.REAL -> slave.readReal(it.valueReference).value.formatForOutput(decimalPoints)
-                    VariableType.BOOLEAN -> slave.readBoolean(it.valueReference).value
-                    VariableType.STRING -> slave.readString(it.valueReference).value
+            if (slave.stepCount % decimationFactor == 0L) {
+                variables.map {
+                    when (it.type) {
+                        VariableType.INTEGER, VariableType.ENUMERATION -> slave.readInteger(it.valueReference).value
+                        VariableType.REAL -> slave.readReal(it.valueReference).value.formatForOutput(decimalPoints)
+                        VariableType.BOOLEAN -> slave.readBoolean(it.valueReference).value
+                        VariableType.STRING -> slave.readString(it.valueReference).value
+                    }
+                }.joinToString(
+                    separator,
+                    "${currentTime.formatForOutput(decimalPoints)}$separator${slave.stepCount}$separator",
+                    "\n"
+                ).also {
+                    writer.write(it)
                 }
-            }.joinToString(
-                separator,
-                "${currentTime.formatForOutput(decimalPoints)}$separator${slave.stepCount}$separator",
-                "\n"
-            ).also {
-                writer.write(it)
             }
         }
 

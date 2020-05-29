@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vico:LogConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/LogConfig" staticFileNames="true">
+
+    <vico:components>
+
+        <vico:component name="bouncingBall_1" decimationFactor="1">
+            <vico:variable name="h"/>
+            <vico:variable name="v"/>
+        </vico:component>
+
+        <vico:component name="bouncingBall_2" decimationFactor="2"/>
+
+    </vico:components>
+
+</vico:LogConfig>
