@@ -9,39 +9,38 @@ class Component(
     val stepSizeHint: Double? = null
 ) {
 
+    val modelName: String
+        get() = model.modelDescription.modelName
+
     val modelDescription: CoSimulationModelDescription
         get() = model.modelDescription
 
     private val connectors = mutableSetOf<Connector>()
-    private val parameterSets = linkedMapOf<String, ParameterSet>()
+    private val _parameterSets = mutableSetOf<ParameterSet>()
+    val parametersSets: Set<ParameterSet> = _parameterSets
 
     fun instantiate() = model.instantiate(instanceName)
 
     fun getConnector(name: String): Connector {
         return connectors.find { it.name == name }
-            ?: throw IllegalArgumentException("No connector named '$name' in component '${model.modelDescription.modelName}'!")
+            ?: throw IllegalArgumentException("No connector named '$name' in component '$instanceName'!")
     }
 
     fun addConnector(connector: Connector) {
         connector.validate(modelDescription)
         check(connectors.add(connector)) {
-            "Connector '${connector.name}' has already been added to component '${model.modelDescription.modelName}'!"
+            "Connector '${connector.name}' has already been added to component '${instanceName}'!"
         }
-    }
-
-    fun getParameterSet(name: String): ParameterSet? {
-        return parameterSets[name]
     }
 
     fun addParameterSet(name: String, parameters: List<Parameter<*>>) = apply {
-        addParameterSet(name, ParameterSet(parameters))
+        addParameterSet(ParameterSet(name, parameters))
     }
 
-    fun addParameterSet(name: String, parameterSet: ParameterSet) = apply {
-        check(name !in parameterSets) {
-            "ParameterSet '$name' has already been added to component '${model.modelDescription.modelName}'!"
+    fun addParameterSet(parameterSet: ParameterSet) = apply {
+        check(_parameterSets.add(parameterSet)) {
+            "ParameterSet '${parameterSet.name}' has already been added to component '${instanceName}'!"
         }
-        parameterSets[name] = parameterSet
     }
 
 }

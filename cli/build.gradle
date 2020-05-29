@@ -4,6 +4,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
+mainClassName = "no.ntnu.ihb.vico.cli.VicoCLI"
+
 dependencies {
 
     api project(':core')

@@ -1,9 +1,9 @@
 package no.ntnu.ihb.vico.structure
 
-import no.ntnu.ihb.acco.core.System
+import no.ntnu.ihb.vico.master.MasterAlgorithm
 
 data class DefaultExperiment(
-    val startTime: Double,
+    val startTime: Double = 0.0,
     val stopTime: Double?,
-    val system: System? = null
+    val algorithm: MasterAlgorithm? = null
 )

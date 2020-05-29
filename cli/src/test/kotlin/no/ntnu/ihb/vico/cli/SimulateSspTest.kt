@@ -24,7 +24,6 @@ internal class SimulateSspTest {
                 "simulate-ssp",
                 ssdFile,
                 "--stepSize", "1e-3",
-                "--stopTime", "2",
                 "-rtf", "1.1",
                 "-res", resultDir.absolutePath
             )

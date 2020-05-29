@@ -3,14 +3,16 @@ package no.ntnu.ihb.vico.structure
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
-import no.ntnu.ihb.vico.*
+import no.ntnu.ihb.vico.Model
+import no.ntnu.ihb.vico.SlaveComponent
+import no.ntnu.ihb.vico.SlaveSystem
 
 class SystemStructure @JvmOverloads constructor(
     val name: String? = null
 ) {
 
-    val components = mutableSetOf<Component>()
-    val connections = mutableSetOf<Connection>()
+    private val components = mutableSetOf<Component>()
+    private val connections = mutableSetOf<SspConnection<*>>()
     var defaultExperiment: DefaultExperiment? = null
 
     private fun getComponent(instanceName: String): Component {
@@ -29,11 +31,32 @@ class SystemStructure @JvmOverloads constructor(
         val sourceVariable = sourceComponent.modelDescription.getVariableByName(sourceVariableName)
         val targetVariable = targetComponent.modelDescription.getVariableByName(targetVariableName)
 
-        addConnection(Connection(sourceComponent, sourceVariable, targetComponent, targetVariable))
+        check(sourceVariable.type == targetVariable.type)
+
+        val connection: SspConnection<*> = when (sourceVariable.type) {
+            VariableType.INTEGER, VariableType.ENUMERATION -> SspIntegerConnection(
+                sourceComponent, sourceVariable as IntegerVariable,
+                targetComponent, targetVariable as IntegerVariable
+            )
+            VariableType.REAL -> SspRealConnection(
+                sourceComponent, sourceVariable as RealVariable,
+                targetComponent, targetVariable as RealVariable
+            )
+            VariableType.STRING -> SspStringConnection(
+                sourceComponent, sourceVariable as StringVariable,
+                targetComponent, targetVariable as StringVariable
+            )
+            VariableType.BOOLEAN -> SspBooleanConnection(
+                sourceComponent, sourceVariable as BooleanVariable,
+                targetComponent, targetVariable as BooleanVariable
+            )
+        }
+
+        addConnection(connection)
     }
 
-    fun addConnection(connection: Connection) = apply {
-        check(connections.add(connection))
+    fun addConnection(connection: SspConnection<*>) = apply {
+        check(connections.add(connection)) { "Connection already exists!" }
     }
 
     @JvmOverloads
@@ -49,7 +72,11 @@ class SystemStructure @JvmOverloads constructor(
 
         components.forEach { c ->
             Entity(c.instanceName).apply {
-                addComponent(SlaveComponent(c.instantiate()))
+                addComponent(SlaveComponent(c.instantiate()).apply {
+                    c.parametersSets.forEach {
+                        addParameterSet(it)
+                    }
+                })
                 engine.addEntity(this)
             }
         }
@@ -58,36 +85,7 @@ class SystemStructure @JvmOverloads constructor(
         engine.addSystem(system)
 
         connections.forEach { c ->
-            val slaves = system.slaves
-            val source = slaves.first { it.instanceName == c.source.instanceName }
-            val target = slaves.first { it.instanceName == c.target.instanceName }
-            when (c.sourceVariable.type) {
-                VariableType.INTEGER, VariableType.ENUMERATION -> {
-                    IntegerConnection(
-                        source, c.sourceVariable as IntegerVariable,
-                        target, c.targetVariable as IntegerVariable
-                    )
-                }
-                VariableType.REAL -> {
-                    RealConnection(
-                        source, c.sourceVariable as RealVariable,
-                        target, c.targetVariable as RealVariable
-                    )
-                }
-                VariableType.BOOLEAN -> {
-                    BooleanConnection(
-                        source, c.sourceVariable as BooleanVariable,
-                        target, c.targetVariable as BooleanVariable
-                    )
-                }
-                VariableType.STRING -> {
-                    StringConnection(
-                        source, c.sourceVariable as StringVariable,
-                        target, c.targetVariable as StringVariable
-                    )
-                }
-                else -> TODO()
-            }
+            system.addConnection(c.toSlaveConnection(system.slaves))
         }
 
     }

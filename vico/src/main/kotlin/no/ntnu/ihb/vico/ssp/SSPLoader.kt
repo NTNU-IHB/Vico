@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.ssp
 
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.fmi4j.util.extractContentTo
 import no.ntnu.ihb.vico.ModelResolver
 import no.ntnu.ihb.vico.ssp.jaxb.SystemStructureDescription
@@ -62,7 +63,7 @@ class SSPLoader @JvmOverloads constructor(
             parseConnections(ssd, components).forEach {
                 addConnection(it)
             }
-            //parseDefaultExperiment(ssd)?.also { defaultExperiment = it }
+            parseDefaultExperiment(ssd)?.also { defaultExperiment = it }
         }
 
         LOG.info("Loaded SSP config '${ssd.name}'")
@@ -115,10 +116,10 @@ class SSPLoader @JvmOverloads constructor(
                     URI("${ssdFile.parentFile.toURI()}/${binding.source}"),
                     no.ntnu.ihb.vico.ssp.jaxb.ParameterSet::class.java
                 )
-                component.addParameterSet(parameterSet.name, parseParameterSet(parameterSet))
+                component.addParameterSet(parseParameterSet(parameterSet))
             } else {
                 binding.parameterValues.parameterSet.forEach { parameterSet ->
-                    component.addParameterSet(parameterSet.name, parseParameterSet(parameterSet))
+                    component.addParameterSet(parseParameterSet(parameterSet))
                 }
             }
         }
@@ -134,7 +135,7 @@ class SSPLoader @JvmOverloads constructor(
                 else -> throw UnsupportedOperationException("Unable to parse parameter: $it")
             }
         }
-        return ParameterSet(parameters)
+        return ParameterSet(p.name, parameters)
     }
 
     private fun parseComponent(c: TComponent): Component {
@@ -162,7 +163,7 @@ class SSPLoader @JvmOverloads constructor(
     private fun parseConnections(
         ssd: SystemStructureDescription,
         components: Components
-    ): List<Connection> {
+    ): List<SspConnection<*>> {
         return ssd.system.connections?.connection?.map { c ->
 
             val startComponent = components[c.startElement]
@@ -176,7 +177,26 @@ class SSPLoader @JvmOverloads constructor(
             val startVariable = startComponent.modelDescription.getVariableByName(startConnector.name)
             val endVariable = endComponent.modelDescription.getVariableByName(endConnector.name)
 
-            Connection(startComponent, startVariable, endComponent, endVariable)
+            require(startVariable.type == endVariable.type)
+
+            when (startVariable.type) {
+                VariableType.INTEGER, VariableType.ENUMERATION -> SspIntegerConnection(
+                    startComponent, startVariable as IntegerVariable,
+                    endComponent, endVariable as IntegerVariable
+                )
+                VariableType.REAL -> SspRealConnection(
+                    startComponent, startVariable as RealVariable,
+                    endComponent, endVariable as RealVariable
+                )
+                VariableType.STRING -> SspStringConnection(
+                    startComponent, startVariable as StringVariable,
+                    endComponent, endVariable as StringVariable
+                )
+                VariableType.BOOLEAN -> SspBooleanConnection(
+                    startComponent, startVariable as BooleanVariable,
+                    endComponent, endVariable as BooleanVariable
+                )
+            }
 
         } ?: emptyList()
     }
@@ -190,12 +210,12 @@ class SSPLoader @JvmOverloads constructor(
         }
         throw UnsupportedOperationException("Unsupported algorithm: ${algorithmNode.nodeName}")
     }
-
+    */
     private fun parseDefaultExperiment(ssd: SystemStructureDescription): DefaultExperiment? {
         return ssd.defaultExperiment?.let {
             val startTime = it.startTime ?: 0.0
             val stopTime: Double? = it.stopTime
-            var system: System? = null
+            /*var system: System? = null
             it.annotations?.annotation?.forEach { annotation ->
                 when (annotation.type.toLowerCase()) {
                     VICO_NAMESPACE, OSP_NAMESPACE -> {
@@ -205,10 +225,10 @@ class SSPLoader @JvmOverloads constructor(
                         }
                     }
                 }
-            }
-            DefaultExperiment(startTime, stopTime, algorithm)
+            }*/
+            DefaultExperiment(startTime, stopTime)
         }
-    }*/
+    }
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(SSPLoader::class.java)

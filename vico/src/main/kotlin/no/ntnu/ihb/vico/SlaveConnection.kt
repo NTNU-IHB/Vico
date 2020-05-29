@@ -48,7 +48,9 @@ class RealConnection(
     private val values = RealArray(1)
     private val modifiers = mutableListOf<RealModifier>()
 
-    fun addModifier(modifier: RealModifier) = modifiers.add(modifier)
+    fun addModifier(modifier: RealModifier) = apply {
+        modifiers.add(modifier)
+    }
 
     override fun transferData() {
         sourceSlave.readReal(vr.also { it[0] = sourceVariable.valueReference }, values)

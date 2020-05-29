@@ -89,7 +89,6 @@ class Engine @JvmOverloads constructor(
         }
     }
 
-
     override fun close() {
         if (!closed.getAndSet(true)) {
             systemManager.close()

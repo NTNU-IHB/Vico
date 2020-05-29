@@ -7,6 +7,11 @@ import no.ntnu.ihb.acco.math.Matrix4
 import no.ntnu.ihb.acco.math.Quaternion
 import no.ntnu.ihb.acco.math.Vector3
 
+
+val Entity.transform
+    get() = getComponent(TransformComponent::class.java)
+
+
 class TransformComponent : Component {
 
     var parent: TransformComponent? = null
@@ -424,6 +429,3 @@ class TransformComponent : Component {
     }
 
 }
-
-val Entity.transform
-    get() = getComponent(TransformComponent::class.java)

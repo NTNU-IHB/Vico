@@ -3,8 +3,7 @@ package no.ntnu.ihb.vico
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.ntnu.ihb.acco.core.Component
-import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.SlaveInstance
+import no.ntnu.ihb.fmi4j.*
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
@@ -48,8 +47,11 @@ class SlaveComponent(
     private val overriddenBooleans = mutableMapOf<ValueReference, Boolean>()
     private val overriddenStrings = mutableMapOf<ValueReference, String>()
 
-    private val parameterSets = linkedMapOf<String, ParameterSet>()
+    private val parameterSets = mutableSetOf<ParameterSet>()
 
+    fun getParameterSet(name: String): ParameterSet? {
+        return parameterSets.firstOrNull { it.name == name }
+    }
 
     override fun exitInitializationMode(): Boolean {
         return slave.exitInitializationMode().also {
@@ -69,6 +71,11 @@ class SlaveComponent(
             initialized = false
         }
     }
+
+    fun readIntegerDirect(name: String) = slave.readInteger(name)
+    fun readRealDirect(name: String) = slave.readReal(name)
+    fun readBooleanDirect(name: String) = slave.readBoolean(name)
+    fun readStringDirect(name: String) = slave.readString(name)
 
     override fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus {
         require(vr.size == ref.size)
@@ -354,19 +361,12 @@ class SlaveComponent(
         overriddenStrings.remove(vr)
     }
 
-    fun getParameterSet(name: String): ParameterSet? {
-        return parameterSets[name]
-    }
-
     fun addParameterSet(name: String, parameters: List<Parameter<*>>) = apply {
-        addParameterSet(name, ParameterSet(parameters))
+        addParameterSet(ParameterSet(name, parameters))
     }
 
-    private fun addParameterSet(name: String, parameterSet: ParameterSet) = apply {
-        check(name !in parameterSets) {
-            "ParameterSet '$name' has already been added to component '${modelDescription.modelName}'!"
-        }
-        parameterSets[name] = parameterSet
+    fun addParameterSet(parameterSet: ParameterSet) = apply {
+        check(parameterSets.add(parameterSet))
     }
 
     override fun toString(): String {

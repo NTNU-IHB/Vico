@@ -10,7 +10,7 @@
     <ssd:System name="test1" description="Just a test">
 
         <ssd:Elements>
-            <ssd:Component name="bouncingBall" source="../../../test-fmus/fmus/1.0/BouncingBall.fmu">
+            <ssd:Component name="bouncingBall" source="../../fmus/1.0/BouncingBall.fmu">
 
                 <ssd:Connectors>
                     <ssd:Connector name="h" kind="output">

@@ -32,6 +32,7 @@ class EnumerationParameter(
 
 
 class ParameterSet(
+    val name: String,
     private val parameters: List<Parameter<*>>
 ) : Iterable<Parameter<*>> by parameters {
 

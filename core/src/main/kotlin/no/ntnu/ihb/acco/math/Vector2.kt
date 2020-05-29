@@ -466,14 +466,14 @@ data class Vector2(
      * @return The created or provided array.
      */
 
-    fun toArray(array: DoubleArray?, offset: Int): DoubleArray {
+    fun toArray(array: DoubleArray?, offset: Int = 0): DoubleArray {
 
         @Suppress("NAME_SHADOWING")
         val array = array ?: DoubleArray(2)
 
         return array.also {
-            array[0] = x
-            array[1] = y
+            array[offset + 0] = x
+            array[offset + 1] = y
         }
     }
 

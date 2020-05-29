@@ -9,7 +9,7 @@
     <ssd:System name="test1" description="Just a test">
 
         <ssd:Elements>
-            <ssd:Component name="bouncingBall" source="../../../../test-fmus/fmus/1.0/BouncingBall.fmu">
+            <ssd:Component name="bouncingBall" source="../../../fmus/1.0/BouncingBall.fmu">
 
                 <ssd:Connectors>
                     <ssd:Connector name="h" kind="output">
@@ -29,9 +29,9 @@
     <ssd:DefaultExperiment startTime="0.0" stopTime="10">
         <ssd:Annotations>
             <ssc:Annotation type="com.github.ntnu-ihb.vico">
-                <vico:Algorithm>
-                    <vico:FixedStepAlgorithm baseStepSize="1e-2"/>
-                </vico:Algorithm>
+                <vico:MasterAlgorithm>
+                    <vico:FixedStepMaster baseStepSize="1e-2"/>
+                </vico:MasterAlgorithm>
             </ssc:Annotation>
         </ssd:Annotations>
     </ssd:DefaultExperiment>

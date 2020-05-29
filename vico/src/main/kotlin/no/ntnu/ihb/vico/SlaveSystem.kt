@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico
 
+import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
@@ -14,6 +15,8 @@ typealias Slaves = List<SlaveComponent>
 typealias SlaveConnections = Map<SlaveComponent, List<SlaveConnection<*>>>
 typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
 
+val Engine.slaveSystem: SlaveSystem
+    get() = this.getSystem(SlaveSystem::class.java)
 
 class SlaveSystem(
     private val algorithm: MasterAlgorithm = FixedStepMaster(),
@@ -23,10 +26,10 @@ class SlaveSystem(
 
     var parameterSet: String = "default"
 
-    private val _slaves = mutableListOf<SlaveComponent>()
-    val slaves: List<SlaveComponent> = _slaves
     private val listeners = mutableListOf<SlaveSystemListener>()
     private val connections: MutableMap<SlaveComponent, MutableList<SlaveConnection<*>>> = mutableMapOf()
+    private val _slaves = mutableListOf<SlaveComponent>()
+    val slaves: List<SlaveComponent> = _slaves
 
     private val slaveStepCallback: SlaveStepCallback = {
         listeners.forEach { l -> l.postSlaveStep(it.first, it.second) }
@@ -36,7 +39,7 @@ class SlaveSystem(
         // algorithm.assignedToSystem(this)
     }
 
-    fun getSlave(name: String) = _slaves.first { it.instanceName == name }
+    fun getSlave(name: String): SlaveComponent = _slaves.first { it.instanceName == name }
 
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent(SlaveComponent::class.java)
@@ -74,6 +77,7 @@ class SlaveSystem(
 
     fun addConnection(connection: SlaveConnection<*>) = apply {
         connections.computeIfAbsent(connection.sourceSlave) { mutableListOf() }.add(connection)
+        connection.sourceSlave.markForReading(connection.sourceVariable.name)
     }
 
     fun addListener(listener: SlaveSystemListener) = apply {

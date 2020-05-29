@@ -538,7 +538,7 @@ data class Vector3(
      * @param offset (optional) optional offset into the array.
      * @return The created or provided array.
      */
-    fun toArray(array: DoubleArray?, offset: Int): DoubleArray {
+    fun toArray(array: DoubleArray?, offset: Int = 0): DoubleArray {
 
         @Suppress("NAME_SHADOWING")
         val array = array ?: DoubleArray(3)
