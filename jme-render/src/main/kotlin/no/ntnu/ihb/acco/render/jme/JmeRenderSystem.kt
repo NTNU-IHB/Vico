@@ -16,7 +16,7 @@ internal class JmeRenderSystem(
     private val root: Node,
     private val assetManager: AssetManager
 ) : System(
-    Family.all(TransformComponent::class.java, GeometryComponent::class.java).build()
+    Family.all(TransformComponent::class.java, GeometryComponent::class.java).build(), 1, Int.MAX_VALUE
 ) {
 
     private val tmpVec = Vector3()
@@ -24,10 +24,14 @@ internal class JmeRenderSystem(
     private val map: MutableMap<Entity, RenderNode> = mutableMapOf()
 
     override fun entityAdded(entity: Entity) {
-        val geometry = entity.getComponent(GeometryComponent::class.java)
         map.computeIfAbsent(entity) {
-            geometry.createGeometry(assetManager).also {
-                root.attachChild(it)
+            val geometry = entity.getComponent(GeometryComponent::class.java)
+            geometry.createGeometry(assetManager).also { node ->
+                val transform = entity.getComponent(TransformComponent::class.java)
+                node.localRotation.set(transform.getWorldQuaternion(tmpQuat))
+                node.localTranslation.set(transform.getWorldPosition(tmpVec))
+                node.forceRefresh(true, true, true)
+                root.attachChild(node)
             }
         }
     }
@@ -42,7 +46,6 @@ internal class JmeRenderSystem(
             val node = map.getValue(entity)
 
             val transform = entity.getComponent(TransformComponent::class.java)
-
             node.localRotation.set(transform.getWorldQuaternion(tmpQuat))
             node.localTranslation.set(transform.getWorldPosition(tmpVec))
             node.forceRefresh(true, true, true)

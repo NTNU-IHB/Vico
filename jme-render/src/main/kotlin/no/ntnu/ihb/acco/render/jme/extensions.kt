@@ -7,6 +7,7 @@ import com.jme3.math.ColorRGBA
 import com.jme3.math.Quaternion
 import com.jme3.math.Vector3f
 import com.jme3.scene.Geometry
+import com.jme3.scene.Node
 import com.jme3.scene.shape.Box
 import com.jme3.scene.shape.Sphere
 import no.ntnu.ihb.acco.math.Vector3
@@ -25,6 +26,10 @@ internal fun Vector3f.set(v: Vector3) = apply {
 
 internal fun Quaternion.set(q: no.ntnu.ihb.acco.math.Quaternion) = apply {
     set(q.x.toFloat(), q.y.toFloat(), q.z.toFloat(), q.w.toFloat())
+}
+
+internal fun Node.setLocalTranslation(v: Vector3) {
+    setLocalTranslation(v.x.toFloat(), v.y.toFloat(), v.z.toFloat())
 }
 
 internal fun AssetManager.getLightingMaterial(color: Color? = null): Material {

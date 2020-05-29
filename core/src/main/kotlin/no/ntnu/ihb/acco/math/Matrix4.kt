@@ -17,22 +17,10 @@ class Matrix4(
      * Sets all fields of this matrix.
      */
     fun set(
-        n11: Double,
-        n12: Double,
-        n13: Double,
-        n14: Double,
-        n21: Double,
-        n22: Double,
-        n23: Double,
-        n24: Double,
-        n31: Double,
-        n32: Double,
-        n33: Double,
-        n34: Double,
-        n41: Double,
-        n42: Double,
-        n43: Double,
-        n44: Double
+        n11: Double, n12: Double, n13: Double, n14: Double,
+        n21: Double, n22: Double, n23: Double, n24: Double,
+        n31: Double, n32: Double, n33: Double, n34: Double,
+        n41: Double, n42: Double, n43: Double, n44: Double
     ): Matrix4 {
         val te = this.elements
 
@@ -58,7 +46,7 @@ class Matrix4(
         )
     }
 
-    override fun clone(): Matrix4 {
+    public override fun clone(): Matrix4 {
         return Matrix4().copy(this)
     }
 
@@ -152,119 +140,127 @@ class Matrix4(
         val e = cos(z)
         val f = sin(z)
 
-        if (euler.order == EulerOrder.XYZ) {
+        when (euler.order) {
+            EulerOrder.XYZ -> {
 
-            val ae = a * e
-            val af = a * f
-            val be = b * e
-            val bf = b * f
+                val ae = a * e
+                val af = a * f
+                val be = b * e
+                val bf = b * f
 
-            te[0] = c * e
-            te[4] = -c * f
-            te[8] = d
+                te[0] = c * e
+                te[4] = -c * f
+                te[8] = d
 
-            te[1] = af + be * d
-            te[5] = ae - bf * d
-            te[9] = -b * c
+                te[1] = af + be * d
+                te[5] = ae - bf * d
+                te[9] = -b * c
 
-            te[2] = bf - ae * d
-            te[6] = be + af * d
-            te[10] = a * c
+                te[2] = bf - ae * d
+                te[6] = be + af * d
+                te[10] = a * c
 
-        } else if (euler.order == EulerOrder.YXZ) {
+            }
+            EulerOrder.YXZ -> {
 
-            val ce = c * e
-            val cf = c * f
-            val de = d * e
-            val df = d * f
+                val ce = c * e
+                val cf = c * f
+                val de = d * e
+                val df = d * f
 
-            te[0] = ce + df * b
-            te[4] = de * b - cf
-            te[8] = a * d
+                te[0] = ce + df * b
+                te[4] = de * b - cf
+                te[8] = a * d
 
-            te[1] = a * f
-            te[5] = a * e
-            te[9] = -b
+                te[1] = a * f
+                te[5] = a * e
+                te[9] = -b
 
-            te[2] = cf * b - de
-            te[6] = df + ce * b
-            te[10] = a * c
+                te[2] = cf * b - de
+                te[6] = df + ce * b
+                te[10] = a * c
 
-        } else if (euler.order == EulerOrder.ZXY) {
+            }
+            EulerOrder.ZXY -> {
 
-            val ce = c * e
-            val cf = c * f
-            val de = d * e
-            val df = d * f
+                val ce = c * e
+                val cf = c * f
+                val de = d * e
+                val df = d * f
 
-            te[0] = ce - df * b
-            te[4] = -a * f
-            te[8] = de + cf * b
+                te[0] = ce - df * b
+                te[4] = -a * f
+                te[8] = de + cf * b
 
-            te[1] = cf + de * b
-            te[5] = a * e
-            te[9] = df - ce * b
+                te[1] = cf + de * b
+                te[5] = a * e
+                te[9] = df - ce * b
 
-            te[2] = -a * d
-            te[6] = b
-            te[10] = a * c
+                te[2] = -a * d
+                te[6] = b
+                te[10] = a * c
 
-        } else if (euler.order == EulerOrder.ZYX) {
+            }
+            EulerOrder.ZYX -> {
 
-            val ae = a * e
-            val af = a * f
-            val be = b * e
-            val bf = b * f
+                val ae = a * e
+                val af = a * f
+                val be = b * e
+                val bf = b * f
 
-            te[0] = c * e
-            te[4] = be * d - af
-            te[8] = ae * d + bf
+                te[0] = c * e
+                te[4] = be * d - af
+                te[8] = ae * d + bf
 
-            te[1] = c * f
-            te[5] = bf * d + ae
-            te[9] = af * d - be
+                te[1] = c * f
+                te[5] = bf * d + ae
+                te[9] = af * d - be
 
-            te[2] = -d
-            te[6] = b * c
-            te[10] = a * c
+                te[2] = -d
+                te[6] = b * c
+                te[10] = a * c
 
-        } else if (euler.order == EulerOrder.YZX) {
+            }
+            EulerOrder.YZX -> {
 
-            val ac = a * c
-            val ad = a * d
-            val bc = b * c
-            val bd = b * d
+                val ac = a * c
+                val ad = a * d
+                val bc = b * c
+                val bd = b * d
 
-            te[0] = c * e
-            te[4] = bd - ac * f
-            te[8] = bc * f + ad
+                te[0] = c * e
+                te[4] = bd - ac * f
+                te[8] = bc * f + ad
 
-            te[1] = f
-            te[5] = a * e
-            te[9] = -b * e
+                te[1] = f
+                te[5] = a * e
+                te[9] = -b * e
 
-            te[2] = -d * e
-            te[6] = ad * f + bc
-            te[10] = ac - bd * f
+                te[2] = -d * e
+                te[6] = ad * f + bc
+                te[10] = ac - bd * f
 
-        } else if (euler.order == EulerOrder.XZY) {
+            }
+            EulerOrder.XZY -> {
 
-            val ac = a * c
-            val ad = a * d
-            val bc = b * c
-            val bd = b * d
+                val ac = a * c
+                val ad = a * d
+                val bc = b * c
+                val bd = b * d
 
-            te[0] = c * e
-            te[4] = -f
-            te[8] = d * e
+                te[0] = c * e
+                te[4] = -f
+                te[8] = d * e
 
-            te[1] = ac * f + bd
-            te[5] = a * e
-            te[9] = ad * f - bc
+                te[1] = ac * f + bd
+                te[5] = a * e
+                te[9] = ad * f - bc
 
-            te[2] = bc * f - ad
-            te[6] = b * e
-            te[10] = bd * f + ac
+                te[2] = bc * f - ad
+                te[6] = b * e
+                te[10] = bd * f + ac
+
+            }
 
         }
 
@@ -287,7 +283,6 @@ class Matrix4(
         val one = Vector3(1.0, 1.0, 1.0)
 
         return this.compose(zero, q, one)
-
 
     }
 
@@ -461,40 +456,38 @@ class Matrix4(
         val n43 = te[11]
         val n44 = te[15]
 
-        return (
-                n41 * (
-                        +n14 * n23 * n32
-                                - n13 * n24 * n32
-                                - n14 * n22 * n33
-                                + n12 * n24 * n33
-                                + n13 * n22 * n34
-                                - n12 * n23 * n34
-                        ) +
-                        n42 * (
-                        +n11 * n23 * n34
-                                - n11 * n24 * n33
-                                + n14 * n21 * n33
-                                - n13 * n21 * n34
-                                + n13 * n24 * n31
-                                - n14 * n23 * n31
-                        ) +
-                        n43 * (
-                        +n11 * n24 * n32
-                                - n11 * n22 * n34
-                                - n14 * n21 * n32
-                                + n12 * n21 * n34
-                                + n14 * n22 * n31
-                                - n12 * n24 * n31
-                        ) +
-                        n44 * (
-                        -n13 * n22 * n31
-                                - n11 * n23 * n32
-                                + n11 * n22 * n33
-                                + n13 * n21 * n32
-                                - n12 * n21 * n33
-                                + n12 * n23 * n31
-                        )
-
+        return (n41 * (
+                +n14 * n23 * n32
+                        - n13 * n24 * n32
+                        - n14 * n22 * n33
+                        + n12 * n24 * n33
+                        + n13 * n22 * n34
+                        - n12 * n23 * n34
+                ) +
+                n42 * (
+                +n11 * n23 * n34
+                        - n11 * n24 * n33
+                        + n14 * n21 * n33
+                        - n13 * n21 * n34
+                        + n13 * n24 * n31
+                        - n14 * n23 * n31
+                ) +
+                n43 * (
+                +n11 * n24 * n32
+                        - n11 * n22 * n34
+                        - n14 * n21 * n32
+                        + n12 * n21 * n34
+                        + n14 * n22 * n31
+                        - n12 * n24 * n31
+                ) +
+                n44 * (
+                -n13 * n22 * n31
+                        - n11 * n23 * n32
+                        + n11 * n22 * n33
+                        + n13 * n21 * n32
+                        - n12 * n21 * n33
+                        + n12 * n23 * n31
+                )
                 )
     }
 
@@ -546,20 +539,23 @@ class Matrix4(
     @JvmOverloads
     fun getInverse(m: Matrix4, throwOnDegenerate: Boolean = false): Matrix4 {
         val te = this.elements
-        val me = m.elements
+        val me = m.elements.clone()
 
         val n11 = me[0]
         val n21 = me[1]
         val n31 = me[2]
         val n41 = me[3]
+
         val n12 = me[4]
         val n22 = me[5]
         val n32 = me[6]
         val n42 = me[7]
+
         val n13 = me[8]
         val n23 = me[9]
         val n33 = me[10]
         val n43 = me[11]
+
         val n14 = me[12]
         val n24 = me[13]
         val n34 = me[14]
@@ -575,7 +571,6 @@ class Matrix4(
             n14 * n23 * n32 - n13 * n24 * n32 - n14 * n22 * n33 + n12 * n24 * n33 + n13 * n22 * n34 - n12 * n23 * n34
 
         val det = n11 * t11 + n21 * t12 + n31 * t13 + n41 * t14
-
         if (det == 0.0) {
 
             val msg = "getInverse() can't invert matrix, determinant is 0!"
@@ -589,7 +584,7 @@ class Matrix4(
 
         }
 
-        val detInv = 1.0 / det
+        val detInv = 1 / det
 
         te[0] = t11 * detInv
         te[1] =
@@ -783,6 +778,7 @@ class Matrix4(
      * Sets this matrix to the transformation composed of translation, rotation and scale.
      */
     fun compose(position: Vector3, quaternion: Quaternion, scale: Vector3): Matrix4 {
+
         val te = this.elements
 
         val x = quaternion.x

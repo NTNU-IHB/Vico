@@ -15,7 +15,7 @@ val Entity.transform
 class TransformComponent : Component {
 
     var parent: TransformComponent? = null
-    val children: MutableList<TransformComponent> = mutableListOf()
+    val children: MutableList<TransformComponent> = mutableListOf<TransformComponent>()
 
     var up = defaultUp.clone()
 
@@ -45,7 +45,7 @@ class TransformComponent : Component {
     /**
      * This updates the position, rotation and scale with the matrix.
      */
-    fun applyMatrix(matrix: Matrix4) {
+    fun applyMatrix4(matrix: Matrix4) {
         if (this.matrixAutoUpdate) {
             this.updateMatrix()
         }
@@ -184,12 +184,13 @@ class TransformComponent : Component {
      * @param vector A world vector.
      */
     fun worldToLocal(vector: Vector3): Vector3 {
+        if (parent == null) return vector
         return vector.applyMatrix4(Matrix4().getInverse(this.matrixWorld))
     }
 
     /**
      * Rotates object to face point in space.
-     * @param vector A world vector to look at.
+     * @param v A world vector to look at.
      */
     fun lookAt(v: Vector3) {
         lookAt(v.x, v.y, v.z)
@@ -289,13 +290,13 @@ class TransformComponent : Component {
 
         m.getInverse(this.matrixWorld)
 
-        `object`.parent?.also {
-            it.updateWorldMatrix(updateParents = true, updateChildren = false)
+        `object`.parent?.also { parent ->
+            parent.updateWorldMatrix(updateParents = true, updateChildren = false)
 
-            m.multiply(it.matrixWorld)
+            m.multiply(parent.matrixWorld)
         }
 
-        `object`.applyMatrix(m)
+        `object`.applyMatrix4(m)
         `object`.updateWorldMatrix(updateParents = false, updateChildren = false)
 
         this.add(`object`)
@@ -305,7 +306,6 @@ class TransformComponent : Component {
 
     fun getWorldPosition(target: Vector3 = Vector3()): Vector3 {
         this.updateMatrixWorld(true)
-
         return target.setFromMatrixPosition(this.matrixWorld)
     }
 

@@ -4,6 +4,7 @@ import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
+import no.ntnu.ihb.acco.math.Vector3
 import no.ntnu.ihb.fmi4j.readReal
 
 class SlaveTransformSystem(
@@ -15,6 +16,8 @@ class SlaveTransformSystem(
     priority
 ) {
 
+    private val tmp = Vector3()
+
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent(SlaveComponent::class.java)
         val slaveTransform = entity.getComponent(SlaveTransform::class.java)
@@ -24,15 +27,18 @@ class SlaveTransformSystem(
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
+
         for (entity in entities) {
 
             val slave = entity.getComponent(SlaveComponent::class.java)
             val transform = entity.getComponent(TransformComponent::class.java)
             val slaveTransform = entity.getComponent(SlaveTransform::class.java)
 
-            slaveTransform.xRef?.also { transform.position.x = slave.readReal(it).value }
-            slaveTransform.yRef?.also { transform.position.y = slave.readReal(it).value }
-            slaveTransform.zRef?.also { transform.position.z = slave.readReal(it).value }
+            slaveTransform.xRef?.also { tmp.x = slave.readReal(it).value }
+            slaveTransform.yRef?.also { tmp.y = slave.readReal(it).value }
+            slaveTransform.zRef?.also { tmp.z = slave.readReal(it).value }
+
+            transform.position.copy(transform.worldToLocal(tmp))
 
         }
     }

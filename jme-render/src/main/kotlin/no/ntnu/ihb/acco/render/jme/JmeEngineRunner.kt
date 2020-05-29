@@ -42,9 +42,8 @@ class JmeEngineRunner(
         private var initialized = lock.newCondition()
 
         private val root = Node()
-        val renderSystem: JmeRenderSystem by lazy {
-            JmeRenderSystem(root, assetManager)
-        }
+        lateinit var renderSystem: JmeRenderSystem
+            private set
 
         override fun start() {
             super.start()
@@ -68,6 +67,8 @@ class JmeEngineRunner(
             })
 
             setupLights()
+
+            renderSystem = JmeRenderSystem(root, assetManager)
 
             lock.withLock {
                 initialized.signalAll()

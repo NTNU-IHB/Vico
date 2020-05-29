@@ -496,8 +496,6 @@ data class Vector3(
         return dx * dx + dy * dy + dz * dz
     }
 
-    //    fun setFromSpherical( s: Spherical ): Vector3
-//    fun setFromCylindrical( s: Cylindrical ): Vector3
     fun setFromMatrixPosition(m: Matrix4): Vector3 {
         val e = m.elements
 
