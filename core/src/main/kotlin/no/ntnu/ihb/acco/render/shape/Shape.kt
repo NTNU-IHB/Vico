@@ -1,6 +1,6 @@
 package no.ntnu.ihb.acco.render.shape
 
-import no.ntnu.ihb.acco.math.Vector3
+import org.joml.Vector3f
 
 
 sealed class Shape
@@ -20,7 +20,7 @@ data class PlaneShape @JvmOverloads constructor(
 ) : Shape()
 
 data class BoxShape @JvmOverloads constructor(
-    val extents: Vector3 = Vector3(1.0, 1.0, 1.0)
+    val extents: Vector3f = Vector3f(1f, 1f, 1f)
 ) : Shape() {
 
     val width: Float
@@ -32,13 +32,7 @@ data class BoxShape @JvmOverloads constructor(
     val depth: Float
         get() = extents.z.toFloat()
 
-    constructor(extents: Float) : this(Vector3(extents.toDouble()))
-    constructor(width: Float, height: Float, depth: Float) : this(
-        Vector3(
-            width.toDouble(),
-            height.toDouble(),
-            depth.toDouble()
-        )
-    )
+    constructor(extents: Float) : this(Vector3f(extents))
+    constructor(width: Float, height: Float, depth: Float) : this(Vector3f(width, height, depth))
 
 }

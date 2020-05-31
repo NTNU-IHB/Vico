@@ -1,5 +1,6 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Vector3dc
 import kotlin.math.*
 
 private const val EPS = 0.000001
@@ -29,9 +30,9 @@ data class Spherical(
         return this
     }
 
-    fun setFromVector3(v: Vector3): Spherical {
+    fun setFromVector3(v: Vector3dc): Spherical {
 
-        return this.setFromCartesianCoords(v.x, v.y, v.z)
+        return this.setFromCartesianCoords(v.x(), v.y(), v.z())
 
     }
 
@@ -47,7 +48,7 @@ data class Spherical(
         } else {
 
             this.theta = atan2(x, z)
-            this.phi = acos(clamp(y / this.radius, -1, 1))
+            this.phi = acos(clamp(y / this.radius, -1.0, 1.0))
 
         }
 

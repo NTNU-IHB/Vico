@@ -1,5 +1,6 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Vector3dc
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
@@ -17,9 +18,9 @@ data class Cylindrical(
         return this
     }
 
-    fun setFromVector3(v: Vector3): Cylindrical {
+    fun setFromVector3(v: Vector3dc): Cylindrical {
 
-        return this.setFromCartesianCoords(v.x, v.y, v.z)
+        return this.setFromCartesianCoords(v.x(), v.y(), v.z())
 
     }
 

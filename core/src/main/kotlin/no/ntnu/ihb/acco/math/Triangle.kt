@@ -1,5 +1,7 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Vector2d
+import org.joml.Vector2dc
 import org.joml.Vector3d
 import kotlin.math.sqrt
 
@@ -45,8 +47,8 @@ data class Triangle @JvmOverloads constructor(
 
     fun getArea(): Double {
 
-        v0.subVectors(this.c, this.b)
-        v1.subVectors(this.a, this.b)
+        this.c.sub(this.b, v0)
+        this.a.sub(this.b, v1)
 
         return v0.cross(v1).length() * 0.5
 
@@ -54,7 +56,7 @@ data class Triangle @JvmOverloads constructor(
 
     @JvmOverloads
     fun getMidpoint(target: Vector3d = Vector3d()): Vector3d {
-        return target.addVectors(this.a, this.b).add(this.c).multiplyScalar(1.0 / 3)
+        return this.a.add(this.b, target).add(this.c).mul(1.0 / 3)
     }
 
     @JvmOverloads
@@ -73,7 +75,13 @@ data class Triangle @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun getUV(point: Vector3d, uv1: Vector2, uv2: Vector2, uv3: Vector2, target: Vector2 = Vector2()): Vector2 {
+    fun getUV(
+        point: Vector3d,
+        uv1: Vector2dc,
+        uv2: Vector2dc,
+        uv3: Vector2dc,
+        target: Vector2d = Vector2d()
+    ): Vector2d {
 
         return getUV(point, this.a, this.b, this.c, uv1, uv2, uv3, target)
 
@@ -111,9 +119,9 @@ data class Triangle @JvmOverloads constructor(
             // basically, we're distinguishing which of the voronoi regions of the triangle
             // the point lies in with the minimum amount of redundant computation.
 
-            vab.subVectors(b, a)
-            vac.subVectors(c, a)
-            vap.subVectors(p, a)
+            b.sub(a, vab)
+            c.sub(a, vac)
+            p.sub(a, vap)
             val d1 = vab.dot(vap)
             val d2 = vac.dot(vap)
             if (d1 <= 0 && d2 <= 0) {
@@ -123,7 +131,7 @@ data class Triangle @JvmOverloads constructor(
 
             }
 
-            vbp.subVectors(p, b)
+            p.sub(b, vbp)
             val d3 = vab.dot(vbp)
             val d4 = vac.dot(vbp)
             if (d3 >= 0 && d4 <= d3) {
@@ -142,7 +150,7 @@ data class Triangle @JvmOverloads constructor(
 
             }
 
-            vcp.subVectors(p, c)
+            p.sub(c, vcp)
             val d5 = vab.dot(vcp)
             val d6 = vac.dot(vcp)
             if (d6 >= 0 && d5 <= d6) {
@@ -164,7 +172,7 @@ data class Triangle @JvmOverloads constructor(
             val va = d3 * d6 - d5 * d4
             if (va <= 0 && (d4 - d3) >= 0 && (d5 - d6) >= 0) {
 
-                vbc.subVectors(c, b)
+                c.sub(b, vbc)
                 w = (d4 - d3) / ((d4 - d3) + (d5 - d6))
                 // edge region of BC; barycentric coords (0, 1-w, w)
                 return target.set(b).addScaledVector(vbc, w) // edge region of BC
@@ -176,7 +184,7 @@ data class Triangle @JvmOverloads constructor(
             // u = va * denom
             v = vb * denom
             w = vc * denom
-            return target.copy(a).addScaledVector(vab, v).addScaledVector(vac, w)
+            return target.set(a).addScaledVector(vab, v).addScaledVector(vac, w)
 
         }
 
@@ -192,8 +200,8 @@ data class Triangle @JvmOverloads constructor(
         @JvmOverloads
         fun getNormal(a: Vector3d, b: Vector3d, c: Vector3d, target: Vector3d = Vector3d()): Vector3d {
 
-            target.subVectors(c, b)
-            v0.subVectors(a, b)
+            c.sub(b, target)
+            a.sub(b, v0)
             target.cross(v0)
 
             val targetLengthSq = target.lengthSquared()
@@ -216,9 +224,9 @@ data class Triangle @JvmOverloads constructor(
             target: Vector3d = Vector3d()
         ): Vector3d {
 
-            v0.subVectors(c, a)
-            v1.subVectors(b, a)
-            v2.subVectors(point, a)
+            c.sub(a, v0)
+            b.sub(a, v1)
+            point.sub(a, v2)
 
             val dot00 = v0.dot(v0)
             val dot01 = v0.dot(v1)
@@ -260,11 +268,11 @@ data class Triangle @JvmOverloads constructor(
             p1: Vector3d,
             p2: Vector3d,
             p3: Vector3d,
-            uv1: Vector2,
-            uv2: Vector2,
-            uv3: Vector2,
-            target: Vector2 = Vector2()
-        ): Vector2 {
+            uv1: Vector2dc,
+            uv2: Vector2dc,
+            uv3: Vector2dc,
+            target: Vector2d = Vector2d()
+        ): Vector2d {
 
             this.getBarycoord(point, p1, p2, p3, barycoord)
 
@@ -278,8 +286,8 @@ data class Triangle @JvmOverloads constructor(
         }
 
         fun isFrontFacing(a: Vector3d, b: Vector3d, c: Vector3d, direction: Vector3d): Boolean {
-            v0.subVectors(c, b)
-            v1.subVectors(a, b)
+            c.sub(b, v0)
+            a.sub(b, v1)
 
             // strictly front facing
             return v0.cross(v1).dot(direction) < 0

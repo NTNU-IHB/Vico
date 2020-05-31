@@ -2,13 +2,14 @@ package no.ntnu.ihb.acco.physics
 
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.acco.math.Matrix4
-import no.ntnu.ihb.acco.math.Vector3
+import org.joml.Matrix4d
+import org.joml.Vector3d
+import org.joml.Vector3dc
 
 class ConstraintData(
     val e1: Entity,
     val e2: Entity?,
-    val anchor: Vector3 = Vector3()
+    val anchor: Vector3dc = Vector3d()
 ) {
 
     val hasConnectedBody = e2 != null
@@ -21,7 +22,7 @@ class ConstraintData(
         e2?.getComponent(RigidBodyComponent::class.java) ?: throw IllegalStateException()
     }
 
-    val frame1 by lazy { Matrix4().setPosition(anchor) }
+    val frame1 by lazy { Matrix4d().setTranslation(anchor) }
 
     /*val frame2 by lazy {
 

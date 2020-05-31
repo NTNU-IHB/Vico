@@ -35,7 +35,7 @@ data class Plane @JvmOverloads constructor(
         val v1 = Vector3d()
         val v2 = Vector3d()
 
-        val normal = Vector3d(v1).sub(b).cross(Vector3d(v2).sub(b)).normalize()
+        val normal = c.sub(b, v1).cross(a.sub(b, v2)).normalize()
 
         // Q: should an error be thrown if normal is zero (e.g. degenerate plane)?
 

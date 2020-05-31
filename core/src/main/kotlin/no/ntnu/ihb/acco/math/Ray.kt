@@ -1,30 +1,32 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Matrix4dc
+import org.joml.Vector3d
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
 data class Ray @JvmOverloads constructor(
-    var origin: Vector3 = Vector3(),
-    val direction: Vector3 = Vector3()
+    var origin: Vector3d = Vector3d(),
+    val direction: Vector3d = Vector3d()
 ) {
 
-    private val v = Vector3()
+    private val v = Vector3d()
 
-    private var segCenter = Vector3()
-    private var segDir = Vector3()
-    private var diff = Vector3()
+    private var segCenter = Vector3d()
+    private var segDir = Vector3d()
+    private var diff = Vector3d()
 
-    private var edge1 = Vector3()
-    private var edge2 = Vector3()
-    private var normal = Vector3()
+    private var edge1 = Vector3d()
+    private var edge2 = Vector3d()
+    private var normal = Vector3d()
 
 
-    fun set(origin: Vector3, direction: Vector3): Ray {
+    fun set(origin: Vector3d, direction: Vector3d): Ray {
 
-        this.origin.copy(origin)
-        this.direction.copy(direction)
+        this.origin.set(origin)
+        this.direction.set(direction)
 
         return this
 
@@ -38,81 +40,81 @@ data class Ray @JvmOverloads constructor(
 
     fun copy(ray: Ray): Ray {
 
-        this.origin.copy(ray.origin)
-        this.direction.copy(ray.direction)
+        this.origin.set(ray.origin)
+        this.direction.set(ray.direction)
 
         return this
 
     }
 
     @JvmOverloads
-    fun at(t: Double, target: Vector3 = Vector3()): Vector3 {
+    fun at(t: Double, target: Vector3d = Vector3d()): Vector3d {
 
-        return target.copy(this.direction).multiplyScalar(t).add(this.origin)
+        return target.set(this.direction).mul(t).add(this.origin)
 
     }
 
-    fun lookAt(v: Vector3): Ray {
+    fun lookAt(v: Vector3d): Ray {
 
-        this.direction.copy(v).sub(this.origin).normalize()
+        this.direction.set(v).sub(this.origin).normalize()
 
         return this
     }
 
     fun recast(t: Double): Ray {
 
-        this.origin.copy(this.at(t, v))
+        this.origin.set(this.at(t, v))
 
         return this
 
     }
 
     @JvmOverloads
-    fun closestPointToPoint(point: Vector3, target: Vector3 = Vector3()): Vector3 {
+    fun closestPointToPoint(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
 
-        target.subVectors(point, this.origin)
+        point.sub(this.origin, target)
 
         val directionDistance = target.dot(this.direction)
 
         if (directionDistance < 0) {
 
-            return target.copy(this.origin)
+            return target.set(this.origin)
 
         }
 
-        return target.copy(this.direction).multiplyScalar(directionDistance).add(this.origin)
+        return target.set(this.direction).mul(directionDistance).add(this.origin)
 
     }
 
-    fun distanceToPoint(point: Vector3): Double {
+    fun distanceToPoint(point: Vector3d): Double {
 
         return sqrt(this.distanceSqToPoint(point))
 
     }
 
-    fun distanceSqToPoint(point: Vector3): Double {
+    fun distanceSqToPoint(point: Vector3d): Double {
 
-        val directionDistance = v.subVectors(point, this.origin).dot(this.direction)
+        val directionDistance = point.sub(this.origin, v).dot(this.direction)
 
         // point behind the ray
 
         if (directionDistance < 0) {
 
-            return this.origin.distanceToSquared(point)
+            return this.origin.distanceSquared(point)
 
         }
 
-        v.copy(this.direction).multiplyScalar(directionDistance).add(this.origin)
+        v.set(this.direction).mul(directionDistance).add(this.origin)
 
-        return v.distanceToSquared(point)
+        return v.distanceSquared(point)
 
     }
 
     fun distanceSqToSegment(
-        v0: Vector3,
-        v1: Vector3,
-        optionalPointOnRay: Vector3? = null,
-        optionalPointOnSegment: Vector3? = null
+        v0: Vector3d,
+        v1: Vector3d,
+        optionalPointOnRay: Vector3d? = null,
+        optionalPointOnSegment: Vector3d? = null
     ): Double {
 
         // from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteDistRaySegment.h
@@ -122,15 +124,15 @@ data class Ray @JvmOverloads constructor(
         // - The closest point on the ray
         // - The closest point on the segment
 
-        segCenter.copy(v0).add(v1).multiplyScalar(0.5)
-        segDir.copy(v1).sub(v0).normalize()
-        diff.copy(this.origin).sub(segCenter)
+        segCenter.set(v0).add(v1).mul(0.5)
+        segDir.set(v1).sub(v0).normalize()
+        diff.set(this.origin).sub(segCenter)
 
-        val segExtent = v0.distanceTo(v1) * 0.5
+        val segExtent = v0.distance(v1) * 0.5
         val a01 = -this.direction.dot(segDir)
         val b0 = diff.dot(this.direction)
         val b1 = -diff.dot(segDir)
-        val c = diff.lengthSq()
+        val c = diff.lengthSquared()
         val det = abs(1 - a01 * a01)
 
         var s0: Double
@@ -219,17 +221,17 @@ data class Ray @JvmOverloads constructor(
 
         }
 
-        optionalPointOnRay?.copy(this.direction)?.multiplyScalar(s0)?.add(this.origin)
+        optionalPointOnRay?.set(this.direction)?.mul(s0)?.add(this.origin)
 
-        optionalPointOnSegment?.copy(segDir)?.multiplyScalar(s1)?.add(segCenter)
+        optionalPointOnSegment?.set(segDir)?.mul(s1)?.add(segCenter)
 
         return sqrDist
 
     }
 
-    fun intersectSphere(sphere: Sphere, target: Vector3): Vector3? {
+    fun intersectSphere(sphere: Sphere, target: Vector3d): Vector3d? {
 
-        v.subVectors(sphere.center, this.origin)
+        sphere.center.sub(this.origin, v)
         val tca = v.dot(this.direction)
         val d2 = v.dot(v) - tca * tca
         val radius2 = sphere.radius * sphere.radius
@@ -290,7 +292,7 @@ data class Ray @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun intersectPlane(plane: Plane, target: Vector3 = Vector3()): Vector3? {
+    fun intersectPlane(plane: Plane, target: Vector3d = Vector3d()): Vector3d? {
 
         val t = this.distanceToPlane(plane) ?: return null
 
@@ -324,7 +326,7 @@ data class Ray @JvmOverloads constructor(
 
     }
 
-    fun intersectBox(box: Box3, target: Vector3): Vector3? {
+    fun intersectBox(box: Box3, target: Vector3d): Vector3d? {
 
         var tmin: Double
         var tmax: Double
@@ -403,18 +405,18 @@ data class Ray @JvmOverloads constructor(
     }
 
     fun intersectTriangle(
-        a: Vector3,
-        b: Vector3,
-        c: Vector3,
+        a: Vector3d,
+        b: Vector3d,
+        c: Vector3d,
         backfaceCulling: Boolean,
-        target: Vector3
-    ): Vector3? {
+        target: Vector3d
+    ): Vector3d? {
 
         // from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
 
-        edge1.subVectors(b, a)
-        edge2.subVectors(c, a)
-        normal.crossVectors(edge1, edge2)
+        b.sub(a, edge1)
+        c.sub(a, edge2)
+        edge1.cross(edge2, normal)
 
         // Solve Q + t*D = b1*E1 + b2*E2 (Q = kDiff, D = ray direction,
         // E1 = kEdge1, E2 = kEdge2, N = Cross(E1,E2)) by
@@ -440,8 +442,8 @@ data class Ray @JvmOverloads constructor(
 
         }
 
-        diff.subVectors(this.origin, a)
-        val DdQxE2 = sign * this.direction.dot(edge2.crossVectors(diff, edge2))
+        this.origin.sub(a, diff)
+        val DdQxE2 = sign * this.direction.dot(diff.cross(edge2, edge2))
 
         // b1 < 0, no intersection
         if (DdQxE2 < 0) {
@@ -481,10 +483,10 @@ data class Ray @JvmOverloads constructor(
 
     }
 
-    fun applyMatrix4(matrix4: Matrix4): Ray {
+    fun applyMatrix4(matrix4: Matrix4dc): Ray {
 
-        this.origin.applyMatrix4(matrix4)
-        this.direction.transformDirection(matrix4)
+        this.origin.mulPosition(matrix4)
+        this.direction.mulDirection(matrix4)
 
         return this
 

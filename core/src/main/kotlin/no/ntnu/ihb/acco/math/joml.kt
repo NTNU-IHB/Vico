@@ -1,12 +1,19 @@
 package no.ntnu.ihb.acco.math
 
-import org.joml.Matrix3d
-import org.joml.Matrix4dc
-import org.joml.Vector3d
-import org.joml.Vector3dc
+import org.joml.*
 import kotlin.math.max
 import kotlin.math.sqrt
 
+fun Vector2d.addScaledVector(v: Vector2dc, s: Double) = apply {
+    this.x += v.x() * s
+    this.y += v.y() * s
+}
+
+fun Vector3d.addScaledVector(v: Vector3dc, s: Double) = apply {
+    this.x += v.x() * s
+    this.y += v.y() * s
+    this.z += v.z() * s
+}
 
 fun Vector3d.clamp(min: Double, max: Double) = apply {
     x = max(min, kotlin.math.min(max, x))
