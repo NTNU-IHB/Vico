@@ -15,7 +15,7 @@ fun main() {
 
         Entity("plane").also { e ->
             e.addComponent(TransformComponent().apply {
-                position.set(1.0, 0.0, 0.0)
+                setLocalTranslation(1.0, 0.0, 0.0)
             })
             e.addComponent(RigidBodyComponent())
             e.addComponent(ColliderComponent(PlaneShape()))

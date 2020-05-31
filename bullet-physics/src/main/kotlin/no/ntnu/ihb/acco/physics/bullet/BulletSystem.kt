@@ -18,12 +18,14 @@ import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
 import no.ntnu.ihb.acco.physics.ColliderComponent
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
+import org.joml.Matrix4d
 
 
 class BulletSystem : System(
     Family.all(TransformComponent::class.java).one(RigidBodyComponent::class.java).build()
 ) {
 
+    private val tmpMat = Matrix4d()
     private val tmpVec = Vector3()
     private val tmpQuat = Quaternion()
 
@@ -51,17 +53,11 @@ class BulletSystem : System(
         entities.forEach { entity ->
 
             val tc = entity.getComponent(TransformComponent::class.java)
-
             rbMap[entity]?.also { rb ->
-                rb.worldTransform.getTranslation(tmpVec).also {
-                    tc.position.copy(tc.worldToLocal(it.convert()))
-                    println(tc.worldToLocal(no.ntnu.ihb.acco.math.Vector3.Y.clone()))
-                }
-                /* rb.worldTransform.getRotation(tmpQuat).also {
-                     tc.quaternion.copy(tmpQuat.convert())
-                 }*/
+                tc.setTransform(tmpMat.copy(rb.worldTransform))
             }
         }
+
     }
 
     override fun entityAdded(entity: Entity) {
@@ -76,7 +72,7 @@ class BulletSystem : System(
             btEmptyShape() to 1f
         }
 
-        val motionState = btDefaultMotionState(Matrix4().copy(tc.matrixWorld))
+        val motionState = btDefaultMotionState(Matrix4().copy(tc.getWorldMatrix(tmpMat)))
         rbMap[entity] = btRigidBody(mass, motionState, shape).also {
             world.addRigidBody(it)
         }

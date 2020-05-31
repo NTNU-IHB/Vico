@@ -1,29 +1,31 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Matrix4dc
+import org.joml.Vector3d
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
 
 data class Sphere @JvmOverloads constructor(
-    val center: Vector3 = Vector3(),
+    val center: Vector3d = Vector3d(),
     var radius: Double = 0.0
 ) : Cloneable {
 
-    fun set(center: Vector3, radius: Double): Sphere {
-        this.center.copy(center)
+    fun set(center: Vector3d, radius: Double): Sphere {
+        this.center.set(center)
         this.radius = radius
         return this
     }
 
     @JvmOverloads
-    fun setFromPoints(points: List<Vector3>, optionalCenter: Vector3? = null): Sphere {
+    fun setFromPoints(points: List<Vector3d>, optionalCenter: Vector3d? = null): Sphere {
 
         val box = Box3()
 
         val center = this.center
 
         if (optionalCenter != null) {
-            center.copy(optionalCenter)
+            center.set(optionalCenter)
         } else {
             box.setFromPoints(points).getCenter(center)
         }
@@ -32,7 +34,7 @@ data class Sphere @JvmOverloads constructor(
 
         points.forEach { point ->
 
-            maxRadiusSq = max(maxRadiusSq, center.distanceToSquared(point))
+            maxRadiusSq = max(maxRadiusSq, center.distanceSquared(point))
 
         }
 
@@ -46,18 +48,18 @@ data class Sphere @JvmOverloads constructor(
         return (this.radius <= 0)
     }
 
-    fun containsPoint(point: Vector3): Boolean {
-        return (point.distanceToSquared(this.center) <= (this.radius * this.radius))
+    fun containsPoint(point: Vector3d): Boolean {
+        return (point.distanceSquared(this.center) <= (this.radius * this.radius))
     }
 
-    fun distanceToPoint(point: Vector3): Double {
-        return (point.distanceTo(this.center) - this.radius)
+    fun distanceToPoint(point: Vector3d): Double {
+        return (point.distance(this.center) - this.radius)
     }
 
     fun intersectsSphere(sphere: Sphere): Boolean {
         val radiusSum = this.radius + sphere.radius
 
-        return sphere.center.distanceToSquared(this.center) <= (radiusSum * radiusSum)
+        return sphere.center.distanceSquared(this.center) <= (radiusSum * radiusSum)
     }
 
     fun intersectsBox(box: Box3): Boolean {
@@ -68,15 +70,15 @@ data class Sphere @JvmOverloads constructor(
         return abs(plane.distanceToPoint(this.center)) <= this.radius
     }
 
-    fun clampPoint(point: Vector3, target: Vector3 = Vector3()): Vector3 {
-        val deltaLengthSq = this.center.distanceToSquared(point)
+    fun clampPoint(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
+        val deltaLengthSq = this.center.distanceSquared(point)
 
-        target.copy(point)
+        target.set(point)
 
         if (deltaLengthSq > (this.radius * this.radius)) {
 
             target.sub(this.center).normalize()
-            target.multiplyScalar(this.radius).add(this.center)
+            target.mul(this.radius).add(this.center)
 
         }
 
@@ -92,25 +94,25 @@ data class Sphere @JvmOverloads constructor(
         return target
     }
 
-    fun applyMatrix4(matrix: Matrix4): Sphere {
-        this.center.applyMatrix4(matrix)
+    fun applyMatrix4(matrix: Matrix4dc): Sphere {
+        this.center.mulPosition(matrix)
         this.radius = this.radius * matrix.getMaxScaleOnAxis()
 
         return this
     }
 
-    fun translate(offset: Vector3): Sphere {
+    fun translate(offset: Vector3d): Sphere {
         this.center.add(offset)
 
         return this
     }
 
-    override fun clone(): Sphere {
+    public override fun clone(): Sphere {
         return Sphere().copy(this)
     }
 
     fun copy(sphere: Sphere): Sphere {
-        this.center.copy(sphere.center)
+        this.center.set(sphere.center)
         this.radius = sphere.radius
         return this
     }

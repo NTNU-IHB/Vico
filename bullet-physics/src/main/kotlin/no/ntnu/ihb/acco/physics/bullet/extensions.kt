@@ -10,6 +10,7 @@ import no.ntnu.ihb.acco.physics.ColliderComponent
 import no.ntnu.ihb.acco.render.shape.BoxShape
 import no.ntnu.ihb.acco.render.shape.PlaneShape
 import no.ntnu.ihb.acco.render.shape.SphereShape
+import org.joml.*
 
 fun ColliderComponent.convert(): btCollisionShape {
     return when (val shape = shape) {
@@ -26,34 +27,18 @@ fun ColliderComponent.convert(): btCollisionShape {
     }
 }
 
-fun Vector3.convert(): no.ntnu.ihb.acco.math.Vector3 {
-    return no.ntnu.ihb.acco.math.Vector3(x.toDouble(), y.toDouble(), z.toDouble())
+fun Vector3.convert(): Vector3dc {
+    return Vector3d(x.toDouble(), y.toDouble(), z.toDouble())
 }
 
-fun Quaternion.convert(): no.ntnu.ihb.acco.math.Quaternion {
-    return no.ntnu.ihb.acco.math.Quaternion(x.toDouble(), y.toDouble(), z.toDouble(), w.toDouble())
+fun Quaternion.convert(): Quaterniond {
+    return Quaterniond(x.toDouble(), y.toDouble(), z.toDouble(), w.toDouble())
 }
 
-fun Matrix4.copy(m: no.ntnu.ihb.acco.math.Matrix4): Matrix4 {
-    val te = this.values
-    val me = m.elements
-
-    te[0] = me[0].toFloat(); te[1] = me[1].toFloat(); te[2] = me[2].toFloat(); te[3] = me[3].toFloat()
-    te[4] = me[4].toFloat(); te[5] = me[5].toFloat(); te[6] = me[6].toFloat(); te[7] = me[7].toFloat()
-    te[8] = me[8].toFloat(); te[9] = me[9].toFloat(); te[10] = me[10].toFloat(); te[11] = me[11].toFloat()
-    te[12] = me[12].toFloat(); te[13] = me[13].toFloat(); te[14] = me[14].toFloat(); te[15] = me[15].toFloat()
-
-    return this
+fun Matrix4.copy(m: Matrix4dc) = apply {
+    m.get(this.values)
 }
 
-fun no.ntnu.ihb.acco.math.Matrix4.copy(m: Matrix4): no.ntnu.ihb.acco.math.Matrix4 {
-    val te = this.elements
-    val me = m.values
-
-    te[0] = me[0].toDouble(); te[1] = me[1].toDouble(); te[2] = me[2].toDouble(); te[3] = me[3].toDouble()
-    te[4] = me[4].toDouble(); te[5] = me[5].toDouble(); te[6] = me[6].toDouble(); te[7] = me[7].toDouble()
-    te[8] = me[8].toDouble(); te[9] = me[9].toDouble(); te[10] = me[10].toDouble(); te[11] = me[11].toDouble()
-    te[12] = me[12].toDouble(); te[13] = me[13].toDouble(); te[14] = me[14].toDouble(); te[15] = me[15].toDouble()
-
-    return this
+fun Matrix4d.copy(m: Matrix4) = apply {
+    set(m.values)
 }

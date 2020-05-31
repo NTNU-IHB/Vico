@@ -10,7 +10,6 @@ import com.jme3.scene.Geometry
 import com.jme3.scene.Node
 import com.jme3.scene.shape.Box
 import com.jme3.scene.shape.Sphere
-import no.ntnu.ihb.acco.math.Vector3
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.objects.JmeGrid
@@ -18,18 +17,20 @@ import no.ntnu.ihb.acco.render.jme.objects.RenderNode
 import no.ntnu.ihb.acco.render.shape.BoxShape
 import no.ntnu.ihb.acco.render.shape.PlaneShape
 import no.ntnu.ihb.acco.render.shape.SphereShape
+import org.joml.Quaterniondc
+import org.joml.Vector3dc
 
 
-internal fun Vector3f.set(v: Vector3) = apply {
-    set(v.x.toFloat(), v.y.toFloat(), v.z.toFloat())
+internal fun Vector3f.set(v: Vector3dc) = apply {
+    set(v.x().toFloat(), v.y().toFloat(), v.z().toFloat())
 }
 
-internal fun Quaternion.set(q: no.ntnu.ihb.acco.math.Quaternion) = apply {
-    set(q.x.toFloat(), q.y.toFloat(), q.z.toFloat(), q.w.toFloat())
+internal fun Quaternion.set(q: Quaterniondc) = apply {
+    set(q.x().toFloat(), q.y().toFloat(), q.z().toFloat(), q.w().toFloat())
 }
 
-internal fun Node.setLocalTranslation(v: Vector3) {
-    setLocalTranslation(v.x.toFloat(), v.y.toFloat(), v.z.toFloat())
+internal fun Node.setLocalTranslation(v: Vector3dc) {
+    setLocalTranslation(v.x().toFloat(), v.y().toFloat(), v.z().toFloat())
 }
 
 internal fun AssetManager.getLightingMaterial(color: Color? = null): Material {

@@ -1,12 +1,16 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Matrix3d
+import org.joml.Matrix4dc
+import org.joml.Vector3d
+
 data class Plane @JvmOverloads constructor(
-    val normal: Vector3 = Vector3(0.0, 0.0, 1.0),
+    val normal: Vector3d = Vector3d(0.0, 0.0, 1.0),
     var constant: Double = 0.0
 ) : Cloneable {
 
-    fun set(normal: Vector3, constant: Double): Plane {
-        this.normal.copy(normal)
+    fun set(normal: Vector3d, constant: Double): Plane {
+        this.normal.set(normal)
         this.constant = constant
 
         return this
@@ -19,19 +23,19 @@ data class Plane @JvmOverloads constructor(
         return this
     }
 
-    fun setFromNormalAndCoplanarPoint(normal: Vector3, point: Vector3): Plane {
-        this.normal.copy(normal)
+    fun setFromNormalAndCoplanarPoint(normal: Vector3d, point: Vector3d): Plane {
+        this.normal.set(normal)
         this.constant = -point.dot(this.normal)
 
         return this
     }
 
-    fun setFromCoplanarPoints(a: Vector3, b: Vector3, c: Vector3): Plane {
+    fun setFromCoplanarPoints(a: Vector3d, b: Vector3d, c: Vector3d): Plane {
 
-        val v1 = Vector3()
-        val v2 = Vector3()
+        val v1 = Vector3d()
+        val v2 = Vector3d()
 
-        val normal = v1.subVectors(c, b).cross(v2.subVectors(a, b)).normalize()
+        val normal = Vector3d(v1).sub(b).cross(Vector3d(v2).sub(b)).normalize()
 
         // Q: should an error be thrown if normal is zero (e.g. degenerate plane)?
 
@@ -45,15 +49,15 @@ data class Plane @JvmOverloads constructor(
     }
 
     fun copy(plane: Plane): Plane {
-        this.normal.copy(plane.normal)
+        this.normal.set(plane.normal)
         this.constant = plane.constant
 
         return this
     }
 
     fun normalize(): Plane {
-        val inverseNormalLength = 1f / this.normal.length()
-        this.normal.multiplyScalar(inverseNormalLength)
+        val inverseNormalLength = 1.0 / this.normal.length()
+        this.normal.mul(inverseNormalLength)
         this.constant *= inverseNormalLength
 
         return this
@@ -66,7 +70,7 @@ data class Plane @JvmOverloads constructor(
         return this
     }
 
-    fun distanceToPoint(point: Vector3): Double {
+    fun distanceToPoint(point: Vector3d): Double {
         return this.normal.dot(point) + this.constant
     }
 
@@ -75,13 +79,13 @@ data class Plane @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun projectPoint(point: Vector3, target: Vector3 = Vector3()): Vector3 {
-        return target.copy(this.normal).multiplyScalar(-this.distanceToPoint(point)).add(point)
+    fun projectPoint(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
+        return target.set(this.normal).mul(-this.distanceToPoint(point)).add(point)
     }
 
     @JvmOverloads
-    fun intersectLine(line: Line3, target: Vector3 = Vector3()): Vector3? {
-        val v1 = Vector3()
+    fun intersectLine(line: Line3, target: Vector3d = Vector3d()): Vector3d? {
+        val v1 = Vector3d()
 
         val direction = line.delta(v1)
 
@@ -92,7 +96,7 @@ data class Plane @JvmOverloads constructor(
             // line is coplanar, return origin
             if (this.distanceToPoint(line.start) == 0.0) {
 
-                return target.copy(line.start)
+                return target.set(line.start)
 
             }
 
@@ -109,7 +113,7 @@ data class Plane @JvmOverloads constructor(
 
         }
 
-        return target.copy(direction).multiplyScalar(t).add(line.start)
+        return target.set(direction).mul(t).add(line.start)
 
     }
 
@@ -131,28 +135,26 @@ data class Plane @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun coplanarPoint(target: Vector3 = Vector3()): Vector3 {
-        return target.copy(this.normal).multiplyScalar(-this.constant)
+    fun coplanarPoint(target: Vector3d = Vector3d()): Vector3d {
+        return target.set(this.normal).mul(-this.constant)
     }
 
     @JvmOverloads
-    fun applyMatrix4(matrix: Matrix4, optionalNormalMatrix: Matrix3? = null): Plane {
+    fun applyMatrix4(matrix: Matrix4dc, optionalNormalMatrix: Matrix3d? = null): Plane {
 
-        val v1 = Vector3()
-        val m1 = Matrix3()
+        val v1 = Vector3d()
+        val normalMatrix = optionalNormalMatrix ?: matrix.getNormalMatrix()
 
-        val normalMatrix = optionalNormalMatrix ?: m1.getNormalMatrix(matrix)
+        val referencePoint = this.coplanarPoint(v1).mulPosition(matrix)
 
-        val referencePoint = this.coplanarPoint(v1).applyMatrix4(matrix)
-
-        val normal = this.normal.applyMatrix3(normalMatrix).normalize()
+        val normal = this.normal.mul(normalMatrix).normalize()
 
         this.constant = -referencePoint.dot(normal)
 
         return this
     }
 
-    fun translate(offset: Vector3): Plane {
+    fun translate(offset: Vector3d): Plane {
         this.constant -= offset.dot(this.normal)
 
         return this

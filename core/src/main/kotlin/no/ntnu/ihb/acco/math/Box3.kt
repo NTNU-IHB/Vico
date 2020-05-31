@@ -1,19 +1,21 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Matrix4dc
+import org.joml.Vector3d
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 data class Box3 @JvmOverloads constructor(
-    var min: Vector3 = Vector3(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY),
-    var max: Vector3 = Vector3(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
+    var min: Vector3d = Vector3d(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY),
+    var max: Vector3d = Vector3d(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
 ) : Cloneable {
 
     private val intersectsTriangleHelper by lazy { IntersectsTriangleHelper() }
 
-    fun set(min: Vector3, max: Vector3): Box3 {
-        this.min.copy(min)
-        this.max.copy(max)
+    fun set(min: Vector3d, max: Vector3d): Box3 {
+        this.min.set(min)
+        this.max.set(max)
 
         return this
     }
@@ -27,7 +29,7 @@ data class Box3 @JvmOverloads constructor(
         var maxY = Double.NEGATIVE_INFINITY
         var maxZ = Double.NEGATIVE_INFINITY
 
-        for (i in 0 until array.size step 3) {
+        for (i in array.indices step 3) {
 
             val x = array[i]
             val y = array[i + 1]
@@ -49,7 +51,7 @@ data class Box3 @JvmOverloads constructor(
         return this
     }
 
-    fun setFromPoints(points: List<Vector3>): Box3 {
+    fun setFromPoints(points: List<Vector3d>): Box3 {
         this.makeEmpty()
 
         points.forEach {
@@ -59,11 +61,11 @@ data class Box3 @JvmOverloads constructor(
         return this
     }
 
-    fun setFromCenterAndSize(center: Vector3, size: Vector3): Box3 {
-        val halfSize = Vector3().copy(size).multiplyScalar(0.5)
+    fun setFromCenterAndSize(center: Vector3d, size: Vector3d): Box3 {
+        val halfSize = Vector3d(size).mul(0.5)
 
-        this.min.copy(center).sub(halfSize)
-        this.max.copy(center).add(halfSize)
+        this.min.set(center).sub(halfSize)
+        this.max.set(center).add(halfSize)
 
         return this
     }
@@ -86,31 +88,31 @@ data class Box3 @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun getCenter(target: Vector3 = Vector3()): Vector3 {
+    fun getCenter(target: Vector3d = Vector3d()): Vector3d {
         return if (this.isEmpty()) {
             target.set(0.0, 0.0, 0.0)
         } else {
-            target.addVectors(this.min, this.max).multiplyScalar(0.5)
+            this.min.add(this.max, target).mul(0.5)
         }
     }
 
     @JvmOverloads
-    fun getSize(target: Vector3 = Vector3()): Vector3 {
+    fun getSize(target: Vector3d = Vector3d()): Vector3d {
         return if (this.isEmpty()) {
             target.set(0.0, 0.0, 0.0)
         } else {
-            target.subVectors(this.max, this.min)
+            this.max.sub(this.min, target)
         }
     }
 
-    fun expandByPoint(point: Vector3): Box3 {
+    fun expandByPoint(point: Vector3d): Box3 {
         this.min.min(point)
         this.max.max(point)
 
         return this
     }
 
-    fun expandByVector(vector: Vector3): Box3 {
+    fun expandByVector(vector: Vector3d): Box3 {
         this.min.sub(vector)
         this.max.add(vector)
 
@@ -118,13 +120,13 @@ data class Box3 @JvmOverloads constructor(
     }
 
     fun expandByScalar(scalar: Double): Box3 {
-        this.min.addScalar(-scalar)
-        this.max.addScalar(scalar)
+        this.min.add(-scalar, -scalar, -scalar)
+        this.max.add(scalar, scalar, scalar)
 
         return this
     }
 
-    fun containsPoint(point: Vector3): Boolean {
+    fun containsPoint(point: Vector3d): Boolean {
         return !(point.x < this.min.x || point.x > this.max.x ||
                 point.y < this.min.y || point.y > this.max.y ||
                 point.z < this.min.z || point.z > this.max.z)
@@ -137,7 +139,7 @@ data class Box3 @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun getParameter(point: Vector3, target: Vector3 = Vector3()): Vector3 {
+    fun getParameter(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
         return target.set(
             (point.x - this.min.x) / (this.max.x - this.min.x),
             (point.y - this.min.y) / (this.max.y - this.min.y),
@@ -153,12 +155,12 @@ data class Box3 @JvmOverloads constructor(
     }
 
     fun intersectsSphere(sphere: Sphere): Boolean {
-        val closestPoint = Vector3()
+        val closestPoint = Vector3d()
         // Find the point on the AABB closest to the sphere center.
         this.clampPoint(sphere.center, closestPoint)
 
         // If that point is inside the sphere, the AABB and sphere intersect.
-        return closestPoint.distanceToSquared(sphere.center) <= (sphere.radius * sphere.radius)
+        return closestPoint.distanceSquared(sphere.center) <= (sphere.radius * sphere.radius)
     }
 
     fun intersectsPlane(plane: Plane): Boolean {
@@ -216,7 +218,7 @@ data class Box3 @JvmOverloads constructor(
                 for (i in 0 until axes.size - 3 step 3) {
 
                     testAxis.fromArray(axes, i)
-                    // project the aabb onto the seperating axis
+                    // project the aabb onto the separating axis
                     val r = extents.x * abs(testAxis.x) + extents.y * abs(testAxis.y) + extents.z * abs(testAxis.z)
                     // project all 3 vertices of the triangle onto the seperating axis
                     val p0 = v0.dot(testAxis)
@@ -245,17 +247,17 @@ data class Box3 @JvmOverloads constructor(
 
             // compute box center and extents
             getCenter(center)
-            extents.subVectors(max, center)
+            max.sub(center, extents)
 
             // translate triangle to aabb origin
-            v0.subVectors(triangle.a, center)
-            v1.subVectors(triangle.b, center)
-            v2.subVectors(triangle.c, center)
+            triangle.a.sub(center, v0)
+            triangle.b.sub(center, v1)
+            triangle.c.sub(center, v2)
 
             // compute edge vectors for triangle
-            f0.subVectors(v1, v0)
-            f1.subVectors(v2, v1)
-            f2.subVectors(v0, v2)
+            v1.sub(v0, f0)
+            v2.sub(v1, f1)
+            v0.sub(v2, f2)
 
             // test against axes that are given by cross product combinations of the edges of the triangle and the edges of the aabb
             // make an axis testing of each of the 3 sides of the aabb against each of the 3 sides of the triangle = 9 axis of separation
@@ -281,7 +283,7 @@ data class Box3 @JvmOverloads constructor(
 
             // finally testing the face normal of the triangle
             // use already existing triangle edge vectors here
-            triangleNormal.crossVectors(f0, f1)
+            f0.cross(f1, triangleNormal)
             axes = doubleArrayOf(triangleNormal.x, triangleNormal.y, triangleNormal.z)
             return satForAxes(axes)
 
@@ -290,12 +292,12 @@ data class Box3 @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun clampPoint(point: Vector3, target: Vector3 = Vector3()): Vector3 {
-        return target.copy(point).clamp(this.min, this.max)
+    fun clampPoint(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
+        return target.set(point).clamp(this.min, this.max)
     }
 
-    fun distanceToPoint(point: Vector3): Double {
-        val clampedPoint = Vector3().copy(point).clamp(this.min, this.max)
+    fun distanceToPoint(point: Vector3d): Double {
+        val clampedPoint = Vector3d().set(point).clamp(this.min, this.max)
         return clampedPoint.sub(point).length()
     }
 
@@ -303,7 +305,7 @@ data class Box3 @JvmOverloads constructor(
     fun getBoundingSphere(target: Sphere = Sphere()): Sphere {
         this.getCenter(target.center)
 
-        target.radius = this.getSize(Vector3()).length() * 0.5f
+        target.radius = this.getSize(Vector3d()).length() * 0.5f
 
         return target
     }
@@ -327,7 +329,7 @@ data class Box3 @JvmOverloads constructor(
         return this
     }
 
-    fun applyMatrix4(matrix: Matrix4): Box3 {
+    fun applyMatrix4(matrix: Matrix4dc): Box3 {
 
         // transform of empty box is an empty box.
         if (this.isEmpty()) {
@@ -335,21 +337,21 @@ data class Box3 @JvmOverloads constructor(
         }
 
         // NOTE: I am using a binary pattern to specify all 2^3 combinations below
-        points[0].set(this.min.x, this.min.y, this.min.z).applyMatrix4(matrix) // 000
-        points[1].set(this.min.x, this.min.y, this.max.z).applyMatrix4(matrix) // 001
-        points[2].set(this.min.x, this.max.y, this.min.z).applyMatrix4(matrix) // 010
-        points[3].set(this.min.x, this.max.y, this.max.z).applyMatrix4(matrix) // 011
-        points[4].set(this.max.x, this.min.y, this.min.z).applyMatrix4(matrix) // 100
-        points[5].set(this.max.x, this.min.y, this.max.z).applyMatrix4(matrix) // 101
-        points[6].set(this.max.x, this.max.y, this.min.z).applyMatrix4(matrix) // 110
-        points[7].set(this.max.x, this.max.y, this.max.z).applyMatrix4(matrix) // 111
+        points[0].set(this.min.x, this.min.y, this.min.z).mulPosition(matrix) // 000
+        points[1].set(this.min.x, this.min.y, this.max.z).mulPosition(matrix) // 001
+        points[2].set(this.min.x, this.max.y, this.min.z).mulPosition(matrix) // 010
+        points[3].set(this.min.x, this.max.y, this.max.z).mulPosition(matrix) // 011
+        points[4].set(this.max.x, this.min.y, this.min.z).mulPosition(matrix) // 100
+        points[5].set(this.max.x, this.min.y, this.max.z).mulPosition(matrix) // 101
+        points[6].set(this.max.x, this.max.y, this.min.z).mulPosition(matrix) // 110
+        points[7].set(this.max.x, this.max.y, this.max.z).mulPosition(matrix) // 111
 
         this.setFromPoints(points)
 
         return this
     }
 
-    fun translate(offset: Vector3): Box3 {
+    fun translate(offset: Vector3d): Box3 {
         this.min.add(offset)
         this.max.add(offset)
 
@@ -365,7 +367,7 @@ data class Box3 @JvmOverloads constructor(
 
     /*fun expandByObject(`object`: Object3D): Box3 {
 
-        val v1 = Vector3()
+        val v1 = Vector3d()
 
         `object`.updateMatrixWorld(true)
         `object`.traverse { node ->
@@ -396,8 +398,8 @@ data class Box3 @JvmOverloads constructor(
     }
 
     fun copy(box: Box3): Box3 {
-        this.min.copy(box.min)
-        this.max.copy(box.max)
+        this.min.set(box.min)
+        this.max.set(box.max)
 
         return this
     }
@@ -405,7 +407,7 @@ data class Box3 @JvmOverloads constructor(
     companion object {
 
         private val points by lazy {
-            List(8) { Vector3() }
+            List(8) { Vector3d() }
         }
 
     }
@@ -413,21 +415,21 @@ data class Box3 @JvmOverloads constructor(
     private inner class IntersectsTriangleHelper {
 
         // triangle centered vertices
-        var v0 = Vector3()
-        var v1 = Vector3()
-        var v2 = Vector3()
+        var v0 = Vector3d()
+        var v1 = Vector3d()
+        var v2 = Vector3d()
 
         // triangle edge vectors
-        var f0 = Vector3()
-        var f1 = Vector3()
-        var f2 = Vector3()
+        var f0 = Vector3d()
+        var f1 = Vector3d()
+        var f2 = Vector3d()
 
-        var testAxis = Vector3()
+        var testAxis = Vector3d()
 
-        var center = Vector3()
-        var extents = Vector3()
+        var center = Vector3d()
+        var extents = Vector3d()
 
-        var triangleNormal = Vector3()
+        var triangleNormal = Vector3d()
 
     }
 

@@ -1,11 +1,12 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Vector3d
 import kotlin.math.sqrt
 
 data class Triangle @JvmOverloads constructor(
-    var a: Vector3 = Vector3(),
-    var b: Vector3 = Vector3(),
-    var c: Vector3 = Vector3()
+    var a: Vector3d = Vector3d(),
+    var b: Vector3d = Vector3d(),
+    var c: Vector3d = Vector3d()
 ) : Cloneable {
 
     private val closestPointToPointHelper by lazy { ClosestPointToPointHelper() }
@@ -14,29 +15,29 @@ data class Triangle @JvmOverloads constructor(
 
     fun copy(triangle: Triangle): Triangle {
 
-        this.a.copy(triangle.a)
-        this.b.copy(triangle.b)
-        this.c.copy(triangle.c)
+        this.a.set(triangle.a)
+        this.b.set(triangle.b)
+        this.c.set(triangle.c)
 
         return this
 
     }
 
-    fun set(a: Vector3, b: Vector3, c: Vector3): Triangle {
+    fun set(a: Vector3d, b: Vector3d, c: Vector3d): Triangle {
 
-        this.a.copy(a)
-        this.b.copy(b)
-        this.c.copy(c)
+        this.a.set(a)
+        this.b.set(b)
+        this.c.set(c)
 
         return this
 
     }
 
-    fun setFromPointsAndIndices(points: List<Vector3>, i0: Int, i1: Int, i2: Int): Triangle {
+    fun setFromPointsAndIndices(points: List<Vector3d>, i0: Int, i1: Int, i2: Int): Triangle {
 
-        this.a.copy(points[i0])
-        this.b.copy(points[i1])
-        this.c.copy(points[i2])
+        this.a.set(points[i0])
+        this.b.set(points[i1])
+        this.c.set(points[i2])
 
         return this
 
@@ -52,12 +53,12 @@ data class Triangle @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun getMidpoint(target: Vector3 = Vector3()): Vector3 {
+    fun getMidpoint(target: Vector3d = Vector3d()): Vector3d {
         return target.addVectors(this.a, this.b).add(this.c).multiplyScalar(1.0 / 3)
     }
 
     @JvmOverloads
-    fun getNormal(target: Vector3 = Vector3()): Vector3 {
+    fun getNormal(target: Vector3d = Vector3d()): Vector3d {
         return getNormal(this.a, this.b, this.c, target)
     }
 
@@ -67,24 +68,24 @@ data class Triangle @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun getBarycoord(point: Vector3, target: Vector3 = Vector3()): Vector3 {
+    fun getBarycoord(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
         return getBarycoord(point, this.a, this.b, this.c, target)
     }
 
     @JvmOverloads
-    fun getUV(point: Vector3, uv1: Vector2, uv2: Vector2, uv3: Vector2, target: Vector2 = Vector2()): Vector2 {
+    fun getUV(point: Vector3d, uv1: Vector2, uv2: Vector2, uv3: Vector2, target: Vector2 = Vector2()): Vector2 {
 
         return getUV(point, this.a, this.b, this.c, uv1, uv2, uv3, target)
 
     }
 
-    fun containsPoint(point: Vector3): Boolean {
+    fun containsPoint(point: Vector3d): Boolean {
 
         return containsPoint(point, this.a, this.b, this.c)
 
     }
 
-    fun isFrontFacing(direction: Vector3): Boolean {
+    fun isFrontFacing(direction: Vector3d): Boolean {
 
         return isFrontFacing(this.a, this.b, this.c, direction)
 
@@ -97,7 +98,7 @@ data class Triangle @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun closestPointToPoint(p: Vector3, target: Vector3 = Vector3()): Vector3 {
+    fun closestPointToPoint(p: Vector3d, target: Vector3d = Vector3d()): Vector3d {
 
         with(closestPointToPointHelper) {
 
@@ -118,7 +119,7 @@ data class Triangle @JvmOverloads constructor(
             if (d1 <= 0 && d2 <= 0) {
 
                 // vertex region of A; barycentric coords (1, 0, 0)
-                return target.copy(a)
+                return target.set(a)
 
             }
 
@@ -128,7 +129,7 @@ data class Triangle @JvmOverloads constructor(
             if (d3 >= 0 && d4 <= d3) {
 
                 // vertex region of B; barycentric coords (0, 1, 0)
-                return target.copy(b)
+                return target.set(b)
 
             }
 
@@ -137,7 +138,7 @@ data class Triangle @JvmOverloads constructor(
 
                 v = d1 / (d1 - d3)
                 // edge region of AB; barycentric coords (1-v, v, 0)
-                return target.copy(a).addScaledVector(vab, v)
+                return target.set(a).addScaledVector(vab, v)
 
             }
 
@@ -147,7 +148,7 @@ data class Triangle @JvmOverloads constructor(
             if (d6 >= 0 && d5 <= d6) {
 
                 // vertex region of C; barycentric coords (0, 0, 1)
-                return target.copy(c)
+                return target.set(c)
 
             }
 
@@ -156,7 +157,7 @@ data class Triangle @JvmOverloads constructor(
 
                 w = d2 / (d2 - d6)
                 // edge region of AC; barycentric coords (1-w, 0, w)
-                return target.copy(a).addScaledVector(vac, w)
+                return target.set(a).addScaledVector(vac, w)
 
             }
 
@@ -166,7 +167,7 @@ data class Triangle @JvmOverloads constructor(
                 vbc.subVectors(c, b)
                 w = (d4 - d3) / ((d4 - d3) + (d5 - d6))
                 // edge region of BC; barycentric coords (0, 1-w, w)
-                return target.copy(b).addScaledVector(vbc, w) // edge region of BC
+                return target.set(b).addScaledVector(vbc, w) // edge region of BC
 
             }
 
@@ -183,22 +184,22 @@ data class Triangle @JvmOverloads constructor(
 
     companion object {
 
-        private val v0 by lazy { Vector3(); }
-        private val v1 by lazy { Vector3(); }
-        private val v2 by lazy { Vector3(); }
-        private val barycoord by lazy { Vector3() }
+        private val v0 by lazy { Vector3d(); }
+        private val v1 by lazy { Vector3d(); }
+        private val v2 by lazy { Vector3d(); }
+        private val barycoord by lazy { Vector3d() }
 
         @JvmOverloads
-        fun getNormal(a: Vector3, b: Vector3, c: Vector3, target: Vector3 = Vector3()): Vector3 {
+        fun getNormal(a: Vector3d, b: Vector3d, c: Vector3d, target: Vector3d = Vector3d()): Vector3d {
 
             target.subVectors(c, b)
             v0.subVectors(a, b)
             target.cross(v0)
 
-            val targetLengthSq = target.lengthSq()
+            val targetLengthSq = target.lengthSquared()
             if (targetLengthSq > 0) {
 
-                return target.multiplyScalar(1.0 / sqrt(targetLengthSq))
+                return target.mul(1.0 / sqrt(targetLengthSq))
 
             }
 
@@ -207,7 +208,13 @@ data class Triangle @JvmOverloads constructor(
         }
 
         @JvmOverloads
-        fun getBarycoord(point: Vector3, a: Vector3, b: Vector3, c: Vector3, target: Vector3 = Vector3()): Vector3 {
+        fun getBarycoord(
+            point: Vector3d,
+            a: Vector3d,
+            b: Vector3d,
+            c: Vector3d,
+            target: Vector3d = Vector3d()
+        ): Vector3d {
 
             v0.subVectors(c, a)
             v1.subVectors(b, a)
@@ -239,7 +246,7 @@ data class Triangle @JvmOverloads constructor(
 
         }
 
-        fun containsPoint(point: Vector3, a: Vector3, b: Vector3, c: Vector3): Boolean {
+        fun containsPoint(point: Vector3d, a: Vector3d, b: Vector3d, c: Vector3d): Boolean {
 
             getBarycoord(point, a, b, c, v1)
 
@@ -249,10 +256,10 @@ data class Triangle @JvmOverloads constructor(
 
         @JvmOverloads
         fun getUV(
-            point: Vector3,
-            p1: Vector3,
-            p2: Vector3,
-            p3: Vector3,
+            point: Vector3d,
+            p1: Vector3d,
+            p2: Vector3d,
+            p3: Vector3d,
             uv1: Vector2,
             uv2: Vector2,
             uv3: Vector2,
@@ -270,7 +277,7 @@ data class Triangle @JvmOverloads constructor(
 
         }
 
-        fun isFrontFacing(a: Vector3, b: Vector3, c: Vector3, direction: Vector3): Boolean {
+        fun isFrontFacing(a: Vector3d, b: Vector3d, c: Vector3d, direction: Vector3d): Boolean {
             v0.subVectors(c, b)
             v1.subVectors(a, b)
 
@@ -281,12 +288,12 @@ data class Triangle @JvmOverloads constructor(
     }
 
     private class ClosestPointToPointHelper {
-        val vab = Vector3()
-        val vac = Vector3()
-        val vbc = Vector3()
-        val vap = Vector3()
-        val vbp = Vector3()
-        val vcp = Vector3()
+        val vab = Vector3d()
+        val vac = Vector3d()
+        val vbc = Vector3d()
+        val vap = Vector3d()
+        val vbp = Vector3d()
+        val vcp = Vector3d()
     }
 
 }

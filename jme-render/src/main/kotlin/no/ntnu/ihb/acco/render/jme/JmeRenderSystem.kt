@@ -6,10 +6,10 @@ import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
-import no.ntnu.ihb.acco.math.Quaternion
-import no.ntnu.ihb.acco.math.Vector3
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
+import org.joml.Quaterniond
+import org.joml.Vector3d
 
 
 internal class JmeRenderSystem(
@@ -19,8 +19,8 @@ internal class JmeRenderSystem(
     Family.all(TransformComponent::class.java, GeometryComponent::class.java).build(), 1, Int.MAX_VALUE
 ) {
 
-    private val tmpVec = Vector3()
-    private val tmpQuat = Quaternion()
+    private val tmpVec = Vector3d()
+    private val tmpQuat = Quaterniond()
     private val map: MutableMap<Entity, RenderNode> = mutableMapOf()
 
     override fun entityAdded(entity: Entity) {
@@ -28,9 +28,9 @@ internal class JmeRenderSystem(
             val geometry = entity.getComponent(GeometryComponent::class.java)
             geometry.createGeometry(assetManager).also { node ->
                 val transform = entity.getComponent(TransformComponent::class.java)
-                node.localRotation.set(transform.getWorldQuaternion(tmpQuat))
-                node.localTranslation.set(transform.getWorldPosition(tmpVec))
-                node.forceRefresh(true, true, true)
+                node.setLocalTranslation(transform.getTranslation(tmpVec))
+                //node.localTranslation.set(transform.getWorldPosition(tmpVec))
+                //node.forceRefresh(true, true, true)
                 root.attachChild(node)
             }
         }
@@ -46,9 +46,9 @@ internal class JmeRenderSystem(
             val node = map.getValue(entity)
 
             val transform = entity.getComponent(TransformComponent::class.java)
-            node.localRotation.set(transform.getWorldQuaternion(tmpQuat))
-            node.localTranslation.set(transform.getWorldPosition(tmpVec))
-            node.forceRefresh(true, true, true)
+            node.setLocalTranslation(transform.getTranslation(tmpVec))
+            // node.localTranslation.set(transform.getWorldPosition(tmpVec))
+            //node.forceRefresh(true, true, true)
 
             val geometry = entity.getComponent(GeometryComponent::class.java)
             node.setVisible(geometry.visible)

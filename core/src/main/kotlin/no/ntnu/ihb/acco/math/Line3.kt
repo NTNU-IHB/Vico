@@ -1,13 +1,16 @@
 package no.ntnu.ihb.acco.math
 
+import org.joml.Matrix4dc
+import org.joml.Vector3d
+
 data class Line3 @JvmOverloads constructor(
-    var start: Vector3 = Vector3(),
-    var end: Vector3 = Vector3()
+    var start: Vector3d = Vector3d(),
+    var end: Vector3d = Vector3d()
 ) {
 
-    fun set(start: Vector3, end: Vector3): Line3 {
-        this.start.copy(start)
-        this.end.copy(end)
+    fun set(start: Vector3d, end: Vector3d): Line3 {
+        this.start.set(start)
+        this.end.set(end)
 
         return this
     }
@@ -17,38 +20,38 @@ data class Line3 @JvmOverloads constructor(
     }
 
     fun copy(line: Line3): Line3 {
-        this.start.copy(line.start)
-        this.end.copy(line.end)
+        this.start.set(line.start)
+        this.end.set(line.end)
 
         return this
     }
 
-    fun getCenter(target: Vector3): Vector3 {
-        return target.addVectors(this.start, this.end).multiplyScalar(0.5)
+    fun getCenter(target: Vector3d): Vector3d {
+        return this.start.add(this.end, target).mul(0.5)
     }
 
-    fun delta(target: Vector3): Vector3 {
-        return target.subVectors(this.end, this.start)
+    fun delta(target: Vector3d): Vector3d {
+        return this.end.sub(this.start, target)
     }
 
     fun distanceSq(): Double {
-        return this.start.distanceToSquared(this.end)
+        return this.start.distanceSquared(this.end)
     }
 
     fun distance(): Double {
-        return this.start.distanceTo(this.end)
+        return this.start.distance(this.end)
     }
 
-    fun at(t: Double, target: Vector3): Vector3 {
-        return this.delta(target).multiplyScalar(t).add(this.start)
+    fun at(t: Double, target: Vector3d): Vector3d {
+        return this.delta(target).mul(t).add(this.start)
     }
 
-    fun closestPointToPointParameter(point: Vector3, clampToLine: Boolean = false): Double {
-        val startP = Vector3()
-        val startEnd = Vector3()
+    fun closestPointToPointParameter(point: Vector3d, clampToLine: Boolean = false): Double {
+        val startP = Vector3d()
+        val startEnd = Vector3d()
 
-        startP.subVectors(point, this.start)
-        startEnd.subVectors(this.end, this.start)
+        point.sub(this.start, startP)
+        this.end.sub(this.start, startEnd)
 
         val startEnd2 = startEnd.dot(startEnd)
         val startEnd_startP = startEnd.dot(startP)
@@ -65,17 +68,17 @@ data class Line3 @JvmOverloads constructor(
     }
 
     fun closestPointToPoint(
-        point: Vector3,
+        point: Vector3d,
         clampToLine: Boolean,
-        target: Vector3
-    ): Vector3 {
+        target: Vector3d
+    ): Vector3d {
         val t = this.closestPointToPointParameter(point, clampToLine)
-        return this.delta(target).multiplyScalar(t).add(this.start)
+        return this.delta(target).mul(t).add(this.start)
     }
 
-    fun applyMatrix4(matrix: Matrix4): Line3 {
-        this.start.applyMatrix4(matrix)
-        this.end.applyMatrix4(matrix)
+    fun applyMatrix4(matrix: Matrix4dc): Line3 {
+        this.start.mulPosition(matrix)
+        this.end.mulPosition(matrix)
 
         return this
     }

@@ -4,8 +4,8 @@ import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
-import no.ntnu.ihb.acco.math.Vector3
 import no.ntnu.ihb.fmi4j.readReal
+import org.joml.Vector3d
 
 class SlaveTransformSystem(
     decimationFactor: Long = 1,
@@ -16,7 +16,7 @@ class SlaveTransformSystem(
     priority
 ) {
 
-    private val tmp = Vector3()
+    private val tmp = Vector3d()
 
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent(SlaveComponent::class.java)
@@ -38,7 +38,7 @@ class SlaveTransformSystem(
             slaveTransform.yRef?.also { tmp.y = slave.readReal(it).value }
             slaveTransform.zRef?.also { tmp.z = slave.readReal(it).value }
 
-            transform.position.copy(transform.worldToLocal(tmp))
+            transform.setTranslation(tmp)
 
         }
     }
