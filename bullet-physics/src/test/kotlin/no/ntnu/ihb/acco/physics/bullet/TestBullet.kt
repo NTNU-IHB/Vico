@@ -4,6 +4,7 @@ import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.physics.ColliderComponent
+import no.ntnu.ihb.acco.physics.MotionControl
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.JmeEngineRunner
@@ -17,7 +18,7 @@ fun main() {
             e.addComponent(TransformComponent().apply {
                 setLocalTranslation(1.0, 0.0, 0.0)
             })
-            e.addComponent(RigidBodyComponent())
+            e.addComponent(RigidBodyComponent(motionControl = MotionControl.DYNAMIC))
             e.addComponent(ColliderComponent(PlaneShape()))
             e.addComponent(GeometryComponent(PlaneShape()))
             engine.addEntity(e)

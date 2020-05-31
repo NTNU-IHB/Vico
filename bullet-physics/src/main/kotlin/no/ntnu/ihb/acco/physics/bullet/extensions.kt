@@ -27,6 +27,12 @@ fun ColliderComponent.convert(): btCollisionShape {
     }
 }
 
+fun Vector3d.set(v: Vector3) = apply {
+    x = v.x.toDouble()
+    y = v.y.toDouble()
+    z = v.z.toDouble()
+}
+
 fun Vector3.convert(): Vector3dc {
     return Vector3d(x.toDouble(), y.toDouble(), z.toDouble())
 }

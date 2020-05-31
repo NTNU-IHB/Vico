@@ -4,10 +4,7 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.Bullet
-import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher
-import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
-import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration
-import com.badlogic.gdx.physics.bullet.collision.btEmptyShape
+import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver
@@ -17,6 +14,7 @@ import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.System
 import no.ntnu.ihb.acco.physics.ColliderComponent
+import no.ntnu.ihb.acco.physics.MotionControl
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
 import org.joml.Matrix4d
 
@@ -53,9 +51,13 @@ class BulletSystem : System(
         entities.forEach { entity ->
 
             val tc = entity.getComponent(TransformComponent::class.java)
+            val rc = entity.getComponent(RigidBodyComponent::class.java)
             rbMap[entity]?.also { rb ->
                 tc.setTransform(tmpMat.copy(rb.worldTransform))
+                rc.linearVelocity.set(rb.linearVelocity)
+                rc.angularVelocity.set(rb.angularVelocity)
             }
+
         }
 
     }
@@ -73,8 +75,22 @@ class BulletSystem : System(
         }
 
         val motionState = btDefaultMotionState(Matrix4().copy(tc.getWorldMatrix(tmpMat)))
-        rbMap[entity] = btRigidBody(mass, motionState, shape).also {
-            world.addRigidBody(it)
+        rbMap[entity] = btRigidBody(mass, motionState, shape).also { rb ->
+            rb.activationState = CollisionConstants.DISABLE_DEACTIVATION
+            when (rc.motionControl) {
+                MotionControl.DYNAMIC -> {
+                    rb.linearFactor = Vector3(1f, 1f, 1f)
+                    rb.angularFactor = Vector3(1f, 1f, 1f)
+                }
+                MotionControl.KINEMATIC -> {
+                    rb.collisionFlags = rb.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
+                }
+                MotionControl.STATIC -> {
+                    rb.linearFactor = Vector3.Zero
+                    rb.angularFactor = Vector3.Zero
+                }
+            }
+            world.addRigidBody(rb)
         }
     }
 
