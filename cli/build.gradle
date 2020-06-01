@@ -1,10 +1,15 @@
 plugins {
     id 'kotlin'
     id 'application'
+    id 'distribution'
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
 mainClassName = "no.ntnu.ihb.vico.cli.VicoCLI"
+
+application {
+    mainClass.set(mainClassName)
+}
 
 dependencies {
 

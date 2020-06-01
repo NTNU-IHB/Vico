@@ -1,7 +1,8 @@
 plugins {
-    id 'java'
     id 'kotlin'
 }
+
+apply from: rootProject.file("gradle/mavenpublish.gradle")
 
 dependencies {
 

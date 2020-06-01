@@ -13,7 +13,7 @@ internal class SystemManagerTest {
 
     abstract class TestSystem(
         family: Family,
-        decimationFactor: Int
+        decimationFactor: Long
     ) : System(family, decimationFactor) {
         override fun entityAdded(entity: Entity) {
             TODO("Not yet implemented")

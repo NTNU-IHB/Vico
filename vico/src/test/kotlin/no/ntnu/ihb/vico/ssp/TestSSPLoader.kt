@@ -15,7 +15,7 @@ internal class TestSSPLoader {
         val structure = SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load()
         val stopTime = structure.defaultExperiment?.stopTime ?: 0.0
         Assertions.assertEquals(4.0, stopTime, 1e-6)
-        Engine().use { engine ->
+        Engine(1e-3).use { engine ->
             structure.apply(engine)
             HeadlessEngineRunner(engine).apply {
                 runFor(stopTime).get()
@@ -35,7 +35,6 @@ internal class TestSSPLoader {
             engine.init()
 
             val bb = engine.slaveSystem.getSlave("bouncingBall")
-            println(bb.getParameterSet("default"))
             val h = bb.readRealDirect("h").value
             Assertions.assertEquals(5.0, h, 1e-6)
 
