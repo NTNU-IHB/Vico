@@ -2,6 +2,7 @@ package no.ntnu.ihb.acco.math
 
 import org.joml.Matrix4dc
 import org.joml.Vector3d
+import org.joml.Vector3dc
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
@@ -101,7 +102,7 @@ data class Sphere @JvmOverloads constructor(
         return this
     }
 
-    fun translate(offset: Vector3d): Sphere {
+    fun translate(offset: Vector3dc): Sphere {
         this.center.add(offset)
 
         return this
@@ -115,6 +116,10 @@ data class Sphere @JvmOverloads constructor(
         this.center.set(sphere.center)
         this.radius = sphere.radius
         return this
+    }
+
+    override fun toString(): String {
+        return "Sphere(center=$center, radius=$radius)"
     }
 
 }

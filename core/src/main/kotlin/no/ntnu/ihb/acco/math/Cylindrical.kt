@@ -8,7 +8,7 @@ data class Cylindrical(
     var radius: Double = 1.0,
     var theta: Double = 0.0,
     var y: Double = 0.0
-) : Cloneable {
+) {
 
     fun set(radius: Double, theta: Double, y: Double): Cylindrical {
         this.radius = radius
@@ -33,8 +33,6 @@ data class Cylindrical(
         return this
 
     }
-
-    override fun clone() = copy()
 
     fun copy(source: Cylindrical): Cylindrical {
         return set(source.radius, source.theta, source.y)

@@ -4,6 +4,10 @@ import org.joml.*
 import kotlin.math.max
 import kotlin.math.sqrt
 
+val Vector3_X: Vector3dc = Vector3d(1.0, 0.0, 0.0)
+val Vector3_Y: Vector3dc = Vector3d(0.0, 1.0, 0.0)
+val Vector3_Z: Vector3dc = Vector3d(0.0, 0.0, 1.0)
+
 fun Vector2d.addScaledVector(v: Vector2dc, s: Double) = apply {
     this.x += v.x() * s
     this.y += v.y() * s

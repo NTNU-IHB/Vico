@@ -245,17 +245,17 @@ open class Frame {
         applyMatrix(Matrix4d().set(q))
     }
 
-    /*fun localRotateX(angle: Angle) {
-        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3d(1, 0, 0), angle.inRadians())))
+    fun localRotateX(angle: Angle) {
+        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_X, angle.inRadians())))
     }
 
     fun localRotateY(angle: Angle) {
-        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3d(0, 1, 0), angle.inRadians())))
+        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_Y, angle.inRadians())))
     }
 
     fun localRotateZ(angle: Angle) {
-        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3d(0, 0, 1), angle.inRadians())))
-    }*/
+        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_Z, angle.inRadians())))
+    }
 
     /*fun lookAt(target: Vector3dc?) {
         lookAt(target, Vector3d(0.0, 0.0, 1.0))

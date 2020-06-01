@@ -9,7 +9,7 @@ import kotlin.math.min
 data class Box3 @JvmOverloads constructor(
     var min: Vector3d = Vector3d(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY),
     var max: Vector3d = Vector3d(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
-) : Cloneable {
+) {
 
     private val intersectsTriangleHelper by lazy { IntersectsTriangleHelper() }
 
@@ -393,7 +393,7 @@ data class Box3 @JvmOverloads constructor(
     }*/
 
 
-    override fun clone(): Box3 {
+    fun copy(): Box3 {
         return Box3().copy(this)
     }
 

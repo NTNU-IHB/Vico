@@ -9,11 +9,9 @@ data class Triangle @JvmOverloads constructor(
     var a: Vector3d = Vector3d(),
     var b: Vector3d = Vector3d(),
     var c: Vector3d = Vector3d()
-) : Cloneable {
+) {
 
     private val closestPointToPointHelper by lazy { ClosestPointToPointHelper() }
-
-    override fun clone() = copy()
 
     fun copy(triangle: Triangle): Triangle {
 

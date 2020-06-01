@@ -2,6 +2,7 @@ package no.ntnu.ihb.acco.math
 
 import org.joml.Matrix4dc
 import org.joml.Vector3d
+import org.joml.Vector3dc
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -32,7 +33,7 @@ data class Ray @JvmOverloads constructor(
 
     }
 
-    fun clone(): Ray {
+    fun copy(): Ray {
 
         return Ray().copy(this)
 
@@ -70,7 +71,7 @@ data class Ray @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun closestPointToPoint(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
+    fun closestPointToPoint(point: Vector3dc, target: Vector3d = Vector3d()): Vector3d {
 
         point.sub(this.origin, target)
 
@@ -92,7 +93,7 @@ data class Ray @JvmOverloads constructor(
 
     }
 
-    fun distanceSqToPoint(point: Vector3d): Double {
+    fun distanceSqToPoint(point: Vector3dc): Double {
 
         val directionDistance = point.sub(this.origin, v).dot(this.direction)
 
@@ -426,20 +427,24 @@ data class Ray @JvmOverloads constructor(
         var DdN = this.direction.dot(normal)
         val sign: Int
 
-        if (DdN > 0) {
+        when {
+            DdN > 0 -> {
 
-            if (backfaceCulling) return null
-            sign = 1
+                if (backfaceCulling) return null
+                sign = 1
 
-        } else if (DdN < 0) {
+            }
+            DdN < 0 -> {
 
-            sign = -1
-            DdN = -DdN
+                sign = -1
+                DdN = -DdN
 
-        } else {
+            }
+            else -> {
 
-            return null
+                return null
 
+            }
         }
 
         this.origin.sub(a, diff)

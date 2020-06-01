@@ -15,7 +15,7 @@ data class Line3 @JvmOverloads constructor(
         return this
     }
 
-    fun clone(): Line3 {
+    fun copy(): Line3 {
         return Line3().copy(this)
     }
 

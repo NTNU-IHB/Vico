@@ -3,13 +3,14 @@ package no.ntnu.ihb.acco.math
 import org.joml.Matrix3d
 import org.joml.Matrix4dc
 import org.joml.Vector3d
+import org.joml.Vector3dc
 
 data class Plane @JvmOverloads constructor(
     val normal: Vector3d = Vector3d(0.0, 0.0, 1.0),
     var constant: Double = 0.0
 ) : Cloneable {
 
-    fun set(normal: Vector3d, constant: Double): Plane {
+    fun set(normal: Vector3dc, constant: Double): Plane {
         this.normal.set(normal)
         this.constant = constant
 
@@ -23,14 +24,14 @@ data class Plane @JvmOverloads constructor(
         return this
     }
 
-    fun setFromNormalAndCoplanarPoint(normal: Vector3d, point: Vector3d): Plane {
+    fun setFromNormalAndCoplanarPoint(normal: Vector3dc, point: Vector3dc): Plane {
         this.normal.set(normal)
         this.constant = -point.dot(this.normal)
 
         return this
     }
 
-    fun setFromCoplanarPoints(a: Vector3d, b: Vector3d, c: Vector3d): Plane {
+    fun setFromCoplanarPoints(a: Vector3d, b: Vector3dc, c: Vector3dc): Plane {
 
         val v1 = Vector3d()
         val v2 = Vector3d()
@@ -70,7 +71,7 @@ data class Plane @JvmOverloads constructor(
         return this
     }
 
-    fun distanceToPoint(point: Vector3d): Double {
+    fun distanceToPoint(point: Vector3dc): Double {
         return this.normal.dot(point) + this.constant
     }
 
@@ -79,7 +80,7 @@ data class Plane @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun projectPoint(point: Vector3d, target: Vector3d = Vector3d()): Vector3d {
+    fun projectPoint(point: Vector3dc, target: Vector3d = Vector3d()): Vector3d {
         return target.set(this.normal).mul(-this.distanceToPoint(point)).add(point)
     }
 
