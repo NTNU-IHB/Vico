@@ -7,14 +7,15 @@ wrapper {
     gradleVersion = '6.4'
 }
 
+version = rootProject.file("VERSION").readLines()[0]
 println("${rootProject.name} v$version")
 
-subprojects {
+subprojects { sub ->
 
     apply plugin: 'java-library'
 
-    group = 'no.ntnu.ihb.acco'
-    version = rootProject.file("VERSION").readLines()[0]
+    sub.group = 'no.ntnu.ihb.acco'
+    sub.version = version
 
     repositories {
         mavenCentral()

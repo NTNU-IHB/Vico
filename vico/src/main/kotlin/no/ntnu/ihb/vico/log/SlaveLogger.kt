@@ -71,8 +71,8 @@ class SlaveLogger @JvmOverloads constructor(
         }
     }
 
-    override fun postStep(currentTime: Double) {
-        loggers.values.forEach { logger ->
+    override fun postSlaveStep(currentTime: Double, slave: SlaveComponent) {
+        loggers[slave.instanceName]?.also { logger ->
             logger.writeLine(currentTime)
         }
     }

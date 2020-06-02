@@ -4,6 +4,8 @@ import java.io.Closeable
 
 interface SlaveSystemListener : Closeable {
 
+    fun addedToSystem(system: SlaveSystem)
+
     fun slaveAdded(slave: SlaveComponent)
 
     fun slaveRemoved(slave: SlaveComponent)
@@ -19,6 +21,13 @@ interface SlaveSystemListener : Closeable {
 }
 
 abstract class SlaveSystemAdapter : SlaveSystemListener {
+
+    lateinit var system: SlaveSystem
+        private set
+
+    override fun addedToSystem(system: SlaveSystem) {
+        this.system = system
+    }
 
     override fun slaveAdded(slave: SlaveComponent) {}
 

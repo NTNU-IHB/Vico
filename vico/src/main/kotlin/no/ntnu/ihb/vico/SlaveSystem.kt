@@ -40,6 +40,7 @@ class SlaveSystem(
     }
 
     fun getSlave(name: String): SlaveComponent = _slaves.first { it.instanceName == name }
+    fun getSlaveNoExcept(name: String): SlaveComponent? = _slaves.firstOrNull { it.instanceName == name }
 
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent(SlaveComponent::class.java)
@@ -81,7 +82,9 @@ class SlaveSystem(
     }
 
     fun addListener(listener: SlaveSystemListener) = apply {
-        listeners.add(listener)
+        listeners.add(listener).also {
+            listener.addedToSystem(this)
+        }
         if (addedToEngine) {
             slaves.forEach { slave ->
                 listener.slaveAdded(slave)
