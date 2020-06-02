@@ -38,30 +38,32 @@ private class SineMoverSystem : IteratingSystem(
     private val tmp = Vector3d()
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
+
         val sc = entity.getComponent(SineMoverComponent::class.java)
         val tc = entity.getComponent(TransformComponent::class.java)
-
-        tc.getLocalTranslation(tmp)
-        tc.setLocalTranslation(tmp.apply { x = sc.compute(currentTime) })
+        tc.setLocalTranslation(tc.getLocalTranslation(tmp).apply { x = sc.compute(currentTime) })
 
     }
 
+}
+
+private fun e1(): Entity {
+    return Entity("e1").also { e ->
+        e.addComponent(TransformComponent().apply {
+            setLocalTranslation(-1.0, 0.0, 0.0)
+        })
+        e.addComponent(GeometryComponent(BoxShape()).apply {
+            color.set(Color.green)
+        })
+        e.addComponent(SineMoverComponent())
+    }
 }
 
 fun main() {
 
     Engine().also { engine ->
 
-        Entity("e1").also { e ->
-            e.addComponent(TransformComponent().apply {
-                setLocalTranslation(-1.0, 0.0, 0.0)
-            })
-            e.addComponent(GeometryComponent(BoxShape()).apply {
-                color.set(Color.green)
-            })
-            e.addComponent(SineMoverComponent())
-            engine.addEntity(e)
-        }
+        engine.addEntity(e1())
         Entity("e2").also { e ->
             e.addComponent(TransformComponent().apply {
                 setLocalTranslation(1.0, 0.0, 0.0)
@@ -69,7 +71,7 @@ fun main() {
             e.addComponent(GeometryComponent(SphereShape()).apply {
                 color.set(Color.yellow)
             })
-            // e.addComponent(SineMoverComponent(f = 0.5))
+            e.addComponent(SineMoverComponent(f = 0.5))
             engine.addEntity(e)
             engine.getEntityByName("e1").transform
                 .add(e.transform)

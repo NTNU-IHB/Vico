@@ -45,6 +45,8 @@ internal class TestLogConfig {
 
             engine.step(5)
 
+            Assertions.assertTrue(resultDir.exists())
+
         }
     }
 
