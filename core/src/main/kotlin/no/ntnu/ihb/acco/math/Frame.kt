@@ -38,12 +38,6 @@ open class Frame {
         child.setParent(this)
     }
 
-    fun attach(child: Frame) {
-        val worldTransform = child.getWorldMatrix()
-        add(child)
-        child.setTransform(worldTransform)
-    }
-
     fun remove(child: Frame) {
         if (children.remove(child)) {
             child.setParent(null)
