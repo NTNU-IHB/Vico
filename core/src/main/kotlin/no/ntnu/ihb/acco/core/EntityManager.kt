@@ -7,9 +7,9 @@ class EntityManager internal constructor(
     private val engine: Engine
 ) : Iterable<Entity> {
 
-    private val entities = mutableListOf<Entity>()
-    private val entityListeners = mutableListOf<EntityListener>()
-    private val families = mutableMapOf<Family, ObservableSet<Entity>>()
+    private val entities: MutableList<Entity> = mutableListOf()
+    private val entityListeners: MutableList<EntityListener> = mutableListOf()
+    private val families: MutableMap<Family, ObservableSet<Entity>> = mutableMapOf()
 
     fun createEntity(name: String): Entity {
         return Entity(name)
