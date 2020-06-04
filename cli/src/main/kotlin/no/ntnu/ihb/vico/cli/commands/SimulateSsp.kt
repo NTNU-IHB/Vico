@@ -1,8 +1,7 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.vico.SlaveSystem
-import no.ntnu.ihb.vico.log.SlaveLogger
+import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.SystemStructure
 import org.slf4j.Logger
@@ -82,14 +81,13 @@ class SimulateSsp : Runnable {
         Engine(baseStepSize).use { engine ->
 
             structure.apply(engine)
-            val slaveSystem = engine.getSystem(SlaveSystem::class.java)
 
             relativeLogConfigPath?.also { configPath ->
                 val logConfig = File(loader.ssdFile.parent, configPath)
                 if (!logConfig.exists()) throw NoSuchFileException(logConfig)
-                slaveSystem.addListener(SlaveLogger(logConfig, resultDir))
+                engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
             } ?: run {
-                slaveSystem.addListener(SlaveLogger(null, resultDir))
+                engine.addSystem(SlaveLoggerSystem(null, resultDir))
             }
 
             /* relativeChartConfigPath?.also { configPath ->

@@ -3,7 +3,7 @@ package no.ntnu.ihb.vico.ssp
 import no.ntnu.ihb.acco.core.LinearTransform
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.fmi4j.util.extractContentTo
-import no.ntnu.ihb.vico.ModelResolver
+import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.ssp.jaxb.SystemStructureDescription
 import no.ntnu.ihb.vico.ssp.jaxb.TComponent
 import no.ntnu.ihb.vico.structure.*

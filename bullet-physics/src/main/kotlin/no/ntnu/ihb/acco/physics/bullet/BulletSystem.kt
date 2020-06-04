@@ -12,14 +12,14 @@ import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.System
+import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.acco.physics.ColliderComponent
 import no.ntnu.ihb.acco.physics.MotionControl
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
 import org.joml.Matrix4d
 
 
-class BulletSystem : System(
+class BulletSystem : SimulationSystem(
     Family.all(TransformComponent::class.java).one(RigidBodyComponent::class.java).build()
 ) {
 

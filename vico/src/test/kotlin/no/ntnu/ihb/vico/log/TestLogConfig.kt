@@ -2,11 +2,10 @@ package no.ntnu.ihb.vico.log
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.vico.ModelResolver
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestFmus
-import no.ntnu.ihb.vico.master.FixedStepMaster
+import no.ntnu.ihb.vico.model.ModelResolver
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -25,13 +24,11 @@ internal class TestLogConfig {
 
         Engine(1.0 / 100).use { engine ->
 
-            val slaveSystem = SlaveSystem(FixedStepMaster())
+            engine.addSystem(SlaveSystem())
             val resultDir = File("build/results").also {
                 it.deleteRecursively()
-                slaveSystem.addListener(SlaveLogger(logConfig, it))
+                engine.addSystem(SlaveLoggerSystem(logConfig, it))
             }
-
-            engine.addSystem(slaveSystem)
 
             for (i in 1..2) {
                 Entity("BouncingBall_$i").also { slaveEntity ->

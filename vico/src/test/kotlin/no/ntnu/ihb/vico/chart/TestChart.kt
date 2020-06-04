@@ -2,10 +2,10 @@ package no.ntnu.ihb.vico.chart
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.vico.ModelResolver
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestFmus
+import no.ntnu.ihb.vico.model.ModelResolver
 import java.io.File
 
 private object TestChart {

@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.fmuproxy
 
-import no.ntnu.ihb.vico.Model
-import no.ntnu.ihb.vico.ModelResolver
+import no.ntnu.ihb.vico.model.Model
+import no.ntnu.ihb.vico.model.ModelResolver
 import java.io.File
 import java.net.URI
 import java.net.URL

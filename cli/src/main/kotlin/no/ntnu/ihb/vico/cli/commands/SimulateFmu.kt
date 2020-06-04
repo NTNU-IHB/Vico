@@ -1,9 +1,8 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.vico.ModelResolver
-import no.ntnu.ihb.vico.SlaveSystem
-import no.ntnu.ihb.vico.log.SlaveLogger
+import no.ntnu.ihb.vico.log.SlaveLoggerSystem
+import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.structure.SystemStructure
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -72,24 +71,23 @@ class SimulateFmu : Runnable {
 
         val model = ModelResolver.resolve(fmu)
         val modelName = model.modelDescription.modelName
+        val structure = SystemStructure().apply {
+            addComponent(model, modelName)
+        }
 
         require(startTime < stopTime) { "stopTime=$stopTime > startTime=$startTime!" }
         require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
 
         Engine(baseStepSize).use { engine ->
 
-            SystemStructure().apply {
-                addComponent(model, modelName)
-            }.apply(engine)
-
-            val slaveSystem = engine.getSystem(SlaveSystem::class.java)
+            structure.apply(engine)
 
             relativeLogConfigPath?.also {
                 val logConfig = File(fmu.parent, it)
                 if (!logConfig.exists()) throw NoSuchFileException(logConfig)
-                slaveSystem.addListener(SlaveLogger(logConfig, resultDir))
+                engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
             } ?: run {
-                slaveSystem.addListener(SlaveLogger(null, resultDir))
+                engine.addSystem(SlaveLoggerSystem(null, resultDir))
             }
 
             runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)

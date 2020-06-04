@@ -10,7 +10,7 @@ import kotlin.math.max
 
 class FixedStepMaster : MasterAlgorithm() {
 
-    private val slaves = mutableListOf<SlaveComponent>()
+    private val slaves: MutableList<SlaveComponent> = mutableListOf()
 
     override fun slaveAdded(slave: SlaveComponent) {
         slaves.add(slave)

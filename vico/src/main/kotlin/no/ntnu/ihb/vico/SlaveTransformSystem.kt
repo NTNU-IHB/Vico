@@ -3,14 +3,14 @@ package no.ntnu.ihb.vico
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.System
+import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.fmi4j.readReal
 import org.joml.Vector3d
 
 class SlaveTransformSystem(
     decimationFactor: Long = 1,
     priority: Int = 1
-) : System(
+) : SimulationSystem(
     Family.all(SlaveComponent::class.java, TransformComponent::class.java, SlaveTransform::class.java).build(),
     decimationFactor,
     priority

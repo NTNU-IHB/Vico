@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class Engine @JvmOverloads constructor(
     startTime: Double? = null,
     baseStepSize: Double? = null
-) : Closeable {
+) : Closeable, EventDispatcher by EventDispatcherImpl() {
 
     val startTime = startTime ?: 0.0
     val baseStepSize = baseStepSize ?: 1.0 / 100
@@ -63,13 +63,14 @@ class Engine @JvmOverloads constructor(
         connections.add(connection)
     }
 
-    fun <E : System> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
+    fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
 
     fun getEntityByName(name: String) = entityManager.getEntityByName(name)
     fun getEntitiesFor(family: Family) = entityManager.getEntitiesFor(family)
 
-    fun addSystem(system: System) = systemManager.add(system)
-    fun removeSystem(system: Class<out System>) = systemManager.remove(system)
+    fun addSystem(system: ManipulationSystem) = systemManager.add(system)
+    fun addSystem(system: EventSystem) = systemManager.add(system)
+    fun removeSystem(system: Class<out BaseSystem>) = systemManager.remove(system)
 
     fun addEntity(entity: Entity, vararg entities: Entity) = entityManager.addEntity(entity, *entities)
     fun removeEntity(entity: Entity, vararg entities: Entity) = entityManager.removeEntity(entity, *entities)

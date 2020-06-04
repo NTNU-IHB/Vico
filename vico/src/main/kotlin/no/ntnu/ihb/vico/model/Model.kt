@@ -1,4 +1,4 @@
-package no.ntnu.ihb.vico
+package no.ntnu.ihb.vico.model
 
 import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
@@ -13,6 +13,10 @@ interface Model {
 
     val modelDescription: CoSimulationModelDescription
 
-    fun instantiate(instanceName: String = defaultInstanceName(modelDescription)): SlaveInstance
+    fun instantiate(
+        instanceName: String = defaultInstanceName(
+            modelDescription
+        )
+    ): SlaveInstance
 
 }

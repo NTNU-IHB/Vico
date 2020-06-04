@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico.master
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import no.ntnu.ihb.acco.core.EventDispatcher
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveConnections
 import no.ntnu.ihb.vico.SlaveStepCallback
@@ -15,6 +16,10 @@ abstract class MasterAlgorithm {
     internal fun assignedToSystem(system: SlaveSystem) {
         baseStepSize = system.interval
     }*/
+
+    internal lateinit var dispatcher: EventDispatcher
+
+    protected fun dispatchEvent(type: String, target: Any?) = dispatcher.dispatchEvent(type, target)
 
     abstract fun slaveAdded(slave: SlaveComponent)
 

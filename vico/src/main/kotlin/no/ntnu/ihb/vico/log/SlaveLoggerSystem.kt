@@ -1,5 +1,9 @@
 package no.ntnu.ihb.vico.log
 
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.Event
+import no.ntnu.ihb.acco.core.EventSystem
+import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.util.formatForOutput
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
@@ -8,7 +12,7 @@ import no.ntnu.ihb.fmi4j.readInteger
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.fmi4j.readString
 import no.ntnu.ihb.vico.SlaveComponent
-import no.ntnu.ihb.vico.SlaveSystemAdapter
+import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.log.jaxb.TLogConfig
 import java.io.BufferedWriter
 import java.io.Closeable
@@ -18,11 +22,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.bind.JAXB
 
-
-class SlaveLogger @JvmOverloads constructor(
+class SlaveLoggerSystem(
     private val logConfig: TLogConfig? = null,
     targetDir: File? = null
-) : SlaveSystemAdapter() {
+) : EventSystem(Family.all(SlaveComponent::class.java).build()) {
 
     var separator: String = ", "
     var decimalPoints: Int = 6
@@ -34,6 +37,7 @@ class SlaveLogger @JvmOverloads constructor(
     )
 
     init {
+
         this.targetDir.mkdirs()
 
         logConfig?.components?.component?.also {
@@ -44,9 +48,11 @@ class SlaveLogger @JvmOverloads constructor(
             }
         }
 
+        listen(SlaveSystem.SLAVE_STEPPED)
     }
 
-    override fun slaveAdded(slave: SlaveComponent) {
+    override fun entityAdded(entity: Entity) {
+        val slave = entity.getComponent(SlaveComponent::class.java)
         if (logConfig == null) {
             loggers[slave.instanceName] = Logger(slave, emptyList(), 1)
         } else {
@@ -65,15 +71,20 @@ class SlaveLogger @JvmOverloads constructor(
         }
     }
 
-    override fun postInit(currentTime: Double) {
+    override fun init(currentTime: Double) {
         loggers.values.forEach { logger ->
             logger.writeLine(currentTime)
         }
     }
 
-    override fun postSlaveStep(currentTime: Double, slave: SlaveComponent) {
-        loggers[slave.instanceName]?.also { logger ->
-            logger.writeLine(currentTime)
+    override fun eventReceived(evt: Event) {
+        when (evt.type) {
+            SlaveSystem.SLAVE_STEPPED -> {
+                val (currentTime, slave) = evt.target as Pair<Double, SlaveComponent>
+                loggers[slave.instanceName]?.also { logger ->
+                    logger.writeLine(currentTime)
+                }
+            }
         }
     }
 

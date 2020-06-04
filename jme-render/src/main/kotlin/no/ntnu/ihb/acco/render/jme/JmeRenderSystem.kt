@@ -5,7 +5,7 @@ import com.jme3.scene.Node
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.System
+import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
 import org.joml.Matrix4d
@@ -16,7 +16,7 @@ import org.joml.Vector3d
 internal class JmeRenderSystem(
     private val root: Node,
     private val assetManager: AssetManager
-) : System(
+) : SimulationSystem(
     Family.all(TransformComponent::class.java, GeometryComponent::class.java).build(), 1, Int.MAX_VALUE
 ) {
 

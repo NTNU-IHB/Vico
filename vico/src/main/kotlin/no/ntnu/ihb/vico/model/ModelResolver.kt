@@ -1,4 +1,4 @@
-package no.ntnu.ihb.vico
+package no.ntnu.ihb.vico.model
 
 import no.ntnu.ihb.vico.fmi.FmuResolver
 import no.ntnu.ihb.vico.fmuproxy.ProxyResolver

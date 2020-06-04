@@ -3,7 +3,7 @@ package no.ntnu.ihb.vico
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.System
+import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.fmi4j.writeBoolean
 import no.ntnu.ihb.fmi4j.writeInteger
 import no.ntnu.ihb.fmi4j.writeReal
@@ -18,25 +18,23 @@ typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
 val Engine.slaveSystem: SlaveSystem
     get() = this.getSystem(SlaveSystem::class.java)
 
-class SlaveSystem(
+class SlaveSystem @JvmOverloads constructor(
     private val algorithm: MasterAlgorithm = FixedStepMaster(),
     decimationFactor: Long = 1,
     priority: Int = 0
-) : System(Family.all(SlaveComponent::class.java).build(), decimationFactor, priority) {
+) : SimulationSystem(Family.all(SlaveComponent::class.java).build(), decimationFactor, priority) {
 
     var parameterSet: String = "default"
 
-    private val listeners = mutableListOf<SlaveSystemListener>()
-    private val connections: MutableMap<SlaveComponent, MutableList<SlaveConnection<*>>> = mutableMapOf()
-    private val _slaves = mutableListOf<SlaveComponent>()
+    private val _slaves: MutableList<SlaveComponent> = mutableListOf()
     val slaves: List<SlaveComponent> = _slaves
+
+    private val listeners: MutableList<SlaveSystemListener> = mutableListOf()
+    private val connections: MutableMap<SlaveComponent, MutableList<SlaveConnection<*>>> = mutableMapOf()
 
     private val slaveStepCallback: SlaveStepCallback = {
         listeners.forEach { l -> l.postSlaveStep(it.first, it.second) }
-    }
-
-    init {
-        // algorithm.assignedToSystem(this)
+        dispatchEvent(SLAVE_STEPPED, it)
     }
 
     fun getSlave(name: String): SlaveComponent = _slaves.first { it.instanceName == name }
@@ -72,10 +70,6 @@ class SlaveSystem(
         listeners.forEach { l -> l.postStep(currentTime + stepSize) }
     }
 
-    /* fun addConnection(connection: Connection) {
-         pendingConnections.add(connection)
-     }*/
-
     fun addConnection(connection: SlaveConnection<*>) = apply {
         connections.computeIfAbsent(connection.sourceSlave) { mutableListOf() }.add(connection)
         connection.sourceSlave.markForReading(connection.sourceVariable.name)
@@ -102,6 +96,13 @@ class SlaveSystem(
         }
         listeners.forEach { l -> l.close() }
     }
+
+    companion object {
+
+        const val SLAVE_STEPPED = "slaveStepped"
+
+    }
+
 }
 
 /*

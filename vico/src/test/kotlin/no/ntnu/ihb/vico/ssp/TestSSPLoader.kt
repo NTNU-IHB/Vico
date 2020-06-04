@@ -29,7 +29,7 @@ internal class TestSSPLoader {
         val structure = SSPLoader(TestSsp.get("bouncingBall/external_ssv")).load()
         val stopTime = structure.defaultExperiment?.stopTime ?: 0.0
         Assertions.assertEquals(10.0, stopTime, 1e-6)
-        Engine().use { engine ->
+        Engine(1e-3).use { engine ->
 
             structure.apply(engine)
             engine.init()

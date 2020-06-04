@@ -1,16 +1,13 @@
 package no.ntnu.ihb.acco.core
 
 import java.io.Closeable
+import java.util.*
 
-abstract class System(
-    private val family: Family,
-    decimationFactor: Long? = null,
-    priority: Int? = null
-) : Comparable<System>, Closeable {
+sealed class BaseSystem(
+    protected val family: Family
+) : Closeable {
 
-    val priority = priority ?: 0
-    val decimationFactor = decimationFactor ?: 1
-
+    var enabled = true
     private var _engine: Engine? = null
     protected val engine: Engine
         get() = _engine ?: throw IllegalStateException("System is not affiliated with an Engine!")
@@ -18,17 +15,12 @@ abstract class System(
     val addedToEngine: Boolean
         get() = _engine != null
 
-    var enabled = true
-    var initialized = false
-        private set
-    val interval: Double
-        get() = engine.baseStepSize * decimationFactor
-
     protected lateinit var entities: Set<Entity>
 
-    constructor(family: Family) : this(family, null, null)
+    var initialized = false
+        private set
 
-    fun addedToEngine(engine: Engine) {
+    internal fun addedToEngine(engine: Engine) {
         this._engine = engine
         entities = engine.entityManager.getEntitiesFor(family).apply {
             addObserver = {
@@ -39,6 +31,7 @@ abstract class System(
             }
             forEach { entityAdded(it) }
         }
+        assignedToEngine(engine)
     }
 
     internal fun initialize(currentTime: Double) {
@@ -47,6 +40,9 @@ abstract class System(
         initialized = true
     }
 
+    fun dispatchEvent(type: String, target: Any?) = engine.dispatchEvent(type, target)
+
+    protected open fun assignedToEngine(engine: Engine) {}
 
     protected open fun entityAdded(entity: Entity) {}
 
@@ -54,13 +50,87 @@ abstract class System(
 
     protected open fun init(currentTime: Double) {}
 
-    abstract fun step(currentTime: Double, stepSize: Double)
-
     override fun close() {}
 
-    override fun compareTo(other: System): Int {
+}
+
+abstract class EventSystem(
+    family: Family
+) : BaseSystem(family), EventListener {
+
+    private val listenQueue = ArrayDeque<String>()
+
+    override fun invoke(evt: Event) {
+        if (enabled) {
+            eventReceived(evt)
+        }
+    }
+
+    protected fun listen(type: String) {
+        if (addedToEngine) {
+            engine.addEventListener(type, this)
+        } else {
+            listenQueue.add(type)
+        }
+    }
+
+    override fun assignedToEngine(engine: Engine) {
+        while (!listenQueue.isEmpty()) {
+            listen(listenQueue.pop())
+        }
+    }
+
+    protected abstract fun eventReceived(evt: Event)
+
+}
+
+abstract class ManipulationSystem(
+    family: Family,
+    decimationFactor: Long? = null,
+    priority: Int? = null
+) : BaseSystem(family), Comparable<ManipulationSystem> {
+
+    val priority = priority ?: 0
+    val decimationFactor = decimationFactor ?: 1
+
+    val interval: Double
+        get() = engine.baseStepSize * decimationFactor
+
+    override fun compareTo(other: ManipulationSystem): Int {
         val compare = other.decimationFactor.compareTo(decimationFactor)
         return if (compare == 0) priority.compareTo(other.priority) else compare
     }
+
+}
+
+abstract class ObserverSystem(
+    family: Family,
+    decimationFactor: Long? = null,
+    priority: Int? = null
+) : ManipulationSystem(family, decimationFactor, priority) {
+
+    internal fun internalObserve(currentTime: Double) {
+        if (enabled) {
+            observe(currentTime)
+        }
+    }
+
+    protected abstract fun observe(currentTime: Double)
+
+}
+
+abstract class SimulationSystem @JvmOverloads constructor(
+    family: Family,
+    decimationFactor: Long? = null,
+    priority: Int? = null
+) : ManipulationSystem(family, decimationFactor, priority) {
+
+    internal fun internalStep(currentTime: Double, stepSize: Double) {
+        if (enabled) {
+            step(currentTime, stepSize)
+        }
+    }
+
+    protected abstract fun step(currentTime: Double, stepSize: Double)
 
 }
