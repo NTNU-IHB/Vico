@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.chart
 
+import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.VariableIdentifier
@@ -78,8 +79,9 @@ class TimeSeriesDrawer internal constructor(
 
     }
 
-    override fun slaveAdded(slave: SlaveComponent) {
+    override fun entityAdded(entity: Entity) {
 
+        val slave = entity.getComponent(SlaveComponent::class.java)
         val invalidVariableIdentifiers = mutableListOf<VariableIdentifier>()
         seriesInfos.forEach {
 
@@ -101,11 +103,11 @@ class TimeSeriesDrawer internal constructor(
 
     }
 
-    override fun postInit(currentTime: Double) {
+    override fun init(currentTime: Double) {
         handles.forEach { handle ->
             data[handle.key] = mutableListOf<Double>() to mutableListOf()
         }
-        super.postInit(currentTime)
+        super.init(currentTime)
     }
 
     override fun updateData(currentTime: Double) {

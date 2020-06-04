@@ -1,7 +1,10 @@
 package no.ntnu.ihb.vico.chart
 
+import no.ntnu.ihb.acco.core.Event
+import no.ntnu.ihb.acco.core.EventSystem
+import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.vico.SlaveComponent
-import no.ntnu.ihb.vico.SlaveSystemAdapter
+import no.ntnu.ihb.vico.SlaveSystem
 import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -27,7 +30,7 @@ abstract class AbstractDrawer(
     height: Int,
     live: Boolean,
     private val decimationFactor: Long
-) : SlaveSystemAdapter() {
+) : EventSystem(Family.all(SlaveComponent::class.java).build()) {
 
     protected val mutex = Any()
     private var queue: BlockingQueue<Unit>? = null
@@ -35,7 +38,6 @@ abstract class AbstractDrawer(
 
     private var lastUpdate: Long = 0L
 
-    private var initialized = false
     var live: Boolean by Delegates.observable(live, { _, _, _ ->
         check(!initialized)
     })
@@ -55,15 +57,28 @@ abstract class AbstractDrawer(
         SwingWrapper(chart)
     }
 
-    override fun postInit(currentTime: Double) {
+    init {
+        listen(SlaveSystem.SLAVE_STEPPED)
+    }
+
+
+    override fun init(currentTime: Double) {
         updateData(currentTime)
         if (live) {
             display()
         }
-        initialized = true
     }
 
-    override fun postSlaveStep(currentTime: Double, slave: SlaveComponent) {
+    override fun eventReceived(evt: Event) {
+        when (evt.type) {
+            SlaveSystem.SLAVE_STEPPED -> {
+                val (currentTime, slave) = evt.target<Pair<Double, SlaveComponent>>()
+                postSlaveStep(currentTime, slave)
+            }
+        }
+    }
+
+    private fun postSlaveStep(currentTime: Double, slave: SlaveComponent) {
         if (slave.stepCount % decimationFactor == 0L) {
             updateData(currentTime)
 
@@ -75,15 +90,12 @@ abstract class AbstractDrawer(
         }
     }
 
-    override fun postTerminate() {
+    override fun close() {
         if (!live) {
             display()
         } else {
             updateChart()
         }
-    }
-
-    override fun close() {
         queue?.also {
             LOG.info("Waiting for chart '$title' to close..")
             it.take()

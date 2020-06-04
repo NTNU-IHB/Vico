@@ -21,12 +21,11 @@ private object TestChart {
                 engine.addEntity(this)
             }
 
-            val system = SlaveSystem()
-            engine.addSystem(system)
+            engine.addSystem(SlaveSystem())
 
             val config = File(TestChart::class.java.classLoader.getResource("chartconfig/ChartConfig1.xml")!!.file)
             ChartLoader.load(config).forEach {
-                system.addListener(it)
+                engine.addSystem(it)
             }
 
             engine.step(500)

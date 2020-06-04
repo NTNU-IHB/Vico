@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.chart
 
+import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.VariableIdentifier
@@ -62,14 +63,14 @@ class XYSeriesDrawer internal constructor(
 
     }
 
-    override fun addedToSystem(system: SlaveSystem) {
-        super.addedToSystem(system)
-
+    override fun assignedToEngine(engine: Engine) {
 
         fun fail(key: String, component: String) {
             LOG.warn("Failed to add xyseries as no component named '${component}' exists!")
             seriesInfos.remove(key)
         }
+
+        val system = engine.getSystem(SlaveSystem::class.java)
 
         seriesInfos.forEach { (key, value) ->
 
@@ -90,16 +91,14 @@ class XYSeriesDrawer internal constructor(
                 } ?: fail(key, value.second.componentName)
 
             } ?: fail(key, value.first.componentName)
-
         }
-
     }
 
-    override fun postInit(currentTime: Double) {
+    override fun init(currentTime: Double) {
         handles.forEach { handle ->
             data[handle.key] = mutableListOf<Double>() to mutableListOf()
         }
-        super.postInit(currentTime)
+        super.init(currentTime)
     }
 
     override fun updateData(currentTime: Double) {
