@@ -1,11 +1,16 @@
 package no.ntnu.ihb.acco.core
 
-interface Source<E> {
-    fun get(): E
+
+abstract class Source<E>(
+    val component: Component
+) {
+    abstract fun get(): E
 }
 
-interface Sink<E> {
-    fun set(value: E)
+abstract class Sink<E>(
+    val component: Component
+) {
+    abstract fun set(value: E)
 }
 
 interface Converter<E, T> {
@@ -13,12 +18,21 @@ interface Converter<E, T> {
 }
 
 interface Connection<E, T> {
+
+    val source: Source<E>
+    val sinks: List<Sink<T>>
+
     fun transferData()
+
+    companion object {
+        const val CONNECTION_NEEDS_UPDATE = "connectionNeedsupdate"
+    }
+
 }
 
 class ScalarConnection<E>(
-    private val source: Source<E>,
-    private val sinks: List<Sink<E>>
+    override val source: Source<E>,
+    override val sinks: List<Sink<E>>
 ) : Connection<E, E> {
 
     override fun transferData() {
@@ -30,8 +44,8 @@ class ScalarConnection<E>(
 }
 
 class ConvertingConnection<E, T>(
-    private val source: Source<E>,
-    private val sinks: List<Sink<T>>,
+    override val source: Source<E>,
+    override val sinks: List<Sink<T>>,
     private val converter: Converter<E, T>
 ) : Connection<E, T> {
 

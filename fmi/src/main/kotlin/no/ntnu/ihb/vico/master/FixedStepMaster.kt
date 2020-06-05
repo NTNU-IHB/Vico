@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico.master
 
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveConnections
+import no.ntnu.ihb.vico.SlaveInitCallback
 import no.ntnu.ihb.vico.SlaveStepCallback
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,20 +18,18 @@ class FixedStepMaster : MasterAlgorithm() {
     }
 
     override fun slaveRemoved(slave: SlaveComponent) {
-        TODO("Not yet implemented")
+        slaves.remove(slave)
     }
 
-    override fun init(currentTime: Double, connections: SlaveConnections) {
+    override fun init(currentTime: Double, slaveInitCallback: SlaveInitCallback) {
         slaves.parallelStream().forEach { slave ->
             slave.setupExperiment(currentTime)
             slave.enterInitializationMode()
         }
-        for (i in slaves.indices) {
-            writeAllVariables(slaves)
-            readAllVariables(slaves)
-            connections.values.flatten().forEach { c ->
-                c.transferData()
-            }
+        for (slave in slaves) {
+            slave.transferCachedSets()
+            slave.retrieveCachedGets()
+            slaveInitCallback.invoke(slave)
         }
         slaves.parallelStream().forEach { slave ->
             slave.exitInitializationMode()

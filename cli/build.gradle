@@ -14,7 +14,7 @@ application {
 dependencies {
 
     api project(':core')
-    api project(':vico')
+    api project(':fmi')
     api project(':jme-render')
 
     compile group: 'info.picocli', name: 'picocli', version: '4.1.1'

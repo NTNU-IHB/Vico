@@ -80,7 +80,7 @@ class SlaveLoggerSystem(
     override fun eventReceived(evt: Event) {
         when (evt.type) {
             SlaveSystem.SLAVE_STEPPED -> {
-                val (currentTime, slave) = evt.target as Pair<Double, SlaveComponent>
+                val (currentTime, slave) = evt.target<Pair<Double, SlaveComponent>>()
                 loggers[slave.instanceName]?.also { logger ->
                     logger.writeLine(currentTime)
                 }

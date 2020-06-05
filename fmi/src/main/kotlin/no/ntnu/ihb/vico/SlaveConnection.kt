@@ -33,6 +33,7 @@ class IntegerConnection(
         sourceSlave.readInteger(vr.also { it[0] = sourceVariable.valueReference }, values)
         targetSlave.writeInteger(vr.also { it[0] = targetVariable.valueReference }, values)
     }
+
 }
 
 class RealConnection(

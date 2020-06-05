@@ -40,7 +40,7 @@ class Family private constructor(
 
     companion object {
 
-        val empty = Family.all().build()
+        val all = all().build()
 
         fun all(vararg c: ComponentClass): Builder {
             return Builder(all = c.toList())

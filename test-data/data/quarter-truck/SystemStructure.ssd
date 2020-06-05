@@ -93,14 +93,4 @@
 
     </ssd:System>
 
-    <ssd:DefaultExperiment>
-        <ssd:Annotations>
-            <ssc:Annotation type="com.opensimulationplatform">
-                <osp:Algorithm>
-                    <osp:FixedStepAlgorithm baseStepSize="0.01"/>
-                </osp:Algorithm>
-            </ssc:Annotation>
-        </ssd:Annotations>
-    </ssd:DefaultExperiment>
-
 </ssd:SystemStructureDescription>

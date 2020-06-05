@@ -13,7 +13,9 @@ import no.ntnu.ihb.vico.master.MasterAlgorithm
 
 typealias Slaves = List<SlaveComponent>
 typealias SlaveConnections = Map<SlaveComponent, List<SlaveConnection<*>>>
+typealias SlaveInitCallback = (SlaveComponent) -> Unit
 typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
+
 
 val Engine.slaveSystem: SlaveSystem
     get() = this.getSystem(SlaveSystem::class.java)
@@ -61,7 +63,11 @@ class SlaveSystem @JvmOverloads constructor(
     }
 
     override fun init(currentTime: Double) {
-        algorithm.init(currentTime, connections)
+        algorithm.init(currentTime) { slave ->
+            connections[slave]?.forEach { c ->
+                c.transferData()
+            }
+        }
         listeners.forEach { l -> l.postInit(currentTime) }
     }
 

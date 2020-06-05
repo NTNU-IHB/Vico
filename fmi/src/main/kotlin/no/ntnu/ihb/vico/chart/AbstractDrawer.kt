@@ -99,7 +99,7 @@ abstract class AbstractDrawer(
         queue?.also {
             LOG.info("Waiting for chart '$title' to close..")
             it.take()
-            LOG.info("'$title' closed..")
+            LOG.info("Chart '$title' closed.")
         }
     }
 

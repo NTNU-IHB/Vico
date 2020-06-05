@@ -1,8 +1,8 @@
 rootProject.name = 'acco'
 
 include 'core'
+include 'fmi'
+include 'cli'
 include 'jme-render'
 include 'bullet-physics'
-include 'vico'
 include 'test-data'
-include 'cli'
