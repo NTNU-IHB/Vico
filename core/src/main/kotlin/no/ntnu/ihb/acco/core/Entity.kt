@@ -13,7 +13,7 @@ class Entity(
     private val componentMap = mutableMapOf<Class<out Component>, Component>()
     private val componentListeners = mutableListOf<ComponentListener>()
 
-    fun addComponent(component: Component) {
+    fun addComponent(component: Component) = apply {
         mutableComponents.add(component)
         componentMap[component::class.java] = component
         componentListeners.forEach { l ->
@@ -21,13 +21,14 @@ class Entity(
         }
     }
 
-    fun removeComponent(componentClass: Class<out Component>) {
+    fun removeComponent(componentClass: Class<out Component>): Component {
         val component = componentMap[componentClass] ?: throw IllegalArgumentException()
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
         componentListeners.forEach { l ->
             l.componentRemoved(component)
         }
+        return component
     }
 
     fun hasComponent(componentClass: Class<out Component>): Boolean {

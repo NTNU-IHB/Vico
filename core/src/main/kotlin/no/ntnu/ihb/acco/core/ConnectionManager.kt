@@ -8,6 +8,10 @@ class ConnectionManager : EventSystem(Family.all) {
         listen(Connection.CONNECTION_NEEDS_UPDATE)
     }
 
+    override fun init(currentTime: Double) {
+        connections.values.flatten().forEach { it.transferData() }
+    }
+
     fun add(connection: Connection<*, *>) {
         connections.computeIfAbsent(connection.source.component) {
             mutableListOf()
