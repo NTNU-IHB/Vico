@@ -4,8 +4,11 @@ import java.io.Closeable
 import java.util.*
 
 sealed class BaseSystem(
-    protected val family: Family
-) : Closeable {
+    protected val family: Family,
+    priority: Int? = null
+) : Comparable<BaseSystem>, Closeable {
+
+    val priority = priority ?: 0
 
     var enabled = true
     private var _engine: Engine? = null
@@ -22,7 +25,7 @@ sealed class BaseSystem(
 
     internal fun addedToEngine(engine: Engine) {
         this._engine = engine
-        entities = engine.entityManager.getEntitiesFor(family).apply {
+        entities = engine.getEntitiesFor(family).apply {
             addObserver = {
                 entityAdded(it)
             }
@@ -52,11 +55,15 @@ sealed class BaseSystem(
 
     override fun close() {}
 
+    override fun compareTo(other: BaseSystem): Int {
+        return priority.compareTo(other.priority)
+    }
 }
 
 abstract class EventSystem(
-    family: Family
-) : BaseSystem(family), EventListener {
+    family: Family,
+    priority: Int? = null
+) : BaseSystem(family, priority), EventListener {
 
     private val listenQueue = ArrayDeque<String>()
 
@@ -88,17 +95,20 @@ abstract class ManipulationSystem(
     family: Family,
     decimationFactor: Long? = null,
     priority: Int? = null
-) : BaseSystem(family), Comparable<ManipulationSystem> {
+) : BaseSystem(family, priority) {
 
-    val priority = priority ?: 0
     val decimationFactor = decimationFactor ?: 1
 
     val interval: Double
         get() = engine.baseStepSize * decimationFactor
 
-    override fun compareTo(other: ManipulationSystem): Int {
-        val compare = other.decimationFactor.compareTo(decimationFactor)
-        return if (compare == 0) priority.compareTo(other.priority) else compare
+    override fun compareTo(other: BaseSystem): Int {
+        return if (other is ManipulationSystem) {
+            val compare = other.decimationFactor.compareTo(decimationFactor)
+            if (compare == 0) super.compareTo(other) else compare
+        } else {
+            super.compareTo(other)
+        }
     }
 
 }

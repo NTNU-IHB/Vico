@@ -31,14 +31,20 @@ fun Vector3d.clamp(min: Vector3dc, max: Vector3dc) = apply {
     z = max(min.z(), kotlin.math.min(max.z(), z))
 }
 
-fun Vector3d.fromArray(array: DoubleArray) = apply {
-    fromArray(array, 0)
-}
-
-fun Vector3d.fromArray(array: DoubleArray, offset: Int) = apply {
-    x = array[offset]
+@JvmOverloads
+fun Vector3d.fromArray(array: DoubleArray, offset: Int = 0) = apply {
+    x = array[offset + 0]
     y = array[offset + 1]
     z = array[offset + 2]
+}
+
+@JvmOverloads
+fun Vector3dc.toArray(array: DoubleArray = DoubleArray(3), offset: Int = 0): DoubleArray {
+    return array.also {
+        it[0 + offset] = x()
+        it[1 + offset] = y()
+        it[2 + offset] = z()
+    }
 }
 
 fun Matrix4dc.getMaxScaleOnAxis(): Double {

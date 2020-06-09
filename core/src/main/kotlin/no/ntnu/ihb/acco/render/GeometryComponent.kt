@@ -12,7 +12,7 @@ import org.joml.Vector3dc
 class GeometryComponent(
     val shape: Shape,
     val offsetTransform: Matrix4d = Matrix4d()
-) : Component {
+) : Component() {
 
     val color = Color(Color.white)
     var visible = true

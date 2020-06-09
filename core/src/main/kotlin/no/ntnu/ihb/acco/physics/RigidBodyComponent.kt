@@ -12,7 +12,7 @@ enum class MotionControl {
 class RigidBodyComponent @JvmOverloads constructor(
     var mass: Double = 1.0,
     var motionControl: MotionControl = MotionControl.DYNAMIC
-) : Component {
+) : Component() {
 
     var linearVelocity = Vector3d()
     var angularVelocity = Vector3d()

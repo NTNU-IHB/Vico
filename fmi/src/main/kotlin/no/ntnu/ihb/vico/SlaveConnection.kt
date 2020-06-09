@@ -1,5 +1,7 @@
 package no.ntnu.ihb.vico
 
+import no.ntnu.ihb.acco.core.Component
+import no.ntnu.ihb.acco.core.Connection
 import no.ntnu.ihb.acco.core.RealModifier
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
@@ -10,12 +12,19 @@ sealed class SlaveConnection<E : ScalarVariable>(
     val sourceVariable: E,
     val targetSlave: SlaveComponent,
     val targetVariable: E
-) {
+) : Connection {
 
     protected val vr = LongArray(1)
 
-    abstract fun transferData()
+    init {
+        sourceSlave.markForReading(sourceVariable.name)
+    }
 
+    override val source: Component
+        get() = sourceSlave
+
+    override val targets: List<Component>
+        get() = listOf(targetSlave)
 }
 
 class IntegerConnection(

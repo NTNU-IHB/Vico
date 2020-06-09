@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test
 
 internal class FamilyTest {
 
-    class ComponentA : Component
-    class ComponentB : Component
-    class ComponentC : Component
-    class ComponentD : Component
-    class ComponentE : Component
+    class ComponentA : Component()
+    class ComponentB : Component()
+    class ComponentC : Component()
+    class ComponentD : Component()
+    class ComponentE : Component()
 
     @Test
     fun testFamily() {

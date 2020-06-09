@@ -1,66 +1,120 @@
 package no.ntnu.ihb.acco.core
 
 
-abstract class Source<E>(
-    val component: Component
-) {
-    abstract fun get(): E
+sealed class Connector<E : Var<*>>(
+    val component: Component,
+    val variable: E
+)
+
+class IntConnector(
+    component: Component,
+    variable: IntVar
+) : Connector<IntVar>(component, variable) {
+    constructor(component: Component, name: String) : this(component, component.getVariable(name) as IntVar)
 }
 
-abstract class Sink<E>(
-    val component: Component
-) {
-    abstract fun set(value: E)
+class RealConnector(
+    component: Component,
+    variable: RealVar
+) : Connector<RealVar>(component, variable) {
+    constructor(component: Component, name: String) : this(component, component.getVariable(name) as RealVar)
 }
+
+class StrConnector(
+    component: Component,
+    variable: StrVar
+) : Connector<StrVar>(component, variable) {
+    constructor(component: Component, name: String) : this(component, component.getVariable(name) as StrVar)
+}
+
+class BoolConnector(
+    component: Component,
+    variable: BoolVar
+) : Connector<BoolVar>(component, variable) {
+    constructor(component: Component, name: String) : this(component, component.getVariable(name) as BoolVar)
+}
+
 
 interface Converter<E, T> {
     fun convert(value: E): T
 }
 
-interface Connection<E, T> {
+interface Connection {
 
-    val source: Source<E>
-    val sinks: List<Sink<T>>
+    val source: Component
+    val targets: List<Component>
 
     fun transferData()
 
     companion object {
-        const val CONNECTION_NEEDS_UPDATE = "connectionNeedsupdate"
+        const val CONNECTION_NEEDS_UPDATE = "connectionNeedsUpdate"
     }
 
 }
 
-class ScalarConnection<E>(
-    override val source: Source<E>,
-    override val sinks: List<Sink<E>>
-) : Connection<E, E> {
+class ScalarConnection<E : Var<*>>(
+    private val sourceConnector: Connector<E>,
+    private val sinks: List<Connector<E>>
+) : Connection {
 
-    constructor(source: Source<E>, sink: Sink<E>)
-            : this(source, listOf(sink))
+    override val source: Component
+        get() = sourceConnector.component
+    override val targets: List<Component>
+        get() = sinks.map { it.component }
+
+    private val size: Int = sourceConnector.variable.size
+
+
+    constructor(
+        source: Connector<E>,
+        sink: Connector<E>
+    ) : this(source, listOf(sink))
+
+    init {
+        require(sinks.filter {
+            it.variable.size == size
+        }.size == sinks.size) { "Dimension mismatch between source and sink(s)" }
+    }
 
     override fun transferData() {
-        val value = source.get()
-        sinks.forEach { sink ->
-            sink.set(value)
+
+        when (val v = sourceConnector.variable) {
+            is IntVar -> {
+                val read = IntArray(size).also { v.read(it) }
+                sinks.forEach { (it.variable as IntVar).write(read) }
+            }
+            is RealVar -> {
+                val read = DoubleArray(size).also { v.read(it) }
+                sinks.forEach { (it.variable as RealVar).write(read) }
+            }
+            is StrVar -> {
+                val read = StringArray(size).also { v.read(it) }
+                sinks.forEach { (it.variable as StrVar).write(read) }
+            }
+            is BoolVar -> {
+                val read = BooleanArray(size).also { v.read(it) }
+                sinks.forEach { (it.variable as BoolVar).write(read) }
+            }
         }
+
     }
 }
 
-class ConvertingConnection<E, T>(
-    override val source: Source<E>,
-    override val sinks: List<Sink<T>>,
+/*class ConvertingConnection<E: Var<*>, T: Var<*>>(
+    override val source: Connector<E>,
+    override val sinks: List<Connector<T>>,
     private val converter: Converter<E, T>
 ) : Connection<E, T> {
 
-    constructor(source: Source<E>, sink: Sink<T>, converter: Converter<E, T>)
+    constructor(source: Connector<Var<E>>, sink: Connector<T>, converter: Converter<E, T>)
             : this(source, listOf(sink), converter)
 
     override fun transferData() {
-        val value = source.get()
+        *//*val value = source.variable
         val convertedValue = converter.convert(value)
         sinks.forEach { sink ->
             sink.set(convertedValue)
-        }
+        }*//*
     }
 
-}
+}*/

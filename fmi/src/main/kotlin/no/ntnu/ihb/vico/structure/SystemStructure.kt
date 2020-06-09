@@ -85,7 +85,7 @@ class SystemStructure @JvmOverloads constructor(
         engine.addSystem(system)
 
         connections.forEach { c ->
-            system.addConnection(c.toSlaveConnection(system.slaves))
+            engine.addConnection(c.toSlaveConnection(system.slaves))
         }
 
     }

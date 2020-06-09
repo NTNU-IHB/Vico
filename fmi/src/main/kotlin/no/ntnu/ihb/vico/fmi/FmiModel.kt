@@ -16,10 +16,7 @@ class FmiModel private constructor(
 
     constructor(file: File) : this(AbstractFmu.from(file).asCoSimulationFmu())
 
-    val fmiModelDescription: CoSimulationModelDescription
-        get() = fmu.modelDescription
-
-    override val modelDescription
+    override val modelDescription: CoSimulationModelDescription
         get() = fmu.modelDescription
 
     override fun instantiate(instanceName: String): SlaveInstance {

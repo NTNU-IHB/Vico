@@ -3,7 +3,6 @@ package no.ntnu.ihb.vico.chart
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveSystem
-import no.ntnu.ihb.vico.VariableIdentifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

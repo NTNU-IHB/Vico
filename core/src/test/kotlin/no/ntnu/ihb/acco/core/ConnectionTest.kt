@@ -1,42 +1,48 @@
 package no.ntnu.ihb.acco.core
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 
 internal class ConnectionTest {
 
-    class ValueComponent(var value: Double = 0.0) : Component
+    class ValueComponent(var value: Double = 0.0) : Component() {
+        init {
+            registerVariable("value", RealLambdaVar(1,
+                getter = { it[0] = value },
+                setter = { value = it[0] }
+            ))
+        }
+    }
 
     @Test
     fun test() {
 
+        val someValue = 99.0
+
         Engine().use { engine ->
 
-            val sourceEntity = Entity("source").addComponent(ValueComponent(99.9))
+            val sourceEntity = Entity("source").addComponent(ValueComponent(someValue))
             engine.addEntity(sourceEntity)
 
-            val source = object : Source<Double>(sourceEntity.getComponent(ValueComponent::class.java)) {
-                override fun get(): Double {
-                    return sourceEntity.getComponent(ValueComponent::class.java).value
-                }
-            }
+            val sourceConnector = RealConnector(
+                sourceEntity.getComponent(ValueComponent::class.java), "value"
+            )
 
             val sinkEntity = Entity("sink").addComponent(ValueComponent())
             engine.addEntity(sinkEntity)
 
-            val sink = object : Sink<Double>(sinkEntity.getComponent(ValueComponent::class.java)) {
-                override fun set(value: Double) {
-                    sinkEntity.getComponent(ValueComponent::class.java).value = value
-                }
-            }
+            val sinkConnector = RealConnector(
+                sinkEntity.getComponent(ValueComponent::class.java), "value"
+            )
 
             val connections = ConnectionManager()
             engine.addSystem(connections)
-            connections.add(ScalarConnection(source, sink))
+            connections.addConnection(ScalarConnection(sourceConnector, sinkConnector))
 
             engine.init()
 
-            println((sink.component as ValueComponent).value)
+            Assertions.assertEquals(someValue, (sinkConnector.component as ValueComponent).value)
 
 
         }

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.chart
 
-import no.ntnu.ihb.vico.VariableIdentifier
 import no.ntnu.ihb.vico.chart.jaxb.TChartConfig
 import no.ntnu.ihb.vico.chart.jaxb.TTimeSeriesChart
 import no.ntnu.ihb.vico.chart.jaxb.TXYSeriesChart

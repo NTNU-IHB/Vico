@@ -12,7 +12,6 @@ class SystemManager(
 
     val systems = mutableListOf<BaseSystem>()
     private val systemMap: MutableMap<Class<out BaseSystem>, BaseSystem> = mutableMapOf()
-    private val eventSystems = mutableListOf<EventSystem>()
     private val manipulators = TreeMap<Long, MutableList<ManipulationSystem>>(Comparator { o1, o2 -> o2.compareTo(o1) })
 
     @Suppress("UNCHECKED_CAST")
@@ -63,7 +62,7 @@ class SystemManager(
     private fun internalAdd(system: BaseSystem) {
 
         when (system) {
-            is EventSystem -> eventSystems.add(system)
+            is EventSystem -> Unit
             is ManipulationSystem -> {
                 manipulators.computeIfAbsent(system.decimationFactor) {
                     mutableListOf()
@@ -72,6 +71,7 @@ class SystemManager(
         }
 
         systems.add(system)
+        systems.sort()
         systemMap[system::class.java] = system
         system.addedToEngine(engine)
     }
@@ -83,7 +83,7 @@ class SystemManager(
     private fun internalRemove(systemClass: Class<out BaseSystem>) {
         systemMap.remove(systemClass)?.also { system ->
             when (system) {
-                is EventSystem -> eventSystems.remove(system)
+                is EventSystem -> Unit
                 is ManipulationSystem -> manipulators[system.decimationFactor]?.remove(system)
             }
             systems.remove(system)

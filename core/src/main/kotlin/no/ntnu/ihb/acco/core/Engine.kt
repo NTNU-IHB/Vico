@@ -21,19 +21,16 @@ class Engine @JvmOverloads constructor(
     private val closed = AtomicBoolean()
     private val queue: Queue<() -> Unit> = ArrayDeque()
 
-    val entityManager = EntityManager(this)
-    val systemManager = SystemManager(this)
-
-    private val connections = mutableListOf<Connection<*, *>>()
+    private val entityManager = EntityManager(this)
+    private val systemManager = SystemManager(this)
+    private val connectionManager = ConnectionManager(this)
 
     constructor(baseStepSize: Double) : this(null, baseStepSize)
 
     fun init() {
         if (!initialized.getAndSet(true)) {
             systemManager.initialize(currentTime)
-            connections.forEach {
-                it.transferData()
-            }
+            connectionManager.update()
         }
     }
 
@@ -50,18 +47,13 @@ class Engine @JvmOverloads constructor(
             currentTime += systemManager.step(currentTime, baseStepSize)
             iterations++
 
-            connections.forEach {
-                it.transferData()
-            }
+            connectionManager.update()
 
             emptyQueue()
         }
 
     }
 
-    fun addConnection(connection: Connection<*, *>) {
-        connections.add(connection)
-    }
 
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
 
@@ -75,6 +67,8 @@ class Engine @JvmOverloads constructor(
     fun addEntity(entity: Entity, vararg entities: Entity) = entityManager.addEntity(entity, *entities)
     fun removeEntity(entity: Entity, vararg entities: Entity) = entityManager.removeEntity(entity, *entities)
 
+    fun addConnection(connection: Connection) = connectionManager.addConnection(connection)
+    fun updateConnection(key: Component) = connectionManager.updateConnection(key)
 
     internal fun safeContext(task: () -> Unit) {
         if (initialized.get()) {

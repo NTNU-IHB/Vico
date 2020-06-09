@@ -3,7 +3,6 @@ package no.ntnu.ihb.vico.chart
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveComponent
-import no.ntnu.ihb.vico.VariableIdentifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -36,21 +35,42 @@ class TimeSeriesDrawer internal constructor(
         }
 
         fun registerSeries(componentName: String, variableName: String, modifier: (Double) -> Double) = apply {
-            registerSeries(VariableIdentifier(componentName, variableName, modifier))
+            registerSeries(
+                VariableIdentifier(
+                    componentName,
+                    variableName,
+                    modifier
+                )
+            )
         }
 
         fun registerSeries(componentName: String, variableName: String, vararg additionalVariableNames: String) =
             apply {
-                registerSeries(VariableIdentifier(componentName, variableName))
+                registerSeries(
+                    VariableIdentifier(
+                        componentName,
+                        variableName
+                    )
+                )
                 for (additionalVariableName in additionalVariableNames) {
-                    registerSeries(VariableIdentifier(componentName, additionalVariableName))
+                    registerSeries(
+                        VariableIdentifier(
+                            componentName,
+                            additionalVariableName
+                        )
+                    )
                 }
             }
 
         fun registerSeries(componentName: String, variableNames: List<String>) = apply {
             require(variableNames.isNotEmpty())
             for (additionalVariableName in variableNames) {
-                registerSeries(VariableIdentifier(componentName, additionalVariableName))
+                registerSeries(
+                    VariableIdentifier(
+                        componentName,
+                        additionalVariableName
+                    )
+                )
             }
         }
 

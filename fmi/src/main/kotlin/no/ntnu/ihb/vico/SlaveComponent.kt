@@ -2,7 +2,7 @@ package no.ntnu.ihb.vico
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.ntnu.ihb.acco.core.Component
+import no.ntnu.ihb.acco.core.*
 import no.ntnu.ihb.fmi4j.*
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
@@ -21,7 +21,7 @@ private typealias Cache<E> = HashMap<ValueReference, E>
 class SlaveComponent(
     private val slave: SlaveInstance,
     val stepSizeHint: Double? = null
-) : SlaveInstance by slave, Component {
+) : SlaveInstance by slave, Component() {
 
     private var initialized = false
     var stepCount = 0L
@@ -48,6 +48,39 @@ class SlaveComponent(
     private val overriddenStrings = mutableMapOf<ValueReference, String>()
 
     private val parameterSets = mutableSetOf<ParameterSet>()
+
+    init {
+
+        modelVariables.integers.forEach { int ->
+            val vr = longArrayOf(int.valueReference)
+            registerVariable(int.name, IntLambdaVar(1,
+                getter = { slave.readInteger(vr, it) },
+                setter = { slave.writeInteger(vr, it) }
+            ))
+        }
+        modelVariables.reals.forEach { real ->
+            val vr = longArrayOf(real.valueReference)
+            registerVariable(real.name, RealLambdaVar(1,
+                getter = { slave.readReal(vr, it) },
+                setter = { slave.writeReal(vr, it) }
+            ))
+        }
+        modelVariables.strings.forEach { real ->
+            val vr = longArrayOf(real.valueReference)
+            registerVariable(real.name, StrLambdaVar(1,
+                getter = { slave.readString(vr, it) },
+                setter = { slave.writeString(vr, it) }
+            ))
+        }
+        modelVariables.booleans.forEach { real ->
+            val vr = longArrayOf(real.valueReference)
+            registerVariable(real.name, BoolLambdaVar(1,
+                getter = { slave.readBoolean(vr, it) },
+                setter = { slave.writeBoolean(vr, it) }
+            ))
+        }
+
+    }
 
     fun getParameterSet(name: String): ParameterSet? {
         return parameterSets.firstOrNull { it.name == name }
@@ -268,14 +301,14 @@ class SlaveComponent(
 
     fun getVariablesMarkedForReading(): List<ScalarVariable> {
         val modelVariables = modelDescription.modelVariables
-        return integerVariablesToFetch.map {
-            modelVariables.getByValueReference(it, VariableType.INTEGER).first()
-        } + realVariablesToFetch.map {
-            modelVariables.getByValueReference(it, VariableType.REAL).first()
-        } + booleanVariablesToFetch.map {
-            modelVariables.getByValueReference(it, VariableType.BOOLEAN).first()
-        } + stringVariablesToFetch.map {
-            modelVariables.getByValueReference(it, VariableType.STRING).first()
+        return integerVariablesToFetch.mapNotNull {
+            modelVariables.getByValueReference(it, VariableType.INTEGER).firstOrNull()
+        } + realVariablesToFetch.mapNotNull {
+            modelVariables.getByValueReference(it, VariableType.REAL).firstOrNull()
+        } + booleanVariablesToFetch.mapNotNull {
+            modelVariables.getByValueReference(it, VariableType.BOOLEAN).firstOrNull()
+        } + stringVariablesToFetch.mapNotNull {
+            modelVariables.getByValueReference(it, VariableType.STRING).firstOrNull()
         }
     }
 

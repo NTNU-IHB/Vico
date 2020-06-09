@@ -25,7 +25,7 @@ import javax.xml.bind.JAXB
 class SlaveLoggerSystem(
     private val logConfig: TLogConfig? = null,
     targetDir: File? = null
-) : EventSystem(Family.all(SlaveComponent::class.java).build()) {
+) : EventSystem(Family.all(SlaveComponent::class.java).build(), 99) {
 
     var separator: String = ", "
     var decimalPoints: Int = 6

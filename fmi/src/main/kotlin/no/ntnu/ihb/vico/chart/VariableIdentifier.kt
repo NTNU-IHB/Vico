@@ -1,4 +1,4 @@
-package no.ntnu.ihb.vico
+package no.ntnu.ihb.vico.chart
 
 data class VariableIdentifier @JvmOverloads constructor(
     val componentName: String,

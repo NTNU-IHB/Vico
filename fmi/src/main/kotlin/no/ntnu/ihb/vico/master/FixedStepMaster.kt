@@ -1,7 +1,6 @@
 package no.ntnu.ihb.vico.master
 
 import no.ntnu.ihb.vico.SlaveComponent
-import no.ntnu.ihb.vico.SlaveConnections
 import no.ntnu.ihb.vico.SlaveInitCallback
 import no.ntnu.ihb.vico.SlaveStepCallback
 import org.slf4j.Logger
@@ -40,7 +39,6 @@ class FixedStepMaster : MasterAlgorithm() {
     override fun step(
         currentTime: Double,
         stepSize: Double,
-        connections: SlaveConnections,
         slaveStepCallback: SlaveStepCallback
     ) {
         val tNext = currentTime + stepSize

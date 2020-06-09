@@ -15,7 +15,7 @@ sealed class Connection<E : ScalarVariable>(
     var targetVariable: E
 ) {
 
-    abstract fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<E>
+    abstract fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<*>
 
 }
 
@@ -26,7 +26,7 @@ class IntegerConnection(
     targetVariable: IntegerVariable
 ) : Connection<IntegerVariable>(source, sourceVariable, target, targetVariable) {
 
-    override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<IntegerVariable> {
+    override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<*> {
         val sourceSlave = slaves.first { it.instanceName == source.instanceName }
         val targetSlave = slaves.first { it.instanceName == target.instanceName }
         return IntegerConnection(

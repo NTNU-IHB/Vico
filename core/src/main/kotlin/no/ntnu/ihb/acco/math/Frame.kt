@@ -3,26 +3,76 @@ package no.ntnu.ihb.acco.math
 import org.joml.*
 
 
-open class Frame {
+interface IFrame {
 
-    private var parent: Frame? = null
-    private val children = mutableListOf<Frame>()
+    val hasParent: Boolean
+
+    fun makeDirty()
+    fun setParent(parent: IFrame?)
+    fun add(child: IFrame)
+    fun remove(child: IFrame)
+
+    fun getLocalMatrix(store: Matrix4d = Matrix4d()): Matrix4d
+    fun getWorldMatrix(store: Matrix4d = Matrix4d()): Matrix4d
+    fun updateWorldMatrix()
+
+    fun getLocalTranslation(store: Vector3d = Vector3d()): Vector3d
+    fun getLocalQuaternion(store: Quaterniond = Quaterniond()): Quaterniond?
+    fun getTranslation(store: Vector3d = Vector3d()): Vector3d
+
+    fun getQuaternion(store: Quaterniond = Quaterniond()): Quaterniond
+    fun setLocalTranslation(x: Double, y: Double, z: Double)
+    fun setLocalTranslation(v: Vector3dc)
+    fun setLocalQuaternion(q: Quaterniondc)
+    fun setTranslation(x: Double, y: Double, z: Double)
+    fun setTranslation(v: Vector3dc)
+    fun setQuaternion(q: Quaterniondc)
+    fun applyMatrix(m: Matrix4dc)
+    fun preApplyMatrix(m: Matrix4dc)
+    fun setTransform(m: Matrix4dc)
+    fun setLocalTransform(m: Matrix4dc)
+    fun localToWorld(m: Matrix4dc): Matrix4d?
+    fun localPointToWorld(x: Double, y: Double, z: Double): Vector3d
+    fun localPointToWorld(v: Vector3dc): Vector3d
+    fun localVectorToWorld(x: Double, y: Double, z: Double): Vector3d
+    fun localVectorToWorld(v: Vector3dc?): Vector3d
+    fun localToWorld(q: Quaterniondc): Quaterniond
+    fun worldToLocal(m: Matrix4dc): Matrix4d
+    fun worldPointToLocal(v: Vector3dc): Vector3d
+    fun worldVectorToLocal(x: Double, y: Double, z: Double): Vector3d
+    fun worldVectorToLocal(v: Vector3dc): Vector3d
+    fun worldToLocal(q: Quaterniondc): Quaterniond
+    fun localTranslate(x: Double, y: Double, z: Double)
+    fun localTranslate(v: Vector3dc)
+    fun localTranslateX(x: Double)
+    fun localTranslateY(y: Double)
+    fun localTranslateZ(z: Double)
+    fun localRotate(q: Quaterniondc)
+    fun localRotateX(angle: Angle)
+    fun localRotateY(angle: Angle)
+    fun localRotateZ(angle: Angle)
+}
+
+open class Frame : IFrame {
+
+    private var parent: IFrame? = null
+    private val children = mutableListOf<IFrame>()
 
     private val localMatrix = Matrix4d()
     private val worldMatrix = Matrix4d()
 
     private var dirty = true
 
-    val hasParent: Boolean
+    override val hasParent: Boolean
         get() = parent != null
 
 
-    fun makeDirty() {
+    override fun makeDirty() {
         dirty = true
         children.forEach { it.makeDirty() }
     }
 
-    private fun setParent(parent: Frame?) {
+    override fun setParent(parent: IFrame?) {
         if (hasParent) {
             val w = getWorldMatrix(Matrix4d())
             this.parent = parent
@@ -33,31 +83,29 @@ open class Frame {
         }
     }
 
-    fun add(child: Frame) {
+    override fun add(child: IFrame) {
         children.add(child)
         child.setParent(this)
     }
 
-    fun remove(child: Frame) {
+    override fun remove(child: IFrame) {
         if (children.remove(child)) {
             child.setParent(null)
         }
     }
 
-    @JvmOverloads
-    fun getLocalMatrix(store: Matrix4d = Matrix4d()): Matrix4d {
+    override fun getLocalMatrix(store: Matrix4d): Matrix4d {
         return store.set(localMatrix)
     }
 
-    @JvmOverloads
-    fun getWorldMatrix(store: Matrix4d = Matrix4d()): Matrix4d {
+    override fun getWorldMatrix(store: Matrix4d): Matrix4d {
         if (dirty) {
             updateWorldMatrix()
         }
         return store.set(worldMatrix)
     }
 
-    private fun updateWorldMatrix() {
+    override fun updateWorldMatrix() {
         if (hasParent) {
             parent!!.getWorldMatrix(worldMatrix).mul(localMatrix)
         } else {
@@ -66,41 +114,37 @@ open class Frame {
         dirty = false
     }
 
-    @JvmOverloads
-    fun getLocalTranslation(store: Vector3d = Vector3d()): Vector3d {
+    override fun getLocalTranslation(store: Vector3d): Vector3d {
         return localMatrix.getTranslation(store)
     }
 
-    @JvmOverloads
-    fun getLocalQuaternion(store: Quaterniond = Quaterniond()): Quaterniond? {
+    override fun getLocalQuaternion(store: Quaterniond): Quaterniond? {
         return localMatrix.getNormalizedRotation(store)
     }
 
-    @JvmOverloads
-    fun getTranslation(store: Vector3d = Vector3d()): Vector3d {
+    override fun getTranslation(store: Vector3d): Vector3d {
         return getWorldMatrix(Matrix4d()).getTranslation(store)
     }
 
-    @JvmOverloads
-    fun getQuaternion(store: Quaterniond = Quaterniond()): Quaterniond {
+    override fun getQuaternion(store: Quaterniond): Quaterniond {
         return getWorldMatrix(Matrix4d()).getNormalizedRotation(store)
     }
 
-    fun setLocalTranslation(x: Double, y: Double, z: Double) {
+    override fun setLocalTranslation(x: Double, y: Double, z: Double) {
         localMatrix.setTranslation(x, y, z)
         makeDirty()
     }
 
-    fun setLocalTranslation(v: Vector3dc) {
+    override fun setLocalTranslation(v: Vector3dc) {
         setLocalTranslation(v.x(), v.y(), v.z())
     }
 
-    fun setLocalQuaternion(q: Quaterniondc) {
+    override fun setLocalQuaternion(q: Quaterniondc) {
         localMatrix.set3x3(Matrix3d().set(q))
         makeDirty()
     }
 
-    fun setTranslation(x: Double, y: Double, z: Double) {
+    override fun setTranslation(x: Double, y: Double, z: Double) {
         if (!hasParent) {
             setLocalTranslation(x, y, z)
         } else {
@@ -108,7 +152,7 @@ open class Frame {
         }
     }
 
-    fun setTranslation(v: Vector3dc) {
+    override fun setTranslation(v: Vector3dc) {
         if (!hasParent) {
             setLocalTranslation(v)
         } else {
@@ -116,7 +160,7 @@ open class Frame {
         }
     }
 
-    fun setQuaternion(q: Quaterniondc) {
+    override fun setQuaternion(q: Quaterniondc) {
         if (!hasParent) {
             setLocalQuaternion(q)
         } else {
@@ -124,17 +168,17 @@ open class Frame {
         }
     }
 
-    fun applyMatrix(m: Matrix4dc) {
+    override fun applyMatrix(m: Matrix4dc) {
         localMatrix.mul(m)
         makeDirty()
     }
 
-    fun preApplyMatrix(m: Matrix4dc) {
+    override fun preApplyMatrix(m: Matrix4dc) {
         m.mul(localMatrix, localMatrix)
         makeDirty()
     }
 
-    fun setTransform(m: Matrix4dc) {
+    override fun setTransform(m: Matrix4dc) {
         if (!hasParent) {
             setLocalTransform(m)
         } else {
@@ -142,12 +186,12 @@ open class Frame {
         }
     }
 
-    fun setLocalTransform(m: Matrix4dc) {
+    override fun setLocalTransform(m: Matrix4dc) {
         localMatrix.set(m)
         makeDirty()
     }
 
-    fun localToWorld(m: Matrix4dc): Matrix4d? {
+    override fun localToWorld(m: Matrix4dc): Matrix4d? {
         return if (!hasParent) {
             Matrix4d(m)
         } else {
@@ -155,11 +199,11 @@ open class Frame {
         }
     }
 
-    fun localPointToWorld(x: Double, y: Double, z: Double): Vector3d {
+    override fun localPointToWorld(x: Double, y: Double, z: Double): Vector3d {
         return localPointToWorld(Vector3d(x, y, z))
     }
 
-    fun localPointToWorld(v: Vector3dc): Vector3d {
+    override fun localPointToWorld(v: Vector3dc): Vector3d {
         return if (!hasParent) {
             Vector3d(v)
         } else {
@@ -167,15 +211,15 @@ open class Frame {
         }
     }
 
-    fun localVectorToWorld(x: Double, y: Double, z: Double): Vector3d {
+    override fun localVectorToWorld(x: Double, y: Double, z: Double): Vector3d {
         return localVectorToWorld(Vector3d(x, y, z))
     }
 
-    fun localVectorToWorld(v: Vector3dc?): Vector3d {
+    override fun localVectorToWorld(v: Vector3dc?): Vector3d {
         return getQuaternion(Quaterniond()).transform(Vector3d(v))
     }
 
-    fun localToWorld(q: Quaterniondc): Quaterniond {
+    override fun localToWorld(q: Quaterniondc): Quaterniond {
         return if (!hasParent) {
             Quaterniond(q)
         } else {
@@ -183,7 +227,7 @@ open class Frame {
         }
     }
 
-    fun worldToLocal(m: Matrix4dc): Matrix4d {
+    override fun worldToLocal(m: Matrix4dc): Matrix4d {
         return if (!hasParent) {
             Matrix4d(m)
         } else {
@@ -191,7 +235,7 @@ open class Frame {
         }
     }
 
-    fun worldPointToLocal(v: Vector3dc): Vector3d {
+    override fun worldPointToLocal(v: Vector3dc): Vector3d {
         return if (!hasParent) {
             Vector3d(v)
         } else {
@@ -199,15 +243,15 @@ open class Frame {
         }
     }
 
-    fun worldVectorToLocal(x: Double, y: Double, z: Double): Vector3d {
+    override fun worldVectorToLocal(x: Double, y: Double, z: Double): Vector3d {
         return localVectorToWorld(Vector3d(x, y, z))
     }
 
-    fun worldVectorToLocal(v: Vector3dc?): Vector3d? {
+    override fun worldVectorToLocal(v: Vector3dc): Vector3d {
         return getQuaternion(Quaterniond()).transform(Vector3d(v))
     }
 
-    fun worldToLocal(q: Quaterniondc): Quaterniond {
+    override fun worldToLocal(q: Quaterniondc): Quaterniond {
         return if (!hasParent) {
             Quaterniond(q)
         } else {
@@ -215,39 +259,39 @@ open class Frame {
         }
     }
 
-    fun localTranslate(x: Double, y: Double, z: Double) {
+    override fun localTranslate(x: Double, y: Double, z: Double) {
         applyMatrix(Matrix4d().setTranslation(x, y, z))
     }
 
-    fun localTranslate(v: Vector3dc) {
+    override fun localTranslate(v: Vector3dc) {
         applyMatrix(Matrix4d().setTranslation(v))
     }
 
-    fun localTranslateX(x: Double) {
+    override fun localTranslateX(x: Double) {
         applyMatrix(Matrix4d().setTranslation(x, 0.0, 0.0))
     }
 
-    fun localTranslateY(y: Double) {
+    override fun localTranslateY(y: Double) {
         applyMatrix(Matrix4d().setTranslation(0.0, y, 0.0))
     }
 
-    fun localTranslateZ(z: Double) {
+    override fun localTranslateZ(z: Double) {
         applyMatrix(Matrix4d().setTranslation(0.0, 0.0, z))
     }
 
-    fun localRotate(q: Quaterniondc) {
+    override fun localRotate(q: Quaterniondc) {
         applyMatrix(Matrix4d().set(q))
     }
 
-    fun localRotateX(angle: Angle) {
+    override fun localRotateX(angle: Angle) {
         applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_X, angle.inRadians())))
     }
 
-    fun localRotateY(angle: Angle) {
+    override fun localRotateY(angle: Angle) {
         applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_Y, angle.inRadians())))
     }
 
-    fun localRotateZ(angle: Angle) {
+    override fun localRotateZ(angle: Angle) {
         applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_Z, angle.inRadians())))
     }
 

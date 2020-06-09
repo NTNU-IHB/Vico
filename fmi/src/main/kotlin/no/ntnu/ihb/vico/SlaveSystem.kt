@@ -12,10 +12,8 @@ import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.master.MasterAlgorithm
 
 typealias Slaves = List<SlaveComponent>
-typealias SlaveConnections = Map<SlaveComponent, List<SlaveConnection<*>>>
 typealias SlaveInitCallback = (SlaveComponent) -> Unit
 typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
-
 
 val Engine.slaveSystem: SlaveSystem
     get() = this.getSystem(SlaveSystem::class.java)
@@ -32,12 +30,6 @@ class SlaveSystem @JvmOverloads constructor(
     val slaves: List<SlaveComponent> = _slaves
 
     private val listeners: MutableList<SlaveSystemListener> = mutableListOf()
-    private val connections: MutableMap<SlaveComponent, MutableList<SlaveConnection<*>>> = mutableMapOf()
-
-    private val slaveStepCallback: SlaveStepCallback = {
-        listeners.forEach { l -> l.postSlaveStep(it.first, it.second) }
-        dispatchEvent(SLAVE_STEPPED, it)
-    }
 
     fun getSlave(name: String): SlaveComponent = _slaves.first { it.instanceName == name }
     fun getSlaveNoExcept(name: String): SlaveComponent? = _slaves.firstOrNull { it.instanceName == name }
@@ -64,22 +56,23 @@ class SlaveSystem @JvmOverloads constructor(
 
     override fun init(currentTime: Double) {
         algorithm.init(currentTime) { slave ->
-            connections[slave]?.forEach { c ->
-                c.transferData()
-            }
+            engine.updateConnection(slave)
         }
         listeners.forEach { l -> l.postInit(currentTime) }
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
-        algorithm.step(currentTime, stepSize, connections, slaveStepCallback)
+        algorithm.step(currentTime, stepSize) {
+            listeners.forEach { l -> l.postSlaveStep(it.first, it.second) }
+            dispatchEvent(SLAVE_STEPPED, it)
+        }
         listeners.forEach { l -> l.postStep(currentTime + stepSize) }
     }
 
-    fun addConnection(connection: SlaveConnection<*>) = apply {
+    /*fun addConnection(connection: SlaveConnection<*>) = apply {
         connections.computeIfAbsent(connection.sourceSlave) { mutableListOf() }.add(connection)
         connection.sourceSlave.markForReading(connection.sourceVariable.name)
-    }
+    }*/
 
     fun addListener(listener: SlaveSystemListener) = apply {
         listeners.add(listener).also {

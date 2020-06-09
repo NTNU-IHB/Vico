@@ -2,7 +2,10 @@ package no.ntnu.ihb.vico.master
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import no.ntnu.ihb.vico.*
+import no.ntnu.ihb.vico.SlaveComponent
+import no.ntnu.ihb.vico.SlaveInitCallback
+import no.ntnu.ihb.vico.SlaveStepCallback
+import no.ntnu.ihb.vico.Slaves
 
 abstract class MasterAlgorithm {
 
@@ -15,7 +18,6 @@ abstract class MasterAlgorithm {
     abstract fun step(
         currentTime: Double,
         stepSize: Double,
-        connections: SlaveConnections,
         slaveStepCallback: SlaveStepCallback
     )
 

@@ -1,28 +1,44 @@
 package no.ntnu.ihb.acco.core
 
-class ConnectionManager : EventSystem(Family.all) {
+class ConnectionManager(
+    engine: Engine
+) : EventListener {
 
-    private val connections: MutableMap<Component, MutableList<Connection<*, *>>> = mutableMapOf()
+    private val connections: MutableMap<Component, MutableList<Connection>> = mutableMapOf()
 
     init {
-        listen(Connection.CONNECTION_NEEDS_UPDATE)
+        engine.addEventListener(Connection.CONNECTION_NEEDS_UPDATE, this)
     }
 
-    override fun init(currentTime: Double) {
-        connections.values.flatten().forEach { it.transferData() }
+    fun update() {
+        forEachConnection { c ->
+            c.transferData()
+        }
     }
 
-    fun add(connection: Connection<*, *>) {
-        connections.computeIfAbsent(connection.source.component) {
+    fun updateConnection(key: Component) {
+        connections[key]?.forEach { it.transferData() }
+    }
+
+    fun addConnection(connection: Connection) {
+        connections.computeIfAbsent(connection.source) {
             mutableListOf()
         }.add(connection)
     }
 
-    override fun eventReceived(evt: Event) {
+    override fun invoke(evt: Event) {
         when (evt.type) {
             Connection.CONNECTION_NEEDS_UPDATE -> {
                 val key = evt.target<Component>()
                 connections[key]?.forEach { it.transferData() }
+            }
+        }
+    }
+
+    private inline fun forEachConnection(f: (Connection) -> Unit) {
+        connections.values.forEach { list ->
+            list.forEach {
+                f.invoke(it)
             }
         }
     }

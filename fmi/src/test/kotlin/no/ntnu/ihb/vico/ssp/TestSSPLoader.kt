@@ -3,25 +3,38 @@ package no.ntnu.ihb.vico.ssp
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.HeadlessEngineRunner
 import no.ntnu.ihb.vico.TestSsp
+import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.slaveSystem
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.io.File
 
 
 internal class TestSSPLoader {
 
     @Test
     fun testControlledDriveTrain() {
+
+        val resultDir = File("build/results/ControlledDriveTrain").also {
+            it.deleteRecursively()
+        }
+
         val structure = SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load()
         val stopTime = structure.defaultExperiment?.stopTime ?: 0.0
         Assertions.assertEquals(4.0, stopTime, 1e-6)
         Engine(1e-3).use { engine ->
+
+            engine.addSystem(SlaveLoggerSystem(null, resultDir))
             structure.apply(engine)
+
             HeadlessEngineRunner(engine).apply {
                 runFor(stopTime).get()
             }
 
         }
+
+        Assertions.assertEquals(3, resultDir.listFiles()?.size ?: 0)
+
     }
 
     @Test
