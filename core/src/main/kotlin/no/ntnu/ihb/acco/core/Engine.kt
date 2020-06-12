@@ -21,9 +21,9 @@ class Engine @JvmOverloads constructor(
     private val closed = AtomicBoolean()
     private val queue: Queue<() -> Unit> = ArrayDeque()
 
-    private val entityManager = EntityManager(this)
-    private val systemManager = SystemManager(this)
-    private val connectionManager = ConnectionManager(this)
+    internal val entityManager = EntityManager(this)
+    internal val systemManager = SystemManager(this)
+    internal val connectionManager = ConnectionManager(this)
 
     constructor(baseStepSize: Double) : this(null, baseStepSize)
 
@@ -89,5 +89,8 @@ class Engine @JvmOverloads constructor(
             systemManager.close()
         }
     }
+
+    fun getEntityByTag(tag: String) = getEntityByTag(Tag(tag))
+    fun getEntityByTag(tag: Tag) = entityManager.getEntityByTag(tag)
 
 }

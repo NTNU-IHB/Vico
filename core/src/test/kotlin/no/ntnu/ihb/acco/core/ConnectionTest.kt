@@ -9,8 +9,8 @@ internal class ConnectionTest {
     class ValueComponent(var value: Double = 0.0) : Component() {
         init {
             registerVariable("value", RealLambdaVar(1,
-                getter = { it[0] = value },
-                setter = { value = it[0] }
+                    getter = { it[0] = value },
+                    setter = { value = it[0] }
             ))
         }
     }
@@ -26,19 +26,17 @@ internal class ConnectionTest {
             engine.addEntity(sourceEntity)
 
             val sourceConnector = RealConnector(
-                sourceEntity.getComponent(ValueComponent::class.java), "value"
+                    sourceEntity.getComponent(ValueComponent::class.java), "value"
             )
 
             val sinkEntity = Entity("sink").addComponent(ValueComponent())
             engine.addEntity(sinkEntity)
 
             val sinkConnector = RealConnector(
-                sinkEntity.getComponent(ValueComponent::class.java), "value"
+                    sinkEntity.getComponent(ValueComponent::class.java), "value"
             )
 
-            val connections = ConnectionManager()
-            engine.addSystem(connections)
-            connections.addConnection(ScalarConnection(sourceConnector, sinkConnector))
+            engine.addConnection(ScalarConnection(sourceConnector, sinkConnector))
 
             engine.init()
 

@@ -9,24 +9,24 @@ internal class EntityManagerTest {
     @Test
     fun getByName() {
         Engine().use { engine ->
-            val e1 = engine.entityManager.createEntity("entity1")
-            val e2 = engine.entityManager.createEntity("entity2")
-            engine.entityManager.addEntity(e1, e2)
-            assertSame(e1, engine.entityManager.getEntityByName(e1.name))
-            assertSame(e2, engine.entityManager.getEntityByName(e2.name))
-            assertThrows<IllegalArgumentException> { engine.entityManager.getEntityByName("") }
+            val e1 = Entity("entity1")
+            val e2 = Entity("entity2")
+            engine.addEntity(e1, e2)
+            assertSame(e1, engine.getEntityByName(e1.name))
+            assertSame(e2, engine.getEntityByName(e2.name))
+            assertThrows<IllegalArgumentException> { engine.getEntityByName("") }
         }
     }
 
     @Test
     fun getByTag() {
         Engine().use { engine ->
-            val tag = "aTag"
-            val e1 = engine.entityManager.createEntity("entity1").apply { this.tag = tag }
-            val e2 = engine.entityManager.createEntity("entity2").apply { this.tag = tag }
-            engine.entityManager.addEntity(e1, e2)
-            assertEquals(listOf(e1, e2), engine.entityManager.getEntityByTag(tag))
-            assertTrue(engine.entityManager.getEntityByTag("").isEmpty())
+            val tag = Tag("aTag")
+            val e1 = Entity("entity1").apply { this.tag = tag }
+            val e2 = Entity("entity2").apply { this.tag = tag }
+            engine.addEntity(e1, e2)
+            assertEquals(listOf(e1, e2), engine.getEntityByTag(tag))
+            assertTrue(engine.getEntityByTag("").isEmpty())
         }
     }
 

@@ -1,10 +1,14 @@
 package no.ntnu.ihb.acco.core
 
+data class Tag(
+        val tag: String
+)
+
 class Entity(
-    val name: String
+        val name: String
 ) {
 
-    var tag: String? = null
+    var tag: Tag? = null
 
     private val mutableComponents = mutableListOf<Component>()
     val components: List<Component>
@@ -50,7 +54,7 @@ class Entity(
     @Suppress("UNCHECKED_CAST")
     fun <E : Component> getComponent(componentClass: Class<E>): E {
         return componentMap[componentClass] as E?
-            ?: throw IllegalStateException("Entity not have component: $componentClass")
+                ?: throw IllegalStateException("Entity not have component: $componentClass")
     }
 
     internal fun addComponentListener(listener: ComponentListener) {

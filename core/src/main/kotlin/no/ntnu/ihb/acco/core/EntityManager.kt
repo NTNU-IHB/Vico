@@ -20,7 +20,7 @@ class EntityManager internal constructor(
             ?: throw IllegalArgumentException("No entities named '$name' present!")
     }
 
-    fun getEntityByTag(tag: String): List<Entity> {
+    fun getEntityByTag(tag: Tag): List<Entity> {
         return entities.filter { it.tag == tag }
     }
 
