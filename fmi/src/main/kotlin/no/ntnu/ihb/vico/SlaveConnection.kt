@@ -64,7 +64,7 @@ class RealConnection(
     override fun transferData() {
         sourceSlave.readReal(vr.also { it[0] = sourceVariable.valueReference }, values)
         modifiers.forEach { m ->
-            values[0] = m.apply(values[0])
+            values[0] = m.invoke(values[0])
         }
         targetSlave.writeReal(vr.also { it[0] = targetVariable.valueReference }, values)
     }

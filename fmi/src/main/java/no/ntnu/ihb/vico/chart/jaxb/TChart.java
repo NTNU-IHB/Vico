@@ -40,8 +40,10 @@ public class TChart {
     /**
      * Gets the value of the xyseries property.
      *
-     * @return possible object is
-     * {@link TXYSeriesChart }
+     * @return
+     *     possible object is
+     *     {@link TXYSeriesChart }
+     *
      */
     public TXYSeriesChart getXyseries() {
         return xyseries;
@@ -50,8 +52,10 @@ public class TChart {
     /**
      * Sets the value of the xyseries property.
      *
-     * @param value allowed object is
-     *              {@link TXYSeriesChart }
+     * @param value
+     *     allowed object is
+     *     {@link TXYSeriesChart }
+     *
      */
     public void setXyseries(TXYSeriesChart value) {
         this.xyseries = value;
@@ -60,8 +64,10 @@ public class TChart {
     /**
      * Gets the value of the timeseries property.
      *
-     * @return possible object is
-     * {@link TTimeSeriesChart }
+     * @return
+     *     possible object is
+     *     {@link TTimeSeriesChart }
+     *
      */
     public TTimeSeriesChart getTimeseries() {
         return timeseries;
@@ -70,8 +76,10 @@ public class TChart {
     /**
      * Sets the value of the timeseries property.
      *
-     * @param value allowed object is
-     *              {@link TTimeSeriesChart }
+     * @param value
+     *     allowed object is
+     *     {@link TTimeSeriesChart }
+     *
      */
     public void setTimeseries(TTimeSeriesChart value) {
         this.timeseries = value;

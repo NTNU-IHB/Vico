@@ -42,10 +42,6 @@ class Entity(
         addComponent(transform)
     }
 
-    fun getVariable(name: String): Var<*> {
-        return (ints + reals + strs + bools)[name] ?: throw IllegalArgumentException()
-    }
-
     fun addComponent(component: Component) = apply {
         mutableComponents.add(component)
         componentMap[component::class.java] = component
@@ -67,9 +63,22 @@ class Entity(
     }
 
     fun removeComponent(componentClass: Class<out Component>): Component {
-        val component = componentMap[componentClass] ?: throw IllegalArgumentException()
+        val component = componentMap[componentClass]
+            ?: throw IllegalArgumentException("No component of type $componentClass registered!")
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
+
+        if (component is CosimulationComponent) {
+            component.variables.forEach { (name, `var`) ->
+                when (`var`) {
+                    is IntVar -> ints.remove(name)
+                    is RealVar -> reals.remove(name)
+                    is StrVar -> strs.remove(name)
+                    is BoolVar -> bools.remove(name)
+                }
+            }
+        }
+
         componentListeners.forEach { l ->
             l.componentRemoved(component)
         }
@@ -110,37 +119,20 @@ class Entity(
         this.componentListeners.remove(listener)
     }
 
-    fun readInteger(name: String, ref: IntArray) {
-        ints[name]?.read(ref) ?: throw IllegalStateException("No variable named '$name' of type Int registered!")
+    fun getIntegerVariable(name: String): IntVar {
+        return ints[name] ?: throw IllegalStateException("No variable named '$name' of type Int registered!")
     }
 
-    fun readReal(name: String, ref: DoubleArray) {
-        reals[name]?.read(ref) ?: throw IllegalStateException("No variable named '$name' of type Real registered!")
+    fun getRealVariable(name: String): RealVar {
+        return reals[name] ?: throw IllegalStateException("No variable named '$name' of type Real registered!")
     }
 
-    fun readString(name: String, ref: StringArray) {
-        strs[name]?.read(ref) ?: throw IllegalStateException("No variable named '$name' of type String registered!")
+    fun getStringVariable(name: String): StrVar {
+        return strs[name] ?: throw IllegalStateException("No variable named '$name' of type String registered!")
     }
 
-    fun readBoolean(name: String, ref: BooleanArray) {
-        bools[name]?.read(ref) ?: throw IllegalStateException("No variable named '$name' of type Boolean registered!")
-    }
-
-    fun writeInteger(name: String, ref: IntArray) {
-        ints[name]?.read(ref) ?: throw IllegalStateException("No variable named '$name' of type Int registered!")
-    }
-
-    fun writeReal(name: String, values: DoubleArray) {
-        reals[name]?.write(values) ?: throw IllegalStateException("No variable named '$name' of type Real registered!")
-    }
-
-    fun writeString(name: String, values: StringArray) {
-        strs[name]?.write(values) ?: throw IllegalStateException("No variable named '$name' of type String registered!")
-    }
-
-    fun writeBoolean(name: String, values: BooleanArray) {
-        bools[name]?.write(values)
-            ?: throw IllegalStateException("No variable named '$name' of type Boolean registered!")
+    fun getBooleanVariable(name: String): BoolVar {
+        return bools[name] ?: throw IllegalStateException("No variable named '$name' of type Boolean registered!")
     }
 
 }

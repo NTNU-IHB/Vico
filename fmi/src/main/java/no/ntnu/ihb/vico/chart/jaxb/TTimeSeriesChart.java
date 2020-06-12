@@ -54,8 +54,10 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the series property.
      *
-     * @return possible object is
-     * {@link TTimeSeries }
+     * @return
+     *     possible object is
+     *     {@link TTimeSeries }
+     *
      */
     public TTimeSeries getSeries() {
         return series;
@@ -64,8 +66,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the series property.
      *
-     * @param value allowed object is
-     *              {@link TTimeSeries }
+     * @param value
+     *     allowed object is
+     *     {@link TTimeSeries }
+     *
      */
     public void setSeries(TTimeSeries value) {
         this.series = value;
@@ -74,8 +78,10 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the title property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getTitle() {
         return title;
@@ -84,8 +90,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the title property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -94,8 +102,10 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the label property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getLabel() {
         return label;
@@ -104,8 +114,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the label property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setLabel(String value) {
         this.label = value;
@@ -114,12 +126,14 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the width property.
      *
-     * @return possible object is
-     * {@link Integer }
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *
      */
     public int getWidth() {
         if (width == null) {
-            return 800;
+            return  800;
         } else {
             return width;
         }
@@ -128,8 +142,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the width property.
      *
-     * @param value allowed object is
-     *              {@link Integer }
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *
      */
     public void setWidth(Integer value) {
         this.width = value;
@@ -138,12 +154,14 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the height property.
      *
-     * @return possible object is
-     * {@link Integer }
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *
      */
     public int getHeight() {
         if (height == null) {
-            return 640;
+            return  640;
         } else {
             return height;
         }
@@ -152,8 +170,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the height property.
      *
-     * @param value allowed object is
-     *              {@link Integer }
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *
      */
     public void setHeight(Integer value) {
         this.height = value;
@@ -162,12 +182,14 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the decimationFactor property.
      *
-     * @return possible object is
-     * {@link Integer }
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *
      */
     public int getDecimationFactor() {
         if (decimationFactor == null) {
-            return 1;
+            return  1;
         } else {
             return decimationFactor;
         }
@@ -176,8 +198,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the decimationFactor property.
      *
-     * @param value allowed object is
-     *              {@link Integer }
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *
      */
     public void setDecimationFactor(Integer value) {
         this.decimationFactor = value;
@@ -186,8 +210,10 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the maxDuration property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public Double getMaxDuration() {
         return maxDuration;
@@ -196,8 +222,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the maxDuration property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setMaxDuration(Double value) {
         this.maxDuration = value;
@@ -206,8 +234,10 @@ public class TTimeSeriesChart {
     /**
      * Gets the value of the live property.
      *
-     * @return possible object is
-     * {@link Boolean }
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *
      */
     public boolean isLive() {
         if (live == null) {
@@ -220,8 +250,10 @@ public class TTimeSeriesChart {
     /**
      * Sets the value of the live property.
      *
-     * @param value allowed object is
-     *              {@link Boolean }
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *
      */
     public void setLive(Boolean value) {
         this.live = value;

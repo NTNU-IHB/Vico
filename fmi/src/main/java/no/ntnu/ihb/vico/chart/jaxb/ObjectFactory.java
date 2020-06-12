@@ -27,12 +27,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.vico.chart.jaxb
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link TChartConfig }
+     *
      */
     public TChartConfig createTChartConfig() {
         return new TChartConfig();
@@ -40,6 +42,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TXYSeries }
+     *
      */
     public TXYSeries createTXYSeries() {
         return new TXYSeries();
@@ -47,6 +50,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TComponent }
+     *
      */
     public TComponent createTComponent() {
         return new TComponent();
@@ -54,9 +58,17 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TVariable }
+     *
      */
     public TVariable createTVariable() {
         return new TVariable();
+    }
+
+    /**
+     * Create an instance of {@link TLinearTransform }
+     */
+    public TLinearTransform createTLinearTransform() {
+        return new TLinearTransform();
     }
 
     /**
@@ -75,6 +87,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TVariableIdentifier }
+     *
      */
     public TVariableIdentifier createTVariableIdentifier() {
         return new TVariableIdentifier();
@@ -82,6 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TChart }
+     *
      */
     public TChart createTChart() {
         return new TChart();
@@ -89,6 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TTimeSeriesChart }
+     *
      */
     public TTimeSeriesChart createTTimeSeriesChart() {
         return new TTimeSeriesChart();
@@ -96,6 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TChartConfig }{@code >}}
+     *
      */
     @XmlElementDecl(namespace = "http://github.com/NTNU-IHB/Vico/schema/ChartConfig", name = "ChartConfig")
     public JAXBElement<TChartConfig> createChartConfig(TChartConfig value) {

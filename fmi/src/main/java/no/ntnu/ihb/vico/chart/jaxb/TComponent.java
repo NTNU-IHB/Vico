@@ -54,6 +54,8 @@ public class TComponent {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TVariable }
+     *
+     *
      */
     public List<TVariable> getVariable() {
         if (variable == null) {
@@ -75,8 +77,10 @@ public class TComponent {
     /**
      * Sets the value of the name property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;

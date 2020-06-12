@@ -35,8 +35,10 @@ public class TVariableIdentifier {
     /**
      * Gets the value of the component property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getComponent() {
         return component;
@@ -45,8 +47,10 @@ public class TVariableIdentifier {
     /**
      * Sets the value of the component property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setComponent(String value) {
         this.component = value;
@@ -55,8 +59,10 @@ public class TVariableIdentifier {
     /**
      * Gets the value of the variable property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getVariable() {
         return variable;
@@ -65,8 +71,10 @@ public class TVariableIdentifier {
     /**
      * Sets the value of the variable property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setVariable(String value) {
         this.variable = value;

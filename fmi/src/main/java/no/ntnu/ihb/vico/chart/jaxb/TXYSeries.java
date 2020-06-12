@@ -40,8 +40,10 @@ public class TXYSeries {
     /**
      * Gets the value of the x property.
      *
-     * @return possible object is
-     * {@link TVariableIdentifier }
+     * @return
+     *     possible object is
+     *     {@link TVariableIdentifier }
+     *
      */
     public TVariableIdentifier getX() {
         return x;
@@ -50,8 +52,10 @@ public class TXYSeries {
     /**
      * Sets the value of the x property.
      *
-     * @param value allowed object is
-     *              {@link TVariableIdentifier }
+     * @param value
+     *     allowed object is
+     *     {@link TVariableIdentifier }
+     *
      */
     public void setX(TVariableIdentifier value) {
         this.x = value;
@@ -60,8 +64,10 @@ public class TXYSeries {
     /**
      * Gets the value of the y property.
      *
-     * @return possible object is
-     * {@link TVariableIdentifier }
+     * @return
+     *     possible object is
+     *     {@link TVariableIdentifier }
+     *
      */
     public TVariableIdentifier getY() {
         return y;
@@ -70,8 +76,10 @@ public class TXYSeries {
     /**
      * Sets the value of the y property.
      *
-     * @param value allowed object is
-     *              {@link TVariableIdentifier }
+     * @param value
+     *     allowed object is
+     *     {@link TVariableIdentifier }
+     *
      */
     public void setY(TVariableIdentifier value) {
         this.y = value;
@@ -80,8 +88,10 @@ public class TXYSeries {
     /**
      * Gets the value of the name property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -90,8 +100,10 @@ public class TXYSeries {
     /**
      * Sets the value of the name property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;

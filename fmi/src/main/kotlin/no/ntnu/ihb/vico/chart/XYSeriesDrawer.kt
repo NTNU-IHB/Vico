@@ -16,7 +16,7 @@ class XYSeriesDrawer internal constructor(
     decimationFactor: Long,
     private val maxLength: Int?,
     private val handles: MutableMap<String, Pair<ValueProvider, ValueProvider>>,
-    private val seriesInfos: MutableMap<String, Pair<VariableIdentifier, VariableIdentifier>>
+    private val seriesInfos: MutableMap<String, Pair<VariableHandle, VariableHandle>>
 ) : AbstractDrawer(title, xLabel, yLabel, width, height, live, decimationFactor) {
 
     class Builder(
@@ -27,7 +27,7 @@ class XYSeriesDrawer internal constructor(
 
         private var maxLength: Int? = null
         private val handles = mutableMapOf<String, Pair<ValueProvider, ValueProvider>>()
-        private var seriesInfo = mutableMapOf<String, Pair<VariableIdentifier, VariableIdentifier>>()
+        private var seriesInfo = mutableMapOf<String, Pair<VariableHandle, VariableHandle>>()
 
         fun maxLength(value: Int?) = apply {
             value?.also {
@@ -40,7 +40,7 @@ class XYSeriesDrawer internal constructor(
             handles[name] = xProvider to yProvider
         }
 
-        fun registerSeries(name: String, x: VariableIdentifier, y: VariableIdentifier) = apply {
+        fun registerSeries(name: String, x: VariableHandle, y: VariableHandle) = apply {
             seriesInfo[name] = x to y
         }
 

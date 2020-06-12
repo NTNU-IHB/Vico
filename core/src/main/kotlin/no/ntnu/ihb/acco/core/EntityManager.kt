@@ -11,10 +11,6 @@ class EntityManager internal constructor(
     private val entityListeners: MutableList<EntityListener> = mutableListOf()
     private val families: MutableMap<Family, ObservableSet<Entity>> = mutableMapOf()
 
-    fun createEntity(name: String): Entity {
-        return Entity(name)
-    }
-
     fun getEntityByName(name: String): Entity {
         return entities.find { it.name == name }
             ?: throw IllegalArgumentException("No entities named '$name' present!")

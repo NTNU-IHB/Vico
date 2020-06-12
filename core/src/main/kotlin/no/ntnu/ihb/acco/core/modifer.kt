@@ -2,7 +2,7 @@ package no.ntnu.ihb.acco.core
 
 interface RealModifier {
 
-    fun apply(originalValue: Double): Double
+    fun invoke(originalValue: Double): Double
 
 }
 
@@ -11,7 +11,7 @@ data class LinearTransform(
     val offset: Double
 ) : RealModifier {
 
-    override fun apply(originalValue: Double): Double {
+    override fun invoke(originalValue: Double): Double {
         return factor * originalValue + offset
     }
 }

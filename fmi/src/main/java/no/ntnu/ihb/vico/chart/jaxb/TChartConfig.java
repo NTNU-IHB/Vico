@@ -54,6 +54,8 @@ public class TChartConfig {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TChart }
+     *
+     *
      */
     public List<TChart> getChart() {
         if (chart == null) {

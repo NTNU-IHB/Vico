@@ -1,6 +1,8 @@
 package no.ntnu.ihb.vico.chart
 
+import no.ntnu.ihb.acco.core.LinearTransform
 import no.ntnu.ihb.vico.chart.jaxb.TChartConfig
+import no.ntnu.ihb.vico.chart.jaxb.TLinearTransform
 import no.ntnu.ihb.vico.chart.jaxb.TTimeSeriesChart
 import no.ntnu.ihb.vico.chart.jaxb.TXYSeriesChart
 import java.io.File
@@ -38,7 +40,9 @@ object ChartLoader {
             isLive(chart.isLive)
             maxDuration(chart.maxDuration)
             chart.series.component.forEach { component ->
-                registerSeries(component.name, component.variable.map { v -> v.name })
+                component.variable.forEach {
+                    registerSeries(VariableHandle(component.name, it.name, it.linearTransformation?.convert()))
+                }
             }
         }.build()
     }
@@ -58,11 +62,15 @@ object ChartLoader {
             chart.series.forEach {
                 registerSeries(
                     it.name,
-                    VariableIdentifier(it.x.component, it.x.variable),
-                    VariableIdentifier(it.y.component, it.y.variable)
+                    VariableHandle(it.x.component, it.x.variable),
+                    VariableHandle(it.y.component, it.y.variable)
                 )
             }
         }.build()
     }
 
+}
+
+private fun TLinearTransform.convert(): LinearTransform {
+    return LinearTransform(factor = factor, offset = offset)
 }

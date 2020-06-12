@@ -1,6 +1,7 @@
 package no.ntnu.ihb.vico.chart
 
 import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.RealModifier
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveComponent
 import org.slf4j.Logger
@@ -14,7 +15,7 @@ class TimeSeriesDrawer internal constructor(
     live: Boolean,
     decimationFactor: Long,
     private val maxDuration: Double?,
-    private val seriesInfos: MutableList<VariableIdentifier>,
+    private val seriesInfos: MutableList<VariableHandle>,
     private val handles: MutableMap<String, ValueProvider>
 ) : AbstractDrawer(title, "Time[s]", label, width, height, live, decimationFactor) {
 
@@ -25,7 +26,7 @@ class TimeSeriesDrawer internal constructor(
 
         private var maxDuration: Double? = null
         private val handles = mutableMapOf<String, ValueProvider>()
-        private var seriesInfo = mutableListOf<VariableIdentifier>()
+        private var seriesInfo = mutableListOf<VariableHandle>()
 
         fun maxDuration(value: Number?) = apply {
             value?.also {
@@ -34,9 +35,9 @@ class TimeSeriesDrawer internal constructor(
             this.maxDuration = value?.toDouble()
         }
 
-        fun registerSeries(componentName: String, variableName: String, modifier: (Double) -> Double) = apply {
+        fun registerSeries(componentName: String, variableName: String, modifier: RealModifier) = apply {
             registerSeries(
-                VariableIdentifier(
+                VariableHandle(
                     componentName,
                     variableName,
                     modifier
@@ -47,14 +48,14 @@ class TimeSeriesDrawer internal constructor(
         fun registerSeries(componentName: String, variableName: String, vararg additionalVariableNames: String) =
             apply {
                 registerSeries(
-                    VariableIdentifier(
+                    VariableHandle(
                         componentName,
                         variableName
                     )
                 )
                 for (additionalVariableName in additionalVariableNames) {
                     registerSeries(
-                        VariableIdentifier(
+                        VariableHandle(
                             componentName,
                             additionalVariableName
                         )
@@ -66,7 +67,7 @@ class TimeSeriesDrawer internal constructor(
             require(variableNames.isNotEmpty())
             for (additionalVariableName in variableNames) {
                 registerSeries(
-                    VariableIdentifier(
+                    VariableHandle(
                         componentName,
                         additionalVariableName
                     )
@@ -74,8 +75,8 @@ class TimeSeriesDrawer internal constructor(
             }
         }
 
-        fun registerSeries(variableIdentifier: VariableIdentifier) = apply {
-            seriesInfo.add(variableIdentifier)
+        fun registerSeries(variableHandle: VariableHandle) = apply {
+            seriesInfo.add(variableHandle)
         }
 
         fun registerSeries(name: String, yProvider: ValueProvider) = apply {
@@ -102,7 +103,7 @@ class TimeSeriesDrawer internal constructor(
     override fun entityAdded(entity: Entity) {
 
         val slave = entity.getComponent(SlaveComponent::class.java)
-        val invalidVariableIdentifiers = mutableListOf<VariableIdentifier>()
+        val invalidVariableIdentifiers = mutableListOf<VariableHandle>()
         seriesInfos.forEach {
 
             val (componentName, variableName, modifier) = it

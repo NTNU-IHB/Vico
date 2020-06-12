@@ -72,7 +72,15 @@
     </xs:complexType>
 
     <xs:complexType name="TVariable">
+        <xs:sequence>
+            <xs:element name="linearTransformation" type="vico:TLinearTransform" minOccurs="0"/>
+        </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TLinearTransform">
+        <xs:attribute name="offset" type="xs:double" default="0"/>
+        <xs:attribute name="factor" type="xs:double" default="1"/>
     </xs:complexType>
 
 
