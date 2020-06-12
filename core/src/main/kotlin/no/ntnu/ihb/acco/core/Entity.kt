@@ -98,6 +98,10 @@ class Entity(
             ?: throw IllegalStateException("Entity does not have component: $componentClass")
     }
 
+    inline fun <reified E : Component> getComponent(): E {
+        return getComponent(E::class.java)
+    }
+
     internal fun addComponentListener(listener: ComponentListener) {
         this.componentListeners.add(listener)
     }

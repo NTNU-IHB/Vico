@@ -83,11 +83,11 @@ fun main() {
         }
 
         Thread.sleep(1000)
-        engine.getEntityByName("e1").getComponent(GeometryComponent::class.java).visible = false
-        engine.getEntityByName("e2").getComponent(GeometryComponent::class.java).wireframe = true
+        engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
+        engine.getEntityByName("e2").getComponent<GeometryComponent>().wireframe = true
         Thread.sleep(1000)
-        engine.getEntityByName("e1").getComponent(GeometryComponent::class.java).visible = true
-        engine.getEntityByName("e2").getComponent(GeometryComponent::class.java).wireframe = false
+        engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
+        engine.getEntityByName("e2").getComponent<GeometryComponent>().wireframe = false
 
     }
 
