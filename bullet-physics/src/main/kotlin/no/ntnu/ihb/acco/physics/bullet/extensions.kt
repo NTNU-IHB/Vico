@@ -15,7 +15,7 @@ import org.joml.*
 fun ColliderComponent.convert(): btCollisionShape {
     return when (val shape = shape) {
         is BoxShape -> {
-            btBoxShape(Vector3(shape.height, shape.height, shape.depth))
+            btBoxShape(Vector3(shape.width, shape.height, shape.depth))
         }
         is PlaneShape -> {
             btBoxShape(Vector3(shape.height, shape.height, 0.1f))

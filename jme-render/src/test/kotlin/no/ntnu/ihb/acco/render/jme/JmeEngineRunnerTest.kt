@@ -38,8 +38,8 @@ private class SineMoverSystem : IteratingSystem(
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-        val sc = entity.getComponent(SineMoverComponent::class.java)
-        val tc = entity.getComponent(TransformComponent::class.java)
+        val tc = entity.transform
+        val sc = entity.getComponent<SineMoverComponent>()
         tc.setLocalTranslation(tc.getLocalTranslation(tmp).apply { x = sc.compute(currentTime) })
 
     }
@@ -48,9 +48,9 @@ private class SineMoverSystem : IteratingSystem(
 
 private fun e1(): Entity {
     return Entity("e1").also { e ->
-        e.addComponent(TransformComponent().apply {
-            setLocalTranslation(-1.0, 0.0, 0.0)
-        })
+
+        e.transform.setLocalTranslation(-1.0, 0.0, 0.0)
+
         e.addComponent(GeometryComponent(BoxShape()).apply {
             color.set(Color.green)
         })
@@ -64,9 +64,9 @@ fun main() {
 
         engine.addEntity(e1())
         Entity("e2").also { e ->
-            e.addComponent(TransformComponent().apply {
-                setLocalTranslation(1.0, 0.0, 0.0)
-            })
+
+            e.transform.setLocalTranslation(1.0, 0.0, 0.0)
+
             e.addComponent(GeometryComponent(SphereShape()).apply {
                 color.set(Color.yellow)
             })

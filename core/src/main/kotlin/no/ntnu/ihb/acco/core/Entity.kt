@@ -43,8 +43,14 @@ class Entity(
     }
 
     fun addComponent(component: Component) = apply {
+
+        val componentClass = component::class.java
+        require(componentClass !in componentMap) {
+            "Entity $hierarchicalName already contains component of type $componentClass!"
+        }
+
         mutableComponents.add(component)
-        componentMap[component::class.java] = component
+        componentMap[componentClass] = component
 
         if (component is CosimulationComponent) {
             component.variables.forEach { (name, `var`) ->

@@ -9,7 +9,7 @@ import no.ntnu.ihb.acco.math.fromArray
 import no.ntnu.ihb.acco.math.toArray
 import org.joml.Vector3d
 
-class TransformComponent : IFrame by Frame(), CosimulationComponent {
+class TransformComponent internal constructor() : IFrame by Frame(), CosimulationComponent {
 
     override val variables: Map<String, Var<*>> by lazy {
         val tmp = Vector3d()

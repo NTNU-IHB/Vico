@@ -26,6 +26,10 @@ class RigidBodyComponent @JvmOverloads constructor(
             "linearVelocity" to RealLambdaVar(3,
                 getter = { ref -> linearVelocity.toArray(ref) },
                 setter = { values -> linearVelocity.fromArray(values) }
+            ),
+            "angularVelocity" to RealLambdaVar(3,
+                getter = { ref -> angularVelocity.toArray(ref) },
+                setter = { values -> angularVelocity.fromArray(values) }
             )
         )
     }

@@ -21,7 +21,6 @@ class JmeEngineRunner(
 
     init {
         app.start()
-        engine.addSystem(app.renderSystem)
     }
 
     override fun start() {
@@ -53,9 +52,10 @@ class JmeEngineRunner(
         }
 
         override fun simpleInitApp() {
+
             super.setPauseOnLostFocus(false)
             super.flyCam.isDragToRotate = true
-            super.rootNode.attachChild(root)
+
             super.flyCam.moveSpeed = 10f
 
             super.viewPort.backgroundColor.set(0.6f, 0.7f, 1f, 1f)
@@ -66,9 +66,11 @@ class JmeEngineRunner(
                 }
             })
 
+            super.rootNode.attachChild(root)
             setupLights()
 
             renderSystem = JmeRenderSystem(root, assetManager)
+            engine.addSystem(renderSystem)
 
             lock.withLock {
                 initialized.signalAll()

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico
 
-import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.render.GeometryComponent
@@ -23,9 +22,6 @@ fun main() {
                 slaveEntity.addComponent(this)
             }
             SlaveTransform(yRef = "h").apply {
-                slaveEntity.addComponent(this)
-            }
-            TransformComponent().apply {
                 slaveEntity.addComponent(this)
             }
             GeometryComponent(SphereShape()).apply {

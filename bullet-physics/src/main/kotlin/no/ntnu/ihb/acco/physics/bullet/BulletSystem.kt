@@ -42,7 +42,7 @@ class BulletSystem : SimulationSystem(
             sequentialImpulseConstraintSolver,
             defaultCollisionConfiguration
         )
-        world.gravity = Vector3(0f, 0f, -9.81f)
+        world.gravity = Vector3(0f, -9.81f, 0f)
 
     }
 
