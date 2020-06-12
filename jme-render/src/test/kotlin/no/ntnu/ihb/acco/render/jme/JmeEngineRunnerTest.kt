@@ -1,7 +1,6 @@
 package no.ntnu.ihb.acco.render.jme
 
 import no.ntnu.ihb.acco.components.TransformComponent
-import no.ntnu.ihb.acco.components.transform
 import no.ntnu.ihb.acco.core.Component
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
@@ -20,7 +19,7 @@ private data class SineMoverComponent(
     var A: Double = 1.0,
     var f: Double = 0.1,
     var phi: Double = 0.0
-) : Component() {
+) : Component {
 
     fun compute(t: Double) = A * sin(TWO_PHI * f * t + phi)
 

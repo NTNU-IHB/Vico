@@ -6,7 +6,7 @@ class SlaveTransform(
     val xRef: String? = null,
     val yRef: String? = null,
     val zRef: String? = null
-) : Component() {
+) : Component {
 
     init {
         require(listOfNotNull(xRef, yRef, zRef).isNotEmpty())

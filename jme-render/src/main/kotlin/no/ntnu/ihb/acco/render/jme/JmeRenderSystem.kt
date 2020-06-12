@@ -17,13 +17,17 @@ internal class JmeRenderSystem(
     private val root: Node,
     private val assetManager: AssetManager
 ) : SimulationSystem(
-    Family.all(TransformComponent::class.java, GeometryComponent::class.java).build(), 1, Int.MAX_VALUE
+    Family.all(TransformComponent::class.java, GeometryComponent::class.java).build()
 ) {
 
     private val tmpVec = Vector3d()
     private val tmpQuat = Quaterniond()
     private val tmpMatrix = Matrix4d()
     private val map: MutableMap<Entity, RenderNode> = mutableMapOf()
+
+    init {
+        priority = Int.MAX_VALUE
+    }
 
     override fun entityAdded(entity: Entity) {
         map.computeIfAbsent(entity) {

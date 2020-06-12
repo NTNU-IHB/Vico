@@ -19,10 +19,8 @@ val Engine.slaveSystem: SlaveSystem
     get() = this.getSystem(SlaveSystem::class.java)
 
 class SlaveSystem @JvmOverloads constructor(
-    private val algorithm: MasterAlgorithm = FixedStepMaster(),
-    decimationFactor: Long = 1,
-    priority: Int = 0
-) : SimulationSystem(Family.all(SlaveComponent::class.java).build(), decimationFactor, priority) {
+    private val algorithm: MasterAlgorithm = FixedStepMaster()
+) : SimulationSystem(Family.all(SlaveComponent::class.java).build()) {
 
     var parameterSet: String = "default"
 

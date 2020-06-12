@@ -6,7 +6,7 @@ interface RealModifier {
 
 }
 
-class LinearTransform(
+data class LinearTransform(
     val factor: Double,
     val offset: Double
 ) : RealModifier {

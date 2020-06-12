@@ -5,4 +5,4 @@ import no.ntnu.ihb.acco.render.shape.Shape
 
 class ColliderComponent(
     val shape: Shape
-) : Component()
+) : Component

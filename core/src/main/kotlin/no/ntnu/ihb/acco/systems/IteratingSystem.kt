@@ -5,10 +5,8 @@ import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
 
 abstract class IteratingSystem(
-    family: Family,
-    decimationFactor: Long = 1,
-    priority: Int = 0
-) : SimulationSystem(family, decimationFactor, priority) {
+    family: Family
+) : SimulationSystem(family) {
 
     override fun step(currentTime: Double, stepSize: Double) {
         entities.forEach { e ->

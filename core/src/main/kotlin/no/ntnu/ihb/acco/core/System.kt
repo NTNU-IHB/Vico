@@ -4,11 +4,11 @@ import java.io.Closeable
 import java.util.*
 
 sealed class BaseSystem(
-    protected val family: Family,
-    priority: Int? = null
+    protected val family: Family
 ) : Comparable<BaseSystem>, Closeable {
 
-    val priority = priority ?: 0
+    var priority = 0
+        protected set
 
     var enabled = true
     private var _engine: Engine? = null
@@ -63,7 +63,7 @@ sealed class BaseSystem(
 abstract class EventSystem(
     family: Family,
     priority: Int? = null
-) : BaseSystem(family, priority), EventListener {
+) : BaseSystem(family), EventListener {
 
     private val listenQueue = ArrayDeque<String>()
 
@@ -92,12 +92,11 @@ abstract class EventSystem(
 }
 
 abstract class ManipulationSystem(
-    family: Family,
-    decimationFactor: Long? = null,
-    priority: Int? = null
-) : BaseSystem(family, priority) {
+    family: Family
+) : BaseSystem(family) {
 
-    val decimationFactor = decimationFactor ?: 1
+    var decimationFactor = 1L
+        protected set
 
     val interval: Double
         get() = engine.baseStepSize * decimationFactor
@@ -114,10 +113,8 @@ abstract class ManipulationSystem(
 }
 
 abstract class ObserverSystem(
-    family: Family,
-    decimationFactor: Long? = null,
-    priority: Int? = null
-) : ManipulationSystem(family, decimationFactor, priority) {
+    family: Family
+) : ManipulationSystem(family) {
 
     internal fun internalObserve(currentTime: Double) {
         if (enabled) {
@@ -129,11 +126,9 @@ abstract class ObserverSystem(
 
 }
 
-abstract class SimulationSystem @JvmOverloads constructor(
-    family: Family,
-    decimationFactor: Long? = null,
-    priority: Int? = null
-) : ManipulationSystem(family, decimationFactor, priority) {
+abstract class SimulationSystem(
+    family: Family
+) : ManipulationSystem(family) {
 
     internal fun internalStep(currentTime: Double, stepSize: Double) {
         if (enabled) {

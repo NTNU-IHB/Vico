@@ -7,13 +7,8 @@ import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.fmi4j.readReal
 import org.joml.Vector3d
 
-class SlaveTransformSystem(
-    decimationFactor: Long = 1,
-    priority: Int = 1
-) : SimulationSystem(
-    Family.all(SlaveComponent::class.java, TransformComponent::class.java, SlaveTransform::class.java).build(),
-    decimationFactor,
-    priority
+class SlaveTransformSystem : SimulationSystem(
+    Family.all(SlaveComponent::class.java, TransformComponent::class.java, SlaveTransform::class.java).build()
 ) {
 
     private val tmp = Vector3d()

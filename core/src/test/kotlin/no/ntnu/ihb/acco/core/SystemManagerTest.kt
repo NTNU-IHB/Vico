@@ -5,16 +5,15 @@ import org.junit.jupiter.api.Test
 
 internal class SystemManagerTest {
 
-    class ComponentA : Component()
+    class ComponentA : Component
 
     companion object {
         val family = Family.all(ComponentA::class.java).build()
     }
 
     abstract class TestSystem(
-        family: Family,
-        decimationFactor: Long
-    ) : SimulationSystem(family, decimationFactor) {
+        family: Family
+    ) : SimulationSystem(family) {
         override fun entityAdded(entity: Entity) {
             TODO("Not yet implemented")
         }
@@ -24,21 +23,34 @@ internal class SystemManagerTest {
         }
     }
 
-    class SystemA : TestSystem(family, 1) {
+    class SystemA : TestSystem(family) {
+
+        init {
+            priority = 1
+        }
 
         override fun step(currentTime: Double, stepSize: Double) {
             println("A")
         }
     }
 
-    class SystemB : TestSystem(family, 2) {
+    class SystemB : TestSystem(family) {
+
+        init {
+            priority = 2
+        }
 
         override fun step(currentTime: Double, stepSize: Double) {
             println("B")
         }
     }
 
-    class SystemC : TestSystem(family, 3) {
+    class SystemC : TestSystem(family) {
+
+        init {
+            priority = 3
+        }
+
         override fun step(currentTime: Double, stepSize: Double) {
             println("C")
         }

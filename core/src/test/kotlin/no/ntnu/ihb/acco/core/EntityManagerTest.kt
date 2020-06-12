@@ -33,9 +33,9 @@ internal class EntityManagerTest {
     @Test
     fun getFor() {
 
-        class ComponentA : Component()
-        class ComponentB : Component()
-        class ComponentC : Component()
+        class ComponentA : Component
+        class ComponentB : Component
+        class ComponentC : Component
 
 
         Engine().use { engine ->

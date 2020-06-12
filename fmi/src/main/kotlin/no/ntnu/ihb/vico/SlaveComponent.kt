@@ -21,7 +21,7 @@ private typealias Cache<E> = HashMap<ValueReference, E>
 class SlaveComponent(
     private val slave: SlaveInstance,
     val stepSizeHint: Double? = null
-) : SlaveInstance by slave, Component() {
+) : SlaveInstance by slave, CosimulationComponent {
 
     private var initialized = false
     var stepCount = 0L
@@ -49,38 +49,42 @@ class SlaveComponent(
 
     private val parameterSets = mutableSetOf<ParameterSet>()
 
-    init {
+    override val variables: Map<String, Var<*>>
+        get() {
 
-        modelVariables.integers.forEach { int ->
-            val vr = longArrayOf(int.valueReference)
-            registerVariable(int.name, IntLambdaVar(1,
-                getter = { slave.readInteger(vr, it) },
-                setter = { slave.writeInteger(vr, it) }
-            ))
-        }
-        modelVariables.reals.forEach { real ->
-            val vr = longArrayOf(real.valueReference)
-            registerVariable(real.name, RealLambdaVar(1,
-                getter = { slave.readReal(vr, it) },
-                setter = { slave.writeReal(vr, it) }
-            ))
-        }
-        modelVariables.strings.forEach { real ->
-            val vr = longArrayOf(real.valueReference)
-            registerVariable(real.name, StrLambdaVar(1,
-                getter = { slave.readString(vr, it) },
-                setter = { slave.writeString(vr, it) }
-            ))
-        }
-        modelVariables.booleans.forEach { real ->
-            val vr = longArrayOf(real.valueReference)
-            registerVariable(real.name, BoolLambdaVar(1,
-                getter = { slave.readBoolean(vr, it) },
-                setter = { slave.writeBoolean(vr, it) }
-            ))
+            val ints = modelVariables.integers.associate { int ->
+                val vr = longArrayOf(int.valueReference)
+                int.name to IntLambdaVar(1,
+                    getter = { slave.readInteger(vr, it) },
+                    setter = { slave.writeInteger(vr, it) }
+                )
+            }
+            val reals = modelVariables.reals.associate { int ->
+                val vr = longArrayOf(int.valueReference)
+                int.name to RealLambdaVar(1,
+                    getter = { slave.readReal(vr, it) },
+                    setter = { slave.readReal(vr, it) }
+                )
+            }
+            val strings = modelVariables.strings.associate { int ->
+                val vr = longArrayOf(int.valueReference)
+                int.name to StrLambdaVar(1,
+                    getter = { slave.readString(vr, it) },
+                    setter = { slave.readString(vr, it) }
+                )
+            }
+            val booleans = modelVariables.booleans.associate { int ->
+                val vr = longArrayOf(int.valueReference)
+                int.name to BoolLambdaVar(1,
+                    getter = { slave.readBoolean(vr, it) },
+                    setter = { slave.readBoolean(vr, it) }
+                )
+            }
+
+            return ints + reals + strings + booleans
+
         }
 
-    }
 
     fun getParameterSet(name: String): ParameterSet? {
         return parameterSets.firstOrNull { it.name == name }
