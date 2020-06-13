@@ -3,25 +3,29 @@ package no.ntnu.ihb.acco.physics.bullet
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.physics.bullet.collision.btBoxShape
-import com.badlogic.gdx.physics.bullet.collision.btCollisionShape
-import com.badlogic.gdx.physics.bullet.collision.btSphereShape
+import com.badlogic.gdx.physics.bullet.collision.*
 import no.ntnu.ihb.acco.physics.ColliderComponent
-import no.ntnu.ihb.acco.render.shape.BoxShape
-import no.ntnu.ihb.acco.render.shape.PlaneShape
-import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.render.shape.*
 import org.joml.*
+
 
 fun ColliderComponent.convert(): btCollisionShape {
     return when (val shape = shape) {
         is BoxShape -> {
-            btBoxShape(Vector3(shape.width, shape.height, shape.depth))
+            btBoxShape(Vector3(shape.width, shape.height, shape.depth).scl(0.5f))
         }
         is PlaneShape -> {
-            btBoxShape(Vector3(shape.height, shape.height, 0.1f))
+            val depth = 0.5f
+            btBoxShape(Vector3(shape.height, shape.height, depth))
         }
         is SphereShape -> {
             btSphereShape(shape.radius)
+        }
+        is CylinderShape -> {
+            btCylinderShapeZ(Vector3(shape.radius, shape.radius, shape.height * 0.5f))
+        }
+        is CapsuleShape -> {
+            btCapsuleShapeZ(shape.radius, shape.height * 0.5f)
         }
         else -> TODO()
     }

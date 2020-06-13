@@ -9,14 +9,14 @@ import com.jme3.math.Vector3f
 import com.jme3.scene.Geometry
 import com.jme3.scene.Node
 import com.jme3.scene.shape.Box
+import com.jme3.scene.shape.Cylinder
 import com.jme3.scene.shape.Sphere
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
+import no.ntnu.ihb.acco.render.jme.objects.JmeCapsule
 import no.ntnu.ihb.acco.render.jme.objects.JmeGrid
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
-import no.ntnu.ihb.acco.render.shape.BoxShape
-import no.ntnu.ihb.acco.render.shape.PlaneShape
-import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.render.shape.*
 import org.joml.Quaterniondc
 import org.joml.Vector3dc
 
@@ -65,37 +65,64 @@ internal fun ColorRGBA.set(c: Color, alpha: Float = 1f) = apply {
     set(c.r, c.g, c.b, alpha)
 }
 
+private fun createBox(shape: BoxShape): Geometry {
+    return Geometry(
+        "BoxGeometry",
+        Box(shape.width * 0.5f, shape.height * 0.5f, shape.depth * 0.5f)
+    )
+}
+
+private fun createPlane(shape: PlaneShape): Geometry {
+    return Geometry(
+        "PlaneGeometry",
+        JmeGrid(shape.width, shape.height)
+    )
+}
+
+private fun createSphere(shape: SphereShape): Geometry {
+    return Geometry(
+        "SphereGeometry",
+        Sphere(32, 32, shape.radius)
+    )
+}
+
+private fun createCylinder(shape: CylinderShape): Geometry {
+    return Geometry(
+        "CylinderGeometry",
+        Cylinder(32, 32, shape.radius, shape.height)
+    )
+}
+
+private fun createCapsule(shape: CapsuleShape): Node {
+    return JmeCapsule(shape.radius, shape.height)
+}
+
 internal fun GeometryComponent.createGeometry(assetManager: AssetManager): RenderNode {
 
     return when (val shape = shape) {
         is BoxShape -> {
             RenderNode(assetManager, visible, wireframe, color).apply {
-                attachChild(
-                    Geometry(
-                        "BoxGeometry",
-                        Box(shape.width * 0.5f, shape.height * 0.5f, shape.depth * 0.5f)
-                    )
-                )
+                attachChild(createBox(shape))
             }
         }
         is PlaneShape -> {
             RenderNode(assetManager, visible, wireframe, color).apply {
-                attachChild(
-                    Geometry(
-                        "PlaneGeometry",
-                        JmeGrid(shape.width, shape.height)
-                    )
-                )
+                attachChild(createPlane(shape))
             }
         }
         is SphereShape -> {
             RenderNode(assetManager, visible, wireframe, color).apply {
-                attachChild(
-                    Geometry(
-                        "SphereGeometry",
-                        Sphere(32, 32, shape.radius)
-                    )
-                )
+                attachChild(createSphere(shape))
+            }
+        }
+        is CylinderShape -> {
+            RenderNode(assetManager, visible, wireframe, color).apply {
+                attachChild(createCylinder(shape))
+            }
+        }
+        is CapsuleShape -> {
+            RenderNode(assetManager, visible, wireframe, color).apply {
+                attachChild(createCapsule(shape))
             }
         }
         else -> RenderNode(assetManager)

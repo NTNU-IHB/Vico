@@ -9,6 +9,11 @@ data class SphereShape @JvmOverloads constructor(
     var radius: Float = 0.5f
 ) : Shape()
 
+data class CylinderShape @JvmOverloads constructor(
+    var radius: Float = 0.5f,
+    var height: Float = 1f
+) : Shape()
+
 data class CapsuleShape @JvmOverloads constructor(
     var radius: Float = 0.5f,
     var height: Float = 1f
