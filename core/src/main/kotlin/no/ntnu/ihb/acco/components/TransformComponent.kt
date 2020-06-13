@@ -1,6 +1,6 @@
 package no.ntnu.ihb.acco.components
 
-import no.ntnu.ihb.acco.core.CosimulationComponent
+import no.ntnu.ihb.acco.core.CoSimulationComponent
 import no.ntnu.ihb.acco.core.RealLambdaVar
 import no.ntnu.ihb.acco.core.Var
 import no.ntnu.ihb.acco.math.Frame
@@ -9,7 +9,7 @@ import no.ntnu.ihb.acco.math.fromArray
 import no.ntnu.ihb.acco.math.toArray
 import org.joml.Vector3d
 
-class TransformComponent internal constructor() : IFrame by Frame(), CosimulationComponent {
+class TransformComponent internal constructor() : IFrame by Frame(), CoSimulationComponent {
 
     override val variables: Map<String, Var<*>> by lazy {
         val tmp = Vector3d()

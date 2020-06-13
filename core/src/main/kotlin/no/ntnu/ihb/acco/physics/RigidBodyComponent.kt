@@ -1,6 +1,6 @@
 package no.ntnu.ihb.acco.physics
 
-import no.ntnu.ihb.acco.core.CosimulationComponent
+import no.ntnu.ihb.acco.core.CoSimulationComponent
 import no.ntnu.ihb.acco.core.RealLambdaVar
 import no.ntnu.ihb.acco.core.Var
 import no.ntnu.ihb.acco.math.fromArray
@@ -16,7 +16,7 @@ enum class MotionControl {
 class RigidBodyComponent @JvmOverloads constructor(
     var mass: Double = 1.0,
     var motionControl: MotionControl = MotionControl.DYNAMIC
-) : CosimulationComponent {
+) : CoSimulationComponent {
 
     var linearVelocity = Vector3d()
     var angularVelocity = Vector3d()

@@ -67,7 +67,7 @@ internal class SystemManagerTest {
             systems.forEach { engine.addSystem(it) }
 
             assertEquals(3, manager.systems.size)
-            //assertEquals(systems, manager.systems.sorted())
+            assertEquals(systems, manager.systems.sorted())
 
             engine.step(1)
 

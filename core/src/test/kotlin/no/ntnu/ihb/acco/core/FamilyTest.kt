@@ -15,7 +15,7 @@ internal class FamilyTest {
     @Test
     fun testFamily() {
 
-        Entity("").apply {
+        Entity().apply {
             addComponent(ComponentA())
             addComponent(ComponentB())
             assertTrue(Family.all(ComponentA::class.java).build().test(this))
@@ -25,14 +25,14 @@ internal class FamilyTest {
             assertTrue(Family.all().build().test(this))
         }
 
-        Entity("").apply {
+        Entity().apply {
             addComponent(ComponentA())
             addComponent(ComponentB())
             assertTrue(Family.one(ComponentA::class.java, ComponentB::class.java).build().test(this))
             assertFalse(Family.one(ComponentC::class.java, ComponentD::class.java).build().test(this))
         }
 
-        Entity("").apply {
+        Entity().apply {
             addComponent(ComponentA())
             addComponent(ComponentB())
             assertTrue(Family.exclude(ComponentC::class.java, ComponentD::class.java).build().test(this))
@@ -50,7 +50,7 @@ internal class FamilyTest {
             )
         }
 
-        Entity("").apply {
+        Entity().apply {
             assertTrue(Family.exclude(ComponentA::class.java).build().test(this))
             assertTrue(Family.exclude(ComponentA::class.java, ComponentB::class.java).build().test(this))
             assertTrue(

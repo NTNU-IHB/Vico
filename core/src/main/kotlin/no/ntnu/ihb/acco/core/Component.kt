@@ -5,7 +5,7 @@ typealias ComponentClass = Class<out Component>
 
 interface Component
 
-interface CosimulationComponent : Component {
+interface CoSimulationComponent : Component {
 
     val variables: Map<String, Var<*>>
 

@@ -7,37 +7,37 @@ sealed class Connector<E : Var<*>>(
 )
 
 class IntConnector(
-    component: CosimulationComponent,
+    component: CoSimulationComponent,
     variable: IntVar
 ) : Connector<IntVar>(component, variable) {
-    constructor(component: CosimulationComponent, name: String) : this(
+    constructor(component: CoSimulationComponent, name: String) : this(
         component, component.getVariable(name) as IntVar
     )
 }
 
 class RealConnector(
-    component: CosimulationComponent,
+    component: CoSimulationComponent,
     variable: RealVar
 ) : Connector<RealVar>(component, variable) {
-    constructor(component: CosimulationComponent, name: String) : this(
+    constructor(component: CoSimulationComponent, name: String) : this(
         component, component.getVariable(name) as RealVar
     )
 }
 
 class StrConnector(
-    component: CosimulationComponent,
+    component: CoSimulationComponent,
     variable: StrVar
 ) : Connector<StrVar>(component, variable) {
-    constructor(component: CosimulationComponent, name: String) : this(
+    constructor(component: CoSimulationComponent, name: String) : this(
         component, component.getVariable(name) as StrVar
     )
 }
 
 class BoolConnector(
-    component: CosimulationComponent,
+    component: CoSimulationComponent,
     variable: BoolVar
 ) : Connector<BoolVar>(component, variable) {
-    constructor(component: CosimulationComponent, name: String) : this(
+    constructor(component: CoSimulationComponent, name: String) : this(
         component, component.getVariable(name) as BoolVar
     )
 }

@@ -105,4 +105,3 @@ class Family private constructor(
     }
 
 }
-

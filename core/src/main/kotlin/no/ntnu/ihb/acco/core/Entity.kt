@@ -8,8 +8,11 @@ data class Tag(
 )
 
 class Entity(
-    val name: String = "entity"
+    name: String? = null
 ) {
+
+    var name = name ?: "Entity"
+        internal set
 
     private val ints = mutableMapOf<String, IntVar>()
     private val reals = mutableMapOf<String, RealVar>()
@@ -52,7 +55,7 @@ class Entity(
         mutableComponents.add(component)
         componentMap[componentClass] = component
 
-        if (component is CosimulationComponent) {
+        if (component is CoSimulationComponent) {
             component.variables.forEach { (name, `var`) ->
                 when (`var`) {
                     is IntVar -> ints[name] = `var`
@@ -74,7 +77,7 @@ class Entity(
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
 
-        if (component is CosimulationComponent) {
+        if (component is CoSimulationComponent) {
             component.variables.forEach { (name, `var`) ->
                 when (`var`) {
                     is IntVar -> ints.remove(name)

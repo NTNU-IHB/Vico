@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico
 
-import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
@@ -15,8 +14,6 @@ typealias Slaves = List<SlaveComponent>
 typealias SlaveInitCallback = (SlaveComponent) -> Unit
 typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
 
-val Engine.slaveSystem: SlaveSystem
-    get() = this.getSystem(SlaveSystem::class.java)
 
 class SlaveSystem @JvmOverloads constructor(
     private val algorithm: MasterAlgorithm = FixedStepMaster()
@@ -33,7 +30,7 @@ class SlaveSystem @JvmOverloads constructor(
     fun getSlaveNoExcept(name: String): SlaveComponent? = _slaves.firstOrNull { it.instanceName == name }
 
     override fun entityAdded(entity: Entity) {
-        val slave = entity.getComponent(SlaveComponent::class.java)
+        val slave = entity.getComponent<SlaveComponent>()
         slave.getParameterSet(parameterSet)?.also {
             it.integerParameters.forEach { p -> slave.writeInteger(p.name, p.value) }
             it.realParameters.forEach { p -> slave.writeReal(p.name, p.value) }
@@ -46,7 +43,7 @@ class SlaveSystem @JvmOverloads constructor(
     }
 
     override fun entityRemoved(entity: Entity) {
-        val slave = entity.getComponent(SlaveComponent::class.java)
+        val slave = entity.getComponent<SlaveComponent>()
         _slaves.remove(slave)
         algorithm.slaveRemoved(slave)
         listeners.forEach { l -> l.slaveRemoved(slave) }

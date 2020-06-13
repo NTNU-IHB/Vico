@@ -21,9 +21,9 @@ class Engine @JvmOverloads constructor(
     private val closed = AtomicBoolean()
     private val queue: Queue<() -> Unit> = ArrayDeque()
 
-    internal val entityManager = EntityManager(this)
+    private val entityManager = EntityManager(this)
     internal val systemManager = SystemManager(this)
-    internal val connectionManager = ConnectionManager(this)
+    private val connectionManager = ConnectionManager()
 
     constructor(baseStepSize: Double) : this(null, baseStepSize)
 
@@ -55,15 +55,17 @@ class Engine @JvmOverloads constructor(
 
     }
 
-
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
+    inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)
 
     fun getEntityByName(name: String) = entityManager.getEntityByName(name)
     fun getEntitiesFor(family: Family) = entityManager.getEntitiesFor(family)
 
     fun addSystem(system: ManipulationSystem) = systemManager.add(system)
     fun addSystem(system: EventSystem) = systemManager.add(system)
+
     fun removeSystem(system: Class<out BaseSystem>) = systemManager.remove(system)
+    inline fun <reified E : BaseSystem> removeSystem() = removeSystem(E::class.java)
 
     fun addEntity(entity: Entity, vararg entities: Entity) = entityManager.addEntity(entity, *entities)
     fun removeEntity(entity: Entity, vararg entities: Entity) = entityManager.removeEntity(entity, *entities)

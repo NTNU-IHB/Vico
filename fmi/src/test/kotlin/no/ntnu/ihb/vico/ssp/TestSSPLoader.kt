@@ -2,9 +2,9 @@ package no.ntnu.ihb.vico.ssp
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.HeadlessEngineRunner
+import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
-import no.ntnu.ihb.vico.slaveSystem
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -47,7 +47,7 @@ internal class TestSSPLoader {
             structure.apply(engine)
             engine.init()
 
-            val bb = engine.slaveSystem.getSlave("bouncingBall")
+            val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
             val h = bb.readRealDirect("h").value
             Assertions.assertEquals(5.0, h, 1e-6)
 

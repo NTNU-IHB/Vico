@@ -21,7 +21,7 @@ private typealias Cache<E> = HashMap<ValueReference, E>
 class SlaveComponent(
     private val slave: SlaveInstance,
     val stepSizeHint: Double? = null
-) : SlaveInstance by slave, CosimulationComponent {
+) : SlaveInstance by slave, CoSimulationComponent {
 
     private var initialized = false
     var stepCount = 0L

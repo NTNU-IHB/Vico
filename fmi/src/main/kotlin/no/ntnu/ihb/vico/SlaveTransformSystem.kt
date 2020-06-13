@@ -14,26 +14,28 @@ class SlaveTransformSystem : SimulationSystem(
     private val tmp = Vector3d()
 
     override fun entityAdded(entity: Entity) {
-        val slave = entity.getComponent(SlaveComponent::class.java)
-        val slaveTransform = entity.getComponent(SlaveTransform::class.java)
+
+        val slave = entity.getComponent<SlaveComponent>()
+        val slaveTransform = entity.getComponent<SlaveTransform>()
+
         slaveTransform.xRef?.also { slave.markForReading(it) }
         slaveTransform.yRef?.also { slave.markForReading(it) }
         slaveTransform.zRef?.also { slave.markForReading(it) }
+
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
 
         for (entity in entities) {
 
-            val slave = entity.getComponent(SlaveComponent::class.java)
-            val transform = entity.getComponent(TransformComponent::class.java)
-            val slaveTransform = entity.getComponent(SlaveTransform::class.java)
+            val slave = entity.getComponent<SlaveComponent>()
+            val slaveTransform = entity.getComponent<SlaveTransform>()
 
             slaveTransform.xRef?.also { tmp.x = slave.readReal(it).value }
             slaveTransform.yRef?.also { tmp.y = slave.readReal(it).value }
             slaveTransform.zRef?.also { tmp.z = slave.readReal(it).value }
 
-            transform.setTranslation(tmp)
+            entity.transform.setTranslation(tmp)
 
         }
     }
