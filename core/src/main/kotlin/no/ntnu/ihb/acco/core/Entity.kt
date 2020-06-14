@@ -2,7 +2,13 @@ package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.util.Tag
+import java.util.*
 
+typealias EntityTraverser = (Entity) -> Unit
+
+enum class TraverseOption {
+    DEPTH_FIRST, BREADTH_FIRST
+}
 
 open class Entity private constructor(
     name: String? = null,
@@ -34,8 +40,6 @@ open class Entity private constructor(
     private val children: MutableList<Entity> = mutableListOf()
     private val descendants: MutableList<Entity> = mutableListOf()
 
-    private val entityListeners: MutableList<EntityListener> = mutableListOf()
-
     init {
         addComponent(transform)
     }
@@ -51,7 +55,6 @@ open class Entity private constructor(
             child.name = "${name}.${child.originalName}"
         }
         descendantAdded(child)
-        entityListeners.forEach { it.entityAdded(child) }
     }
 
     fun addAllEntities(child: Entity, vararg additionalChildren: Entity) {
@@ -65,7 +68,7 @@ open class Entity private constructor(
             child.transform.setParent(null)
             child.name = child.originalName
             descendantRemoved(child)
-            entityListeners.forEach { it.entityRemoved(child) }
+            child.removeAllComponents()
         }
     }
 
@@ -84,15 +87,36 @@ open class Entity private constructor(
         parent?.descendantRemoved(entity)
     }
 
-    fun traverseAncestors(callback: (Entity) -> Unit) {
+    fun traverseAncestors(callback: EntityTraverser) {
         callback.invoke(this)
         parent?.also {
             it.traverseAncestors(callback)
         }
     }
 
-    fun addEntityListener(entityListener: EntityListener) {
-        entityListeners.add(entityListener)
+    fun traverseDecendants(traverser: EntityTraverser, option: TraverseOption?) {
+        when (option) {
+            TraverseOption.BREADTH_FIRST -> breadthFirstTraversal(traverser)
+            TraverseOption.DEPTH_FIRST -> depthFirstTraversal(traverser)
+        }
+    }
+
+    fun depthFirstTraversal(traverser: EntityTraverser) {
+        traverser.invoke(this)
+        for (child in children) {
+            child.depthFirstTraversal(traverser)
+        }
+    }
+
+    fun breadthFirstTraversal(traverser: EntityTraverser) {
+        traverser.invoke(this)
+        val queue = ArrayDeque(children)
+        while (!queue.isEmpty()) {
+            queue.remove().also { child ->
+                traverser.invoke(child)
+                child.children.forEach { queue.add(it) }
+            }
+        }
     }
 
     fun addComponent(component: Component) = apply {
@@ -173,7 +197,6 @@ open class Entity private constructor(
     }
 
     fun findInDescendants(predicate: (Entity) -> Boolean): Entity {
-        println(descendants)
         return descendants.first { predicate.invoke(it) }
     }
 

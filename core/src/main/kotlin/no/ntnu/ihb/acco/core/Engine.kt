@@ -95,8 +95,8 @@ class Engine @JvmOverloads constructor(
     }
 
     fun getEntityByName(name: String) = findInDescendants { it.name == name }
-    fun getEntityByTag(tag: String) = findInDescendants { it.tag?.value == tag }
-    fun getEntityByTag(tag: Tag) = findInDescendants { it.tag == tag }
+    fun getEntitiesByTag(tag: String) = findAllInDescendants { it.tag?.value == tag }
+    fun getEntitiesByTag(tag: Tag) = findAllInDescendants { it.tag == tag }
 
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)

@@ -47,10 +47,11 @@ class SlaveSystem @JvmOverloads constructor(
         _slaves.remove(slave)
         algorithm.slaveRemoved(slave)
         listeners.forEach { l -> l.slaveRemoved(slave) }
+        slave.close()
     }
 
     override fun init(currentTime: Double) {
-        algorithm.init(currentTime) { slave ->
+        algorithm.init(currentTime, slaves) { slave ->
             engine.updateConnection(slave)
         }
         listeners.forEach { l -> l.postInit(currentTime) }
@@ -63,11 +64,6 @@ class SlaveSystem @JvmOverloads constructor(
         }
         listeners.forEach { l -> l.postStep(currentTime + stepSize) }
     }
-
-    /*fun addConnection(connection: SlaveConnection<*>) = apply {
-        connections.computeIfAbsent(connection.sourceSlave) { mutableListOf() }.add(connection)
-        connection.sourceSlave.markForReading(connection.sourceVariable.name)
-    }*/
 
     fun addListener(listener: SlaveSystemListener) = apply {
         listeners.add(listener).also {

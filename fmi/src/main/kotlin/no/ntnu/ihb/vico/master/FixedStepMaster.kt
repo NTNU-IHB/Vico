@@ -10,17 +10,7 @@ import kotlin.math.max
 
 class FixedStepMaster : MasterAlgorithm() {
 
-    private val slaves: MutableList<SlaveComponent> = mutableListOf()
-
-    override fun slaveAdded(slave: SlaveComponent) {
-        slaves.add(slave)
-    }
-
-    override fun slaveRemoved(slave: SlaveComponent) {
-        slaves.remove(slave)
-    }
-
-    override fun init(currentTime: Double, slaveInitCallback: SlaveInitCallback) {
+    override fun initialize(currentTime: Double, slaveInitCallback: SlaveInitCallback) {
         slaves.parallelStream().forEach { slave ->
             slave.setupExperiment(currentTime)
             slave.enterInitializationMode()

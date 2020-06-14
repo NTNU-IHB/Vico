@@ -9,11 +9,19 @@ import no.ntnu.ihb.vico.Slaves
 
 abstract class MasterAlgorithm {
 
-    abstract fun slaveAdded(slave: SlaveComponent)
+    protected lateinit var slaves: List<SlaveComponent>
+        private set
 
-    abstract fun slaveRemoved(slave: SlaveComponent)
+    internal open fun slaveAdded(slave: SlaveComponent) {}
 
-    abstract fun init(currentTime: Double, slaveInitCallback: SlaveInitCallback)
+    internal open fun slaveRemoved(slave: SlaveComponent) {}
+
+    fun init(currentTime: Double, slaves: List<SlaveComponent>, slaveInitCallback: SlaveInitCallback) {
+        this.slaves = slaves
+        initialize(currentTime, slaveInitCallback)
+    }
+
+    abstract fun initialize(currentTime: Double, slaveInitCallback: SlaveInitCallback)
 
     abstract fun step(
         currentTime: Double,

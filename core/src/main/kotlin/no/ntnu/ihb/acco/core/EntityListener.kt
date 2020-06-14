@@ -8,10 +8,3 @@ interface EntityListener {
 
 }
 
-abstract class EntityAdapter : EntityListener {
-
-    override fun entityAdded(entity: Entity) {}
-
-    override fun entityRemoved(entity: Entity) {}
-
-}

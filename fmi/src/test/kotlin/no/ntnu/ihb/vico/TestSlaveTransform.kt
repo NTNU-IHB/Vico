@@ -36,5 +36,8 @@ fun main() {
 
         }
 
+        Thread.sleep(3000)
+        engine.removeEntity(engine.getEntityByName("BouncingBall"))
+
     }
 }
