@@ -19,4 +19,5 @@ class TransformComponent internal constructor() : IFrame by Frame(), CoSimulatio
                 setter = { values -> setLocalTranslation(tmp.fromArray(values)) }
             ))
     }
+
 }

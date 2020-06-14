@@ -4,7 +4,7 @@ import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.util.Tag
 
 
-class Entity private constructor(
+open class Entity private constructor(
     name: String? = null,
     private val properties: Properties
 ) : PropertyAccessor by properties {
@@ -16,6 +16,12 @@ class Entity private constructor(
     var tag: Tag? = null
     val transform = TransformComponent()
 
+    val numChildren: Int
+        get() = children.size
+
+    val numDescendants: Int
+        get() = descendants.size
+
     private val mutableComponents = mutableListOf<Component>()
     val components: List<Component>
         get() = mutableComponents
@@ -23,8 +29,10 @@ class Entity private constructor(
     private val componentMap = mutableMapOf<Class<out Component>, Component>()
     private val componentListeners = mutableListOf<ComponentListener>()
 
-    private var parent: Entity? = null
+    var parent: Entity? = null
+        private set
     private val children: MutableList<Entity> = mutableListOf()
+    private val descendants: MutableList<Entity> = mutableListOf()
 
     private val entityListeners: MutableList<EntityListener> = mutableListOf()
 
@@ -35,18 +43,51 @@ class Entity private constructor(
     @JvmOverloads
     constructor(name: String? = null) : this(name, Properties())
 
-    fun add(child: Entity) {
+    fun addEntity(child: Entity) {
         children.add(child)
         child.parent = this
-        child.name = "${name}.${child.originalName}"
+        child.transform.setParent(this.transform)
+        if (tag?.value != "root") {
+            child.name = "${name}.${child.originalName}"
+        }
+        descendantAdded(child)
         entityListeners.forEach { it.entityAdded(child) }
     }
 
-    fun remove(child: Entity) {
+    fun addAllEntities(child: Entity, vararg additionalChildren: Entity) {
+        addEntity(child)
+        additionalChildren.forEach { addEntity(it) }
+    }
+
+    fun removeEntity(child: Entity) {
         if (children.remove(child)) {
             child.parent = null
+            child.transform.setParent(null)
             child.name = child.originalName
+            descendantRemoved(child)
             entityListeners.forEach { it.entityRemoved(child) }
+        }
+    }
+
+    fun removeAllEntities(child: Entity, vararg additionalChildren: Entity) {
+        removeEntity(child)
+        additionalChildren.forEach { removeEntity(it) }
+    }
+
+    protected open fun descendantAdded(entity: Entity) {
+        descendants.add(entity)
+        parent?.descendantAdded(entity)
+    }
+
+    protected open fun descendantRemoved(entity: Entity) {
+        descendants.remove(entity)
+        parent?.descendantRemoved(entity)
+    }
+
+    fun traverseAncestors(callback: (Entity) -> Unit) {
+        callback.invoke(this)
+        parent?.also {
+            it.traverseAncestors(callback)
         }
     }
 
@@ -121,6 +162,27 @@ class Entity private constructor(
 
     internal fun removeComponentListener(listener: ComponentListener) {
         this.componentListeners.remove(listener)
+    }
+
+    fun findInChildren(predicate: (Entity) -> Boolean): Entity {
+        return children.first { predicate.invoke(it) }
+    }
+
+    fun findAllInChildren(predicate: (Entity) -> Boolean): List<Entity> {
+        return children.filter { predicate.invoke(it) }
+    }
+
+    fun findInDescendants(predicate: (Entity) -> Boolean): Entity {
+        println(descendants)
+        return descendants.first { predicate.invoke(it) }
+    }
+
+    fun findAllInDescendants(predicate: (Entity) -> Boolean): List<Entity> {
+        return descendants.filter { predicate.invoke(it) }
+    }
+
+    override fun toString(): String {
+        return "Entity(name='$name', tag=$tag, numChildren=$numChildren, numDescendants=$numDescendants)"
     }
 
 }

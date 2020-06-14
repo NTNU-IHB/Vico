@@ -62,7 +62,8 @@ fun main() {
 
     Engine().also { engine ->
 
-        engine.addEntity(e1())
+        val e1 = e1()
+        engine.addEntity(e1)
         Entity("e2").also { e ->
 
             e.transform.setLocalTranslation(1.0, 0.0, 0.0)
@@ -71,9 +72,8 @@ fun main() {
                 color.set(Color.yellow)
             })
             e.addComponent(SineMoverComponent(f = 0.5))
-            engine.addEntity(e)
-            engine.getEntityByName("e1").transform
-                .add(e.transform)
+            e1.addEntity(e)
+            engine.getEntityByName("e1")
         }
 
         engine.addSystem(SineMoverSystem())
@@ -84,10 +84,10 @@ fun main() {
 
         Thread.sleep(1000)
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
-        engine.getEntityByName("e2").getComponent<GeometryComponent>().wireframe = true
+        engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
         Thread.sleep(1000)
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
-        engine.getEntityByName("e2").getComponent<GeometryComponent>().wireframe = false
+        engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
 
     }
 
