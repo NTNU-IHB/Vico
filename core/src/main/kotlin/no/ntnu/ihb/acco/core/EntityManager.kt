@@ -1,6 +1,7 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.util.ObservableSet
+import no.ntnu.ihb.acco.util.Tag
 
 
 class EntityManager internal constructor(
@@ -8,7 +9,6 @@ class EntityManager internal constructor(
 ) : Iterable<Entity> {
 
     private val entities: MutableList<Entity> = mutableListOf()
-    private val entityListeners: MutableList<EntityListener> = mutableListOf()
     private val families: MutableMap<Family, ObservableSet<Entity>> = mutableMapOf()
 
     fun getEntityByName(name: String): Entity {
@@ -34,18 +34,7 @@ class EntityManager internal constructor(
     private fun internalAddEntity(entity: Entity) {
         entities.add(entity)
         updateFamilyMemberShip(entity)
-        entity.addComponentListener(object : ComponentListener {
-            override fun componentAdded(component: Component) {
-                updateFamilyMemberShip(entity)
-            }
-
-            override fun componentRemoved(component: Component) {
-                updateFamilyMemberShip(entity)
-            }
-        })
-        entityListeners.forEach { l ->
-            l.entityAdded(entity)
-        }
+        entity.addComponentListener(MyComponentListener(entity))
     }
 
     fun removeEntity(entity: Entity, vararg entities: Entity) {
@@ -63,9 +52,6 @@ class EntityManager internal constructor(
             families.values.forEach { entities ->
                 entities.remove(entity)
             }
-            entityListeners.forEach { l ->
-                l.entityRemoved(entity)
-            }
         }
     }
 
@@ -79,18 +65,21 @@ class EntityManager internal constructor(
         }
     }
 
-    /* private fun ensureUnique(name: String): String {
-         var i = 1
-         var uniqueName = name
-         while (entities.find { it.name == uniqueName } != null) {
-             uniqueName += "(${i++})"
-         }
-         return uniqueName
-     }*/
-
-
     override fun iterator(): Iterator<Entity> {
         return entities.iterator()
+    }
+
+    private inner class MyComponentListener(
+        private val entity: Entity
+    ) : ComponentListener {
+
+        override fun componentAdded(component: Component) {
+            updateFamilyMemberShip(entity)
+        }
+
+        override fun componentRemoved(component: Component) {
+            updateFamilyMemberShip(entity)
+        }
     }
 
 }

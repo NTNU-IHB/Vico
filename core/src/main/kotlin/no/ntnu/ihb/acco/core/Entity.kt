@@ -1,27 +1,20 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.components.TransformComponent
-import no.ntnu.ihb.acco.util.Node
+import no.ntnu.ihb.acco.util.Tag
 
-data class Tag(
-    val tag: String
-)
 
-class Entity(
-    name: String? = null
-) {
+class Entity private constructor(
+    name: String? = null,
+    private val properties: Properties
+) : PropertyAccessor by properties {
 
-    var name = name ?: "Entity"
-        internal set
-
-    private val ints = mutableMapOf<String, IntVar>()
-    private val reals = mutableMapOf<String, RealVar>()
-    private val strs = mutableMapOf<String, StrVar>()
-    private val bools = mutableMapOf<String, BoolVar>()
+    private var originalName = name ?: "Entity"
+    var name = originalName
+        private set
 
     var tag: Tag? = null
     val transform = TransformComponent()
-    private var node: Node<Entity> = Node(this)
 
     private val mutableComponents = mutableListOf<Component>()
     val components: List<Component>
@@ -30,40 +23,49 @@ class Entity(
     private val componentMap = mutableMapOf<Class<out Component>, Component>()
     private val componentListeners = mutableListOf<ComponentListener>()
 
-    val hierarchicalName: String
-        get() {
-            val sb = StringBuilder().append(name)
-            var current = node
-            while (current.hasParent()) {
-                current = current.parent!!
-                sb.insert(0, current.data.name + '.')
-            }
-            return sb.toString()
-        }
+    private var parent: Entity? = null
+    private val children: MutableList<Entity> = mutableListOf()
+
+    private val entityListeners: MutableList<EntityListener> = mutableListOf()
 
     init {
         addComponent(transform)
+    }
+
+    @JvmOverloads
+    constructor(name: String? = null) : this(name, Properties())
+
+    fun add(child: Entity) {
+        children.add(child)
+        child.parent = this
+        child.name = "${name}.${child.originalName}"
+        entityListeners.forEach { it.entityAdded(child) }
+    }
+
+    fun remove(child: Entity) {
+        if (children.remove(child)) {
+            child.parent = null
+            child.name = child.originalName
+            entityListeners.forEach { it.entityRemoved(child) }
+        }
+    }
+
+    fun addEntityListener(entityListener: EntityListener) {
+        entityListeners.add(entityListener)
     }
 
     fun addComponent(component: Component) = apply {
 
         val componentClass = component::class.java
         require(componentClass !in componentMap) {
-            "Entity $hierarchicalName already contains component of type $componentClass!"
+            "Entity $name already contains component of type $componentClass!"
         }
 
         mutableComponents.add(component)
         componentMap[componentClass] = component
 
         if (component is CoSimulationComponent) {
-            component.variables.forEach { (name, `var`) ->
-                when (`var`) {
-                    is IntVar -> ints[name] = `var`
-                    is RealVar -> reals[name] = `var`
-                    is StrVar -> strs[name] = `var`
-                    is BoolVar -> bools[name] = `var`
-                }
-            }
+            properties.add(component.variables)
         }
 
         componentListeners.forEach { l ->
@@ -78,14 +80,7 @@ class Entity(
         componentMap.remove(componentClass)
 
         if (component is CoSimulationComponent) {
-            component.variables.forEach { (name, `var`) ->
-                when (`var`) {
-                    is IntVar -> ints.remove(name)
-                    is RealVar -> reals.remove(name)
-                    is StrVar -> strs.remove(name)
-                    is BoolVar -> bools.remove(name)
-                }
-            }
+            properties.remove(component.variables)
         }
 
         componentListeners.forEach { l ->
@@ -124,24 +119,8 @@ class Entity(
         this.componentListeners.add(listener)
     }
 
-    internal fun removeComponentListeners(listener: ComponentListener) {
+    internal fun removeComponentListener(listener: ComponentListener) {
         this.componentListeners.remove(listener)
-    }
-
-    fun getIntegerVariable(name: String): IntVar {
-        return ints[name] ?: throw IllegalStateException("No variable named '$name' of type Int registered!")
-    }
-
-    fun getRealVariable(name: String): RealVar {
-        return reals[name] ?: throw IllegalStateException("No variable named '$name' of type Real registered!")
-    }
-
-    fun getStringVariable(name: String): StrVar {
-        return strs[name] ?: throw IllegalStateException("No variable named '$name' of type String registered!")
-    }
-
-    fun getBooleanVariable(name: String): BoolVar {
-        return bools[name] ?: throw IllegalStateException("No variable named '$name' of type Boolean registered!")
     }
 
 }

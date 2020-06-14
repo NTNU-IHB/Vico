@@ -1,5 +1,6 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.util.Tag
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
