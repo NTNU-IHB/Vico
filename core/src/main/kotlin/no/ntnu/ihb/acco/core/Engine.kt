@@ -7,13 +7,15 @@ import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
+private val DEFAULT_TIME_STEP = 1.0 / 100
+
 class Engine @JvmOverloads constructor(
     startTime: Double? = null,
     baseStepSize: Double? = null
 ) : Entity(), EventDispatcher by EventDispatcherImpl(), Closeable {
 
     val startTime = startTime ?: 0.0
-    val baseStepSize = baseStepSize ?: 1.0 / 100
+    val baseStepSize = baseStepSize ?: DEFAULT_TIME_STEP
 
     var currentTime = this.startTime
         private set
@@ -127,6 +129,5 @@ class Engine @JvmOverloads constructor(
             systemManager.close()
         }
     }
-
 
 }
