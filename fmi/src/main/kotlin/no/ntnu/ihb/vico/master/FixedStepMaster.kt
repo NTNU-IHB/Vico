@@ -18,7 +18,6 @@ class FixedStepMaster : MasterAlgorithm() {
         for (slave in slaves) {
             slave.transferCachedSets()
             slave.retrieveCachedGets()
-            slaveInitCallback.invoke(slave)
         }
         slaves.parallelStream().forEach { slave ->
             slave.exitInitializationMode()

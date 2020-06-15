@@ -47,11 +47,12 @@ class BulletSystem : SimulationSystem(
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
+
         world.stepSimulation(stepSize.toFloat())
         entities.forEach { entity ->
 
-            val tc = entity.getComponent(TransformComponent::class.java)
-            val rc = entity.getComponent(RigidBodyComponent::class.java)
+            val tc = entity.getComponent<TransformComponent>()
+            val rc = entity.getComponent<RigidBodyComponent>()
             rbMap[entity]?.also { rb ->
                 tc.setTransform(tmpMat.copy(rb.worldTransform))
                 rc.linearVelocity.set(rb.linearVelocity)
@@ -64,8 +65,8 @@ class BulletSystem : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
 
-        val tc = entity.getComponent(TransformComponent::class.java)
-        val rc = entity.getComponent(RigidBodyComponent::class.java)
+        val tc = entity.getComponent<TransformComponent>()
+        val rc = entity.getComponent<RigidBodyComponent>()
 
         val (shape, mass) = if (entity.hasComponent(ColliderComponent::class.java)) {
             val collider = entity.getComponent(ColliderComponent::class.java)
@@ -101,7 +102,6 @@ class BulletSystem : SimulationSystem(
     }
 
     override fun close() {
-        super.close()
         world.dispose()
     }
 

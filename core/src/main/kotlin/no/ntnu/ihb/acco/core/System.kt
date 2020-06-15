@@ -53,6 +53,8 @@ sealed class BaseSystem(
 
     protected open fun init(currentTime: Double) {}
 
+    open fun postInit() {}
+
     override fun close() {}
 
     override fun compareTo(other: BaseSystem): Int {

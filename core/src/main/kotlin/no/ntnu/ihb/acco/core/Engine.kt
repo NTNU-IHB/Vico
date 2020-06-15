@@ -25,6 +25,12 @@ class Engine @JvmOverloads constructor(
     private val closed = AtomicBoolean()
     private val queue: Queue<() -> Unit> = ArrayDeque()
 
+    val isInitialized: Boolean
+        get() = initialized.get()
+
+    val isClosed: Boolean
+        get() = closed.get()
+
     internal val entityManager = EntityManager()
     internal val systemManager = SystemManager(this)
     private val connectionManager = ConnectionManager()
@@ -99,8 +105,10 @@ class Engine @JvmOverloads constructor(
     }
 
     override fun close() {
-        if (!closed.getAndSet(true)) {
-            systemManager.close()
+        safeContext {
+            if (!closed.getAndSet(true)) {
+                systemManager.close()
+            }
         }
     }
 

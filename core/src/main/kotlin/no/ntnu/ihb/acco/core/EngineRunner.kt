@@ -4,23 +4,18 @@ import no.ntnu.ihb.acco.util.Clock
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.lang.System
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
 import java.util.concurrent.atomic.AtomicBoolean
 
-interface EngineRunner {
 
-    fun start()
+private typealias Predicate = ((Engine) -> Boolean)
+private typealias Callback = () -> Unit
 
-    fun stop()
-
-}
-
-abstract class AbstractEngineRunner(
-    protected val engine: Engine
-) : EngineRunner {
+class EngineRunner(
+    private val engine: Engine
+) {
 
     val paused = AtomicBoolean(false)
 
@@ -33,40 +28,6 @@ abstract class AbstractEngineRunner(
     var enableRealTimeTarget = true
     var actualRealTimeFactor = Double.NaN
 
-    protected fun stepEngine(deltaTime: Double): Boolean {
-
-        var stepOccurred = false
-        if (paused.get()) {
-            return false
-        }
-
-        if (enableRealTimeTarget) {
-            val diff = (simulationClock / targetRealTimeFactor) - wallClock
-            if (diff <= 0) {
-                engine.step()
-                stepOccurred = true
-            }
-        } else {
-            engine.step()
-            stepOccurred = true
-        }
-
-        wallClock += deltaTime
-        actualRealTimeFactor = simulationClock / wallClock
-
-        return stepOccurred
-
-    }
-
-}
-
-private typealias Predicate = ((Engine) -> Boolean)
-private typealias Callback = () -> Unit
-
-class HeadlessEngineRunner(
-    engine: Engine
-) : AbstractEngineRunner(engine) {
-
     private var thread: Thread? = null
     private var stop = AtomicBoolean(false)
 
@@ -78,7 +39,7 @@ class HeadlessEngineRunner(
             return thread != null
         }
 
-    override fun start() {
+    fun start() {
         if (this.thread == null) {
             this.stop.set(false)
             this.thread = Thread(Runner()).apply { start() }
@@ -114,7 +75,34 @@ class HeadlessEngineRunner(
         )
     }
 
-    override fun stop() {
+    fun stepEngine(deltaTime: Double): Boolean {
+
+        var stepOccurred = false
+        if (paused.get()) {
+            return false
+        }
+
+        if (enableRealTimeTarget) {
+            val diff = (simulationClock / targetRealTimeFactor) - wallClock
+            if (diff <= 0) {
+                engine.step()
+                stepOccurred = true
+            } else {
+                Thread.sleep(1)
+            }
+        } else {
+            engine.step()
+            stepOccurred = true
+        }
+
+        wallClock += deltaTime
+        actualRealTimeFactor = simulationClock / wallClock
+
+        return stepOccurred
+
+    }
+
+    fun stop() {
         thread?.also {
             stop.set(true)
             it.join()
@@ -125,10 +113,15 @@ class HeadlessEngineRunner(
 
         override fun run() {
 
+            if (!engine.isInitialized) {
+                engine.init()
+            }
+
             val inputThread = ConsoleInputReader().apply { start() }
             val clock = Clock()
-            while (!stop.get() && predicate?.invoke(engine) != true) {
-                if (stepEngine(clock.getDelta())) {
+            while (!engine.isClosed && !stop.get() && predicate?.invoke(engine) != true) {
+                val dt = clock.getDelta()
+                if (stepEngine(dt)) {
                     callback?.invoke()
                 }
             }

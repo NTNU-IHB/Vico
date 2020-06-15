@@ -1,9 +1,10 @@
 package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.EngineRunner
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.render.GeometryComponent
-import no.ntnu.ihb.acco.render.jme.JmeEngineRunner
+import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
 import no.ntnu.ihb.acco.render.shape.SphereShape
 import no.ntnu.ihb.fmi4j.writeReal
 import no.ntnu.ihb.vico.model.ModelResolver
@@ -14,8 +15,9 @@ fun main() {
 
         engine.addSystem(SlaveSystem())
         engine.addSystem(SlaveTransformSystem())
+        engine.addSystem(JmeRenderSystem())
 
-        Entity("BouncingBall").also { slaveEntity ->
+        val e = Entity("BouncingBall").also { slaveEntity ->
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
             SlaveComponent(model.instantiate("bouncingBall_")).apply {
                 writeReal("h", 3.0)
@@ -30,14 +32,9 @@ fun main() {
             engine.addEntity(slaveEntity)
         }
 
-        JmeEngineRunner(engine).apply {
-
+        EngineRunner(engine).apply {
             start()
-
         }
-
-        Thread.sleep(3000)
-        engine.removeEntity(engine.getEntityByName("BouncingBall"))
 
     }
 }

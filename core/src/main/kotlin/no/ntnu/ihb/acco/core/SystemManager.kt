@@ -25,6 +25,9 @@ class SystemManager(
             LOG.debug("Initializing system ${system::class.java}")
             system.initialize(currentTime)
         }
+        systems.forEach { system ->
+            system.postInit()
+        }
     }
 
     fun step(currentTime: Double, baseStepSize: Double): Double {

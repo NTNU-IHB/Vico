@@ -1,15 +1,12 @@
 package no.ntnu.ihb.acco.physics.bullet
 
-import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.acco.core.RealConnector
-import no.ntnu.ihb.acco.core.ScalarConnection
+import no.ntnu.ihb.acco.core.*
 import no.ntnu.ihb.acco.physics.ColliderComponent
 import no.ntnu.ihb.acco.physics.MotionControl
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
-import no.ntnu.ihb.acco.render.jme.JmeEngineRunner
+import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
 import no.ntnu.ihb.acco.render.shape.BoxShape
 import no.ntnu.ihb.acco.render.shape.SphereShape
 import kotlin.random.Random
@@ -53,8 +50,10 @@ fun main() {
         engine.addConnection(ScalarConnection(source, sink))
 
         engine.addSystem(BulletSystem())
+        engine.addSystem(JmeRenderSystem())
 
-        JmeEngineRunner(engine).apply {
+        EngineRunner(engine).apply {
+            targetRealTimeFactor = 1.0
             start()
         }
 

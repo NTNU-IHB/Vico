@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.ssp
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.HeadlessEngineRunner
+import no.ntnu.ihb.acco.core.EngineRunner
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
@@ -27,7 +27,7 @@ internal class TestSSPLoader {
             engine.addSystem(SlaveLoggerSystem(null, resultDir))
             structure.apply(engine)
 
-            HeadlessEngineRunner(engine).apply {
+            EngineRunner(engine).apply {
                 runFor(stopTime).get()
             }
 

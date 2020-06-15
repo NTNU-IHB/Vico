@@ -14,7 +14,7 @@ internal class SimulateSspTest {
     @EnabledOnOs(OS.WINDOWS)
     fun testSSP() {
 
-        val resultDir = File("build/results").also {
+        val resultDir = File("build/results/ControlledDriveTrain").also {
             it.deleteRecursively()
         }
 
