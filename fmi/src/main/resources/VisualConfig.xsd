@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig"
+           elementFormDefault="qualified"
+           targetNamespace="http://github.com/NTNU-IHB/Vico/schema/VisualConfig">
+
+    <xs:element name="Transform" type="vico:TTransform"/>
+
+    <xs:complexType name="TTransform">
+        <xs:sequence>
+            <xs:element name="PositionRef" type="vico:TPositionRef"/>
+            <xs:element name="RotationRef" type="vico:TEulerRef" minOccurs="0"/>
+            <xs:element name="Geometries" type="vico:TGeometries" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TGeometries">
+        <xs:sequence>
+            <xs:element name="Geometry" type="vico:TGeometry" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TGeometry">
+        <xs:sequence>
+            <xs:element name="OffsetPosition" type="vico:TPosition" minOccurs="0"/>
+            <xs:element name="OffsetRotation" type="vico:TEuler" minOccurs="0"/>
+            <xs:element name="Shapes" type="vico:TShapes"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TShapes">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="Plane" type="vico:TPlane"/>
+            <xs:element name="Box" type="vico:TBox"/>
+            <xs:element name="Sphere" type="vico:TSphere"/>
+            <xs:element name="Cylinder" type="vico:TCylinder"/>
+            <xs:element name="Capsule" type="vico:TCapsule"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="TSphere">
+        <xs:attribute name="radius" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TPlane">
+        <xs:attribute name="width" type="xs:double" use="required"/>
+        <xs:attribute name="height" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TBox">
+        <xs:attribute name="xExtent" type="xs:double" use="required"/>
+        <xs:attribute name="yExtent" type="xs:double" use="required"/>
+        <xs:attribute name="zExtent" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TCylinder">
+        <xs:attribute name="radius" type="xs:double" use="required"/>
+        <xs:attribute name="height" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TCapsule">
+        <xs:attribute name="radius" type="xs:double" use="required"/>
+        <xs:attribute name="height" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TPositionRef">
+        <xs:attribute name="px" type="xs:string" use="required" default="undefined"/>
+        <xs:attribute name="py" type="xs:string" use="required" default="undefined"/>
+        <xs:attribute name="pz" type="xs:string" use="required" default="undefined"/>
+    </xs:complexType>
+
+    <xs:complexType name="TEulerRef">
+        <xs:attribute name="x" type="xs:string" use="required" default="undefined"/>
+        <xs:attribute name="y" type="xs:string" use="required" default="undefined"/>
+        <xs:attribute name="z" type="xs:string" use="required" default="undefined"/>
+        <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
+    </xs:complexType>
+
+    <xs:complexType name="TEuler">
+        <xs:attribute name="x" type="xs:double" default="0"/>
+        <xs:attribute name="y" type="xs:double" default="0"/>
+        <xs:attribute name="z" type="xs:double" default="0"/>
+        <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
+    </xs:complexType>
+
+    <xs:complexType name="TQuaternion">
+        <xs:attribute name="x" type="xs:double" default="0"/>
+        <xs:attribute name="y" type="xs:double" default="0"/>
+        <xs:attribute name="z" type="xs:double" default="0"/>
+        <xs:attribute name="w" type="xs:double" default="1"/>
+    </xs:complexType>
+
+    <xs:complexType name="TPosition">
+        <xs:attribute name="px" type="xs:double" default="0"/>
+        <xs:attribute name="py" type="xs:double" default="0"/>
+        <xs:attribute name="pz" type="xs:double" default="0"/>
+    </xs:complexType>
+
+    <xs:simpleType name="TAngleRepr">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="deg"/>
+            <xs:enumeration value="rad"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

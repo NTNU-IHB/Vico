@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VicoAnnotations"
            elementFormDefault="qualified"
            targetNamespace="http://github.com/NTNU-IHB/Vico/schema/VicoAnnotations">
+
+    <xs:element name="MasterAlgorithm" type="vico:TMasterAlgorithm"/>
+    <xs:element name="StepSizeHint" type="vico:TStepSizeHint"/>
+
+    <xs:complexType name="TMasterAlgorithm">
+        <xs:choice>
+            <xs:element name="FixedStepMaster" type="vico:TFixedStepMaster"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="TFixedStepMaster">
+        <xs:attribute name="baseStepSize" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="TStepSizeHint">
+        <xs:attribute name="value" type="xs:double" use="required"/>
+    </xs:complexType>
 
 </xs:schema>
