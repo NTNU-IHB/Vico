@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each
  * Java content interface and Java element interface
- * generated in the no.ntnu.ihb.vico.jaxb.log package.
+ * generated in the no.ntnu.ihb.vico.log.jaxb package.
  * <p>An ObjectFactory allows you to programatically
  * construct new instances of the Java representation
  * for XML content. The Java representation of XML
@@ -26,13 +26,15 @@ public class ObjectFactory {
     private final static QName _LogConfig_QNAME = new QName("http://github.com/NTNU-IHB/Vico/schema/LogConfig", "LogConfig");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.vico.jaxb.log
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.vico.log.jaxb
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link TLogConfig }
+     *
      */
     public TLogConfig createTLogConfig() {
         return new TLogConfig();
@@ -40,6 +42,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TComponent }
+     *
      */
     public TComponent createTComponent() {
         return new TComponent();
@@ -47,9 +50,17 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TVariable }
+     *
      */
     public TVariable createTVariable() {
         return new TVariable();
+    }
+
+    /**
+     * Create an instance of {@link TLinearTransformation }
+     */
+    public TLinearTransformation createTLinearTransformation() {
+        return new TLinearTransformation();
     }
 
     /**

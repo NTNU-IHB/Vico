@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.*;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="linearTransformation" type="{http://github.com/NTNU-IHB/Vico/schema/ChartConfig}TLinearTransform" minOccurs="0"/>
+ *         &lt;element name="linearTransformation" type="{http://github.com/NTNU-IHB/Vico/schema/ChartConfig}TLinearTransformation" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -29,35 +29,41 @@ import javax.xml.bind.annotation.*;
 public class TVariable {
 
     @XmlElement(namespace = "http://github.com/NTNU-IHB/Vico/schema/ChartConfig")
-    protected TLinearTransform linearTransformation;
+    protected TLinearTransformation linearTransformation;
     @XmlAttribute(name = "name", required = true)
     protected String name;
 
     /**
      * Gets the value of the linearTransformation property.
      *
-     * @return possible object is
-     * {@link TLinearTransform }
+     * @return
+     *     possible object is
+     *     {@link TLinearTransformation }
+     *
      */
-    public TLinearTransform getLinearTransformation() {
+    public TLinearTransformation getLinearTransformation() {
         return linearTransformation;
     }
 
     /**
      * Sets the value of the linearTransformation property.
      *
-     * @param value allowed object is
-     *              {@link TLinearTransform }
+     * @param value
+     *     allowed object is
+     *     {@link TLinearTransformation }
+     *
      */
-    public void setLinearTransformation(TLinearTransform value) {
+    public void setLinearTransformation(TLinearTransformation value) {
         this.linearTransformation = value;
     }
 
     /**
      * Gets the value of the name property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getName() {
         return name;

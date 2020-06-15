@@ -2,7 +2,6 @@ package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.util.ObservableSet
 import no.ntnu.ihb.acco.util.Tag
-import no.ntnu.ihb.acco.util.toTag
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -12,7 +11,7 @@ private val DEFAULT_TIME_STEP = 1.0 / 100
 class Engine @JvmOverloads constructor(
     startTime: Double? = null,
     baseStepSize: Double? = null
-) : Entity(), EventDispatcher by EventDispatcherImpl(), Closeable {
+) : EventDispatcher by EventDispatcherImpl(), Closeable {
 
     val startTime = startTime ?: 0.0
     val baseStepSize = baseStepSize ?: DEFAULT_TIME_STEP
@@ -26,44 +25,14 @@ class Engine @JvmOverloads constructor(
     private val closed = AtomicBoolean()
     private val queue: Queue<() -> Unit> = ArrayDeque()
 
+    internal val entityManager = EntityManager()
     internal val systemManager = SystemManager(this)
     private val connectionManager = ConnectionManager()
 
-    private val families: MutableMap<Family, ObservableSet<Entity>> = mutableMapOf()
-
-    init {
-        tag = "root".toTag()
-    }
-
     constructor(baseStepSize: Double) : this(null, baseStepSize)
 
-    override fun descendantAdded(entity: Entity) {
-        super.descendantAdded(entity)
-        updateFamilyMemberShip(entity)
-    }
-
-    override fun descendantRemoved(entity: Entity) {
-        super.descendantRemoved(entity)
-        families.values.forEach { entities ->
-            entities.remove(entity)
-        }
-    }
-
     fun getEntitiesFor(family: Family): ObservableSet<Entity> {
-        return families.computeIfAbsent(family) {
-            findAllInDescendants { family.test(it) }
-            ObservableSet(findAllInDescendants { family.test(it) }.toMutableSet())
-        }
-    }
-
-    private fun updateFamilyMemberShip(entity: Entity) {
-        families.forEach { (family, entities) ->
-            if (family.test(entity)) {
-                entities.add(entity)
-            } else {
-                entities.remove(entity)
-            }
-        }
+        return entityManager.getEntitiesFor(family)
     }
 
     fun init() {
@@ -94,15 +63,20 @@ class Engine @JvmOverloads constructor(
 
     }
 
-    fun getEntityByName(name: String) = findInDescendants { it.name == name }
-    fun getEntitiesByTag(tag: String) = findAllInDescendants { it.tag?.value == tag }
-    fun getEntitiesByTag(tag: Tag) = findAllInDescendants { it.tag == tag }
+    fun addEntity(entity: Entity) = entityManager.addEntity(entity)
+    fun addAllEntities(entity: Entity, vararg additionalEntities: Entity) =
+        entityManager.addAllEntities(entity, *additionalEntities)
+
+    fun removeEntity(entity: Entity) = entityManager.removeEntity(entity)
+
+    fun getEntityByName(name: String) = entityManager.getEntityByName(name)
+    fun getEntitiesByTag(tag: Tag) = entityManager.getEntitiesByTag(tag)
 
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)
 
-    fun addSystem(system: ManipulationSystem) = systemManager.add(system)
     fun addSystem(system: EventSystem) = systemManager.add(system)
+    fun addSystem(system: ManipulationSystem) = systemManager.add(system)
 
     fun removeSystem(system: Class<out BaseSystem>) = systemManager.remove(system)
     inline fun <reified E : BaseSystem> removeSystem() = removeSystem(E::class.java)

@@ -61,8 +61,7 @@ sealed class BaseSystem(
 }
 
 abstract class EventSystem(
-    family: Family,
-    priority: Int? = null
+    family: Family
 ) : BaseSystem(family), EventListener {
 
     private val listenQueue = ArrayDeque<String>()

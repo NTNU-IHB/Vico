@@ -138,6 +138,10 @@ open class Entity private constructor(
         }
     }
 
+    inline fun <reified E : Component> removeComponent(): Component {
+        return removeComponent(E::class.java)
+    }
+
     fun removeComponent(componentClass: Class<out Component>): Component {
         val component = componentMap[componentClass]
             ?: throw IllegalArgumentException("No component of type $componentClass registered!")

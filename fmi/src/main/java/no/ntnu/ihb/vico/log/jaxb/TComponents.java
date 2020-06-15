@@ -54,6 +54,8 @@ public class TComponents {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TComponent }
+     *
+     *
      */
     public List<TComponent> getComponent() {
         if (component == null) {

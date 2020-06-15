@@ -67,8 +67,10 @@ public class TComponent {
     /**
      * Gets the value of the name property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getName() {
         return name;

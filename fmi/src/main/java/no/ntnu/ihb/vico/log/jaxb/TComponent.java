@@ -57,6 +57,8 @@ public class TComponent {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TVariable }
+     *
+     *
      */
     public List<TVariable> getVariable() {
         if (variable == null) {
@@ -68,8 +70,10 @@ public class TComponent {
     /**
      * Gets the value of the name property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -78,8 +82,10 @@ public class TComponent {
     /**
      * Sets the value of the name property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -88,12 +94,14 @@ public class TComponent {
     /**
      * Gets the value of the decimationFactor property.
      *
-     * @return possible object is
-     * {@link Integer }
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *
      */
     public int getDecimationFactor() {
         if (decimationFactor == null) {
-            return 1;
+            return  1;
         } else {
             return decimationFactor;
         }
@@ -102,8 +110,10 @@ public class TComponent {
     /**
      * Sets the value of the decimationFactor property.
      *
-     * @param value allowed object is
-     *              {@link Integer }
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *
      */
     public void setDecimationFactor(Integer value) {
         this.decimationFactor = value;

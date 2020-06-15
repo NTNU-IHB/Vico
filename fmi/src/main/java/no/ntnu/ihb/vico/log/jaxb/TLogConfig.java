@@ -36,8 +36,10 @@ public class TLogConfig {
     /**
      * Gets the value of the components property.
      *
-     * @return possible object is
-     * {@link TComponents }
+     * @return
+     *     possible object is
+     *     {@link TComponents }
+     *
      */
     public TComponents getComponents() {
         return components;
@@ -46,8 +48,10 @@ public class TLogConfig {
     /**
      * Sets the value of the components property.
      *
-     * @param value allowed object is
-     *              {@link TComponents }
+     * @param value
+     *     allowed object is
+     *     {@link TComponents }
+     *
      */
     public void setComponents(TComponents value) {
         this.components = value;
@@ -56,8 +60,10 @@ public class TLogConfig {
     /**
      * Gets the value of the staticFileNames property.
      *
-     * @return possible object is
-     * {@link Boolean }
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *
      */
     public boolean isStaticFileNames() {
         if (staticFileNames == null) {
@@ -70,8 +76,10 @@ public class TLogConfig {
     /**
      * Sets the value of the staticFileNames property.
      *
-     * @param value allowed object is
-     *              {@link Boolean }
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *
      */
     public void setStaticFileNames(Boolean value) {
         this.staticFileNames = value;

@@ -65,14 +65,8 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TLinearTransform }
-     */
-    public TLinearTransform createTLinearTransform() {
-        return new TLinearTransform();
-    }
-
-    /**
      * Create an instance of {@link TXYSeriesChart }
+     *
      */
     public TXYSeriesChart createTXYSeriesChart() {
         return new TXYSeriesChart();
@@ -80,6 +74,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TTimeSeries }
+     *
      */
     public TTimeSeries createTTimeSeries() {
         return new TTimeSeries();
@@ -94,8 +89,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TLinearTransformation }
+     */
+    public TLinearTransformation createTLinearTransformation() {
+        return new TLinearTransformation();
+    }
+
+    /**
      * Create an instance of {@link TChart }
-     *
      */
     public TChart createTChart() {
         return new TChart();
@@ -103,7 +104,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TTimeSeriesChart }
-     *
      */
     public TTimeSeriesChart createTTimeSeriesChart() {
         return new TTimeSeriesChart();

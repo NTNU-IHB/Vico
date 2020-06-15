@@ -28,8 +28,15 @@ internal class FamilyTest {
         Entity().apply {
             addComponent(ComponentA())
             addComponent(ComponentB())
-            assertTrue(Family.one(ComponentA::class.java, ComponentB::class.java).build().test(this))
-            assertFalse(Family.one(ComponentC::class.java, ComponentD::class.java).build().test(this))
+            val f1 = Family.one(ComponentA::class.java, ComponentB::class.java).build()
+            val f2 = Family.one(ComponentC::class.java, ComponentD::class.java).build()
+            assertTrue(f1.test(this))
+            assertFalse(f2.test(this))
+            removeComponent<ComponentA>()
+            removeComponent<ComponentB>()
+            assertFalse(f1.test(this))
+            addComponent(ComponentA())
+            assertTrue(f1.test(this))
         }
 
         Entity().apply {

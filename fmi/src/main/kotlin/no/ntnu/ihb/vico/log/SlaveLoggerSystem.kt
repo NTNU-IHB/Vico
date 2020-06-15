@@ -25,7 +25,7 @@ import javax.xml.bind.JAXB
 class SlaveLoggerSystem(
     private val logConfig: TLogConfig? = null,
     targetDir: File? = null
-) : EventSystem(Family.all(SlaveComponent::class.java).build(), 99) {
+) : EventSystem(Family.all(SlaveComponent::class.java).build()) {
 
     var separator: String = ", "
     var decimalPoints: Int = 6
@@ -37,6 +37,8 @@ class SlaveLoggerSystem(
     )
 
     init {
+
+        priority = Int.MAX_VALUE
 
         this.targetDir.mkdirs()
 

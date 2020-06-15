@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TLinearTransform complex type.
+ * <p>Java class for TLinearTransformation complex type.
  *
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="TLinearTransform">
+ * &lt;complexType name="TLinearTransformation">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TLinearTransform", namespace = "http://github.com/NTNU-IHB/Vico/schema/ChartConfig")
-public class TLinearTransform {
+@XmlType(name = "TLinearTransformation", namespace = "http://github.com/NTNU-IHB/Vico/schema/ChartConfig")
+public class TLinearTransformation {
 
     @XmlAttribute(name = "offset")
     protected Double offset;
@@ -35,12 +35,14 @@ public class TLinearTransform {
     /**
      * Gets the value of the offset property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getOffset() {
         if (offset == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return offset;
         }
@@ -49,8 +51,10 @@ public class TLinearTransform {
     /**
      * Sets the value of the offset property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setOffset(Double value) {
         this.offset = value;
@@ -59,12 +63,14 @@ public class TLinearTransform {
     /**
      * Gets the value of the factor property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getFactor() {
         if (factor == null) {
-            return 1.0D;
+            return  1.0D;
         } else {
             return factor;
         }
@@ -73,8 +79,10 @@ public class TLinearTransform {
     /**
      * Sets the value of the factor property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setFactor(Double value) {
         this.factor = value;

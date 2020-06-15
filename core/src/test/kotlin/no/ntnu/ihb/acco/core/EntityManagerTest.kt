@@ -1,6 +1,7 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.util.Tag
+import no.ntnu.ihb.acco.util.toTag
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -28,7 +29,7 @@ internal class EntityManagerTest {
             val e2 = Entity("entity2").apply { this.tag = tag }
             engine.addAllEntities(e1, e2)
             assertEquals(listOf(e1, e2), engine.getEntitiesByTag(tag))
-            assertTrue(engine.getEntitiesByTag("").isEmpty())
+            assertTrue(engine.getEntitiesByTag("".toTag()).isEmpty())
         }
     }
 

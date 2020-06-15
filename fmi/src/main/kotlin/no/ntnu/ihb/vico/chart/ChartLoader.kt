@@ -2,7 +2,7 @@ package no.ntnu.ihb.vico.chart
 
 import no.ntnu.ihb.acco.core.LinearTransform
 import no.ntnu.ihb.vico.chart.jaxb.TChartConfig
-import no.ntnu.ihb.vico.chart.jaxb.TLinearTransform
+import no.ntnu.ihb.vico.chart.jaxb.TLinearTransformation
 import no.ntnu.ihb.vico.chart.jaxb.TTimeSeriesChart
 import no.ntnu.ihb.vico.chart.jaxb.TXYSeriesChart
 import java.io.File
@@ -71,6 +71,6 @@ object ChartLoader {
 
 }
 
-private fun TLinearTransform.convert(): LinearTransform {
+private fun TLinearTransformation.convert(): LinearTransform {
     return LinearTransform(factor = factor, offset = offset)
 }
