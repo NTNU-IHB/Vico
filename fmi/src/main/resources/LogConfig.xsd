@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/LogConfig"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/LogConfig"
            elementFormDefault="qualified"
            targetNamespace="http://github.com/NTNU-IHB/Vico/schema/LogConfig">
 
