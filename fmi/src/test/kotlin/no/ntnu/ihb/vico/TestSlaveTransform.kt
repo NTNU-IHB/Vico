@@ -17,7 +17,7 @@ fun main() {
         engine.addSystem(SlaveTransformSystem())
         engine.addSystem(JmeRenderSystem())
 
-        val e = Entity("BouncingBall").also { slaveEntity ->
+        Entity("BouncingBall").also { slaveEntity ->
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
             SlaveComponent(model.instantiate("bouncingBall_")).apply {
                 writeReal("h", 3.0)

@@ -1,6 +1,7 @@
 package no.ntnu.ihb.acco.render.jme.objects
 
 import com.jme3.asset.AssetManager
+import com.jme3.math.ColorRGBA
 import com.jme3.scene.Geometry
 import com.jme3.scene.Node
 import com.jme3.scene.SceneGraphVisitorAdapter
@@ -8,22 +9,18 @@ import com.jme3.scene.Spatial
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.jme.getLightingMaterial
 import no.ntnu.ihb.acco.render.jme.getWireFrameMaterial
+import no.ntnu.ihb.acco.render.jme.set
 
 
 class RenderNode(
-    private val assetManager: AssetManager,
+    assetManager: AssetManager,
     private var visible: Boolean = true,
     private var wireframe: Boolean = false,
-    private val color: Color = Color()
+    color: Color = Color()
 ) : Node() {
 
     private val mainMaterial = assetManager.getLightingMaterial(color)
     private val wireframeMaterial = assetManager.getWireFrameMaterial()
-
-    init {
-        //this.mainMaterial.additionalRenderState.faceCullMode = RenderState.FaceCullMode.Off
-    }
-
 
     override fun attachChild(child: Spatial): Int {
         return super.attachChild(child).also {
@@ -34,6 +31,15 @@ class RenderNode(
                     }
                 }
             })
+        }
+    }
+
+    fun setColor(color: Color) {
+        ColorRGBA().set(color).also { colorRGBA ->
+            mainMaterial.setColor("Ambient", colorRGBA)
+            mainMaterial.setColor("Diffuse", colorRGBA)
+            mainMaterial.setColor("Specular", colorRGBA)
+            mainMaterial.setColor("GlowColor", colorRGBA)
         }
     }
 

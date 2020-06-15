@@ -12,6 +12,7 @@ import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.acco.render.GeometryComponent
+import no.ntnu.ihb.acco.render.GeometryComponentListener
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
 import org.joml.Quaterniond
 import org.joml.Vector3d
@@ -53,11 +54,27 @@ class JmeRenderSystem : SimulationSystem(
         val transform = entity.getComponent(TransformComponent::class.java)
         val geometry = entity.getComponent(GeometryComponent::class.java)
 
+
         val world = transform.getWorldMatrix()
         invokeLater {
             map.computeIfAbsent(entity) {
 
                 geometry.createGeometry(app.assetManager).also { node ->
+
+                    geometry.addListener(object : GeometryComponentListener {
+
+                        override fun onColorChanged() {
+                            node.setColor(geometry.getColor())
+                        }
+
+                        override fun onVisibilityChanged() {
+                            node.setVisible(geometry.visible)
+                        }
+
+                        override fun onWireframeChanged() {
+                            node.setWireframe(geometry.wireframe)
+                        }
+                    })
 
                     node.localTranslation.set(world.getTranslation(tmpVec))
                     node.localRotation.set(world.getNormalizedRotation(tmpQuat))
@@ -90,9 +107,6 @@ class JmeRenderSystem : SimulationSystem(
                 node.localTranslation.set(world.getTranslation(tmpVec))
                 node.localRotation.set(world.getNormalizedRotation(tmpQuat))
                 node.forceRefresh(true, true, true)
-
-                node.setVisible(geometry.visible)
-                node.setWireframe(geometry.wireframe)
             }
 
         }

@@ -39,7 +39,7 @@ fun main() {
             val shape = BoxShape(0.1f)
             e.addComponent(ColliderComponent(shape))
             e.addComponent(GeometryComponent(shape).apply {
-                color.set(Color.red)
+                setColor(Color.red)
             })
             engine.addEntity(e)
         }

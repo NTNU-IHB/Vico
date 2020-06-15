@@ -49,7 +49,7 @@ private fun e1(): Entity {
         e.transform.setLocalTranslation(-1.0, 0.0, 0.0)
 
         e.addComponent(GeometryComponent(BoxShape()).apply {
-            color.set(Color.green)
+            setColor(Color.green)
         })
         e.addComponent(SineMoverComponent())
     }
@@ -66,7 +66,7 @@ fun main() {
             e.transform.setLocalTranslation(1.0, 0.0, 0.0)
 
             e.addComponent(GeometryComponent(SphereShape()).apply {
-                color.set(Color.yellow)
+                setColor(Color.yellow)
             })
             e.addComponent(SineMoverComponent(f = 0.5))
             e1.addEntity(e)
@@ -80,12 +80,13 @@ fun main() {
             start()
         }
 
-        Thread.sleep(1000)
+        Thread.sleep(5000)
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
         Thread.sleep(1000)
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
+        engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
 
     }
 

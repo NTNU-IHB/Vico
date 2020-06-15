@@ -101,27 +101,27 @@ internal fun GeometryComponent.createGeometry(assetManager: AssetManager): Rende
 
     return when (val shape = shape) {
         is BoxShape -> {
-            RenderNode(assetManager, visible, wireframe, color).apply {
+            RenderNode(assetManager, visible, wireframe, getColor()).apply {
                 attachChild(createBox(shape))
             }
         }
         is PlaneShape -> {
-            RenderNode(assetManager, visible, wireframe, color).apply {
+            RenderNode(assetManager, visible, wireframe, getColor()).apply {
                 attachChild(createPlane(shape))
             }
         }
         is SphereShape -> {
-            RenderNode(assetManager, visible, wireframe, color).apply {
+            RenderNode(assetManager, visible, wireframe, getColor()).apply {
                 attachChild(createSphere(shape))
             }
         }
         is CylinderShape -> {
-            RenderNode(assetManager, visible, wireframe, color).apply {
+            RenderNode(assetManager, visible, wireframe, getColor()).apply {
                 attachChild(createCylinder(shape))
             }
         }
         is CapsuleShape -> {
-            RenderNode(assetManager, visible, wireframe, color).apply {
+            RenderNode(assetManager, visible, wireframe, getColor()).apply {
                 attachChild(createCapsule(shape))
             }
         }
