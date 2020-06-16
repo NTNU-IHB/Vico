@@ -2,7 +2,6 @@ package no.ntnu.ihb.vico.cli
 
 import no.ntnu.ihb.vico.TestSsp
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -38,13 +37,12 @@ internal class SimulateSspTest {
     }
 
     @Test
-    @Disabled
     @EnabledOnOs(OS.WINDOWS)
     fun testLogConfig() {
 
         val ssdFile = TestSsp.get("ControlledDrivetrain.ssp").absolutePath
 
-        val resultDir = File("build/testLogConfig").also {
+        val resultDir = File("build/results/ControlledDriveTrain/logconfig").also {
             it.deleteRecursively()
         }
 
