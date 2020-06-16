@@ -21,8 +21,7 @@ class CosimSystem @JvmOverloads constructor(
     private val entityQueue = ArrayDeque<Entity>()
 
     private fun addSlave(entity: Entity) {
-        val fmuComponent = entity.getComponent<CosimFmuComponent>()
-        execution.addSlave(fmuComponent.source, fmuComponent.instanceName)
+        entity.getComponent<CosimFmuComponent>().apply(execution)
     }
 
     override fun init(currentTime: Double) {
