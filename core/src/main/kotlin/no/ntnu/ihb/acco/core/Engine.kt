@@ -37,10 +37,6 @@ class Engine @JvmOverloads constructor(
 
     constructor(baseStepSize: Double) : this(null, baseStepSize)
 
-    fun getEntitiesFor(family: Family): ObservableSet<Entity> {
-        return entityManager.getEntitiesFor(family)
-    }
-
     fun init() {
         if (!initialized.getAndSet(true)) {
             systemManager.initialize(currentTime)
@@ -67,6 +63,11 @@ class Engine @JvmOverloads constructor(
             emptyQueue()
         }
 
+    }
+
+
+    fun getEntitiesFor(family: Family): ObservableSet<Entity> {
+        return entityManager.getEntitiesFor(family)
     }
 
     fun addEntity(entity: Entity) = entityManager.addEntity(entity)

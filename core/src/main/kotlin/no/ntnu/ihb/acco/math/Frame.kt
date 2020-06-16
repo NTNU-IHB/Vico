@@ -284,15 +284,15 @@ open class Frame : IFrame {
     }
 
     override fun localRotateX(angle: Angle) {
-        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_X, angle.inRadians())))
+        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3d_X, angle.inRadians())))
     }
 
     override fun localRotateY(angle: Angle) {
-        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_Y, angle.inRadians())))
+        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3d_Y, angle.inRadians())))
     }
 
     override fun localRotateZ(angle: Angle) {
-        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3_Z, angle.inRadians())))
+        applyMatrix(Matrix4d().set(Quaterniond().fromAxisAngleRad(Vector3d_Z, angle.inRadians())))
     }
 
     /*fun lookAt(target: Vector3dc?) {

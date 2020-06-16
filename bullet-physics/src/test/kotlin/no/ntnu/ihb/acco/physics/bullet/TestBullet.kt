@@ -18,7 +18,7 @@ fun main() {
         Entity("plane").also { e ->
             e.transform.setLocalTranslation(0.0, -1.0, 0.0)
             e.addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
-            val shape = BoxShape(10f, 0.1f, 10f)
+            val shape = BoxShape(10.0, 0.1, 10.0)
             e.addComponent(ColliderComponent(shape))
             e.addComponent(GeometryComponent(shape))
             engine.addEntity(e)
@@ -28,7 +28,7 @@ fun main() {
             Entity("sphere_$i").also { e ->
                 e.transform.setLocalTranslation(Random.nextDouble(-1.0, 1.0), 2.0, Random.nextDouble(-1.0, 1.0))
                 e.addComponent(RigidBodyComponent())
-                val shape = SphereShape(0.1f)
+                val shape = SphereShape(0.1)
                 e.addComponent(ColliderComponent(shape))
                 e.addComponent(GeometryComponent(shape))
                 engine.addEntity(e)
@@ -36,7 +36,7 @@ fun main() {
         }
 
         Entity("test").also { e ->
-            val shape = BoxShape(0.1f)
+            val shape = BoxShape(0.1)
             e.addComponent(ColliderComponent(shape))
             e.addComponent(GeometryComponent(shape).apply {
                 setColor(Color.red)

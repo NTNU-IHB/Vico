@@ -12,22 +12,22 @@ import org.joml.*
 fun ColliderComponent.convert(): btCollisionShape {
     return when (val shape = shape) {
         is BoxShape -> {
-            btBoxShape(Vector3(shape.width, shape.height, shape.depth).scl(0.5f))
+            btBoxShape(Vector3(shape.width.toFloat(), shape.height.toFloat(), shape.depth.toFloat()).scl(0.5f))
         }
         is PlaneShape -> {
             val depth = 0.5f
-            btBoxShape(Vector3(shape.height, shape.height, depth))
+            btBoxShape(Vector3(shape.height.toFloat(), shape.height.toFloat(), depth))
         }
         is SphereShape -> {
-            btSphereShape(shape.radius)
+            btSphereShape(shape.radius.toFloat())
         }
         is CylinderShape -> {
-            btCylinderShapeZ(Vector3(shape.radius, shape.radius, shape.height * 0.5f))
+            btCylinderShapeZ(Vector3(shape.radius.toFloat(), shape.radius.toFloat(), shape.height.toFloat() * 0.5f))
         }
         is CapsuleShape -> {
-            btCapsuleShapeZ(shape.radius, shape.height * 0.5f)
+            btCapsuleShapeZ(shape.radius.toFloat(), shape.height.toFloat() * 0.5f)
         }
-        else -> TODO()
+        else -> TODO("Unsupported shape: $shape")
     }
 }
 

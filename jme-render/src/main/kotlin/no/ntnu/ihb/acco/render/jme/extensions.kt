@@ -68,33 +68,33 @@ internal fun ColorRGBA.set(c: Color, alpha: Float = 1f) = apply {
 private fun createBox(shape: BoxShape): Geometry {
     return Geometry(
         "BoxGeometry",
-        Box(shape.width * 0.5f, shape.height * 0.5f, shape.depth * 0.5f)
+        Box(shape.width.toFloat() * 0.5f, shape.height.toFloat() * 0.5f, shape.depth.toFloat() * 0.5f)
     )
 }
 
 private fun createPlane(shape: PlaneShape): Geometry {
     return Geometry(
         "PlaneGeometry",
-        JmeGrid(shape.width, shape.height)
+        JmeGrid(shape.width.toFloat(), shape.height.toFloat())
     )
 }
 
 private fun createSphere(shape: SphereShape): Geometry {
     return Geometry(
         "SphereGeometry",
-        Sphere(32, 32, shape.radius)
+        Sphere(32, 32, shape.radius.toFloat())
     )
 }
 
 private fun createCylinder(shape: CylinderShape): Geometry {
     return Geometry(
         "CylinderGeometry",
-        Cylinder(32, 32, shape.radius, shape.height)
+        Cylinder(32, 32, shape.radius.toFloat(), shape.height.toFloat())
     )
 }
 
 private fun createCapsule(shape: CapsuleShape): Node {
-    return JmeCapsule(shape.radius, shape.height)
+    return JmeCapsule(shape.radius.toFloat(), shape.height.toFloat())
 }
 
 internal fun GeometryComponent.createGeometry(assetManager: AssetManager): RenderNode {
