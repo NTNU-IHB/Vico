@@ -1,7 +1,6 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.util.ObservableSet
-import no.ntnu.ihb.acco.util.Tag
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -77,7 +76,7 @@ class Engine @JvmOverloads constructor(
     fun removeEntity(entity: Entity) = entityManager.removeEntity(entity)
 
     fun getEntityByName(name: String) = entityManager.getEntityByName(name)
-    fun getEntitiesByTag(tag: Tag) = entityManager.getEntitiesByTag(tag)
+    fun getEntitiesByTag(tag: String) = entityManager.getEntitiesByTag(tag)
 
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)

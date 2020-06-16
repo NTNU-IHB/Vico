@@ -1,7 +1,6 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.components.TransformComponent
-import no.ntnu.ihb.acco.util.Tag
 import java.util.*
 
 typealias EntityTraverser = (Entity) -> Unit
@@ -19,7 +18,7 @@ open class Entity private constructor(
     var name = originalName
         private set
 
-    var tag: Tag? = null
+    var tag: String? = null
     val transform = TransformComponent()
 
     val numChildren: Int
@@ -53,7 +52,7 @@ open class Entity private constructor(
         children.add(child)
         child.parent = this
         child.transform.setParent(this.transform)
-        if (tag?.value != "root") {
+        if (tag != "root") {
             child.name = "${name}.${child.originalName}"
         }
         descendantAdded(child)
