@@ -6,7 +6,7 @@ import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-private val DEFAULT_TIME_STEP = 1.0 / 100
+private const val DEFAULT_TIME_STEP = 1.0 / 100
 
 class Engine @JvmOverloads constructor(
     startTime: Double? = null,
@@ -23,7 +23,7 @@ class Engine @JvmOverloads constructor(
 
     private val initialized = AtomicBoolean()
     private val closed = AtomicBoolean()
-    private val queue: Queue<() -> Unit> = ArrayDeque()
+    private val queue: Queue<Runnable> = ArrayDeque()
 
     val isInitialized: Boolean
         get() = initialized.get()
@@ -31,7 +31,7 @@ class Engine @JvmOverloads constructor(
     val isClosed: Boolean
         get() = closed.get()
 
-    internal val entityManager = EntityManager()
+    private val entityManager = EntityManager()
     internal val systemManager = SystemManager(this)
     private val connectionManager = ConnectionManager()
 
@@ -90,17 +90,17 @@ class Engine @JvmOverloads constructor(
     fun addConnection(connection: Connection) = connectionManager.addConnection(connection)
     fun updateConnection(key: Component) = connectionManager.updateConnection(key)
 
-    internal fun safeContext(task: () -> Unit) {
+    internal fun safeContext(task: Runnable) {
         if (initialized.get()) {
             queue.add(task)
         } else {
-            task.invoke()
+            task.run()
         }
     }
 
     private fun emptyQueue() {
         while (!queue.isEmpty()) {
-            queue.poll().invoke()
+            queue.poll().run()
         }
     }
 

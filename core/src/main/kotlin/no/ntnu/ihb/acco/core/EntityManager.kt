@@ -6,7 +6,7 @@ import no.ntnu.ihb.acco.util.toTag
 
 class EntityManager {
 
-    val root = RootEntity()
+    private val root = RootEntity()
 
     private val families: MutableMap<Family, ObservableSet<Entity>> = mutableMapOf()
 
@@ -51,7 +51,6 @@ class EntityManager {
             }
         }
 
-
         private fun updateFamilyMemberShip(entity: Entity) {
             families.forEach { (family, entities) ->
                 if (family.test(entity)) {
@@ -61,7 +60,6 @@ class EntityManager {
                 }
             }
         }
-
 
     }
 

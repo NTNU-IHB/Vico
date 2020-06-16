@@ -51,11 +51,12 @@ class JmeRenderSystem : SimulationSystem(
     }
 
     override fun entityAdded(entity: Entity) {
-        val transform = entity.getComponent(TransformComponent::class.java)
-        val geometry = entity.getComponent(GeometryComponent::class.java)
 
+        val transform = entity.getComponent<TransformComponent>()
+        val geometry = entity.getComponent<GeometryComponent>()
 
         val world = transform.getWorldMatrix()
+
         invokeLater {
             map.computeIfAbsent(entity) {
 
@@ -98,8 +99,7 @@ class JmeRenderSystem : SimulationSystem(
         entities.forEach { entity ->
 
             val node = map.getValue(entity)
-            val geometry = entity.getComponent(GeometryComponent::class.java)
-            val transform = entity.getComponent(TransformComponent::class.java)
+            val transform = entity.getComponent<TransformComponent>()
 
             val world = transform.getWorldMatrix()
 

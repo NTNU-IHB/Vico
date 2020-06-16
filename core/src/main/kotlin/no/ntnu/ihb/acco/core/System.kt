@@ -1,5 +1,6 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.util.SetObserver
 import java.io.Closeable
 import java.util.*
 
@@ -26,19 +27,26 @@ sealed class BaseSystem(
     internal fun addedToEngine(engine: Engine) {
         this._engine = engine
         entities = engine.getEntitiesFor(family).apply {
-            addObserver = {
-                entityAdded(it)
+            observer = object : SetObserver<Entity> {
+
+                override fun onElementAdded(element: Entity) {
+                    entityAdded(element)
+                }
+
+                override fun onElementRemoved(element: Entity) {
+                    entityRemoved(element)
+                }
+
             }
-            removeObserver = {
-                entityRemoved(it)
-            }
-            forEach { entityAdded(it) }
+            forEach { entity -> entityAdded(entity) }
         }
         assignedToEngine(engine)
     }
 
     internal fun initialize(currentTime: Double) {
-        if (initialized) throw IllegalStateException()
+        if (initialized) {
+            throw IllegalStateException()
+        }
         init(currentTime)
         initialized = true
     }
@@ -68,7 +76,7 @@ abstract class EventSystem(
 
     private val listenQueue = ArrayDeque<String>()
 
-    override fun invoke(evt: Event) {
+    override fun onEvent(evt: Event) {
         if (enabled) {
             eventReceived(evt)
         }

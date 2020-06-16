@@ -11,7 +11,11 @@ class Event(
 
 }
 
-typealias EventListener = (Event) -> Unit
+fun interface EventListener {
+
+    fun onEvent(evt: Event)
+
+}
 
 interface EventDispatcher {
 
@@ -71,7 +75,7 @@ class EventDispatcherImpl : EventDispatcher {
 
     override fun dispatchEvent(type: String, target: Any?) {
         listeners[type]?.forEach {
-            it.invoke(Event(type, target))
+            it.onEvent(Event(type, target))
         }
     }
 

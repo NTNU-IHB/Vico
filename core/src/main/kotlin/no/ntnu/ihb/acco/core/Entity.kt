@@ -15,7 +15,7 @@ open class Entity private constructor(
     private val properties: Properties
 ) : PropertyAccessor by properties {
 
-    private var originalName = name ?: "Entity"
+    internal var originalName = name ?: "Entity"
     var name = originalName
         private set
 
@@ -48,6 +48,8 @@ open class Entity private constructor(
     constructor(name: String? = null) : this(name, Properties())
 
     fun addEntity(child: Entity) {
+        require(child != this) { "Adding self!" }
+        require(child !in descendants) { "$child is already a descendant" }
         children.add(child)
         child.parent = this
         child.transform.setParent(this.transform)

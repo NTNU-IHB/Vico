@@ -6,34 +6,28 @@ import org.junit.jupiter.api.Test
 internal class ObservableSetTest {
 
     @Test
-    fun testAdd() {
+    fun testObservableSet() {
 
         val set = ObservableSet(mutableSetOf<Int>())
 
-        var observed = false
-        set.addObserver = {
-            observed = true
+        var addObserved = false
+        var removeObserved = false
+
+        set.observer = object : SetObserver<Int> {
+            override fun onElementAdded(element: Int) {
+                addObserved = true
+            }
+
+            override fun onElementRemoved(element: Int) {
+                removeObserved = true
+            }
         }
 
         set.add(5)
+        assertTrue(addObserved)
 
-        assertTrue(observed)
-
-    }
-
-    @Test
-    fun testRemove() {
-
-        val set = ObservableSet(mutableSetOf(1, 2, 3))
-
-        var observed = false
-        set.removeObserver = {
-            observed = true
-        }
-
-        set.remove(1)
-
-        assertTrue(observed)
+        set.remove(5)
+        assertTrue(removeObserved)
 
     }
 
