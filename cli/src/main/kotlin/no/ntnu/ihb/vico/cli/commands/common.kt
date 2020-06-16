@@ -49,6 +49,11 @@ internal fun runSimulation(
     measureTime {
         runner.runUntil(stopTime).get()
     }.also { t ->
-        LOG.info("Simulation finished. Simulated ${totalSimulationTime}s in ${t.inSeconds}s.. ")
+        val targetRTF: Any = if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded"
+        LOG.info(
+            "Simulation finished. " +
+                    "Simulated ${totalSimulationTime}s in ${t.inSeconds}s, " +
+                    "RTF: target=$targetRTF, actual=${runner.actualRealTimeFactor}"
+        )
     }
 }
