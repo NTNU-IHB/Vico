@@ -26,7 +26,7 @@ sealed class BaseSystem(
 
     internal fun addedToEngine(engine: Engine) {
         this._engine = engine
-        entities = engine.getEntitiesFor(family).apply {
+        this.entities = engine.getEntitiesFor(family).apply {
             observer = object : SetObserver<Entity> {
 
                 override fun onElementAdded(element: Entity) {
@@ -38,15 +38,17 @@ sealed class BaseSystem(
                 }
 
             }
-            forEach { entity -> entityAdded(entity) }
         }
+        this.entities.forEach { entity -> entityAdded(entity) }
+
         assignedToEngine(engine)
     }
 
     internal fun initialize(currentTime: Double) {
-        if (initialized) {
-            throw IllegalStateException()
+        check(!initialized) {
+            "System already initialized!"
         }
+
         init(currentTime)
         initialized = true
     }
