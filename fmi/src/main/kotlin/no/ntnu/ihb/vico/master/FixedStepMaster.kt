@@ -1,12 +1,9 @@
 package no.ntnu.ihb.vico.master
 
-import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveInitCallback
 import no.ntnu.ihb.vico.SlaveStepCallback
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.math.ceil
-import kotlin.math.max
 
 class FixedStepMaster : MasterAlgorithm() {
 
@@ -43,7 +40,7 @@ class FixedStepMaster : MasterAlgorithm() {
 
         private val LOG: Logger = LoggerFactory.getLogger(MasterAlgorithm::class.java)
 
-        fun calculateStepFactor(slave: SlaveComponent, baseStepSize: Double): Long {
+       /* fun calculateStepFactor(slave: SlaveComponent, baseStepSize: Double): Long {
             val stepSizeHint: Double = slave.stepSizeHint ?: return 1
             val decimationFactor = max(1, ceil(stepSizeHint / baseStepSize).toLong())
             val actualStepSize = baseStepSize * decimationFactor
@@ -51,7 +48,7 @@ class FixedStepMaster : MasterAlgorithm() {
                 LOG.warn("Actual step size for ${slave.instanceName} will be $actualStepSize rather than requested value $stepSizeHint.")
             }
             return decimationFactor
-        }
+        }*/
 
     }
 

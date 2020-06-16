@@ -5,6 +5,8 @@ import no.ntnu.ihb.acco.util.Tag
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.ceil
+import kotlin.math.max
 
 private const val DEFAULT_TIME_STEP = 1.0 / 100
 
@@ -65,6 +67,11 @@ class Engine @JvmOverloads constructor(
 
     }
 
+    fun stepUntil(timePoint: Double) {
+        while (timePoint >= currentTime) {
+            step(1)
+        }
+    }
 
     fun getEntitiesFor(family: Family): ObservableSet<Entity> {
         return entityManager.getEntitiesFor(family)
@@ -111,6 +118,10 @@ class Engine @JvmOverloads constructor(
                 systemManager.close()
             }
         }
+    }
+
+    fun calculateStepFactor(stepSizeHint: Double): Long {
+        return max(1, ceil(stepSizeHint / baseStepSize).toLong())
     }
 
 }

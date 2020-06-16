@@ -38,8 +38,8 @@ sealed class BaseSystem(
                 }
 
             }
-            forEach { entity -> entityAdded(entity) }
         }
+        entities.forEach { entity -> entityAdded(entity) }
         assignedToEngine(engine)
     }
 
