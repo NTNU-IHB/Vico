@@ -16,8 +16,10 @@ internal class TestSSPLoader {
     fun testControlledDriveTrain() {
 
         val resultDir = File("build/results/ControlledDriveTrain").also {
-            it.deleteRecursively()
+            Assertions.assertTrue(it.deleteRecursively())
         }
+
+        Assertions.assertEquals(0, resultDir.listFiles()?.size ?: 0)
 
         val structure = SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load()
         val stopTime = structure.defaultExperiment?.stopTime ?: 0.0

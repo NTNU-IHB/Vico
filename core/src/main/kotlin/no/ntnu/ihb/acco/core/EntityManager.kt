@@ -37,10 +37,12 @@ class EntityManager {
         }
 
         override fun descendantAdded(entity: Entity) {
+            super.descendantAdded(entity)
             updateFamilyMemberShip(entity)
         }
 
         override fun descendantRemoved(entity: Entity) {
+            super.descendantRemoved(entity)
             families.values.forEach { entities ->
                 entities.remove(entity)
             }

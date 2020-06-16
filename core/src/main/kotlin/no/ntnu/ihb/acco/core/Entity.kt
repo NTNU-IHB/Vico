@@ -3,12 +3,6 @@ package no.ntnu.ihb.acco.core
 import no.ntnu.ihb.acco.components.TransformComponent
 import java.util.*
 
-typealias EntityTraverser = (Entity) -> Unit
-
-enum class TraverseOption {
-    DEPTH_FIRST, BREADTH_FIRST
-}
-
 open class Entity private constructor(
     name: String? = null,
     private val properties: Properties
@@ -27,12 +21,12 @@ open class Entity private constructor(
     val numDescendants: Int
         get() = descendants.size
 
-    private val mutableComponents = mutableListOf<Component>()
+    private val mutableComponents: MutableList<Component> = mutableListOf()
     val components: List<Component>
         get() = mutableComponents
 
-    private val componentMap = mutableMapOf<Class<out Component>, Component>()
-    private val componentListeners = mutableListOf<ComponentListener>()
+    private val componentMap: MutableMap<Class<out Component>, Component> = mutableMapOf()
+    private val componentListeners: MutableList<ComponentListener> = mutableListOf()
 
     var parent: Entity? = null
         private set
@@ -89,7 +83,7 @@ open class Entity private constructor(
     }
 
     fun traverseAncestors(callback: EntityTraverser) {
-        callback.invoke(this)
+        callback.traverse(this)
         parent?.also {
             it.traverseAncestors(callback)
         }
@@ -103,18 +97,18 @@ open class Entity private constructor(
     }
 
     fun depthFirstTraversal(traverser: EntityTraverser) {
-        traverser.invoke(this)
+        traverser.traverse(this)
         for (child in children) {
             child.depthFirstTraversal(traverser)
         }
     }
 
     fun breadthFirstTraversal(traverser: EntityTraverser) {
-        traverser.invoke(this)
+        traverser.traverse(this)
         val queue = ArrayDeque(children)
         while (!queue.isEmpty()) {
             queue.remove().also { child ->
-                traverser.invoke(child)
+                traverser.traverse(child)
                 child.children.forEach { queue.add(it) }
             }
         }

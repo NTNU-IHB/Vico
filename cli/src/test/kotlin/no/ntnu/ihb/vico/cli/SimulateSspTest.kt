@@ -13,8 +13,8 @@ internal class SimulateSspTest {
     @EnabledOnOs(OS.WINDOWS)
     fun testSSP() {
 
-        val resultDir = File("build/results/ControlledDriveTrain").also {
-            it.deleteRecursively()
+        val resultDir = File("build/results/ControlledDriveTrain/testSSP").also {
+            Assertions.assertTrue(it.deleteRecursively())
         }
 
         val ssdFile = TestSsp.get("ControlledDrivetrain.ssp").absolutePath
@@ -42,8 +42,8 @@ internal class SimulateSspTest {
 
         val ssdFile = TestSsp.get("ControlledDrivetrain.ssp").absolutePath
 
-        val resultDir = File("build/results/ControlledDriveTrain/logconfig").also {
-            it.deleteRecursively()
+        val resultDir = File("build/results/ControlledDriveTrain/testLogConfig").also {
+            Assertions.assertTrue(it.deleteRecursively())
         }
 
         VicoCLI.main(
