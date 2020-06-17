@@ -30,14 +30,14 @@ internal class ConnectionTest {
             engine.addEntity(sourceEntity)
 
             val sourceConnector = RealConnector(
-                sourceEntity.getComponent(ValueComponent::class.java), "value"
+                sourceEntity.getComponent<ValueComponent>(), "value"
             )
 
             val sinkEntity = Entity("sink").addComponent(ValueComponent())
             engine.addEntity(sinkEntity)
 
             val sinkConnector = RealConnector(
-                sinkEntity.getComponent(ValueComponent::class.java), "value"
+                sinkEntity.getComponent<ValueComponent>(), "value"
             )
 
             engine.addConnection(ScalarConnection(sourceConnector, sinkConnector))
@@ -45,7 +45,6 @@ internal class ConnectionTest {
             engine.init()
 
             Assertions.assertEquals(someValue, (sinkConnector.component as ValueComponent).value)
-
 
         }
 
