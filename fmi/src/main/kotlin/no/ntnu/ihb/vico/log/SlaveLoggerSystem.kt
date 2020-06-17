@@ -14,6 +14,8 @@ import no.ntnu.ihb.fmi4j.readString
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.log.jaxb.TLogConfig
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.BufferedWriter
 import java.io.Closeable
 import java.io.File
@@ -30,7 +32,7 @@ class SlaveLoggerSystem(
     var separator: String = ", "
     var decimalPoints: Int = 6
     val targetDir: File = targetDir ?: File(".")
-    private val loggers: MutableMap<String, Logger> = mutableMapOf()
+    private val loggers: MutableMap<String, SlaveLogger> = mutableMapOf()
 
     constructor(configFile: File, targetDir: File? = null) : this(
         JAXB.unmarshal(configFile, TLogConfig::class.java), targetDir
@@ -56,7 +58,7 @@ class SlaveLoggerSystem(
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent(SlaveComponent::class.java)
         if (logConfig == null) {
-            loggers[slave.instanceName] = Logger(slave, emptyList(), 1)
+            loggers[slave.instanceName] = SlaveLogger(slave, emptyList(), 1)
         } else {
             val logInfo = logConfig.components?.component?.associateBy { it.name } ?: mutableMapOf()
             logInfo[slave.instanceName]?.also { component ->
@@ -65,7 +67,8 @@ class SlaveLoggerSystem(
                 val variables = component.variable.map { v ->
                     slave.modelDescription.getVariableByName(v.name)
                 }
-                loggers[slave.instanceName] = Logger(slave, variables, decimationFactor, logConfig.isStaticFileNames)
+                loggers[slave.instanceName] =
+                    SlaveLogger(slave, variables, decimationFactor, logConfig.isStaticFileNames)
             }
         }
         loggers[slave.instanceName]?.also {
@@ -94,7 +97,11 @@ class SlaveLoggerSystem(
         loggers.values.forEach { it.close() }
     }
 
-    private inner class Logger(
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(SlaveLoggerSystem::class.java)
+    }
+
+    private inner class SlaveLogger(
         private val slave: SlaveComponent,
         variables: List<ScalarVariable>,
         private val decimationFactor: Int,
@@ -145,6 +152,7 @@ class SlaveLoggerSystem(
         override fun close() {
             writer.flush()
             writer.close()
+            LOG.debug("Wrote csv data for slave '${slave.instanceName} to folder '${targetDir.absolutePath}'")
         }
 
     }
