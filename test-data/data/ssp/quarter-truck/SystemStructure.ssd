@@ -8,7 +8,7 @@
     <ssd:System name="quarter-truck" description="Quarter-truck co-simulation benchmark">
 
         <ssd:Elements>
-            <ssd:Component name="chassis" source="chassis.fmu">
+            <ssd:Component name="chassis" source="resources/chassis.fmu">
                 <ssd:Connectors>
                     <ssd:Connector name="p.e" kind="output">
                         <ssc:Real/>
@@ -37,7 +37,7 @@
                     </ssd:ParameterBinding>
                 </ssd:ParameterBindings>
             </ssd:Component>
-            <ssd:Component name="wheel" source="wheel.fmu">
+            <ssd:Component name="wheel" source="resources/wheel.fmu">
                 <ssd:Connectors>
                     <ssd:Connector name="p.f" kind="input">
                         <ssc:Real/>
@@ -72,7 +72,7 @@
                     </ssd:ParameterBinding>
                 </ssd:ParameterBindings>
             </ssd:Component>
-            <ssd:Component name="ground" source="ground.fmu">
+            <ssd:Component name="ground" source="resources/ground.fmu">
                 <ssd:Connectors>
                     <ssd:Connector name="p.e" kind="input">
                         <ssc:Real/>
