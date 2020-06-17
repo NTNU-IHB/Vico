@@ -2,7 +2,7 @@
 <vico:ChartConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/ChartConfig">
 
     <vico:chart>
-        <vico:timeseries title="Chassis" label="Height[m]">
+        <vico:timeseries title="Chassis" label="Height[m]" decimationFactor="2">
             <vico:series>
                 <vico:component name="chassis">
                     <vico:variable name="zChassis"/>

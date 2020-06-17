@@ -1,11 +1,9 @@
 package no.ntnu.ihb.vico.ssp
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
-import org.junit.jupiter.api.Assertions
 import java.io.File
 
 
@@ -18,7 +16,7 @@ fun main() {
     val sspDir = TestSsp.get("quarter-truck")
     val structure = SSPLoader(sspDir).load()
 
-    Engine(1e-3).use { engine ->
+    Engine(1e-2).use { engine ->
 
         structure.apply(engine)
 
@@ -28,17 +26,16 @@ fun main() {
 
         engine.addSystem(
             SlaveLoggerSystem(
-                File(sspDir, "LogConfig.xml"), resultDir
+                File(sspDir, "LogConfig_vico.xml"), resultDir
             )
         )
 
         engine.init()
 
-        val chassis = engine.getSystem<SlaveSystem>().getSlave("chassis")
-        val mChassis = chassis.readRealDirect("C.mChassis").value
-        Assertions.assertEquals(400.0, mChassis, 1e-6)
-
-        engine.stepUntil(10.0)
+        engine.runner.apply {
+            enableRealTimeTarget = false
+            runUntil(10).get()
+        }
 
     }
 }
