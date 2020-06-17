@@ -66,8 +66,9 @@ class Engine @JvmOverloads constructor(
 
     }
 
-    fun stepUntil(timePoint: Double) {
-        while (timePoint > currentTime) {
+    fun stepUntil(timePoint: Number) {
+        val doubleTimePoint = timePoint.toDouble()
+        while (doubleTimePoint > currentTime) {
             step()
         }
     }
