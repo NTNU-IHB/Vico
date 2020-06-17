@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.ssp
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.EngineRunner
+import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
@@ -29,7 +29,7 @@ internal class TestSSPLoader {
             engine.addSystem(SlaveLoggerSystem(null, resultDir))
             structure.apply(engine)
 
-            EngineRunner(engine).apply {
+            engine.runner.apply {
                 runFor(stopTime).get()
             }
 
@@ -47,11 +47,14 @@ internal class TestSSPLoader {
         Engine(1e-3).use { engine ->
 
             structure.apply(engine)
-            engine.init()
 
             val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
-            val h = bb.readRealDirect("h").value
-            Assertions.assertEquals(5.0, h, 1e-6)
+            bb.markForReading("h")
+
+            engine.init()
+
+            Assertions.assertEquals(5.0, bb.readRealDirect("h").value, 1e-6)
+            Assertions.assertEquals(5.0, bb.readReal("h").value, 1e-6)
 
         }
     }

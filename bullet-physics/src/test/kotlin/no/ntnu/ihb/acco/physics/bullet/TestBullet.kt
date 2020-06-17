@@ -1,6 +1,9 @@
 package no.ntnu.ihb.acco.physics.bullet
 
-import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.RealConnector
+import no.ntnu.ihb.acco.core.ScalarConnection
 import no.ntnu.ihb.acco.physics.ColliderComponent
 import no.ntnu.ihb.acco.physics.MotionControl
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
@@ -52,7 +55,7 @@ fun main() {
         engine.addSystem(BulletSystem())
         engine.addSystem(JmeRenderSystem())
 
-        EngineRunner(engine).apply {
+        engine.runner.apply {
             targetRealTimeFactor = 1.0
             start()
         }

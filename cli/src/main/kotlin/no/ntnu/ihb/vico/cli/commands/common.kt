@@ -1,7 +1,6 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.EngineRunner
 import no.ntnu.ihb.acco.util.formatForOutput
 import org.slf4j.Logger
 import kotlin.time.ExperimentalTime
@@ -22,7 +21,7 @@ internal fun runSimulation(
     val numSteps = (totalSimulationTime / stepSize).toLong()
     val aTenth = numSteps / 10
 
-    val runner = EngineRunner(engine)
+    val runner = engine.runner
 
     targetRealtimeFactor?.also {
         runner.targetRealTimeFactor = it

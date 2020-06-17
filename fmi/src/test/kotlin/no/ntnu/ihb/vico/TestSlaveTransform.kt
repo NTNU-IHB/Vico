@@ -1,7 +1,6 @@
 package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.EngineRunner
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
@@ -32,7 +31,7 @@ fun main() {
             engine.addEntity(slaveEntity)
         }
 
-        EngineRunner(engine).apply {
+        engine.runner.apply {
             start()
         }
 

@@ -1,7 +1,10 @@
 package no.ntnu.ihb.acco.render.jme
 
 import no.ntnu.ihb.acco.components.TransformComponent
-import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.core.Component
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.shape.BoxShape
@@ -76,7 +79,7 @@ fun main() {
         engine.addSystem(SineMoverSystem())
         engine.addSystem(JmeRenderSystem())
 
-        EngineRunner(engine).apply {
+        engine.runner.apply {
             start()
         }
 

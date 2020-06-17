@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 private typealias Predicate = ((Engine) -> Boolean)
 private typealias Callback = () -> Unit
 
-class EngineRunner(
+class EngineRunner internal constructor(
     private val engine: Engine
 ) {
 

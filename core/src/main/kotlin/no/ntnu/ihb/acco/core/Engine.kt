@@ -34,6 +34,8 @@ class Engine @JvmOverloads constructor(
     internal val systemManager = SystemManager(this)
     private val connectionManager = ConnectionManager()
 
+    val runner by lazy { EngineRunner(this) }
+
     constructor(baseStepSize: Double) : this(null, baseStepSize)
 
     fun init() {
