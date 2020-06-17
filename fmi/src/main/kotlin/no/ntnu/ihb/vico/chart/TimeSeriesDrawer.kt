@@ -102,21 +102,25 @@ class TimeSeriesDrawer internal constructor(
 
     override fun entityAdded(entity: Entity) {
 
-        val slave = entity.getComponent(SlaveComponent::class.java)
+        val slave = entity.getComponent<SlaveComponent>()
         val invalidVariableIdentifiers = mutableListOf<VariableHandle>()
         seriesInfos.forEach {
 
             val (componentName, variableName, modifier) = it
 
+            if (componentName == slave.instanceName) {
 
-            val variable = slave.modelDescription.getVariableByName(variableName)
-            slave.markForReading(variable.name)
+                val variable = slave.modelVariables.getByName(variableName)
+                slave.markForReading(variable.name)
 
-            val yProvider: ValueProvider = {
-                val value = slave.readReal(variable.valueReference).value
-                modifier?.invoke(value) ?: value
+                val yProvider: ValueProvider = {
+                    val value = slave.readReal(variable.valueReference).value
+                    modifier?.invoke(value) ?: value
+                }
+
+                handles["$componentName.$variableName"] = yProvider
+
             }
-            handles["$componentName.$variableName"] = yProvider
 
         }
 

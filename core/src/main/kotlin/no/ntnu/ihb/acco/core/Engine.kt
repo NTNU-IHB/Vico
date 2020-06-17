@@ -64,6 +64,11 @@ class Engine @JvmOverloads constructor(
 
     }
 
+    fun stepUntil(timePoint: Double) {
+        while (timePoint > currentTime) {
+            step()
+        }
+    }
 
     fun getEntitiesFor(family: Family): ObservableSet<Entity> {
         return entityManager.getEntitiesFor(family)
@@ -105,10 +110,8 @@ class Engine @JvmOverloads constructor(
     }
 
     override fun close() {
-        safeContext {
-            if (!closed.getAndSet(true)) {
-                systemManager.close()
-            }
+        if (!closed.getAndSet(true)) {
+            systemManager.close()
         }
     }
 

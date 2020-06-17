@@ -15,8 +15,11 @@ private object TestChart {
 
         Engine().use { engine ->
 
-            Entity("").apply {
-                val slave = SlaveComponent(ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu")).instantiate())
+            Entity("BouncingBall").apply {
+                val slave = SlaveComponent(
+                    ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
+                        .instantiate("bouncingBall")
+                )
                 addComponent(slave)
                 engine.addEntity(this)
             }
@@ -28,7 +31,7 @@ private object TestChart {
                 engine.addSystem(it)
             }
 
-            engine.step(500)
+            engine.step()
 
         }
 

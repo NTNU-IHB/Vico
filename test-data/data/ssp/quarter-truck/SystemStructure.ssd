@@ -2,10 +2,10 @@
 <ssd:SystemStructureDescription xmlns:ssc="http://ssp-standard.org/SSP1/SystemStructureCommon"
                                 xmlns:ssd="http://ssp-standard.org/SSP1/SystemStructureDescription"
                                 xmlns:ssv="http://ssp-standard.org/SSP1/SystemStructureParameterValues"
-                                name="simple-cse-example"
+                                name="QuarterTruck"
                                 version="1.0">
 
-    <ssd:System name="quarter-truck" description="Quarter-truck co-simulation benchmark">
+    <ssd:System name="QuarterTruckSystem" description="Quarter-truck co-simulation">
 
         <ssd:Elements>
             <ssd:Component name="chassis" source="resources/chassis.fmu">

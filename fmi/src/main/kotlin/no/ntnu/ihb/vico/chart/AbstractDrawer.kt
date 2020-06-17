@@ -34,7 +34,7 @@ abstract class AbstractDrawer(
 
     protected val mutex = Any()
     private var queue: BlockingQueue<Unit>? = null
-    protected val data = mutableMapOf<String, Pair<MutableList<Double>, MutableList<Double>>>()
+    protected val data: MutableMap<String, Pair<MutableList<Double>, MutableList<Double>>> = mutableMapOf()
 
     private var lastUpdate: Long = 0L
 

@@ -65,7 +65,7 @@ class SlaveLoggerSystem(
                 val variables = component.variable.map { v ->
                     slave.modelDescription.getVariableByName(v.name)
                 }
-                loggers[slave.instanceName] = Logger(slave, variables, decimationFactor)
+                loggers[slave.instanceName] = Logger(slave, variables, decimationFactor, logConfig.isStaticFileNames)
             }
         }
         loggers[slave.instanceName]?.also {
