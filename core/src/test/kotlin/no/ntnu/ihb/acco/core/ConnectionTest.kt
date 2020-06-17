@@ -8,13 +8,15 @@ internal class ConnectionTest {
 
     class ValueComponent(
         var value: Double = 0.0
-    ) : CoSimulationComponent {
+    ) : Component() {
 
-        override val variables: Map<String, Var<*>> by lazy {
-            mapOf("value" to RealLambdaVar(1,
-                getter = { it[0] = value },
-                setter = { value = it[0] }
-            ))
+        init {
+            registerVariables(
+                mapOf("value" to RealLambdaVar(1,
+                    getter = { it[0] = value },
+                    setter = { value = it[0] }
+                ))
+            )
         }
 
     }

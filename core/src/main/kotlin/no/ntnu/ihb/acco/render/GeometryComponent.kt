@@ -22,28 +22,25 @@ interface GeometryComponentListener {
 class GeometryComponent(
     val shape: Shape,
     val offsetTransform: Matrix4d = Matrix4d()
-) : Component {
+) : Component() {
 
     private val color = Color(Color.white)
-    var visible by Delegates.observable(true) { _, _, _ ->
-        listeners.forEach { it.onVisibilityChanged() }
+    var visible by Delegates.observable(true) { _, _, newValue ->
+        dispatchEvent("onVisibilityChanged", newValue)
     }
-    var wireframe by Delegates.observable(false) { _, _, _ ->
-        listeners.forEach { it.onWireframeChanged() }
+    var wireframe by Delegates.observable(false) { _, _, newValue ->
+        dispatchEvent("onWireframeChanged", newValue)
     }
-
-    private val listeners = mutableListOf<GeometryComponentListener>()
 
     fun getColor() = color
 
     fun setColor(hex: Int) {
         color.set(hex)
-        listeners.forEach { it.onColorChanged() }
+        dispatchEvent("onColorChanged", color)
     }
 
     fun setColor(color: Color) {
-        color.set(color)
-        listeners.forEach { it.onColorChanged() }
+        setColor(color.hexValue)
     }
 
     fun applyMatrix(m: Matrix4dc) {
@@ -72,14 +69,6 @@ class GeometryComponent(
 
     fun rotateZ(angle: Angle) {
         offsetTransform.rotateZ(angle.inRadians())
-    }
-
-    fun addListener(listener: GeometryComponentListener) {
-        listeners.add(listener)
-    }
-
-    fun removeListener(listener: GeometryComponentListener) {
-        listeners.remove(listener)
     }
 
 }

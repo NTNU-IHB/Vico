@@ -15,11 +15,11 @@ class ConstraintData(
     val hasConnectedBody = e2 != null
 
     val rb1 by lazy {
-        e1.getComponent(RigidBodyComponent::class.java)
+        e1.getComponent<RigidBodyComponent>()
     }
 
     val rb2 by lazy {
-        e2?.getComponent(RigidBodyComponent::class.java) ?: throw IllegalStateException()
+        e2?.getComponent<RigidBodyComponent>() ?: throw IllegalStateException()
     }
 
     val frame1 by lazy { Matrix4d().setTranslation(anchor) }

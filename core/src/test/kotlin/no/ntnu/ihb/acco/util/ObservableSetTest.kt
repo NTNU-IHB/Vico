@@ -14,6 +14,7 @@ internal class ObservableSetTest {
         var removeObserved = false
 
         set.observer = object : SetObserver<Int> {
+
             override fun onElementAdded(element: Int) {
                 addObserved = true
             }
@@ -21,6 +22,7 @@ internal class ObservableSetTest {
             override fun onElementRemoved(element: Int) {
                 removeObserved = true
             }
+
         }
 
         set.add(5)

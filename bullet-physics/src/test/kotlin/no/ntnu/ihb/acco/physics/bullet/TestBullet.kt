@@ -29,7 +29,11 @@ fun main() {
 
         for (i in 0 until 2) {
             Entity("sphere_$i").also { e ->
-                e.transform.setLocalTranslation(Random.nextDouble(-1.0, 1.0), 2.0, Random.nextDouble(-1.0, 1.0))
+                e.transform.setLocalTranslation(
+                    Random.nextDouble(-1.0, 1.0),
+                    2.0,
+                    Random.nextDouble(-1.0, 1.0)
+                )
                 e.addComponent(RigidBodyComponent())
                 val shape = SphereShape(0.1)
                 e.addComponent(ColliderComponent(shape))
@@ -56,7 +60,7 @@ fun main() {
         engine.addSystem(JmeRenderSystem())
 
         engine.runner.apply {
-            targetRealTimeFactor = 1.0
+            paused.set(true)
             start()
         }
 

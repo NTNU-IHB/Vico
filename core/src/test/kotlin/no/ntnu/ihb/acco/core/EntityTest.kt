@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 
 internal class EntityTest {
 
-    internal class ComponentA : Component
+    internal class ComponentA : Component()
 
     @Test
     fun testAddComponent() {

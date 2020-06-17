@@ -19,7 +19,6 @@ import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.acco.input.ClickListener
 import no.ntnu.ihb.acco.input.KeyListener
 import no.ntnu.ihb.acco.render.GeometryComponent
-import no.ntnu.ihb.acco.render.GeometryComponentListener
 import no.ntnu.ihb.acco.render.jme.objects.RawInputAdapter
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
 import org.joml.Matrix4f
@@ -71,20 +70,17 @@ class JmeRenderSystem : SimulationSystem(
 
                 geometry.createGeometry(app.assetManager).also { node ->
 
-                    geometry.addListener(object : GeometryComponentListener {
+                    geometry.addEventListener("onVisibilityChanged") {
+                        node.setVisible(it.target())
+                    }
 
-                        override fun onColorChanged() {
-                            node.setColor(geometry.getColor())
-                        }
+                    geometry.addEventListener("onWireframeChanged") {
+                        node.setWireframe(it.target())
+                    }
 
-                        override fun onVisibilityChanged() {
-                            node.setVisible(geometry.visible)
-                        }
-
-                        override fun onWireframeChanged() {
-                            node.setWireframe(geometry.wireframe)
-                        }
-                    })
+                    geometry.addEventListener("onColorChanged") {
+                        node.setColor(it.target())
+                    }
 
                     node.localTranslation.set(world.getTranslation(tmpVec))
                     node.localRotation.set(world.getNormalizedRotation(tmpQuat))

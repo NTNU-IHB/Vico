@@ -3,10 +3,9 @@ package no.ntnu.ihb.acco.core
 import no.ntnu.ihb.acco.components.TransformComponent
 import java.util.*
 
-open class Entity private constructor(
-    name: String? = null,
-    private val properties: Properties
-) : PropertyAccessor by properties {
+open class Entity(
+    name: String? = null
+) {
 
     internal var originalName = name ?: "Entity"
     var name = originalName
@@ -36,9 +35,6 @@ open class Entity private constructor(
     init {
         addComponent(transform)
     }
-
-    @JvmOverloads
-    constructor(name: String? = null) : this(name, Properties())
 
     fun addEntity(child: Entity) {
         require(child != this) { "Adding self!" }
@@ -124,10 +120,6 @@ open class Entity private constructor(
         mutableComponents.add(component)
         componentMap[componentClass] = component
 
-        if (component is CoSimulationComponent) {
-            properties.add(component.variables)
-        }
-
         componentListeners.forEach { l ->
             l.componentAdded(component)
         }
@@ -142,10 +134,6 @@ open class Entity private constructor(
             ?: throw IllegalArgumentException("No component of type $componentClass registered!")
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
-
-        if (component is CoSimulationComponent) {
-            properties.remove(component.variables)
-        }
 
         componentListeners.forEach { l ->
             l.componentRemoved(component)
@@ -172,7 +160,7 @@ open class Entity private constructor(
     @Suppress("UNCHECKED_CAST")
     fun <E : Component> getComponent(componentClass: Class<E>): E {
         return componentMap[componentClass] as E?
-            ?: throw IllegalStateException("Entity does not have component: $componentClass")
+            ?: throw RuntimeException("No component of type $componentClass registered with Entity named $name")
     }
 
     inline fun <reified E : Component> getComponent(): E {
@@ -201,6 +189,38 @@ open class Entity private constructor(
 
     fun findAllInDescendants(predicate: (Entity) -> Boolean): List<Entity> {
         return descendants.filter { predicate.invoke(it) }
+    }
+
+    fun getIntegerProperty(name: String): IntVar? {
+        for (component in components) {
+            val v = component.ints[name]
+            if (v != null) return v
+        }
+        return null
+    }
+
+    fun getRealProperty(name: String): RealVar? {
+        for (component in components) {
+            val v = component.reals[name]
+            if (v != null) return v
+        }
+        return null
+    }
+
+    fun getStringProperty(name: String): StrVar? {
+        for (component in components) {
+            val v = component.strs[name]
+            if (v != null) return v
+        }
+        return null
+    }
+
+    fun getBooleanProperty(name: String): BoolVar? {
+        for (component in components) {
+            val v = component.bools[name]
+            if (v != null) return v
+        }
+        return null
     }
 
     override fun toString(): String {
