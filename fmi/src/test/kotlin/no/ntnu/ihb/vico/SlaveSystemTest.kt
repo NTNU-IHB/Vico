@@ -33,17 +33,14 @@ internal class SlaveSystemTest {
                 addParameterSet("default", listOf(RealParameter("h", 2.0)))
                 slaveEntity.addComponent(this)
             }
+
             engine.addEntity(slaveEntity)
-
-            val slave = slaveSystem.getSlave("bouncingBall").apply {
-                markForReading("h")
-            }
-
             engine.init()
 
+            val slave = slaveSystem.getSlave("bouncingBall")
             Assertions.assertEquals(2.0, slave.readReal("h").value, 1e-6)
             engine.step(100)
-            Assertions.assertTrue(slave.readReal("h").value > 0)
+            Assertions.assertEquals(1.0, slave.readReal("h").value, 0.1)
 
             Assertions.assertTrue(resultDir.listFiles()?.size ?: 0 > 0)
 

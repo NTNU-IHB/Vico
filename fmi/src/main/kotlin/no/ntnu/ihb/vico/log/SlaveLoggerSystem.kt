@@ -5,6 +5,7 @@ import no.ntnu.ihb.acco.core.Event
 import no.ntnu.ihb.acco.core.EventSystem
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.util.formatForOutput
+import no.ntnu.ihb.fmi4j.modeldescription.variables.Causality
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import no.ntnu.ihb.fmi4j.readBoolean
@@ -116,14 +117,12 @@ class SlaveLoggerSystem(
             val fileName = if (staticFileNames) slave.instanceName else "${slave.instanceName}_$dateFormat"
             this.writer = FileOutputStream(File(targetDir, "${fileName}.csv")).bufferedWriter()
             this.variables = if (variables.isEmpty()) slave.modelVariables.toList() else variables
-            this.variables.forEach {
-                slave.markForReading(it.name)
-            }
         }
 
         fun writeHeader() {
             variables.joinToString(separator, "time, stepNumber, ", "\n") {
-                "${it.name} [${it.valueReference} ${it.type} ${it.causality}]"
+                val causality = it.causality ?: Causality.UNKNOWN
+                "${it.name} [${it.valueReference} ${it.type} $causality]"
             }.also {
                 writer.write(it)
             }

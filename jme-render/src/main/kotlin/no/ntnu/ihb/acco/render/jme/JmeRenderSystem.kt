@@ -60,10 +60,7 @@ class JmeRenderSystem : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
 
-        val transform = entity.getComponent<TransformComponent>()
         val geometry = entity.getComponent<GeometryComponent>()
-
-        val world = transform.getWorldMatrix()
 
         invokeLater {
             map.computeIfAbsent(entity) {
@@ -82,10 +79,6 @@ class JmeRenderSystem : SimulationSystem(
                         node.setColor(it.target())
                     }
 
-                    node.localTranslation.set(world.getTranslation(tmpVec))
-                    node.localRotation.set(world.getNormalizedRotation(tmpQuat))
-                    node.forceRefresh(true, true, true)
-
                     root.attachChild(node)
                 }
 
@@ -99,13 +92,19 @@ class JmeRenderSystem : SimulationSystem(
         }
     }
 
-    override fun step(currentTime: Double, stepSize: Double) {
+    override fun postInit() {
+        updateTransforms()
+    }
 
-        entities.forEach { entity ->
+    override fun step(currentTime: Double, stepSize: Double) {
+        updateTransforms()
+    }
+
+    fun updateTransforms() {
+        for (entity in entities) {
 
             val node = map.getValue(entity)
             val transform = entity.getComponent<TransformComponent>()
-
             val world = transform.getWorldMatrix()
 
             invokeLater {
@@ -113,8 +112,8 @@ class JmeRenderSystem : SimulationSystem(
                 node.localRotation.set(world.getNormalizedRotation(tmpQuat))
                 node.forceRefresh(true, true, true)
             }
-
         }
+
     }
 
     private inner class JmeApp : SimpleApplication() {
@@ -132,7 +131,6 @@ class JmeRenderSystem : SimulationSystem(
             lock.withLock {
                 initialized.await()
             }
-            Thread.sleep(500)
         }
 
         override fun simpleInitApp() {

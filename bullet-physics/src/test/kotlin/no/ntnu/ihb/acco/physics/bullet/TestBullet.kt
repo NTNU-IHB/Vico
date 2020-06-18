@@ -27,7 +27,7 @@ fun main() {
             engine.addEntity(e)
         }
 
-        for (i in 0 until 2) {
+        for (i in 0 until 20) {
             Entity("sphere_$i").also { e ->
                 e.transform.setLocalTranslation(
                     Random.nextDouble(-1.0, 1.0),

@@ -48,11 +48,9 @@ internal class TestSSPLoader {
 
             structure.apply(engine)
 
-            val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
-            bb.markForReading("h")
-
             engine.init()
 
+            val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
             Assertions.assertEquals(5.0, bb.readRealDirect("h").value, 1e-6)
             Assertions.assertEquals(5.0, bb.readReal("h").value, 1e-6)
 

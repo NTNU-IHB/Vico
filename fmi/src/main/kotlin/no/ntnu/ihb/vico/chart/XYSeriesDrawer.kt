@@ -76,12 +76,10 @@ class XYSeriesDrawer internal constructor(
             system.getSlaveNoExcept(value.first.componentName)?.also { slave1 ->
 
                 val variable1 = slave1.modelDescription.getVariableByName(value.first.variableName)
-                slave1.markForReading(variable1.name)
 
                 system.getSlaveNoExcept(value.second.componentName)?.also { slave2 ->
 
                     val variable2 = slave2.modelDescription.getVariableByName(value.second.variableName)
-                    slave2.markForReading(variable2.name)
 
                     val xProvider: ValueProvider = { slave1.readReal(variable1.valueReference).value }
                     val yProvider: ValueProvider = { slave2.readReal(variable2.valueReference).value }

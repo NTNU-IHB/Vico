@@ -13,16 +13,16 @@ fun main() {
     Engine(1.0 / 100).also { engine ->
 
         engine.addSystem(SlaveSystem())
-        engine.addSystem(SlaveTransformSystem())
+        engine.addSystem(PositionRefSystem())
         engine.addSystem(JmeRenderSystem())
 
         Entity("BouncingBall").also { slaveEntity ->
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
-            SlaveComponent(model.instantiate("bouncingBall_")).apply {
+            SlaveComponent(model.instantiate("bb")).apply {
                 writeReal("h", 3.0)
                 slaveEntity.addComponent(this)
             }
-            SlaveTransform(yRef = "h").apply {
+            PositionRefComponent(yRef = "h").apply {
                 slaveEntity.addComponent(this)
             }
             GeometryComponent(SphereShape()).apply {

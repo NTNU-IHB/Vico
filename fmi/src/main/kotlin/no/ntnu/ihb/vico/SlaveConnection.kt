@@ -16,10 +16,6 @@ sealed class SlaveConnection<E : ScalarVariable>(
 
     protected val vr = LongArray(1)
 
-    init {
-        sourceSlave.markForReading(sourceVariable.name)
-    }
-
     override val source: Component
         get() = sourceSlave
 

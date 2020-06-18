@@ -2,7 +2,7 @@ package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.core.Component
 
-class SlaveTransform(
+class PositionRefComponent(
     val xRef: String? = null,
     val yRef: String? = null,
     val zRef: String? = null

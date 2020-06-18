@@ -27,6 +27,9 @@ class SlaveComponent(
     var stepCount = 0L
         private set
 
+    private val _variablesMarkedForReading: MutableList<ScalarVariable> = mutableListOf()
+    val variablesMarkedForReading: List<ScalarVariable> = _variablesMarkedForReading
+
     private val integerSetCache by lazy { Cache<Int>() }
     private val realSetCache by lazy { Cache<Double>() }
     private val booleanSetCache by lazy { Cache<Boolean>() }
@@ -294,64 +297,47 @@ class SlaveComponent(
     }
 
     private fun check(ref: ValueReference, type: VariableType, cache: MutableMap<*, *>) {
-        check(ref in cache) {
-            val v = modelDescription.modelVariables.getByValueReference(ref, type)
-            "Variable with valueReference=$ref, type=$type and possible variable names=${v.map { it.name }} " +
-                    "has not been marked for reading for slave named '${slave.instanceName}'!"
+        if (ref !in cache) {
+            var vars = modelVariables.getByValueReference(ref, type)
+            if (vars.isEmpty() && type == VariableType.INTEGER) {
+                vars = modelVariables.getByValueReference(ref, VariableType.ENUMERATION)
+            }
+            vars.forEach {
+                markForReading(it.name)
+            }
         }
     }
 
-    fun getVariablesMarkedForReading(): List<ScalarVariable> {
-        val modelVariables = modelDescription.modelVariables
-        return integerVariablesToFetch.mapNotNull {
-            modelVariables.getByValueReference(it, VariableType.INTEGER).firstOrNull()
-        } + realVariablesToFetch.mapNotNull {
-            modelVariables.getByValueReference(it, VariableType.REAL).firstOrNull()
-        } + booleanVariablesToFetch.mapNotNull {
-            modelVariables.getByValueReference(it, VariableType.BOOLEAN).firstOrNull()
-        } + stringVariablesToFetch.mapNotNull {
-            modelVariables.getByValueReference(it, VariableType.STRING).firstOrNull()
+    private fun markForReading(variableName: String) {
+
+        if (variableName in _variablesMarkedForReading.map { it.name }) return
+
+        val v: ScalarVariable = modelDescription.modelVariables.getByName(variableName)
+        val added = when (v.type) {
+            VariableType.INTEGER, VariableType.ENUMERATION -> integerVariablesToFetch.add(v.valueReference)
+            VariableType.REAL -> realVariablesToFetch.add(v.valueReference)
+            VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
+            VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
         }
-    }
-
-    fun markForReading(variableName: String) {
-        if (variableName.contains("*")) {
-            val partialName = variableName.substring(0, variableName.indexOf("*"))
-
-            modelDescription.modelVariables.forEach {
-                if (it.name.startsWith(partialName)) {
-                    markForReading(it.name)
+        if (added && initialized) {
+            when (v.type) {
+                VariableType.INTEGER, VariableType.ENUMERATION -> readIntegerDirect(v.name).value.also {
+                    integerGetCache[v.valueReference] = it
+                }
+                VariableType.REAL -> readRealDirect(v.name).value.also {
+                    realGetCache[v.valueReference] = it
+                }
+                VariableType.BOOLEAN -> readBooleanDirect(v.name).value.also {
+                    booleanGetCache[v.valueReference] = it
+                }
+                VariableType.STRING -> readStringDirect(v.name).value.also {
+                    stringGetCache[v.valueReference] = it
                 }
             }
-
-        } else {
-            val v = modelDescription.modelVariables.getByName(variableName)
-            val added = when (v.type) {
-                VariableType.INTEGER, VariableType.ENUMERATION -> integerVariablesToFetch.add(v.valueReference)
-                VariableType.REAL -> realVariablesToFetch.add(v.valueReference)
-                VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
-                VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
-            }
-            if (added) {
-                if (initialized) {
-                    markedForReadingPostInitAction(v)
-                }
-                LOG.trace("Variable '${instanceName}.${v.name}' marked for reading.")
-            }
+            _variablesMarkedForReading.add(v)
+            LOG.debug("${v.type} variable '${instanceName}.${v.name}' marked for reading.")
         }
-    }
 
-    private fun markedForReadingPostInitAction(v: ScalarVariable) {
-        when (v.type) {
-            VariableType.INTEGER, VariableType.ENUMERATION -> integerGetCache[v.valueReference] =
-                IntArray(1).also { readInteger(longArrayOf(v.valueReference), it) }[0]
-            VariableType.REAL -> realGetCache[v.valueReference] =
-                DoubleArray(1).also { readReal(longArrayOf(v.valueReference), it) }[0]
-            VariableType.BOOLEAN -> booleanGetCache[v.valueReference] =
-                BooleanArray(1).also { readBoolean(longArrayOf(v.valueReference), it) }[0]
-            VariableType.STRING -> stringGetCache[v.valueReference] =
-                StringArray(1) { "" }.also { readString(longArrayOf(v.valueReference), it) }[0]
-        }
     }
 
     private fun checkCausalityForOverride(vr: ValueReference, type: VariableType) {

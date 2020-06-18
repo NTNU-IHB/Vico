@@ -111,7 +111,6 @@ class TimeSeriesDrawer internal constructor(
             if (componentName == slave.instanceName) {
 
                 val variable = slave.modelVariables.getByName(variableName)
-                slave.markForReading(variable.name)
 
                 val yProvider: ValueProvider = {
                     val value = slave.readReal(variable.valueReference).value
