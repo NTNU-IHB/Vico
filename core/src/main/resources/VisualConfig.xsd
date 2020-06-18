@@ -4,37 +4,45 @@
            elementFormDefault="qualified"
            targetNamespace="http://github.com/NTNU-IHB/Vico/schema/VisualConfig">
 
-    <xs:element name="Transform" type="vico:TTransform"/>
+    <xs:element name="Transforms" type="vico:TTransforms"/>
+
+    <xs:complexType name="TTransforms">
+        <xs:sequence>
+            <xs:element name="Transform" type="vico:TTransform" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="TTransform">
         <xs:sequence>
             <xs:element name="PositionRef" type="vico:TPositionRef"/>
             <xs:element name="RotationRef" type="vico:TEulerRef" minOccurs="0"/>
-            <xs:element name="Geometries" type="vico:TGeometries" minOccurs="0"/>
+            <xs:element name="Geometry" type="vico:TGeometry" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
 
-    <xs:complexType name="TGeometries">
-        <xs:sequence>
-            <xs:element name="Geometry" type="vico:TGeometry" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
+    <!-- <xs:complexType name="TGeometries">
+         <xs:sequence>
+             <xs:element name="Geometry" type="vico:TGeometry" maxOccurs="unbounded"/>
+         </xs:sequence>
+     </xs:complexType>-->
 
     <xs:complexType name="TGeometry">
         <xs:sequence>
             <xs:element name="OffsetPosition" type="vico:TPosition" minOccurs="0"/>
             <xs:element name="OffsetRotation" type="vico:TEuler" minOccurs="0"/>
-            <xs:element name="Shapes" type="vico:TShapes"/>
+            <xs:element name="Shape" type="vico:TShape"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="TShapes">
-        <xs:choice maxOccurs="unbounded">
+    <xs:complexType name="TShape">
+        <xs:choice>
             <xs:element name="Plane" type="vico:TPlane"/>
             <xs:element name="Box" type="vico:TBox"/>
             <xs:element name="Sphere" type="vico:TSphere"/>
             <xs:element name="Cylinder" type="vico:TCylinder"/>
             <xs:element name="Capsule" type="vico:TCapsule"/>
+            <xs:element name="Mesh" type="vico:TMesh"/>
         </xs:choice>
     </xs:complexType>
 
@@ -63,16 +71,20 @@
         <xs:attribute name="height" type="xs:double" use="required"/>
     </xs:complexType>
 
+    <xs:complexType name="TMesh">
+        <xs:attribute name="source" type="xs:string" use="required"/>
+    </xs:complexType>
+
     <xs:complexType name="TPositionRef">
-        <xs:attribute name="px" type="xs:string" use="required" default="undefined"/>
-        <xs:attribute name="py" type="xs:string" use="required" default="undefined"/>
-        <xs:attribute name="pz" type="xs:string" use="required" default="undefined"/>
+        <xs:attribute name="px" type="xs:string" default="undefined"/>
+        <xs:attribute name="py" type="xs:string" default="undefined"/>
+        <xs:attribute name="pz" type="xs:string" default="undefined"/>
     </xs:complexType>
 
     <xs:complexType name="TEulerRef">
-        <xs:attribute name="x" type="xs:string" use="required" default="undefined"/>
-        <xs:attribute name="y" type="xs:string" use="required" default="undefined"/>
-        <xs:attribute name="z" type="xs:string" use="required" default="undefined"/>
+        <xs:attribute name="x" type="xs:string" default="undefined"/>
+        <xs:attribute name="y" type="xs:string" default="undefined"/>
+        <xs:attribute name="z" type="xs:string" default="undefined"/>
         <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
     </xs:complexType>
 
@@ -81,13 +93,6 @@
         <xs:attribute name="y" type="xs:double" default="0"/>
         <xs:attribute name="z" type="xs:double" default="0"/>
         <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
-    </xs:complexType>
-
-    <xs:complexType name="TQuaternion">
-        <xs:attribute name="x" type="xs:double" default="0"/>
-        <xs:attribute name="y" type="xs:double" default="0"/>
-        <xs:attribute name="z" type="xs:double" default="0"/>
-        <xs:attribute name="w" type="xs:double" default="1"/>
     </xs:complexType>
 
     <xs:complexType name="TPosition">
