@@ -5,8 +5,10 @@ import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import java.io.File
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
-
+@ExperimentalTime
 fun main() {
 
     val resultDir = File("build/results/quarter-truck").also {
@@ -16,7 +18,7 @@ fun main() {
     val sspDir = TestSsp.get("quarter-truck")
     val structure = SSPLoader(sspDir).load()
 
-    Engine(1e-2).use { engine ->
+    Engine(1e-3).use { engine ->
 
         structure.apply(engine)
 
@@ -30,11 +32,16 @@ fun main() {
             )
         )
 
-        engine.init()
+        measureTime {
+            engine.init()
 
-        engine.runner.apply {
-            enableRealTimeTarget = false
-            runUntil(10).get()
+            engine.runner.apply {
+                enableRealTimeTarget = false
+                runUntil(100).get()
+            }
+
+        }.also {
+            println("simulation took ${it.inSeconds}s")
         }
 
     }

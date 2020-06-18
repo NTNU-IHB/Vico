@@ -1,6 +1,7 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.SystemStructure
@@ -90,13 +91,13 @@ class SimulateSsp : Runnable {
                 engine.addSystem(SlaveLoggerSystem(null, resultDir))
             }
 
-            /* relativeChartConfigPath?.also { configPath ->
-                 val chartConfig = File(loader.ssdFile.parent, configPath)
-                 if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
-                 ChartLoader.load(chartConfig).forEach { chart ->
-                     exec.addListener(chart)
-                 }
-             }*/
+            relativeChartConfigPath?.also { configPath ->
+                val chartConfig = File(loader.ssdFile.parent, configPath)
+                if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
+                ChartLoader.load(chartConfig).forEach { chart ->
+                    engine.addSystem(chart)
+                }
+            }
 
             runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
 
