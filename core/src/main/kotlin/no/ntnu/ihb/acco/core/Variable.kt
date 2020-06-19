@@ -14,7 +14,7 @@ sealed class Var<E> {
     abstract val size: Int
     abstract val causality: Causality
 
-    abstract fun read(values: E)
+    abstract fun read(values: E): E
     abstract fun write(values: E)
 
 }
@@ -31,9 +31,10 @@ class IntLambdaVar(
     override val causality: Causality = Causality.LOCAL
 ) : IntVar() {
 
-    override fun read(values: IntArray) {
+    override fun read(values: IntArray): IntArray {
         require(size == values.size)
         getter.invoke(values)
+        return values
     }
 
     override fun write(values: IntArray) {
@@ -50,9 +51,10 @@ class RealLambdaVar(
     override val causality: Causality = Causality.LOCAL
 ) : RealVar() {
 
-    override fun read(values: DoubleArray) {
+    override fun read(values: DoubleArray): DoubleArray {
         require(size == values.size)
         getter.invoke(values)
+        return values
     }
 
     override fun write(values: DoubleArray) {
@@ -70,9 +72,10 @@ class StrLambdaVar(
     override val causality: Causality = Causality.LOCAL
 ) : StrVar() {
 
-    override fun read(values: StringArray) {
+    override fun read(values: StringArray): StringArray {
         require(size == values.size)
         getter.invoke(values)
+        return values
     }
 
     override fun write(values: StringArray) {
@@ -90,9 +93,10 @@ class BoolLambdaVar(
     override val causality: Causality = Causality.LOCAL
 ) : BoolVar() {
 
-    override fun read(values: BooleanArray) {
+    override fun read(values: BooleanArray): BooleanArray {
         require(size == values.size)
         getter.invoke(values)
+        return values
     }
 
     override fun write(values: BooleanArray) {

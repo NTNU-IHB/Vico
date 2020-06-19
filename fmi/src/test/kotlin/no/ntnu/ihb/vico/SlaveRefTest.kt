@@ -1,10 +1,12 @@
 package no.ntnu.ihb.vico
 
+import no.ntnu.ihb.acco.components.PositionRefComponent
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
 import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.systems.PositionRefSystem
 import no.ntnu.ihb.fmi4j.writeReal
 import no.ntnu.ihb.vico.model.ModelResolver
 
