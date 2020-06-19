@@ -68,8 +68,8 @@ class BulletSystem : SimulationSystem(
         val tc = entity.getComponent<TransformComponent>()
         val rc = entity.getComponent<RigidBodyComponent>()
 
-        val (shape, mass) = if (entity.hasComponent(ColliderComponent::class.java)) {
-            val collider = entity.getComponent(ColliderComponent::class.java)
+        val (shape, mass) = if (entity.hasComponent<ColliderComponent>()) {
+            val collider = entity.getComponent<ColliderComponent>()
             collider.convert() to rc.mass.toFloat()
         } else {
             btEmptyShape() to 1f

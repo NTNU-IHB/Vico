@@ -57,7 +57,7 @@ class SlaveLoggerSystem(
     }
 
     override fun entityAdded(entity: Entity) {
-        val slave = entity.getComponent(SlaveComponent::class.java)
+        val slave = entity.getComponent<SlaveComponent>()
         if (logConfig == null) {
             loggers[slave.instanceName] = SlaveLogger(slave, emptyList(), 1)
         } else {

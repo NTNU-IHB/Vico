@@ -24,8 +24,6 @@ class SlaveSystem @JvmOverloads constructor(
     private val _slaves: MutableList<SlaveComponent> = mutableListOf()
     val slaves: List<SlaveComponent> = _slaves
 
-    private val listeners: MutableList<SlaveSystemListener> = mutableListOf()
-
     fun getSlave(name: String): SlaveComponent = _slaves.first { it.instanceName == name }
     fun getSlaveNoExcept(name: String): SlaveComponent? = _slaves.firstOrNull { it.instanceName == name }
 
@@ -39,14 +37,12 @@ class SlaveSystem @JvmOverloads constructor(
         }
         _slaves.add(slave)
         algorithm.slaveAdded(slave)
-        listeners.forEach { l -> l.slaveAdded(slave) }
     }
 
     override fun entityRemoved(entity: Entity) {
         val slave = entity.getComponent<SlaveComponent>()
         _slaves.remove(slave)
         algorithm.slaveRemoved(slave)
-        listeners.forEach { l -> l.slaveRemoved(slave) }
         slave.close()
     }
 
@@ -54,25 +50,11 @@ class SlaveSystem @JvmOverloads constructor(
         algorithm.init(currentTime, slaves) { slave ->
             engine.updateConnection(slave)
         }
-        listeners.forEach { l -> l.postInit(currentTime) }
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
         algorithm.step(currentTime, stepSize) {
-            listeners.forEach { l -> l.postSlaveStep(it.first, it.second) }
             dispatchEvent(SLAVE_STEPPED, it)
-        }
-        listeners.forEach { l -> l.postStep(currentTime + stepSize) }
-    }
-
-    fun addListener(listener: SlaveSystemListener) = apply {
-        listeners.add(listener).also {
-            listener.addedToSystem(this)
-        }
-        if (addedToEngine) {
-            slaves.forEach { slave ->
-                listener.slaveAdded(slave)
-            }
         }
     }
 
@@ -80,11 +62,9 @@ class SlaveSystem @JvmOverloads constructor(
         _slaves.forEach { slave ->
             slave.terminate()
         }
-        listeners.forEach { l -> l.postTerminate() }
         _slaves.forEach { slave ->
             slave.close()
         }
-        listeners.forEach { l -> l.close() }
     }
 
     companion object {

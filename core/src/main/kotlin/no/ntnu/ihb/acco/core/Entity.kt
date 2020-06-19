@@ -145,6 +145,10 @@ open class Entity(
         return componentClass in componentMap
     }
 
+    inline fun <reified E : Component> hasComponent(): Boolean {
+        return hasComponent(E::class.java)
+    }
+
     fun removeAllComponents() {
         val comps = components.toMutableList()
         comps.forEach { c ->
