@@ -1,6 +1,6 @@
 package no.ntnu.ihb.acco.core
 
-interface RealModifier {
+fun interface RealModifier {
 
     fun invoke(originalValue: Double): Double
 
@@ -14,4 +14,5 @@ data class LinearTransform(
     override fun invoke(originalValue: Double): Double {
         return factor * originalValue + offset
     }
+
 }

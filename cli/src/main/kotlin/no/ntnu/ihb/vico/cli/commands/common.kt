@@ -17,8 +17,7 @@ internal fun runSimulation(
 ) {
 
     val totalSimulationTime = stopTime - startTime
-    val stepSize = baseStepSize
-    val numSteps = (totalSimulationTime / stepSize).toLong()
+    val numSteps = (totalSimulationTime / baseStepSize).toLong()
     val aTenth = numSteps / 10
 
     val runner = engine.runner
@@ -28,7 +27,7 @@ internal fun runSimulation(
     } ?: run {
         runner.enableRealTimeTarget = false
     }
-    runner.callback = {
+    runner.callback = Runnable {
         val i = engine.iterations
         if (i != 0L && i % aTenth == 0L || i == numSteps) {
             val percentComplete = i / numSteps.toDouble() * 100
@@ -40,7 +39,6 @@ internal fun runSimulation(
                 if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded",
                 runner.actualRealTimeFactor.formatForOutput()
             )
-
         }
     }
 

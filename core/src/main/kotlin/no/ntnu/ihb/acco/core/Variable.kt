@@ -9,6 +9,10 @@ enum class Causality {
     LOCAL, INPUT, OUTPUT, PARAMETER, CALCULATED_PARAMETER
 }
 
+fun interface ReferenceProvider<E> {
+    fun invoke(values: E)
+}
+
 sealed class Var<E> {
 
     abstract val size: Int
@@ -26,8 +30,8 @@ abstract class BoolVar : Var<BooleanArray>()
 
 class IntLambdaVar(
     override val size: Int,
-    private val getter: (IntArray) -> Unit,
-    private val setter: ((IntArray) -> Unit)? = null,
+    private val getter: ReferenceProvider<IntArray>,
+    private val setter: ReferenceProvider<IntArray>? = null,
     override val causality: Causality = Causality.LOCAL
 ) : IntVar() {
 
@@ -46,8 +50,8 @@ class IntLambdaVar(
 
 class RealLambdaVar(
     override val size: Int,
-    private val getter: (DoubleArray) -> Unit,
-    private val setter: ((DoubleArray) -> Unit)? = null,
+    private val getter: ReferenceProvider<DoubleArray>,
+    private val setter: ReferenceProvider<DoubleArray>? = null,
     override val causality: Causality = Causality.LOCAL
 ) : RealVar() {
 
@@ -67,8 +71,8 @@ class RealLambdaVar(
 
 class StrLambdaVar(
     override val size: Int,
-    private val getter: (StringArray) -> Unit,
-    private val setter: ((StringArray) -> Unit)? = null,
+    private val getter: ReferenceProvider<StringArray>,
+    private val setter: ReferenceProvider<StringArray>? = null,
     override val causality: Causality = Causality.LOCAL
 ) : StrVar() {
 
@@ -88,8 +92,8 @@ class StrLambdaVar(
 
 class BoolLambdaVar(
     override val size: Int,
-    private val getter: (BooleanArray) -> Unit,
-    private val setter: ((BooleanArray) -> Unit)? = null,
+    private val getter: ReferenceProvider<BooleanArray>,
+    private val setter: ReferenceProvider<BooleanArray>? = null,
     override val causality: Causality = Causality.LOCAL
 ) : BoolVar() {
 
