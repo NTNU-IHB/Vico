@@ -56,8 +56,10 @@ public class TShape {
     /**
      * Gets the value of the plane property.
      *
-     * @return possible object is
-     * {@link TPlane }
+     * @return
+     *     possible object is
+     *     {@link TPlane }
+     *
      */
     public TPlane getPlane() {
         return plane;
@@ -66,8 +68,10 @@ public class TShape {
     /**
      * Sets the value of the plane property.
      *
-     * @param value allowed object is
-     *              {@link TPlane }
+     * @param value
+     *     allowed object is
+     *     {@link TPlane }
+     *
      */
     public void setPlane(TPlane value) {
         this.plane = value;
@@ -76,8 +80,10 @@ public class TShape {
     /**
      * Gets the value of the box property.
      *
-     * @return possible object is
-     * {@link TBox }
+     * @return
+     *     possible object is
+     *     {@link TBox }
+     *
      */
     public TBox getBox() {
         return box;
@@ -86,8 +92,10 @@ public class TShape {
     /**
      * Sets the value of the box property.
      *
-     * @param value allowed object is
-     *              {@link TBox }
+     * @param value
+     *     allowed object is
+     *     {@link TBox }
+     *
      */
     public void setBox(TBox value) {
         this.box = value;
@@ -96,8 +104,10 @@ public class TShape {
     /**
      * Gets the value of the sphere property.
      *
-     * @return possible object is
-     * {@link TSphere }
+     * @return
+     *     possible object is
+     *     {@link TSphere }
+     *
      */
     public TSphere getSphere() {
         return sphere;
@@ -106,8 +116,10 @@ public class TShape {
     /**
      * Sets the value of the sphere property.
      *
-     * @param value allowed object is
-     *              {@link TSphere }
+     * @param value
+     *     allowed object is
+     *     {@link TSphere }
+     *
      */
     public void setSphere(TSphere value) {
         this.sphere = value;
@@ -116,8 +128,10 @@ public class TShape {
     /**
      * Gets the value of the cylinder property.
      *
-     * @return possible object is
-     * {@link TCylinder }
+     * @return
+     *     possible object is
+     *     {@link TCylinder }
+     *
      */
     public TCylinder getCylinder() {
         return cylinder;
@@ -126,8 +140,10 @@ public class TShape {
     /**
      * Sets the value of the cylinder property.
      *
-     * @param value allowed object is
-     *              {@link TCylinder }
+     * @param value
+     *     allowed object is
+     *     {@link TCylinder }
+     *
      */
     public void setCylinder(TCylinder value) {
         this.cylinder = value;
@@ -136,8 +152,10 @@ public class TShape {
     /**
      * Gets the value of the capsule property.
      *
-     * @return possible object is
-     * {@link TCapsule }
+     * @return
+     *     possible object is
+     *     {@link TCapsule }
+     *
      */
     public TCapsule getCapsule() {
         return capsule;
@@ -146,8 +164,10 @@ public class TShape {
     /**
      * Sets the value of the capsule property.
      *
-     * @param value allowed object is
-     *              {@link TCapsule }
+     * @param value
+     *     allowed object is
+     *     {@link TCapsule }
+     *
      */
     public void setCapsule(TCapsule value) {
         this.capsule = value;
@@ -156,8 +176,10 @@ public class TShape {
     /**
      * Gets the value of the mesh property.
      *
-     * @return possible object is
-     * {@link TMesh }
+     * @return
+     *     possible object is
+     *     {@link TMesh }
+     *
      */
     public TMesh getMesh() {
         return mesh;
@@ -166,8 +188,10 @@ public class TShape {
     /**
      * Sets the value of the mesh property.
      *
-     * @param value allowed object is
-     *              {@link TMesh }
+     * @param value
+     *     allowed object is
+     *     {@link TMesh }
+     *
      */
     public void setMesh(TMesh value) {
         this.mesh = value;

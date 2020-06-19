@@ -32,8 +32,10 @@ public class TMesh {
     /**
      * Gets the value of the source property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getSource() {
         return source;
@@ -42,8 +44,10 @@ public class TMesh {
     /**
      * Sets the value of the source property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setSource(String value) {
         this.source = value;

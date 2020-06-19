@@ -31,6 +31,7 @@ public class TSphere {
 
     /**
      * Gets the value of the radius property.
+     *
      */
     public double getRadius() {
         return radius;
@@ -38,6 +39,7 @@ public class TSphere {
 
     /**
      * Sets the value of the radius property.
+     *
      */
     public void setRadius(double value) {
         this.radius = value;

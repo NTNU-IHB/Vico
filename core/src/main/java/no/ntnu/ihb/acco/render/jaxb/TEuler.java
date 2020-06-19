@@ -41,12 +41,14 @@ public class TEuler {
     /**
      * Gets the value of the x property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getX() {
         if (x == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return x;
         }
@@ -55,8 +57,10 @@ public class TEuler {
     /**
      * Sets the value of the x property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setX(Double value) {
         this.x = value;
@@ -65,12 +69,14 @@ public class TEuler {
     /**
      * Gets the value of the y property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getY() {
         if (y == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return y;
         }
@@ -79,8 +85,10 @@ public class TEuler {
     /**
      * Sets the value of the y property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setY(Double value) {
         this.y = value;
@@ -89,12 +97,14 @@ public class TEuler {
     /**
      * Gets the value of the z property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getZ() {
         if (z == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return z;
         }
@@ -103,8 +113,10 @@ public class TEuler {
     /**
      * Sets the value of the z property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setZ(Double value) {
         this.z = value;
@@ -113,8 +125,10 @@ public class TEuler {
     /**
      * Gets the value of the repr property.
      *
-     * @return possible object is
-     * {@link TAngleRepr }
+     * @return
+     *     possible object is
+     *     {@link TAngleRepr }
+     *
      */
     public TAngleRepr getRepr() {
         if (repr == null) {
@@ -127,8 +141,10 @@ public class TEuler {
     /**
      * Sets the value of the repr property.
      *
-     * @param value allowed object is
-     *              {@link TAngleRepr }
+     * @param value
+     *     allowed object is
+     *     {@link TAngleRepr }
+     *
      */
     public void setRepr(TAngleRepr value) {
         this.repr = value;

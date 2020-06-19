@@ -38,12 +38,14 @@ public class TPosition {
     /**
      * Gets the value of the px property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getPx() {
         if (px == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return px;
         }
@@ -52,8 +54,10 @@ public class TPosition {
     /**
      * Sets the value of the px property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setPx(Double value) {
         this.px = value;
@@ -62,12 +66,14 @@ public class TPosition {
     /**
      * Gets the value of the py property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getPy() {
         if (py == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return py;
         }
@@ -76,8 +82,10 @@ public class TPosition {
     /**
      * Sets the value of the py property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setPy(Double value) {
         this.py = value;
@@ -86,12 +94,14 @@ public class TPosition {
     /**
      * Gets the value of the pz property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getPz() {
         if (pz == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return pz;
         }
@@ -100,8 +110,10 @@ public class TPosition {
     /**
      * Sets the value of the pz property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setPz(Double value) {
         this.pz = value;

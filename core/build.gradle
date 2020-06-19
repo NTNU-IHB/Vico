@@ -6,4 +6,6 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 
 dependencies {
     api group: 'org.joml', name: 'joml', version: '1.9.24'
+
+    testImplementation project(':jme-render')
 }

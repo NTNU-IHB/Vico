@@ -44,8 +44,10 @@ public class TGeometry {
     /**
      * Gets the value of the offsetPosition property.
      *
-     * @return possible object is
-     * {@link TPosition }
+     * @return
+     *     possible object is
+     *     {@link TPosition }
+     *
      */
     public TPosition getOffsetPosition() {
         return offsetPosition;
@@ -54,8 +56,10 @@ public class TGeometry {
     /**
      * Sets the value of the offsetPosition property.
      *
-     * @param value allowed object is
-     *              {@link TPosition }
+     * @param value
+     *     allowed object is
+     *     {@link TPosition }
+     *
      */
     public void setOffsetPosition(TPosition value) {
         this.offsetPosition = value;
@@ -64,8 +68,10 @@ public class TGeometry {
     /**
      * Gets the value of the offsetRotation property.
      *
-     * @return possible object is
-     * {@link TEuler }
+     * @return
+     *     possible object is
+     *     {@link TEuler }
+     *
      */
     public TEuler getOffsetRotation() {
         return offsetRotation;
@@ -74,8 +80,10 @@ public class TGeometry {
     /**
      * Sets the value of the offsetRotation property.
      *
-     * @param value allowed object is
-     *              {@link TEuler }
+     * @param value
+     *     allowed object is
+     *     {@link TEuler }
+     *
      */
     public void setOffsetRotation(TEuler value) {
         this.offsetRotation = value;
@@ -84,8 +92,10 @@ public class TGeometry {
     /**
      * Gets the value of the shape property.
      *
-     * @return possible object is
-     * {@link TShape }
+     * @return
+     *     possible object is
+     *     {@link TShape }
+     *
      */
     public TShape getShape() {
         return shape;
@@ -94,8 +104,10 @@ public class TGeometry {
     /**
      * Sets the value of the shape property.
      *
-     * @param value allowed object is
-     *              {@link TShape }
+     * @param value
+     *     allowed object is
+     *     {@link TShape }
+     *
      */
     public void setShape(TShape value) {
         this.shape = value;

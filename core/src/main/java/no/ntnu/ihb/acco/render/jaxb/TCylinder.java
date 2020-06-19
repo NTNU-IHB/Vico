@@ -34,6 +34,7 @@ public class TCylinder {
 
     /**
      * Gets the value of the radius property.
+     *
      */
     public double getRadius() {
         return radius;
@@ -41,6 +42,7 @@ public class TCylinder {
 
     /**
      * Sets the value of the radius property.
+     *
      */
     public void setRadius(double value) {
         this.radius = value;
@@ -48,6 +50,7 @@ public class TCylinder {
 
     /**
      * Gets the value of the height property.
+     *
      */
     public double getHeight() {
         return height;
@@ -55,6 +58,7 @@ public class TCylinder {
 
     /**
      * Sets the value of the height property.
+     *
      */
     public void setHeight(double value) {
         this.height = value;

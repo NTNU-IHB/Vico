@@ -38,8 +38,10 @@ public class TPositionRef {
     /**
      * Gets the value of the px property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getPx() {
         if (px == null) {
@@ -52,8 +54,10 @@ public class TPositionRef {
     /**
      * Sets the value of the px property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setPx(String value) {
         this.px = value;
@@ -62,8 +66,10 @@ public class TPositionRef {
     /**
      * Gets the value of the py property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getPy() {
         if (py == null) {
@@ -76,8 +82,10 @@ public class TPositionRef {
     /**
      * Sets the value of the py property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setPy(String value) {
         this.py = value;
@@ -86,8 +94,10 @@ public class TPositionRef {
     /**
      * Gets the value of the pz property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getPz() {
         if (pz == null) {
@@ -100,8 +110,10 @@ public class TPositionRef {
     /**
      * Sets the value of the pz property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setPz(String value) {
         this.pz = value;

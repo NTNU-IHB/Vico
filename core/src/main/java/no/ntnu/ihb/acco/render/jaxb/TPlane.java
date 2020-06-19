@@ -34,6 +34,7 @@ public class TPlane {
 
     /**
      * Gets the value of the width property.
+     *
      */
     public double getWidth() {
         return width;
@@ -41,6 +42,7 @@ public class TPlane {
 
     /**
      * Sets the value of the width property.
+     *
      */
     public void setWidth(double value) {
         this.width = value;
@@ -48,6 +50,7 @@ public class TPlane {
 
     /**
      * Gets the value of the height property.
+     *
      */
     public double getHeight() {
         return height;
@@ -55,6 +58,7 @@ public class TPlane {
 
     /**
      * Sets the value of the height property.
+     *
      */
     public void setHeight(double value) {
         this.height = value;

@@ -23,23 +23,26 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Transforms_QNAME = new QName("http://github.com/NTNU-IHB/Vico/schema/VisualConfig", "Transforms");
+    private final static QName _VisualConfig_QNAME = new QName("http://github.com/NTNU-IHB/Vico/schema/VisualConfig", "VisualConfig");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.acco.render.jaxb
+     *
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link TTransforms }
+     * Create an instance of {@link TVisualConfig }
+     *
      */
-    public TTransforms createTTransforms() {
-        return new TTransforms();
+    public TVisualConfig createTVisualConfig() {
+        return new TVisualConfig();
     }
 
     /**
      * Create an instance of {@link TMesh }
+     *
      */
     public TMesh createTMesh() {
         return new TMesh();
@@ -47,6 +50,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TSphere }
+     *
      */
     public TSphere createTSphere() {
         return new TSphere();
@@ -54,9 +58,17 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TEuler }
+     *
      */
     public TEuler createTEuler() {
         return new TEuler();
+    }
+
+    /**
+     * Create an instance of {@link TTransforms }
+     */
+    public TTransforms createTTransforms() {
+        return new TTransforms();
     }
 
     /**
@@ -75,6 +87,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TEulerRef }
+     *
      */
     public TEulerRef createTEulerRef() {
         return new TEulerRef();
@@ -82,6 +95,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TTransform }
+     *
      */
     public TTransform createTTransform() {
         return new TTransform();
@@ -89,6 +103,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TCylinder }
+     *
      */
     public TCylinder createTCylinder() {
         return new TCylinder();
@@ -96,6 +111,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TCapsule }
+     *
      */
     public TCapsule createTCapsule() {
         return new TCapsule();
@@ -103,6 +119,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TShape }
+     *
      */
     public TShape createTShape() {
         return new TShape();
@@ -110,6 +127,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TPositionRef }
+     *
      */
     public TPositionRef createTPositionRef() {
         return new TPositionRef();
@@ -117,6 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TPlane }
+     *
      */
     public TPlane createTPlane() {
         return new TPlane();
@@ -124,17 +143,19 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TPosition }
+     *
      */
     public TPosition createTPosition() {
         return new TPosition();
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TTransforms }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link TVisualConfig }{@code >}}
+     *
      */
-    @XmlElementDecl(namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", name = "Transforms")
-    public JAXBElement<TTransforms> createTransforms(TTransforms value) {
-        return new JAXBElement<TTransforms>(_Transforms_QNAME, TTransforms.class, null, value);
+    @XmlElementDecl(namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", name = "VisualConfig")
+    public JAXBElement<TVisualConfig> createVisualConfig(TVisualConfig value) {
+        return new JAXBElement<TVisualConfig>(_VisualConfig_QNAME, TVisualConfig.class, null, value);
     }
 
 }

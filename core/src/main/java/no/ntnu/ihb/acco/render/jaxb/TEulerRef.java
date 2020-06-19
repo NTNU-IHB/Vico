@@ -41,8 +41,10 @@ public class TEulerRef {
     /**
      * Gets the value of the x property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getX() {
         if (x == null) {
@@ -55,8 +57,10 @@ public class TEulerRef {
     /**
      * Sets the value of the x property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setX(String value) {
         this.x = value;
@@ -65,8 +69,10 @@ public class TEulerRef {
     /**
      * Gets the value of the y property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getY() {
         if (y == null) {
@@ -79,8 +85,10 @@ public class TEulerRef {
     /**
      * Sets the value of the y property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setY(String value) {
         this.y = value;
@@ -89,8 +97,10 @@ public class TEulerRef {
     /**
      * Gets the value of the z property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getZ() {
         if (z == null) {
@@ -103,8 +113,10 @@ public class TEulerRef {
     /**
      * Sets the value of the z property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setZ(String value) {
         this.z = value;
@@ -113,8 +125,10 @@ public class TEulerRef {
     /**
      * Gets the value of the repr property.
      *
-     * @return possible object is
-     * {@link TAngleRepr }
+     * @return
+     *     possible object is
+     *     {@link TAngleRepr }
+     *
      */
     public TAngleRepr getRepr() {
         if (repr == null) {
@@ -127,8 +141,10 @@ public class TEulerRef {
     /**
      * Sets the value of the repr property.
      *
-     * @param value allowed object is
-     *              {@link TAngleRepr }
+     * @param value
+     *     allowed object is
+     *     {@link TAngleRepr }
+     *
      */
     public void setRepr(TAngleRepr value) {
         this.repr = value;

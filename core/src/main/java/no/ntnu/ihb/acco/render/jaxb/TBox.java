@@ -37,6 +37,7 @@ public class TBox {
 
     /**
      * Gets the value of the xExtent property.
+     *
      */
     public double getXExtent() {
         return xExtent;
@@ -44,6 +45,7 @@ public class TBox {
 
     /**
      * Sets the value of the xExtent property.
+     *
      */
     public void setXExtent(double value) {
         this.xExtent = value;
@@ -51,6 +53,7 @@ public class TBox {
 
     /**
      * Gets the value of the yExtent property.
+     *
      */
     public double getYExtent() {
         return yExtent;
@@ -58,6 +61,7 @@ public class TBox {
 
     /**
      * Sets the value of the yExtent property.
+     *
      */
     public void setYExtent(double value) {
         this.yExtent = value;
@@ -65,6 +69,7 @@ public class TBox {
 
     /**
      * Gets the value of the zExtent property.
+     *
      */
     public double getZExtent() {
         return zExtent;
@@ -72,6 +77,7 @@ public class TBox {
 
     /**
      * Sets the value of the zExtent property.
+     *
      */
     public void setZExtent(double value) {
         this.zExtent = value;
