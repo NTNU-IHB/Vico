@@ -2,10 +2,7 @@ package no.ntnu.ihb.acco.render
 
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.render.jaxb.*
-import no.ntnu.ihb.acco.render.shape.BoxShape
-import no.ntnu.ihb.acco.render.shape.CapsuleShape
-import no.ntnu.ihb.acco.render.shape.CylinderShape
-import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.render.shape.*
 import org.joml.Matrix4d
 import java.io.File
 import javax.xml.bind.JAXB
@@ -27,46 +24,53 @@ object VisualLoader {
         return entity
     }
 
-}
 
-private fun createGeometryComponent(g: TGeometry): GeometryComponent {
-    val shape = when {
-        g.shape.sphere != null -> g.shape.sphere.toShape()
-        g.shape.cylinder != null -> g.shape.cylinder.toShape()
-        g.shape.capsule != null -> g.shape.capsule.toShape()
-        else -> TODO()
-    }
-    val offset = Matrix4d()
-    g.offsetPosition?.also { p ->
-        offset.setTranslation(p.px, p.py, p.pz)
-    }
-    g.offsetRotation?.also { r ->
-        var rx = r.x
-        var ry = r.y
-        var rz = r.z
-        if (g.offsetRotation.repr == TAngleRepr.DEG) {
-            rx = Math.toRadians(rx)
-            ry = Math.toRadians(ry)
-            rz = Math.toRadians(rz)
+    private fun createGeometryComponent(g: TGeometry): GeometryComponent {
+        val shape = when {
+            g.shape.box != null -> createShape(g.shape.box)
+            g.shape.plane != null -> createShape(g.shape.plane)
+            g.shape.sphere != null -> createShape(g.shape.sphere)
+            g.shape.cylinder != null -> createShape(g.shape.cylinder)
+            g.shape.capsule != null -> createShape(g.shape.capsule)
+            else -> TODO()
         }
-        offset.setRotationXYZ(rx, ry, rz)
+        val offset = Matrix4d()
+        g.offsetPosition?.also { p ->
+            offset.setTranslation(p.px, p.py, p.pz)
+        }
+        g.offsetRotation?.also { r ->
+            var rx = r.x
+            var ry = r.y
+            var rz = r.z
+            if (g.offsetRotation.repr == TAngleRepr.DEG) {
+                rx = Math.toRadians(rx)
+                ry = Math.toRadians(ry)
+                rz = Math.toRadians(rz)
+            }
+            offset.setRotationXYZ(rx, ry, rz)
+        }
+
+        return GeometryComponent(shape, offset)
     }
 
-    return GeometryComponent(shape, offset)
-}
+    private fun createShape(b: TBox): BoxShape {
+        return BoxShape(b.xExtent * 0.5, b.yExtent * 0.5, b.zExtent * 0.5)
+    }
 
-private fun TBox.toShape(): BoxShape {
-    return BoxShape(xExtent * 0.5, yExtent * 0.5, zExtent * 0.5)
-}
+    private fun createShape(p: TPlane): PlaneShape {
+        return PlaneShape(p.width, p.height)
+    }
 
-private fun TSphere.toShape(): SphereShape {
-    return SphereShape(radius)
-}
+    private fun createShape(s: TSphere): SphereShape {
+        return SphereShape(s.radius)
+    }
 
-private fun TCylinder.toShape(): CylinderShape {
-    return CylinderShape(radius, height)
-}
+    private fun createShape(c: TCylinder): CylinderShape {
+        return CylinderShape(c.radius, c.height)
+    }
 
-private fun TCapsule.toShape(): CapsuleShape {
-    return CapsuleShape(radius, height)
+    private fun createShape(c: TCapsule): CapsuleShape {
+        return CapsuleShape(c.radius, c.height)
+    }
+
 }
