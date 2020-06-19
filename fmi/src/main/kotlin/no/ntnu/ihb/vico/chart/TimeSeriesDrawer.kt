@@ -103,7 +103,6 @@ class TimeSeriesDrawer internal constructor(
     override fun entityAdded(entity: Entity) {
 
         val slave = entity.getComponent<SlaveComponent>()
-        val invalidVariableIdentifiers = mutableListOf<VariableHandle>()
         seriesInfos.forEach {
 
             val (componentName, variableName, modifier) = it
@@ -122,8 +121,6 @@ class TimeSeriesDrawer internal constructor(
             }
 
         }
-
-        seriesInfos.removeAll(invalidVariableIdentifiers)
 
     }
 
