@@ -51,7 +51,7 @@ internal class SlaveSystemTest {
     @Test
     fun testSSP() {
 
-        Engine(1.0 / 100).use { engine ->
+        Engine(1e-3).use { engine ->
 
             SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load().apply(engine)
             val resultDir = File("build/results").also {

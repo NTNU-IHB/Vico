@@ -94,7 +94,10 @@ class SystemManager(
     }
 
     override fun close() {
-        systems.forEach { it.close() }
+        systems.forEach { system ->
+            LOG.debug("Closing system ${system::class.java}")
+            system.close()
+        }
     }
 
     private companion object {

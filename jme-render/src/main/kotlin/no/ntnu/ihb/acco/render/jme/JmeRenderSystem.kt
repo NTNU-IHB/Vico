@@ -35,6 +35,7 @@ class JmeRenderSystem : SimulationSystem(
 ) {
 
     private val app = JmeApp()
+    private val queueMutex = Unit
 
     private val tmpVec = Vector3d()
     private val tmpQuat = Quaterniond()
@@ -48,9 +49,11 @@ class JmeRenderSystem : SimulationSystem(
     }
 
     private fun invokeLater(task: JmeApp.() -> Unit) {
-        queue.add(task)
-        while (queue.size > MAX_QUEUE_SIZE) {
-            queue.poll()
+        synchronized(queueMutex) {
+            queue.add(task)
+            while (queue.size > MAX_QUEUE_SIZE) {
+                queue.poll()
+            }
         }
     }
 
@@ -116,6 +119,10 @@ class JmeRenderSystem : SimulationSystem(
 
     }
 
+    override fun close() {
+        app.stop()
+    }
+
     private inner class JmeApp : SimpleApplication() {
 
         private val lock = ReentrantLock()
@@ -160,8 +167,10 @@ class JmeRenderSystem : SimulationSystem(
         }
 
         private fun emptyQueue() {
-            while (!queue.isEmpty()) {
-                queue.poll().invoke(this)
+            synchronized(queueMutex) {
+                while (!queue.isEmpty()) {
+                    queue.poll().invoke(this)
+                }
             }
         }
 

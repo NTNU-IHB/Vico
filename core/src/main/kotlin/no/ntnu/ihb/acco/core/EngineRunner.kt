@@ -176,6 +176,7 @@ class EngineRunner internal constructor(
 
             if (!stop.getAndSet(true)) {
                 println("Manually aborted execution at t=${engine.currentTime}..")
+                engine.close()
             }
 
         }
