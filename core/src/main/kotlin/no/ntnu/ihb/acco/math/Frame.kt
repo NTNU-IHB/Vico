@@ -19,8 +19,8 @@ interface IFrame {
     fun getLocalTranslation(store: Vector3d = Vector3d()): Vector3d
     fun getLocalQuaternion(store: Quaterniond = Quaterniond()): Quaterniond?
     fun getTranslation(store: Vector3d = Vector3d()): Vector3d
-
     fun getQuaternion(store: Quaterniond = Quaterniond()): Quaterniond
+
     fun setLocalTranslation(x: Double, y: Double, z: Double)
     fun setLocalTranslation(v: Vector3dc)
     fun setLocalQuaternion(q: Quaterniondc)

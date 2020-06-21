@@ -16,7 +16,12 @@ class TransformComponent internal constructor() : IFrame by Frame(), Component()
             RealLambdaVar("localPosition", 3,
                 getter = { ref -> getLocalTranslation(tmp).toArray(ref) },
                 setter = { values -> setLocalTranslation(tmp.fromArray(values)) }
-            )))
+            ),
+            RealLambdaVar("worldPosition", 3,
+                getter = { ref -> getTranslation(tmp).toArray(ref) },
+                setter = { values -> setTranslation(tmp.fromArray(values)) }
+            ))
+        )
     }
 
 }
