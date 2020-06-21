@@ -25,7 +25,6 @@ open class Entity(
         get() = mutableComponents
 
     private val componentMap: MutableMap<Class<out Component>, Component> = mutableMapOf()
-    private val componentListeners: MutableList<ComponentListener> = mutableListOf()
 
     var parent: Entity? = null
         private set
@@ -120,9 +119,6 @@ open class Entity(
         mutableComponents.add(component)
         componentMap[componentClass] = component
 
-        componentListeners.forEach { l ->
-            l.componentAdded(component)
-        }
     }
 
     inline fun <reified E : Component> removeComponent(): Component {
@@ -135,9 +131,6 @@ open class Entity(
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
 
-        componentListeners.forEach { l ->
-            l.componentRemoved(component)
-        }
         return component
     }
 
@@ -157,7 +150,6 @@ open class Entity(
     }
 
     fun reset() {
-        componentListeners.clear()
         removeAllComponents()
     }
 
@@ -169,14 +161,6 @@ open class Entity(
 
     inline fun <reified E : Component> getComponent(): E {
         return getComponent(E::class.java)
-    }
-
-    internal fun addComponentListener(listener: ComponentListener) {
-        this.componentListeners.add(listener)
-    }
-
-    internal fun removeComponentListener(listener: ComponentListener) {
-        this.componentListeners.remove(listener)
     }
 
     fun findInChildren(predicate: (Entity) -> Boolean): Entity {
@@ -197,34 +181,52 @@ open class Entity(
 
     fun getIntegerProperty(name: String): IntVar? {
         for (component in components) {
-            val v = component.ints[name]
-            if (v != null) return v
+            val v = component.getIntegerVariable(name)
+            if (v != null) {
+                return v
+            }
         }
         return null
+    }
+
+    fun getIntegerProperties(): List<IntVar> {
+        return components.flatMap { it.ints }
     }
 
     fun getRealProperty(name: String): RealVar? {
         for (component in components) {
-            val v = component.reals[name]
+            val v = component.getRealVariable(name)
             if (v != null) return v
         }
         return null
+    }
+
+    fun getRealProperties(): List<RealVar> {
+        return components.flatMap { it.reals }
     }
 
     fun getStringProperty(name: String): StrVar? {
         for (component in components) {
-            val v = component.strs[name]
+            val v = component.getStringVariable(name)
             if (v != null) return v
         }
         return null
     }
 
+    fun getStringProperties(): List<StrVar> {
+        return components.flatMap { it.strs }
+    }
+
     fun getBooleanProperty(name: String): BoolVar? {
         for (component in components) {
-            val v = component.bools[name]
+            val v = component.getBooleanVariable(name)
             if (v != null) return v
         }
         return null
+    }
+
+    fun getBooleanProperties(): List<BoolVar> {
+        return components.flatMap { it.bools }
     }
 
     override fun toString(): String {

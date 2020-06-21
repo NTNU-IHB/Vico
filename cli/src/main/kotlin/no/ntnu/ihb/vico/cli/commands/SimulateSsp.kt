@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import no.ntnu.ihb.acco.chart.ChartLoader
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.SystemStructure

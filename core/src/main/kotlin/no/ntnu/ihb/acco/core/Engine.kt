@@ -4,6 +4,8 @@ import no.ntnu.ihb.acco.util.ObservableSet
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.ceil
+import kotlin.math.max
 
 private const val DEFAULT_TIME_STEP = 1.0 / 100
 
@@ -116,6 +118,17 @@ class Engine @JvmOverloads constructor(
         if (!closed.getAndSet(true)) {
             systemManager.close()
         }
+    }
+
+    companion object {
+
+        fun calculateStepFactor(baseStepSize: Double, stepSizeHint: Double?): Int {
+            if (stepSizeHint == null) return 1
+            val decimationFactor = max(1, ceil(stepSizeHint / baseStepSize).toInt())
+            //val actualStepSize = baseStepSize * decimationFactor
+            return decimationFactor
+        }
+
     }
 
 }

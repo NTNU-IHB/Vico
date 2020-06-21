@@ -1,4 +1,4 @@
-package no.ntnu.ihb.vico.chart
+package no.ntnu.ihb.acco.chart
 
 import no.ntnu.ihb.acco.core.RealModifier
 

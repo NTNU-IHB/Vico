@@ -54,30 +54,30 @@ class SlaveComponent(
 
     init {
 
-        val ints = modelVariables.integers.associate { int ->
-            val vr = longArrayOf(int.valueReference)
-            int.name to IntLambdaVar(1,
+        val ints = modelVariables.integers.map { v ->
+            val vr = longArrayOf(v.valueReference)
+            IntLambdaVar(v.name, 1,
                 getter = { slave.readInteger(vr, it) },
                 setter = { slave.writeInteger(vr, it) }
             )
         }
-        val reals = modelVariables.reals.associate { int ->
-            val vr = longArrayOf(int.valueReference)
-            int.name to RealLambdaVar(1,
+        val reals = modelVariables.reals.map { v ->
+            val vr = longArrayOf(v.valueReference)
+            RealLambdaVar(v.name, 1,
                 getter = { slave.readReal(vr, it) },
                 setter = { slave.readReal(vr, it) }
             )
         }
-        val strings = modelVariables.strings.associate { int ->
-            val vr = longArrayOf(int.valueReference)
-            int.name to StrLambdaVar(1,
+        val strings = modelVariables.strings.map { v ->
+            val vr = longArrayOf(v.valueReference)
+            StrLambdaVar(v.name, 1,
                 getter = { slave.readString(vr, it) },
                 setter = { slave.readString(vr, it) }
             )
         }
-        val booleans = modelVariables.booleans.associate { int ->
-            val vr = longArrayOf(int.valueReference)
-            int.name to BoolLambdaVar(1,
+        val booleans = modelVariables.booleans.map { v ->
+            val vr = longArrayOf(v.valueReference)
+            BoolLambdaVar(v.name, 1,
                 getter = { slave.readBoolean(vr, it) },
                 setter = { slave.readBoolean(vr, it) }
             )

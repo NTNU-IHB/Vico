@@ -1,10 +1,10 @@
-package no.ntnu.ihb.vico.chart
+package no.ntnu.ihb.acco.chart
 
+import no.ntnu.ihb.acco.chart.jaxb.TChartConfig
+import no.ntnu.ihb.acco.chart.jaxb.TLinearTransformation
+import no.ntnu.ihb.acco.chart.jaxb.TTimeSeriesChart
+import no.ntnu.ihb.acco.chart.jaxb.TXYSeriesChart
 import no.ntnu.ihb.acco.core.LinearTransform
-import no.ntnu.ihb.vico.chart.jaxb.TChartConfig
-import no.ntnu.ihb.vico.chart.jaxb.TLinearTransformation
-import no.ntnu.ihb.vico.chart.jaxb.TTimeSeriesChart
-import no.ntnu.ihb.vico.chart.jaxb.TXYSeriesChart
 import java.io.File
 import javax.xml.bind.JAXB
 
@@ -24,7 +24,9 @@ object ChartLoader {
         return config.chart.map { chart ->
             when {
                 chart.xyseries != null -> loadXYSeriesDrawer(chart.xyseries)
-                chart.timeseries != null -> loadTimeSeriesDrawer(chart.timeseries)
+                chart.timeseries != null -> loadTimeSeriesDrawer(
+                    chart.timeseries
+                )
                 else -> throw AssertionError()
             }
         }
@@ -42,7 +44,13 @@ object ChartLoader {
             maxDuration(chart.maxDuration)
             chart.series.component.forEach { component ->
                 component.variable.forEach {
-                    registerSeries(VariableHandle(component.name, it.name, it.linearTransformation?.convert()))
+                    registerSeries(
+                        VariableHandle(
+                            component.name,
+                            it.name,
+                            it.linearTransformation?.convert()
+                        )
+                    )
                 }
             }
         }.build()

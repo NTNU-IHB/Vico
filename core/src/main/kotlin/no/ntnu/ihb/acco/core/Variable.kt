@@ -3,7 +3,7 @@ package no.ntnu.ihb.acco.core
 
 typealias StringArray = Array<String>
 
-fun StringArray(size: Int = 0) = StringArray(size) { "" }
+fun StringArray(size: Int) = StringArray(size) { "" }
 
 enum class Causality {
     LOCAL, INPUT, OUTPUT, PARAMETER, CALCULATED_PARAMETER
@@ -13,9 +13,11 @@ fun interface ReferenceProvider<E> {
     fun invoke(values: E)
 }
 
-sealed class Var<E> {
+sealed class Var<E>(
+    val name: String,
+    val size: Int
+) {
 
-    abstract val size: Int
     abstract val causality: Causality
 
     abstract fun read(values: E): E
@@ -23,17 +25,29 @@ sealed class Var<E> {
 
 }
 
-abstract class IntVar : Var<IntArray>()
-abstract class RealVar : Var<DoubleArray>()
-abstract class StrVar : Var<StringArray>()
-abstract class BoolVar : Var<BooleanArray>()
+abstract class IntVar(name: String, size: Int) : Var<IntArray>(name, size) {
+    fun read(): IntArray = read(IntArray(size))
+}
+
+abstract class RealVar(name: String, size: Int) : Var<DoubleArray>(name, size) {
+    fun read(): DoubleArray = read(DoubleArray(size))
+}
+
+abstract class StrVar(name: String, size: Int) : Var<StringArray>(name, size) {
+    fun read(): StringArray = read(StringArray(size))
+}
+
+abstract class BoolVar(name: String, size: Int) : Var<BooleanArray>(name, size) {
+    fun read(): BooleanArray = read(BooleanArray(size))
+}
 
 class IntLambdaVar(
-    override val size: Int,
+    name: String,
+    size: Int,
     private val getter: ReferenceProvider<IntArray>,
     private val setter: ReferenceProvider<IntArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : IntVar() {
+) : IntVar(name, size) {
 
     override fun read(values: IntArray): IntArray {
         require(size == values.size)
@@ -49,11 +63,12 @@ class IntLambdaVar(
 }
 
 class RealLambdaVar(
-    override val size: Int,
+    name: String,
+    size: Int,
     private val getter: ReferenceProvider<DoubleArray>,
     private val setter: ReferenceProvider<DoubleArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : RealVar() {
+) : RealVar(name, size) {
 
     override fun read(values: DoubleArray): DoubleArray {
         require(size == values.size)
@@ -70,11 +85,12 @@ class RealLambdaVar(
 }
 
 class StrLambdaVar(
-    override val size: Int,
+    name: String,
+    size: Int,
     private val getter: ReferenceProvider<StringArray>,
     private val setter: ReferenceProvider<StringArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : StrVar() {
+) : StrVar(name, size) {
 
     override fun read(values: StringArray): StringArray {
         require(size == values.size)
@@ -91,11 +107,12 @@ class StrLambdaVar(
 }
 
 class BoolLambdaVar(
-    override val size: Int,
+    name: String,
+    size: Int,
     private val getter: ReferenceProvider<BooleanArray>,
     private val setter: ReferenceProvider<BooleanArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : BoolVar() {
+) : BoolVar(name, size) {
 
     override fun read(values: BooleanArray): BooleanArray {
         require(size == values.size)

@@ -12,6 +12,7 @@ class IntConnector(
 ) : Connector<IntVar>(component, variable) {
     constructor(component: Component, name: String) : this(
         component, component.getIntegerVariable(name)
+            ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 
@@ -21,6 +22,7 @@ class RealConnector(
 ) : Connector<RealVar>(component, variable) {
     constructor(component: Component, name: String) : this(
         component, component.getRealVariable(name)
+            ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 
@@ -30,6 +32,7 @@ class StrConnector(
 ) : Connector<StrVar>(component, variable) {
     constructor(component: Component, name: String) : this(
         component, component.getStringVariable(name)
+            ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 
@@ -39,6 +42,7 @@ class BoolConnector(
 ) : Connector<BoolVar>(component, variable) {
     constructor(component: Component, name: String) : this(
         component, component.getBooleanVariable(name)
+            ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 

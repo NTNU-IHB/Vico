@@ -2,56 +2,74 @@ package no.ntnu.ihb.acco.core
 
 interface PropertyAccessor {
 
-    fun getIntegerVariable(name: String): IntVar
-    fun getRealVariable(name: String): RealVar
-    fun getStringVariable(name: String): StrVar
-    fun getBooleanVariable(name: String): BoolVar
+    fun getIntegerVariable(name: String): IntVar?
+    fun getRealVariable(name: String): RealVar?
+    fun getStringVariable(name: String): StrVar?
+    fun getBooleanVariable(name: String): BoolVar?
 
 }
 
-internal class Properties : PropertyAccessor {
+open class Properties : PropertyAccessor {
 
-    val ints = mutableMapOf<String, IntVar>()
-    val reals = mutableMapOf<String, RealVar>()
-    val strs = mutableMapOf<String, StrVar>()
-    val bools = mutableMapOf<String, BoolVar>()
+    private val _ints = mutableSetOf<IntVar>()
+    val ints: Collection<IntVar> = _ints
+    private val _reals = mutableSetOf<RealVar>()
+    val reals: Collection<RealVar> = _reals
+    private val _strs = mutableSetOf<StrVar>()
+    val strs: Collection<StrVar> = _strs
+    private val _bools = mutableSetOf<BoolVar>()
+    val bools: Collection<BoolVar> = _bools
 
-    fun add(variables: Map<String, Var<*>>) {
-        variables.forEach { (name, `var`) ->
-            when (`var`) {
-                is IntVar -> ints[name] = `var`
-                is RealVar -> reals[name] = `var`
-                is StrVar -> strs[name] = `var`
-                is BoolVar -> bools[name] = `var`
+    protected fun registerVariable(variable: Var<*>) = apply {
+        when (variable) {
+            is IntVar -> _ints.add(variable)
+            is RealVar -> _reals.add(variable)
+            is StrVar -> _strs.add(variable)
+            is BoolVar -> _bools.add(variable)
+        }
+    }
+
+    protected fun registerVariables(variables: List<Var<*>>) {
+        variables.forEach {
+            registerVariable(it)
+        }
+    }
+
+    protected fun registerVariables(vararg variables: Var<*>) {
+        variables.forEach {
+            registerVariable(it)
+        }
+    }
+
+    fun remove(variables: List<Var<*>>) {
+        variables.forEach {
+            when (it) {
+                is IntVar -> _ints.remove(it)
+                is RealVar -> _reals.remove(it)
+                is StrVar -> _strs.remove(it)
+                is BoolVar -> _bools.remove(it)
             }
         }
     }
 
-    fun remove(variables: Map<String, Var<*>>) {
-        variables.forEach { (name, `var`) ->
-            when (`var`) {
-                is IntVar -> ints.remove(name)
-                is RealVar -> reals.remove(name)
-                is StrVar -> strs.remove(name)
-                is BoolVar -> bools.remove(name)
-            }
-        }
+    override fun getIntegerVariable(name: String): IntVar? {
+        return _ints.find { it.name == name }
     }
 
-    override fun getIntegerVariable(name: String): IntVar {
-        return ints[name] ?: throw IllegalStateException("No variable named '$name' of type Int registered!")
+    override fun getRealVariable(name: String): RealVar? {
+        return _reals.find { it.name == name }
     }
 
-    override fun getRealVariable(name: String): RealVar {
-        return reals[name] ?: throw IllegalStateException("No variable named '$name' of type Real registered!")
+    override fun getStringVariable(name: String): StrVar? {
+        return _strs.find { it.name == name }
     }
 
-    override fun getStringVariable(name: String): StrVar {
-        return strs[name] ?: throw IllegalStateException("No variable named '$name' of type String registered!")
+    override fun getBooleanVariable(name: String): BoolVar? {
+        return _bools.find { it.name == name }
     }
 
-    override fun getBooleanVariable(name: String): BoolVar {
-        return bools[name] ?: throw IllegalStateException("No variable named '$name' of type Boolean registered!")
+    companion object {
+        const val PROPERTIES_CHANGED = "propertiesChanged"
     }
 
 }

@@ -1,5 +1,5 @@
 
-package no.ntnu.ihb.vico.chart.jaxb;
+package no.ntnu.ihb.acco.chart.jaxb;
 
 import javax.xml.bind.annotation.*;
 

@@ -1,5 +1,5 @@
 
-package no.ntnu.ihb.vico.chart.jaxb;
+package no.ntnu.ihb.acco.chart.jaxb;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each
  * Java content interface and Java element interface
- * generated in the no.ntnu.ihb.vico.chart.jaxb package.
+ * generated in the no.ntnu.ihb.acco.chart.jaxb package.
  * <p>An ObjectFactory allows you to programatically
  * construct new instances of the Java representation
  * for XML content. The Java representation of XML
@@ -26,7 +26,7 @@ public class ObjectFactory {
     private final static QName _ChartConfig_QNAME = new QName("http://github.com/NTNU-IHB/Vico/schema/ChartConfig", "ChartConfig");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.vico.chart.jaxb
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.acco.chart.jaxb
      *
      */
     public ObjectFactory() {
@@ -90,6 +90,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TLinearTransformation }
+     *
      */
     public TLinearTransformation createTLinearTransformation() {
         return new TLinearTransformation();
@@ -97,6 +98,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TChart }
+     *
      */
     public TChart createTChart() {
         return new TChart();
@@ -104,6 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TTimeSeriesChart }
+     *
      */
     public TTimeSeriesChart createTTimeSeriesChart() {
         return new TTimeSeriesChart();

@@ -1,30 +1,27 @@
 
-package no.ntnu.ihb.vico.chart.jaxb;
+package no.ntnu.ihb.acco.chart.jaxb;
 
 import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
- * <p>Java class for TXYSeriesChart complex type.
+ * <p>Java class for TTimeSeriesChart complex type.
  *
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="TXYSeriesChart">
+ * &lt;complexType name="TTimeSeriesChart">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="series" type="{http://github.com/NTNU-IHB/Vico/schema/ChartConfig}TXYSeries" maxOccurs="unbounded"/>
+ *         &lt;element name="series" type="{http://github.com/NTNU-IHB/Vico/schema/ChartConfig}TTimeSeries"/>
  *       &lt;/sequence>
  *       &lt;attribute name="title" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="xLabel" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="yLabel" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="label" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="width" type="{http://www.w3.org/2001/XMLSchema}int" default="800" />
  *       &lt;attribute name="height" type="{http://www.w3.org/2001/XMLSchema}int" default="640" />
  *       &lt;attribute name="decimationFactor" type="{http://www.w3.org/2001/XMLSchema}int" default="1" />
- *       &lt;attribute name="maxLength" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *       &lt;attribute name="maxDuration" type="{http://www.w3.org/2001/XMLSchema}double" />
  *       &lt;attribute name="live" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,57 +29,50 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TXYSeriesChart", namespace = "http://github.com/NTNU-IHB/Vico/schema/ChartConfig", propOrder = {
+@XmlType(name = "TTimeSeriesChart", namespace = "http://github.com/NTNU-IHB/Vico/schema/ChartConfig", propOrder = {
         "series"
 })
-public class TXYSeriesChart {
+public class TTimeSeriesChart {
 
     @XmlElement(namespace = "http://github.com/NTNU-IHB/Vico/schema/ChartConfig", required = true)
-    protected List<TXYSeries> series;
+    protected TTimeSeries series;
     @XmlAttribute(name = "title", required = true)
     protected String title;
-    @XmlAttribute(name = "xLabel", required = true)
-    protected String xLabel;
-    @XmlAttribute(name = "yLabel", required = true)
-    protected String yLabel;
+    @XmlAttribute(name = "label", required = true)
+    protected String label;
     @XmlAttribute(name = "width")
     protected Integer width;
     @XmlAttribute(name = "height")
     protected Integer height;
     @XmlAttribute(name = "decimationFactor")
     protected Integer decimationFactor;
-    @XmlAttribute(name = "maxLength")
-    protected Integer maxLength;
+    @XmlAttribute(name = "maxDuration")
+    protected Double maxDuration;
     @XmlAttribute(name = "live")
     protected Boolean live;
 
     /**
      * Gets the value of the series property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the series property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSeries().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link TXYSeries }
-     *
+     * @return
+     *     possible object is
+     *     {@link TTimeSeries }
      *
      */
-    public List<TXYSeries> getSeries() {
-        if (series == null) {
-            series = new ArrayList<TXYSeries>();
-        }
-        return this.series;
+    public TTimeSeries getSeries() {
+        return series;
+    }
+
+    /**
+     * Sets the value of the series property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TTimeSeries }
+     *
+     */
+    public void setSeries(TTimeSeries value) {
+        this.series = value;
     }
 
     /**
@@ -110,51 +100,27 @@ public class TXYSeriesChart {
     }
 
     /**
-     * Gets the value of the xLabel property.
+     * Gets the value of the label property.
      *
      * @return
      *     possible object is
      *     {@link String }
      *
      */
-    public String getXLabel() {
-        return xLabel;
+    public String getLabel() {
+        return label;
     }
 
     /**
-     * Sets the value of the xLabel property.
+     * Sets the value of the label property.
      *
      * @param value
      *     allowed object is
      *     {@link String }
      *
      */
-    public void setXLabel(String value) {
-        this.xLabel = value;
-    }
-
-    /**
-     * Gets the value of the yLabel property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getYLabel() {
-        return yLabel;
-    }
-
-    /**
-     * Sets the value of the yLabel property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setYLabel(String value) {
-        this.yLabel = value;
+    public void setLabel(String value) {
+        this.label = value;
     }
 
     /**
@@ -242,27 +208,27 @@ public class TXYSeriesChart {
     }
 
     /**
-     * Gets the value of the maxLength property.
+     * Gets the value of the maxDuration property.
      *
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link Double }
      *
      */
-    public Integer getMaxLength() {
-        return maxLength;
+    public Double getMaxDuration() {
+        return maxDuration;
     }
 
     /**
-     * Sets the value of the maxLength property.
+     * Sets the value of the maxDuration property.
      *
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link Double }
      *
      */
-    public void setMaxLength(Integer value) {
-        this.maxLength = value;
+    public void setMaxDuration(Double value) {
+        this.maxDuration = value;
     }
 
     /**

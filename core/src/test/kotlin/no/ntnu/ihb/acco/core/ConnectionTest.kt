@@ -11,11 +11,11 @@ internal class ConnectionTest {
     ) : Component() {
 
         init {
-            registerVariables(
-                mapOf("value" to RealLambdaVar(1,
+            registerVariable(
+                RealLambdaVar("value", 1,
                     getter = { it[0] = value },
                     setter = { value = it[0] }
-                ))
+                )
             )
         }
 

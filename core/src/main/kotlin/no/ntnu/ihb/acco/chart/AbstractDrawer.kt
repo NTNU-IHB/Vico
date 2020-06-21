@@ -1,10 +1,9 @@
-package no.ntnu.ihb.vico.chart
+package no.ntnu.ihb.acco.chart
 
 import no.ntnu.ihb.acco.core.Event
 import no.ntnu.ihb.acco.core.EventSystem
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.vico.SlaveComponent
-import no.ntnu.ihb.vico.SlaveSystem
+import no.ntnu.ihb.acco.core.Properties
 import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -16,11 +15,12 @@ import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
+import java.util.function.Supplier
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 import kotlin.properties.Delegates
 
-internal typealias ValueProvider = () -> Double
+internal typealias ValueProvider = Supplier<Double>
 
 abstract class AbstractDrawer(
     private val title: String,
@@ -30,9 +30,9 @@ abstract class AbstractDrawer(
     height: Int,
     live: Boolean,
     private val decimationFactor: Long
-) : EventSystem(Family.all(SlaveComponent::class.java).build()) {
+) : EventSystem(Family.all().build()) {
 
-    protected val mutex = Any()
+    protected val mutex = Unit
     private var queue: BlockingQueue<Unit>? = null
     protected val data: MutableMap<String, Pair<MutableList<Double>, MutableList<Double>>> = mutableMapOf()
 
@@ -58,7 +58,7 @@ abstract class AbstractDrawer(
     }
 
     init {
-        listen(SlaveSystem.SLAVE_STEPPED)
+        listen(Properties.PROPERTIES_CHANGED)
     }
 
 
@@ -71,16 +71,16 @@ abstract class AbstractDrawer(
 
     override fun eventReceived(evt: Event) {
         when (evt.type) {
-            SlaveSystem.SLAVE_STEPPED -> {
-                val (currentTime, slave) = evt.target<Pair<Double, SlaveComponent>>()
-                postSlaveStep(currentTime, slave)
+            Properties.PROPERTIES_CHANGED -> {
+                postSlaveStep()
             }
         }
     }
 
-    private fun postSlaveStep(currentTime: Double, slave: SlaveComponent) {
-        if (slave.stepCount % decimationFactor == 0L) {
-            updateData(currentTime)
+    private fun postSlaveStep() {
+        if (engine.iterations % decimationFactor == 0L) {
+
+            updateData(engine.currentTime)
 
             if (live && (System.currentTimeMillis() - lastUpdate) > 100L) {
                 updateChart()

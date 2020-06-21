@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
+import no.ntnu.ihb.acco.core.Properties
 import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.fmi4j.writeBoolean
 import no.ntnu.ihb.fmi4j.writeInteger
@@ -54,7 +55,7 @@ class SlaveSystem @JvmOverloads constructor(
 
     override fun step(currentTime: Double, stepSize: Double) {
         algorithm.step(currentTime, stepSize) {
-            dispatchEvent(SLAVE_STEPPED, it)
+            dispatchEvent(Properties.PROPERTIES_CHANGED, it)
         }
     }
 

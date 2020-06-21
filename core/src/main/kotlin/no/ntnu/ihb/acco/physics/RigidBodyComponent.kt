@@ -21,12 +21,12 @@ class RigidBodyComponent @JvmOverloads constructor(
     var angularVelocity = Vector3d()
 
     init {
-        registerVariables(mapOf(
-            "linearVelocity" to RealLambdaVar(3,
+        registerVariables(listOf(
+            RealLambdaVar("linearVelocity", 3,
                 getter = { ref -> linearVelocity.toArray(ref) },
                 setter = { values -> linearVelocity.fromArray(values) }
             ),
-            "angularVelocity" to RealLambdaVar(3,
+            RealLambdaVar("angularVelocity", 3,
                 getter = { ref -> angularVelocity.toArray(ref) },
                 setter = { values -> angularVelocity.fromArray(values) }
             )

@@ -1,9 +1,7 @@
-package no.ntnu.ihb.vico.chart
+package no.ntnu.ihb.acco.chart
 
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.RealModifier
-import no.ntnu.ihb.fmi4j.readReal
-import no.ntnu.ihb.vico.SlaveComponent
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -102,17 +100,16 @@ class TimeSeriesDrawer internal constructor(
 
     override fun entityAdded(entity: Entity) {
 
-        val slave = entity.getComponent<SlaveComponent>()
         seriesInfos.forEach {
 
             val (componentName, variableName, modifier) = it
 
-            if (componentName == slave.instanceName) {
+            if (componentName == entity.name) {
 
-                val variable = slave.modelVariables.getByName(variableName)
+                val variable = entity.getRealProperty(it.variableName)!!
 
-                val yProvider: ValueProvider = {
-                    val value = slave.readReal(variable.valueReference).value
+                val yProvider = ValueProvider {
+                    val value = variable.read(DoubleArray(variable.size))[0]
                     modifier?.invoke(value) ?: value
                 }
 
@@ -136,7 +133,7 @@ class TimeSeriesDrawer internal constructor(
             handles.forEach { handle ->
                 val (timeData, yData) = data.getValue(handle.key)
                 timeData.add(currentTime)
-                yData.add(handle.value.invoke())
+                yData.add(handle.value.get())
 
                 if (maxDuration != null && timeData.size >= 2) {
                     while ((timeData.last() - timeData.first()) > maxDuration) {

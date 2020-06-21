@@ -1,8 +1,5 @@
-package no.ntnu.ihb.vico.chart
+package no.ntnu.ihb.acco.chart
 
-import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.fmi4j.readReal
-import no.ntnu.ihb.vico.SlaveSystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -26,8 +23,8 @@ class XYSeriesDrawer internal constructor(
     ) : AbstractDrawer.Builder<XYSeriesDrawer>(title, xLabel, yLabel) {
 
         private var maxLength: Int? = null
-        private val handles = mutableMapOf<String, Pair<ValueProvider, ValueProvider>>()
-        private var seriesInfo = mutableMapOf<String, Pair<VariableHandle, VariableHandle>>()
+        private val handles: MutableMap<String, Pair<ValueProvider, ValueProvider>> = mutableMapOf()
+        private var seriesInfo: MutableMap<String, Pair<VariableHandle, VariableHandle>> = mutableMapOf()
 
         fun maxLength(value: Int?) = apply {
             value?.also {
@@ -62,36 +59,55 @@ class XYSeriesDrawer internal constructor(
 
     }
 
-    override fun assignedToEngine(engine: Engine) {
+    /* override fun assignedToEngine(engine: Engine) {
 
-        fun fail(key: String, component: String) {
-            LOG.warn("Failed to add xyseries as no component named '${component}' exists!")
-            seriesInfos.remove(key)
-        }
+         fun fail(key: String, component: String) {
+             LOG.warn("Failed to add xyseries as no component named '${component}' exists!")
+             seriesInfos.remove(key)
+         }
 
-        val system = engine.getSystem(SlaveSystem::class.java)
+         val system = engine.getSystem(SlaveSystem::class.java)
+
+         seriesInfos.forEach { (key, value) ->
+
+             system.getSlaveNoExcept(value.first.componentName)?.also { slave1 ->
+
+                 val variable1 = slave1.modelDescription.getVariableByName(value.first.variableName)
+
+                 system.getSlaveNoExcept(value.second.componentName)?.also { slave2 ->
+
+                     val variable2 = slave2.modelDescription.getVariableByName(value.second.variableName)
+
+                     val xProvider: ValueProvider = { slave1.readReal(variable1.valueReference).value }
+                     val yProvider: ValueProvider = { slave2.readReal(variable2.valueReference).value }
+                     handles[key] = xProvider to yProvider
+
+                 } ?: fail(key, value.second.componentName)
+
+             } ?: fail(key, value.first.componentName)
+         }
+     }*/
+
+    override fun init(currentTime: Double) {
 
         seriesInfos.forEach { (key, value) ->
 
-            system.getSlaveNoExcept(value.first.componentName)?.also { slave1 ->
+            val (h1, h2) = value
 
-                val variable1 = slave1.modelDescription.getVariableByName(value.first.variableName)
+            val variable1 = engine.getEntityByName(h1.componentName).getRealProperty(h1.variableName)
+                ?: throw IllegalStateException()
+            val variable2 = engine.getEntityByName(h2.componentName).getRealProperty(h2.variableName)
+                ?: throw IllegalStateException()
 
-                system.getSlaveNoExcept(value.second.componentName)?.also { slave2 ->
-
-                    val variable2 = slave2.modelDescription.getVariableByName(value.second.variableName)
-
-                    val xProvider: ValueProvider = { slave1.readReal(variable1.valueReference).value }
-                    val yProvider: ValueProvider = { slave2.readReal(variable2.valueReference).value }
-                    handles[key] = xProvider to yProvider
-
-                } ?: fail(key, value.second.componentName)
-
-            } ?: fail(key, value.first.componentName)
+            val xProvider = ValueProvider {
+                variable1.read()[0]
+            }
+            val yProvider = ValueProvider {
+                variable2.read()[0]
+            }
+            handles[key] = xProvider to yProvider
         }
-    }
 
-    override fun init(currentTime: Double) {
         handles.forEach { handle ->
             data[handle.key] = mutableListOf<Double>() to mutableListOf()
         }
@@ -103,8 +119,8 @@ class XYSeriesDrawer internal constructor(
             handles.forEach { handle ->
 
                 val (xData, yData) = data.getValue(handle.key)
-                xData.add(handle.value.first.invoke())
-                yData.add(handle.value.second.invoke())
+                xData.add(handle.value.first.get())
+                yData.add(handle.value.second.get())
 
                 if (maxLength != null && xData.size > maxLength) {
                     xData.removeAt(0)

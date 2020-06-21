@@ -10,9 +10,9 @@ class SystemManager(
     private val engine: Engine
 ) : Closeable {
 
-    val systems = mutableListOf<BaseSystem>()
+    val systems: MutableList<BaseSystem> = mutableListOf()
     private val systemMap: MutableMap<Class<out BaseSystem>, BaseSystem> = mutableMapOf()
-    private val manipulators = TreeMap<Long, MutableList<ManipulationSystem>>(Comparator { o1, o2 -> o2.compareTo(o1) })
+    private val manipulators = TreeMap<Long, MutableList<ManipulationSystem>> { o1, o2 -> o2.compareTo(o1) }
 
     @Suppress("UNCHECKED_CAST")
     fun <E : SimulationSystem> get(systemClass: Class<E>): E {
