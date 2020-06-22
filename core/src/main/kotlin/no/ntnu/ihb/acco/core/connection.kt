@@ -1,5 +1,7 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.util.StringArray
+
 
 sealed class Connector {
 
@@ -70,7 +72,10 @@ class ScalarConnection(
 
     private val size: Int = sourceConnector.property.size
 
+    private val intBuffer by lazy { IntArray(size) }
     private val realBuffer by lazy { DoubleArray(size) }
+    private val booleanBuffer by lazy { BooleanArray(size) }
+    private val stringBuffer by lazy { StringArray(size) }
 
     constructor(
         source: Connector,
@@ -87,7 +92,7 @@ class ScalarConnection(
 
         when (val v = sourceConnector.property) {
             is IntProperty -> {
-                val read = v.read()
+                val read = v.read(intBuffer)
                 sinks.forEach { (it.property as IntProperty).write(read) }
             }
             is RealProperty -> {
@@ -95,11 +100,11 @@ class ScalarConnection(
                 sinks.forEach { (it.property as RealProperty).write(read) }
             }
             is StrProperty -> {
-                val read = v.read()
+                val read = v.read(stringBuffer)
                 sinks.forEach { (it.property as StrProperty).write(read) }
             }
             is BoolProperty -> {
-                val read = v.read()
+                val read = v.read(booleanBuffer)
                 sinks.forEach { (it.property as BoolProperty).write(read) }
             }
         }
