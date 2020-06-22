@@ -10,6 +10,8 @@ wrapper {
 version = rootProject.file("VERSION").readLines()[0]
 println("Building ${rootProject.name} v$version")
 
+apply from: project.file("gradle/fmuproxy.gradle")
+
 subprojects { sub ->
 
     apply plugin: 'java-library'

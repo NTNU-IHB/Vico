@@ -1,0 +1,26 @@
+def proxyVersion = "0.6.1"
+def workingDir = rootProject.file("data")
+
+task start2Proxies {
+    doLast {
+        ProcessBuilder pb = new ProcessBuilder('cmd', '/c',
+                'start', 'java', '-jar', "fmu-proxy-${proxyVersion}.jar", "-thrift/tcp=9090", '&',
+                'start', 'java', '-jar', "fmu-proxy-${proxyVersion}.jar", "-thrift/tcp=9091")
+        pb.directory(workingDir)
+        pb.start()
+    }
+    group 'fmuproxy'
+}
+
+task start3Proxies {
+    doLast {
+        ProcessBuilder pb = new ProcessBuilder('cmd', '/c',
+                'start', 'java', '-jar', "fmu-proxy-${proxyVersion}.jar", "-thrift/tcp=9090", '&',
+                'start', 'java', '-jar', "fmu-proxy-${proxyVersion}.jar", "-thrift/tcp=9091", '&',
+                'start', 'java', '-jar', "fmu-proxy-${proxyVersion}.jar", "-thrift/tcp=9092")
+        pb.directory(workingDir)
+        pb.start()
+    }
+    group 'fmuproxy'
+}
+
