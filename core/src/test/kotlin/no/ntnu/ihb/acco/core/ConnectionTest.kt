@@ -11,8 +11,8 @@ internal class ConnectionTest {
     ) : Component() {
 
         init {
-            registerVariable(
-                RealLambdaVar("value", 1,
+            registerProperties(
+                RealLambdaProperty("value", 1,
                     getter = { it[0] = value },
                     setter = { value = it[0] }
                 )

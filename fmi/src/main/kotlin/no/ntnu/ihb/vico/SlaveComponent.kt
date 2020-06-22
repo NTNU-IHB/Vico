@@ -56,34 +56,42 @@ class SlaveComponent(
 
         val ints = modelVariables.integers.map { v ->
             val vr = longArrayOf(v.valueReference)
-            IntLambdaVar(v.name, 1,
+            IntLambdaProperty(
+                v.name, 1,
                 getter = { slave.readInteger(vr, it) },
-                setter = { slave.writeInteger(vr, it) }
+                setter = { slave.writeInteger(vr, it) },
+                causality = v.causality.convert()
             )
         }
         val reals = modelVariables.reals.map { v ->
             val vr = longArrayOf(v.valueReference)
-            RealLambdaVar(v.name, 1,
+            RealLambdaProperty(
+                v.name, 1,
                 getter = { slave.readReal(vr, it) },
-                setter = { slave.readReal(vr, it) }
+                setter = { slave.readReal(vr, it) },
+                causality = v.causality.convert()
             )
         }
         val strings = modelVariables.strings.map { v ->
             val vr = longArrayOf(v.valueReference)
-            StrLambdaVar(v.name, 1,
+            StrLambdaProperty(
+                v.name, 1,
                 getter = { slave.readString(vr, it) },
-                setter = { slave.readString(vr, it) }
+                setter = { slave.readString(vr, it) },
+                causality = v.causality.convert()
             )
         }
         val booleans = modelVariables.booleans.map { v ->
             val vr = longArrayOf(v.valueReference)
-            BoolLambdaVar(v.name, 1,
+            BoolLambdaProperty(
+                v.name, 1,
                 getter = { slave.readBoolean(vr, it) },
-                setter = { slave.readBoolean(vr, it) }
+                setter = { slave.readBoolean(vr, it) },
+                causality = v.causality.convert()
             )
         }
 
-        registerVariables(ints + reals + strings + booleans)
+        registerProperties(ints + reals + strings + booleans)
 
     }
 
@@ -319,7 +327,7 @@ class SlaveComponent(
             VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
             VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
         }
-        if (added && initialized) {
+        if (added) {
             when (v.type) {
                 VariableType.INTEGER, VariableType.ENUMERATION -> readIntegerDirect(v.name).value.also {
                     integerGetCache[v.valueReference] = it
@@ -398,4 +406,15 @@ class SlaveComponent(
         private val LOG: Logger = LoggerFactory.getLogger(SlaveComponent::class.java)
     }
 
+}
+
+private fun Causality?.convert(): no.ntnu.ihb.acco.core.Causality {
+    return when (this) {
+        Causality.INPUT -> no.ntnu.ihb.acco.core.Causality.INPUT
+        Causality.OUTPUT -> no.ntnu.ihb.acco.core.Causality.OUTPUT
+        Causality.LOCAL -> no.ntnu.ihb.acco.core.Causality.LOCAL
+        Causality.PARAMETER -> no.ntnu.ihb.acco.core.Causality.PARAMETER
+        Causality.CALCULATED_PARAMETER -> no.ntnu.ihb.acco.core.Causality.CALCULATED_PARAMETER
+        else -> no.ntnu.ihb.acco.core.Causality.UNKNOWN
+    }
 }

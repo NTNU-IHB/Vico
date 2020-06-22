@@ -179,9 +179,17 @@ open class Entity(
         return descendants.filter { predicate.invoke(it) }
     }
 
-    fun getIntegerProperty(name: String): IntVar? {
+    fun getProperties(): Collection<Property> {
+        return components.flatMap { it.getVariables() }
+    }
+
+    fun getProperty(name: String): Property? {
+        return getProperties().find { it.name == name }
+    }
+
+    fun getIntegerProperty(name: String): IntProperty? {
         for (component in components) {
-            val v = component.getIntegerVariable(name)
+            val v = component.getIntegerProperty(name)
             if (v != null) {
                 return v
             }
@@ -189,43 +197,43 @@ open class Entity(
         return null
     }
 
-    fun getIntegerProperties(): List<IntVar> {
+    fun getIntegerProperties(): List<IntProperty> {
         return components.flatMap { it.ints }
     }
 
-    fun getRealProperty(name: String): RealVar? {
+    fun getRealProperty(name: String): RealProperty? {
         for (component in components) {
-            val v = component.getRealVariable(name)
+            val v = component.getRealProperty(name)
             if (v != null) return v
         }
         return null
     }
 
-    fun getRealProperties(): List<RealVar> {
+    fun getRealProperties(): List<RealProperty> {
         return components.flatMap { it.reals }
     }
 
-    fun getStringProperty(name: String): StrVar? {
+    fun getStringProperty(name: String): StrProperty? {
         for (component in components) {
-            val v = component.getStringVariable(name)
+            val v = component.getStringProperty(name)
             if (v != null) return v
         }
         return null
     }
 
-    fun getStringProperties(): List<StrVar> {
+    fun getStringProperties(): List<StrProperty> {
         return components.flatMap { it.strs }
     }
 
-    fun getBooleanProperty(name: String): BoolVar? {
+    fun getBooleanProperty(name: String): BoolProperty? {
         for (component in components) {
-            val v = component.getBooleanVariable(name)
+            val v = component.getBooleanProperty(name)
             if (v != null) return v
         }
         return null
     }
 
-    fun getBooleanProperties(): List<BoolVar> {
+    fun getBooleanProperties(): List<BoolProperty> {
         return components.flatMap { it.bools }
     }
 

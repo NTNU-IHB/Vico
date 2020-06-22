@@ -1,53 +1,57 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.util.StringArray
 
-typealias StringArray = Array<String>
-
-fun StringArray(size: Int) = StringArray(size) { "" }
 
 enum class Causality {
-    LOCAL, INPUT, OUTPUT, PARAMETER, CALCULATED_PARAMETER
+    LOCAL, INPUT, OUTPUT, PARAMETER, CALCULATED_PARAMETER, UNKNOWN
 }
 
 fun interface ReferenceProvider<E> {
     fun invoke(values: E)
 }
 
-sealed class Var<E>(
+sealed class Property(
     val name: String,
     val size: Int
 ) {
 
     abstract val causality: Causality
 
-    abstract fun read(values: E): E
-    abstract fun write(values: E)
-
 }
 
-abstract class IntVar(name: String, size: Int) : Var<IntArray>(name, size) {
+abstract class IntProperty(name: String, size: Int) : Property(name, size) {
     fun read(): IntArray = read(IntArray(size))
+    abstract fun read(values: IntArray): IntArray
+    abstract fun write(values: IntArray)
+
 }
 
-abstract class RealVar(name: String, size: Int) : Var<DoubleArray>(name, size) {
+abstract class RealProperty(name: String, size: Int) : Property(name, size) {
     fun read(): DoubleArray = read(DoubleArray(size))
+    abstract fun read(values: DoubleArray): DoubleArray
+    abstract fun write(values: DoubleArray)
 }
 
-abstract class StrVar(name: String, size: Int) : Var<StringArray>(name, size) {
+abstract class StrProperty(name: String, size: Int) : Property(name, size) {
     fun read(): StringArray = read(StringArray(size))
+    abstract fun read(values: StringArray): StringArray
+    abstract fun write(values: StringArray)
 }
 
-abstract class BoolVar(name: String, size: Int) : Var<BooleanArray>(name, size) {
+abstract class BoolProperty(name: String, size: Int) : Property(name, size) {
     fun read(): BooleanArray = read(BooleanArray(size))
+    abstract fun read(values: BooleanArray): BooleanArray
+    abstract fun write(values: BooleanArray)
 }
 
-class IntLambdaVar(
+class IntLambdaProperty(
     name: String,
     size: Int,
     private val getter: ReferenceProvider<IntArray>,
     private val setter: ReferenceProvider<IntArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : IntVar(name, size) {
+) : IntProperty(name, size) {
 
     override fun read(values: IntArray): IntArray {
         require(size == values.size)
@@ -62,13 +66,13 @@ class IntLambdaVar(
     }
 }
 
-class RealLambdaVar(
+class RealLambdaProperty(
     name: String,
     size: Int,
     private val getter: ReferenceProvider<DoubleArray>,
     private val setter: ReferenceProvider<DoubleArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : RealVar(name, size) {
+) : RealProperty(name, size) {
 
     override fun read(values: DoubleArray): DoubleArray {
         require(size == values.size)
@@ -84,13 +88,13 @@ class RealLambdaVar(
 
 }
 
-class StrLambdaVar(
+class StrLambdaProperty(
     name: String,
     size: Int,
     private val getter: ReferenceProvider<StringArray>,
     private val setter: ReferenceProvider<StringArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : StrVar(name, size) {
+) : StrProperty(name, size) {
 
     override fun read(values: StringArray): StringArray {
         require(size == values.size)
@@ -106,13 +110,13 @@ class StrLambdaVar(
 
 }
 
-class BoolLambdaVar(
+class BoolLambdaProperty(
     name: String,
     size: Int,
     private val getter: ReferenceProvider<BooleanArray>,
     private val setter: ReferenceProvider<BooleanArray>? = null,
     override val causality: Causality = Causality.LOCAL
-) : BoolVar(name, size) {
+) : BoolProperty(name, size) {
 
     override fun read(values: BooleanArray): BooleanArray {
         require(size == values.size)
@@ -127,57 +131,3 @@ class BoolLambdaVar(
     }
 
 }
-
-
-/*private fun IntVar.buffered() = BufferedIntVar(this)
-private fun RealVar.buffered() = BufferedRealVar(this)*/
-
-
-/*class BufferedIntVar(
-    private val v: IntVar
-) : IntVar by v {
-
-    private val readBuffer = IntArray(size)
-    private val writeBuffer = IntArray(size)
-
-    override fun read(values: IntArray) {
-        require(values.size == size)
-        readBuffer.copyInto(values)
-    }
-
-    override fun write(values: IntArray) {
-        require(values.size == size)
-        values.copyInto(writeBuffer)
-    }
-
-    fun swapBuffers() {
-        v.read(readBuffer)
-        v.write(writeBuffer)
-    }
-
-}*/
-
-/*class BufferedRealVar(
-    private val real: RealVar
-) : RealVar by real {
-
-    private val readBuffer = DoubleArray(size)
-    private val writeBuffer = DoubleArray(size)
-
-    override fun read(values: DoubleArray) {
-        require(values.size == size)
-        readBuffer.copyInto(values)
-    }
-
-    override fun write(values: DoubleArray) {
-        require(values.size == size)
-        values.copyInto(writeBuffer)
-    }
-
-    fun swapBuffers() {
-        real.read(readBuffer)
-        real.write(writeBuffer)
-    }
-
-}*/
-

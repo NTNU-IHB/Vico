@@ -11,9 +11,14 @@ import no.ntnu.ihb.fmi4j.writeString
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.master.MasterAlgorithm
 
-typealias Slaves = List<SlaveComponent>
-typealias SlaveInitCallback = (SlaveComponent) -> Unit
-typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
+
+fun interface SlaveInitCallback {
+    fun invoke(slave: SlaveComponent)
+}
+
+fun interface SlaveStepCallback {
+    fun invoke(target: Pair<Double, SlaveComponent>)
+}
 
 
 class SlaveSystem @JvmOverloads constructor(
@@ -66,12 +71,6 @@ class SlaveSystem @JvmOverloads constructor(
         _slaves.forEach { slave ->
             slave.close()
         }
-    }
-
-    companion object {
-
-        const val SLAVE_STEPPED = "slaveStepped"
-
     }
 
 }

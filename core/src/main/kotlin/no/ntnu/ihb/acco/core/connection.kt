@@ -1,55 +1,53 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.util.StringArray
 
-sealed class Connector<E : Var<*>>(
+
+sealed class Connector<E : Property>(
     val component: Component,
     val variable: E
 )
 
 class IntConnector(
     component: Component,
-    variable: IntVar
-) : Connector<IntVar>(component, variable) {
+    variable: IntProperty
+) : Connector<IntProperty>(component, variable) {
     constructor(component: Component, name: String) : this(
-        component, component.getIntegerVariable(name)
+        component, component.getIntegerProperty(name)
             ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 
 class RealConnector(
     component: Component,
-    variable: RealVar
-) : Connector<RealVar>(component, variable) {
+    variable: RealProperty
+) : Connector<RealProperty>(component, variable) {
     constructor(component: Component, name: String) : this(
-        component, component.getRealVariable(name)
+        component, component.getRealProperty(name)
             ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 
 class StrConnector(
     component: Component,
-    variable: StrVar
-) : Connector<StrVar>(component, variable) {
+    variable: StrProperty
+) : Connector<StrProperty>(component, variable) {
     constructor(component: Component, name: String) : this(
-        component, component.getStringVariable(name)
+        component, component.getStringProperty(name)
             ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 
 class BoolConnector(
     component: Component,
-    variable: BoolVar
-) : Connector<BoolVar>(component, variable) {
+    variable: BoolProperty
+) : Connector<BoolProperty>(component, variable) {
     constructor(component: Component, name: String) : this(
-        component, component.getBooleanVariable(name)
+        component, component.getBooleanProperty(name)
             ?: throw IllegalArgumentException("No variable named '$name' registered in component!")
     )
 }
 
-
-interface Converter<E, T> {
-    fun convert(value: E): T
-}
 
 interface Connection {
 
@@ -64,7 +62,7 @@ interface Connection {
 
 }
 
-class ScalarConnection<E : Var<*>>(
+class ScalarConnection<E : Property>(
     private val sourceConnector: Connector<E>,
     private val sinks: List<Connector<E>>
 ) : Connection {
@@ -91,21 +89,21 @@ class ScalarConnection<E : Var<*>>(
     override fun transferData() {
 
         when (val v = sourceConnector.variable) {
-            is IntVar -> {
+            is IntProperty -> {
                 val read = IntArray(size).also { v.read(it) }
-                sinks.forEach { (it.variable as IntVar).write(read) }
+                sinks.forEach { (it.variable as IntProperty).write(read) }
             }
-            is RealVar -> {
+            is RealProperty -> {
                 val read = DoubleArray(size).also { v.read(it) }
-                sinks.forEach { (it.variable as RealVar).write(read) }
+                sinks.forEach { (it.variable as RealProperty).write(read) }
             }
-            is StrVar -> {
+            is StrProperty -> {
                 val read = StringArray(size).also { v.read(it) }
-                sinks.forEach { (it.variable as StrVar).write(read) }
+                sinks.forEach { (it.variable as StrProperty).write(read) }
             }
-            is BoolVar -> {
+            is BoolProperty -> {
                 val read = BooleanArray(size).also { v.read(it) }
-                sinks.forEach { (it.variable as BoolVar).write(read) }
+                sinks.forEach { (it.variable as BoolProperty).write(read) }
             }
         }
 

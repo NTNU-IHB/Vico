@@ -1,7 +1,7 @@
 package no.ntnu.ihb.acco.physics
 
 import no.ntnu.ihb.acco.core.Component
-import no.ntnu.ihb.acco.core.RealLambdaVar
+import no.ntnu.ihb.acco.core.RealLambdaProperty
 import no.ntnu.ihb.acco.math.fromArray
 import no.ntnu.ihb.acco.math.toArray
 import org.joml.Vector3d
@@ -21,12 +21,12 @@ class RigidBodyComponent @JvmOverloads constructor(
     var angularVelocity = Vector3d()
 
     init {
-        registerVariables(listOf(
-            RealLambdaVar("linearVelocity", 3,
+        registerProperties(listOf(
+            RealLambdaProperty("linearVelocity", 3,
                 getter = { ref -> linearVelocity.toArray(ref) },
                 setter = { values -> linearVelocity.fromArray(values) }
             ),
-            RealLambdaVar("angularVelocity", 3,
+            RealLambdaProperty("angularVelocity", 3,
                 getter = { ref -> angularVelocity.toArray(ref) },
                 setter = { values -> angularVelocity.fromArray(values) }
             )

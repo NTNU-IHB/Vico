@@ -4,7 +4,7 @@ import no.ntnu.ihb.acco.components.PositionRefComponent
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.RealVar
+import no.ntnu.ihb.acco.core.RealProperty
 import no.ntnu.ihb.acco.core.SimulationSystem
 import org.joml.Vector3d
 
@@ -14,7 +14,7 @@ class PositionRefSystem : SimulationSystem(
 
     private val tmpVector = Vector3d()
     private val tmpArray = DoubleArray(1)
-    private val map: MutableMap<String, RealVar> = mutableMapOf()
+    private val map: MutableMap<String, RealProperty> = mutableMapOf()
 
     override fun entityAdded(entity: Entity) {
 
