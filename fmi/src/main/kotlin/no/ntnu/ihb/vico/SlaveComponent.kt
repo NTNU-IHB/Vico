@@ -68,7 +68,7 @@ class SlaveComponent(
             RealLambdaProperty(
                 v.name, 1,
                 getter = { slave.readReal(vr, it) },
-                setter = { slave.readReal(vr, it) },
+                setter = { slave.writeReal(vr, it) },
                 causality = v.causality.convert()
             )
         }
@@ -77,7 +77,7 @@ class SlaveComponent(
             StrLambdaProperty(
                 v.name, 1,
                 getter = { slave.readString(vr, it) },
-                setter = { slave.readString(vr, it) },
+                setter = { slave.writeString(vr, it) },
                 causality = v.causality.convert()
             )
         }
@@ -86,7 +86,7 @@ class SlaveComponent(
             BoolLambdaProperty(
                 v.name, 1,
                 getter = { slave.readBoolean(vr, it) },
-                setter = { slave.readBoolean(vr, it) },
+                setter = { slave.writeBoolean(vr, it) },
                 causality = v.causality.convert()
             )
         }
@@ -327,7 +327,7 @@ class SlaveComponent(
             VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
             VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
         }
-        if (added) {
+        if (added && initialized) {
             when (v.type) {
                 VariableType.INTEGER, VariableType.ENUMERATION -> readIntegerDirect(v.name).value.also {
                     integerGetCache[v.valueReference] = it

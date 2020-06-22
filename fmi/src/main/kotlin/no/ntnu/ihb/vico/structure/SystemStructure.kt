@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.structure
 
-import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.core.RealConnector
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
@@ -11,8 +11,8 @@ class SystemStructure @JvmOverloads constructor(
     val name: String? = null
 ) {
 
-    private val components = mutableSetOf<Component>()
-    private val connections = mutableSetOf<Connection<*>>()
+    private val components: MutableSet<Component> = mutableSetOf()
+    private val connections: MutableSet<Connection<*>> = mutableSetOf()
     var defaultExperiment: DefaultExperiment? = null
 
     private fun getComponent(instanceName: String): Component {
@@ -85,77 +85,47 @@ class SystemStructure @JvmOverloads constructor(
         engine.addSystem(system)
 
         connections.forEach { c ->
-            engine.addConnection(c.toSlaveConnection(system.slaves))
+
+            val source = engine.getEntityByName(c.source.instanceName).getComponent<SlaveComponent>()
+            val target = engine.getEntityByName(c.target.instanceName).getComponent<SlaveComponent>()
+
+            when (c) {
+                is IntegerConnection -> {
+                    engine.addConnection(
+                        ScalarConnection(
+                            IntConnector(source, c.sourceVariable.name),
+                            IntConnector(target, c.targetVariable.name)
+                        )
+                    )
+                }
+                is RealConnection -> {
+                    engine.addConnection(
+                        ScalarConnection(
+                            RealConnector(source, c.sourceVariable.name),
+                            RealConnector(target, c.targetVariable.name)
+                        )
+                    )
+                }
+                is BooleanConnection -> {
+                    engine.addConnection(
+                        ScalarConnection(
+                            BoolConnector(source, c.sourceVariable.name),
+                            BoolConnector(target, c.targetVariable.name)
+                        )
+                    )
+                }
+                is StringConnection -> {
+                    engine.addConnection(
+                        ScalarConnection(
+                            StrConnector(source, c.sourceVariable.name),
+                            StrConnector(target, c.targetVariable.name)
+                        )
+                    )
+                }
+            }
+
         }
 
     }
 
 }
-
-/*
-sealed class ConnectionTemplate(
-    val sourceComponent: String,
-    val sourceVariable: ScalarVariable,
-    val targetComponent: String,
-    val targetVariable: ScalarVariable
-) {
-
-    val connectionType = sourceVariable.type
-    internal val modifiers by lazy { mutableListOf<Modifier<E>>() }
-
-    init {
-        require(sourceVariable != targetVariable)
-        require(sourceVariable.type == targetVariable.type)
-    }
-
-    fun addModifier(modifier: Modifier<E>) = apply {
-        modifiers.add(modifier)
-    }
-
-}
-
-class IntegerConnectionTemplate(
-     sourceComponent: String,
-     sourceVariable: IntegerVariable,
-     targetComponent: String,
-     targetVariable: IntegerVariable
-): ConnectionTemplate<Int>(
-    sourceComponent, sourceVariable, targetComponent, targetVariable
-)
-
-class RealConnectionTemplate(
-    sourceComponent: String,
-    sourceVariable: RealVariable,
-    targetComponent: String,
-    targetVariable: RealVariable
-): ConnectionTemplate<Double>(
-    sourceComponent, sourceVariable, targetComponent, targetVariable
-)
-
-class BooleanConnectionTemplate(
-    sourceComponent: String,
-    sourceVariable: BooleanVariable,
-    targetComponent: String,
-    targetVariable: BooleanVariable
-): ConnectionTemplate<Boolean>(
-    sourceComponent, sourceVariable, targetComponent, targetVariable
-)
-
-class StringConnectionTemplate(
-    sourceComponent: String,
-    sourceVariable: StringVariable,
-    targetComponent: String,
-    targetVariable: StringVariable
-): ConnectionTemplate<String>(
-    sourceComponent, sourceVariable, targetComponent, targetVariable
-)
-
-class EnumerationConnectionTemplate(
-    sourceComponent: String,
-    sourceVariable: EnumerationVariable,
-    targetComponent: String,
-    targetVariable: EnumerationVariable
-): ConnectionTemplate<Int>(
-    sourceComponent, sourceVariable, targetComponent, targetVariable
-)
-*/

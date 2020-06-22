@@ -46,27 +46,6 @@ class SystemManager(
             }
         }
 
-        /*val largestSystemStepSize = baseStepSize * manipulators.lastKey()
-        val endOfStepTime = currentTime + largestSystemStepSize
-        manipulators.forEach { (decimationFactor, systemGroup) ->
-            systemGroup.forEach { system ->
-                if (system.enabled) {
-                    var t = currentTime
-                    val dt = baseStepSize * decimationFactor
-                    do {
-                        when (system) {
-                            is ObserverSystem -> system.observe(currentTime)
-                            is SimulationSystem -> system.step(currentTime, dt).also {
-                                println("Stepping ${system.javaClass} at t=$currentTime, dt=$dt")
-                            }
-                        }
-                        t += dt
-                    } while (t < endOfStepTime)
-                }
-            }
-        }*/
-
-
     }
 
     fun add(system: ManipulationSystem) {

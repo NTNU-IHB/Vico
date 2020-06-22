@@ -2,11 +2,6 @@ package no.ntnu.ihb.vico.structure
 
 import no.ntnu.ihb.acco.core.RealModifier
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
-import no.ntnu.ihb.vico.*
-import no.ntnu.ihb.vico.BooleanConnection
-import no.ntnu.ihb.vico.IntegerConnection
-import no.ntnu.ihb.vico.RealConnection
-import no.ntnu.ihb.vico.StringConnection
 
 sealed class Connection<E : ScalarVariable>(
     val source: Component,
@@ -15,7 +10,7 @@ sealed class Connection<E : ScalarVariable>(
     var targetVariable: E
 ) {
 
-    abstract fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<*>
+    //abstract fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<*>
 
 }
 
@@ -26,14 +21,14 @@ class IntegerConnection(
     targetVariable: IntegerVariable
 ) : Connection<IntegerVariable>(source, sourceVariable, target, targetVariable) {
 
-    override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<*> {
+    /*override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<*> {
         val sourceSlave = slaves.first { it.instanceName == source.instanceName }
         val targetSlave = slaves.first { it.instanceName == target.instanceName }
         return IntegerConnection(
             sourceSlave, sourceVariable,
             targetSlave, targetVariable
         )
-    }
+    }*/
 
 }
 
@@ -46,16 +41,16 @@ class RealConnection(
 
     val modifiers = mutableListOf<RealModifier>()
 
-    override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<RealVariable> {
-        val sourceSlave = slaves.first { it.instanceName == source.instanceName }
-        val targetSlave = slaves.first { it.instanceName == target.instanceName }
-        return RealConnection(
-            sourceSlave, sourceVariable,
-            targetSlave, targetVariable
-        ).apply {
-            modifiers.forEach { addModifier(it) }
-        }
-    }
+    /* override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<RealVariable> {
+         val sourceSlave = slaves.first { it.instanceName == source.instanceName }
+         val targetSlave = slaves.first { it.instanceName == target.instanceName }
+         return RealConnection(
+             sourceSlave, sourceVariable,
+             targetSlave, targetVariable
+         ).apply {
+             modifiers.forEach { addModifier(it) }
+         }
+     }*/
 
 }
 
@@ -66,14 +61,14 @@ class StringConnection(
     targetVariable: StringVariable
 ) : Connection<StringVariable>(source, sourceVariable, target, targetVariable) {
 
-    override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<StringVariable> {
+    /*override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<StringVariable> {
         val sourceSlave = slaves.first { it.instanceName == source.instanceName }
         val targetSlave = slaves.first { it.instanceName == target.instanceName }
         return StringConnection(
             sourceSlave, sourceVariable,
             targetSlave, targetVariable
         )
-    }
+    }*/
 
 }
 
@@ -84,13 +79,13 @@ class BooleanConnection(
     targetVariable: BooleanVariable
 ) : Connection<BooleanVariable>(source, sourceVariable, target, targetVariable) {
 
-    override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<BooleanVariable> {
+    /*override fun toSlaveConnection(slaves: List<SlaveComponent>): SlaveConnection<BooleanVariable> {
         val sourceSlave = slaves.first { it.instanceName == source.instanceName }
         val targetSlave = slaves.first { it.instanceName == target.instanceName }
         return BooleanConnection(
             sourceSlave, sourceVariable,
             targetSlave, targetVariable
         )
-    }
+    }*/
 
 }

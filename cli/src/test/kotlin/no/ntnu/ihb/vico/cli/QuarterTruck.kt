@@ -16,11 +16,11 @@ fun main() {
         arrayOf(
             "simulate-ssp",
             ssdFile.absolutePath,
-            "--stepSize", "1e-2",
-            "--stopTime", "10",
-            "-rtf", "1.0",
+            "--stepSize", "1e-3",
+            "--stopTime", "100",
+            //"-rtf", "1.0",
             "-log", "LogConfig_vico.xml",
-            "-chart", "ChartConfig.xml",
+            // "-chart", "ChartConfig.xml",
             "-res", resultDir.absolutePath
         )
     )

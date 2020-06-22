@@ -123,7 +123,7 @@ abstract class AbstractDrawer(
             series.marker = SeriesMarkers.NONE
         }
 
-        queue = ArrayBlockingQueue<Unit>(1)
+        queue = ArrayBlockingQueue(1)
         sw.displayChart().apply {
             defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
             addWindowListener(object : WindowAdapter() {

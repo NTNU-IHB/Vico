@@ -67,7 +67,7 @@ object VisualLoaderTest {
             VisualLoader.load(config, engine)
 
             engine.addSystem(SineMoverSystem())
-            engine.addSystem(JmeRenderSystem().apply { decimationFactor = 50 })
+            engine.addSystem(JmeRenderSystem().apply { decimationFactor = 2 })
 
             engine.runner.apply {
 
