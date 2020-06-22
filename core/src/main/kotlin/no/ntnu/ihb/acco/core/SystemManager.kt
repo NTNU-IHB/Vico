@@ -66,7 +66,7 @@ class SystemManager(
         }
 
         systems.add(system)
-        //systems.sort()
+        systems.sort()
         systemMap[system::class.java] = system
         system.addedToEngine(engine)
     }

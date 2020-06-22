@@ -25,6 +25,7 @@ open class Entity(
         get() = mutableComponents
 
     private val componentMap: MutableMap<Class<out Component>, Component> = mutableMapOf()
+    private val componentListeners: MutableList<ComponentListener> = mutableListOf()
 
     var parent: Entity? = null
         private set
@@ -118,6 +119,7 @@ open class Entity(
 
         mutableComponents.add(component)
         componentMap[componentClass] = component
+        componentListeners.forEach { it.onComponentAdded(this, component) }
 
     }
 
@@ -130,7 +132,7 @@ open class Entity(
             ?: throw IllegalArgumentException("No component of type $componentClass registered!")
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
-
+        componentListeners.forEach { it.onComponentRemoved(this, component) }
         return component
     }
 
@@ -151,6 +153,16 @@ open class Entity(
 
     fun reset() {
         removeAllComponents()
+        componentListeners.clear()
+    }
+
+
+    fun addComponentListener(listener: ComponentListener) {
+        componentListeners.add(listener)
+    }
+
+    fun removeComponentListener(listener: ComponentListener) {
+        componentListeners.remove(listener)
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -90,7 +90,11 @@ fun main() {
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
-
+        Thread.sleep(1000)
+        engine.getEntityByName("e1").removeComponent<SineMoverComponent>()
+        Thread.sleep(1000)
+        engine.getEntityByName("e1").addComponent(SineMoverComponent(f = 1.0))
+        engine.getEntityByName("e1.e2").removeComponent<GeometryComponent>()
     }
 
 }

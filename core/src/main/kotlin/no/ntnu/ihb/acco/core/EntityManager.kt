@@ -30,7 +30,7 @@ class EntityManager {
         return root.findAllInDescendants { it.tag == tag }
     }
 
-    inner class RootEntity : Entity("") {
+    inner class RootEntity : Entity(""), ComponentListener {
 
         init {
             tag = "root"
@@ -38,11 +38,13 @@ class EntityManager {
 
         override fun descendantAdded(entity: Entity) {
             super.descendantAdded(entity)
+            entity.addComponentListener(this)
             updateFamilyMemberShip(entity)
         }
 
         override fun descendantRemoved(entity: Entity) {
             super.descendantRemoved(entity)
+            entity.removeComponentListener(this)
             families.values.forEach { entities ->
                 entities.remove(entity)
             }
@@ -56,6 +58,14 @@ class EntityManager {
                     entities.remove(entity)
                 }
             }
+        }
+
+        override fun onComponentAdded(entity: Entity, component: Component) {
+            updateFamilyMemberShip(entity)
+        }
+
+        override fun onComponentRemoved(entity: Entity, component: Component) {
+            updateFamilyMemberShip(entity)
         }
 
     }

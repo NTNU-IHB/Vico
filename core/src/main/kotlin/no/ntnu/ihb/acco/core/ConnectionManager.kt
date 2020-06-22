@@ -20,6 +20,19 @@ class ConnectionManager {
         }.add(connection)
     }
 
+    fun onComponentRemoved(component: Component) {
+        for (connection in connections.values.flatten()) {
+            if (connection.source == component) {
+                connections.remove(connection.source)
+            }
+            for (targetComponent in connection.targets) {
+                if (targetComponent == component) {
+                    connections.remove(connection.source)
+                }
+            }
+        }
+    }
+
     private inline fun forEachConnection(f: (Connection) -> Unit) {
         connections.values.forEach { list ->
             list.forEach {
