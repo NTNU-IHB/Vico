@@ -13,15 +13,7 @@ internal class SystemManagerTest {
 
     abstract class TestSystem(
         family: Family
-    ) : SimulationSystem(family) {
-        override fun entityAdded(entity: Entity) {
-            TODO("Not yet implemented")
-        }
-
-        override fun entityRemoved(entity: Entity) {
-            TODO("Not yet implemented")
-        }
-    }
+    ) : SimulationSystem(family)
 
     class SystemA : TestSystem(family) {
 
@@ -57,17 +49,17 @@ internal class SystemManagerTest {
     }
 
     @Test
-    operator fun iterator() {
+    fun testSystemManager() {
         Engine().use { engine ->
             val manager = engine.systemManager
 
             val systems = listOf(
-                SystemA(), SystemB(), SystemC()
+                SystemB(), SystemB(), SystemC()
             )
             systems.forEach { engine.addSystem(it) }
 
             assertEquals(3, manager.systems.size)
-            assertEquals(systems, manager.systems.sorted())
+            assertEquals(systems.sorted(), manager.systems)
 
             engine.step(1)
 
