@@ -1,6 +1,8 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.util.ObservableSet
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -58,7 +60,8 @@ class Engine @JvmOverloads constructor(
 
         for (i in 0 until numSteps) {
 
-            currentTime += systemManager.step(currentTime, baseStepSize)
+            systemManager.step(currentTime, baseStepSize)
+            currentTime += baseStepSize
             iterations++
 
             connectionManager.update()
@@ -118,9 +121,12 @@ class Engine @JvmOverloads constructor(
         if (!closed.getAndSet(true)) {
             systemManager.close()
         }
+        LOG.info("Closed engine..")
     }
 
     companion object {
+
+        private val LOG: Logger = LoggerFactory.getLogger(Engine::class.java)
 
         fun calculateStepFactor(baseStepSize: Double, stepSizeHint: Double?): Int {
             if (stepSizeHint == null) return 1

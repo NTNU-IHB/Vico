@@ -36,8 +36,10 @@ public class TVisualConfig {
     /**
      * Gets the value of the transforms property.
      *
-     * @return possible object is
-     * {@link TTransforms }
+     * @return
+     *     possible object is
+     *     {@link TTransforms }
+     *
      */
     public TTransforms getTransforms() {
         return transforms;
@@ -46,8 +48,10 @@ public class TVisualConfig {
     /**
      * Sets the value of the transforms property.
      *
-     * @param value allowed object is
-     *              {@link TTransforms }
+     * @param value
+     *     allowed object is
+     *     {@link TTransforms }
+     *
      */
     public void setTransforms(TTransforms value) {
         this.transforms = value;

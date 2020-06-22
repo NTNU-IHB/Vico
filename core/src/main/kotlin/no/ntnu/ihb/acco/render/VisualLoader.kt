@@ -1,6 +1,6 @@
 package no.ntnu.ihb.acco.render
 
-import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.render.jaxb.*
 import no.ntnu.ihb.acco.render.shape.*
 import org.joml.Matrix4d
@@ -9,21 +9,17 @@ import javax.xml.bind.JAXB
 
 object VisualLoader {
 
-    fun load(configFile: File): List<Entity> {
+    fun load(configFile: File, engine: Engine) {
         require(configFile.exists())
-        return load(JAXB.unmarshal(configFile, TVisualConfig::class.java))
+        load(JAXB.unmarshal(configFile, TVisualConfig::class.java), engine)
     }
 
-    fun load(config: TVisualConfig): List<Entity> {
-        return config.transforms.transform.map { loadTransform(it) }
+    fun load(config: TVisualConfig, engine: Engine) {
+        config.transforms.transform.forEach { t ->
+            val entity = engine.getEntityByName(t.name)
+            entity.addComponent(createGeometryComponent(t.geometry))
+        }
     }
-
-    private fun loadTransform(t: TTransform): Entity {
-        val entity = Entity(t.name)
-        entity.addComponent(createGeometryComponent(t.geometry))
-        return entity
-    }
-
 
     private fun createGeometryComponent(g: TGeometry): GeometryComponent {
         val shape = when {

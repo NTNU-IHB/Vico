@@ -20,18 +20,10 @@
 
     <xs:complexType name="TTransform">
         <xs:sequence>
-            <xs:element name="PositionRef" type="vico:TPositionRef"/>
-            <xs:element name="RotationRef" type="vico:TEulerRef" minOccurs="0"/>
             <xs:element name="Geometry" type="vico:TGeometry" minOccurs="0"/>
         </xs:sequence>
-        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
-
-    <!-- <xs:complexType name="TGeometries">
-         <xs:sequence>
-             <xs:element name="Geometry" type="vico:TGeometry" maxOccurs="unbounded"/>
-         </xs:sequence>
-     </xs:complexType>-->
 
     <xs:complexType name="TGeometry">
         <xs:sequence>
@@ -79,19 +71,6 @@
 
     <xs:complexType name="TMesh">
         <xs:attribute name="source" type="xs:string" use="required"/>
-    </xs:complexType>
-
-    <xs:complexType name="TPositionRef">
-        <xs:attribute name="px" type="xs:string" default="undefined"/>
-        <xs:attribute name="py" type="xs:string" default="undefined"/>
-        <xs:attribute name="pz" type="xs:string" default="undefined"/>
-    </xs:complexType>
-
-    <xs:complexType name="TEulerRef">
-        <xs:attribute name="x" type="xs:string" default="undefined"/>
-        <xs:attribute name="y" type="xs:string" default="undefined"/>
-        <xs:attribute name="z" type="xs:string" default="undefined"/>
-        <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
     </xs:complexType>
 
     <xs:complexType name="TEuler">

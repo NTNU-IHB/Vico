@@ -2,8 +2,7 @@
 <vico:VisualConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig">
 
     <vico:Transforms>
-        <vico:Transform>
-            <vico:PositionRef/>
+        <vico:Transform name="SineMover">
             <vico:Geometry>
                 <vico:Shape>
                     <vico:Sphere radius="0.5"/>

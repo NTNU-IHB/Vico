@@ -107,7 +107,6 @@ abstract class ManipulationSystem(
 ) : BaseSystem(family) {
 
     var decimationFactor = 1L
-        protected set
 
     val interval: Double
         get() = engine.baseStepSize * decimationFactor
@@ -127,13 +126,7 @@ abstract class ObserverSystem(
     family: Family
 ) : ManipulationSystem(family) {
 
-    internal fun internalObserve(currentTime: Double) {
-        if (enabled) {
-            observe(currentTime)
-        }
-    }
-
-    protected abstract fun observe(currentTime: Double)
+    abstract fun observe(currentTime: Double)
 
 }
 
@@ -141,12 +134,6 @@ abstract class SimulationSystem(
     family: Family
 ) : ManipulationSystem(family) {
 
-    internal fun internalStep(currentTime: Double, stepSize: Double) {
-        if (enabled) {
-            step(currentTime, stepSize)
-        }
-    }
-
-    protected abstract fun step(currentTime: Double, stepSize: Double)
+    abstract fun step(currentTime: Double, stepSize: Double)
 
 }

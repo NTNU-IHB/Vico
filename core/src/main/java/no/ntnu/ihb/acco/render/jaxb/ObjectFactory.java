@@ -66,6 +66,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TTransforms }
+     *
      */
     public TTransforms createTTransforms() {
         return new TTransforms();
@@ -73,6 +74,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TGeometry }
+     *
      */
     public TGeometry createTGeometry() {
         return new TGeometry();
@@ -80,17 +82,10 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TBox }
+     *
      */
     public TBox createTBox() {
         return new TBox();
-    }
-
-    /**
-     * Create an instance of {@link TEulerRef }
-     *
-     */
-    public TEulerRef createTEulerRef() {
-        return new TEulerRef();
     }
 
     /**
@@ -123,14 +118,6 @@ public class ObjectFactory {
      */
     public TShape createTShape() {
         return new TShape();
-    }
-
-    /**
-     * Create an instance of {@link TPositionRef }
-     *
-     */
-    public TPositionRef createTPositionRef() {
-        return new TPositionRef();
     }
 
     /**
