@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import java.io.Closeable
 
 
-class SystemManager(
+class SystemManager internal constructor(
     private val engine: Engine
 ) : Closeable {
 
@@ -49,11 +49,11 @@ class SystemManager(
     }
 
     fun add(system: ManipulationSystem) {
-        engine.safeContext { internalAdd(system) }
+        engine.invokeLater { internalAdd(system) }
     }
 
     fun add(system: EventSystem) {
-        engine.safeContext { internalAdd(system) }
+        engine.invokeLater { internalAdd(system) }
     }
 
     private fun internalAdd(system: BaseSystem) {
@@ -72,7 +72,7 @@ class SystemManager(
     }
 
     fun remove(system: Class<out BaseSystem>) {
-        engine.safeContext { internalRemove(system) }
+        engine.invokeLater { internalRemove(system) }
     }
 
     private fun internalRemove(systemClass: Class<out BaseSystem>) {

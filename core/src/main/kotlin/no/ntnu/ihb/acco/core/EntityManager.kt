@@ -2,7 +2,9 @@ package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.util.ObservableSet
 
-class EntityManager {
+class EntityManager internal constructor(
+    private val connectionManager: ConnectionManager
+) {
 
     private val root = RootEntity()
 
@@ -66,6 +68,7 @@ class EntityManager {
 
         override fun onComponentRemoved(entity: Entity, component: Component) {
             updateFamilyMemberShip(entity)
+            connectionManager.onComponentRemoved(component)
         }
 
     }

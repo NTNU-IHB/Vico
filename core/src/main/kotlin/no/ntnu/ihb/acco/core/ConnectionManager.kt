@@ -1,6 +1,6 @@
 package no.ntnu.ihb.acco.core
 
-class ConnectionManager {
+class ConnectionManager internal constructor() {
 
     private val connections: MutableMap<Component, MutableList<Connection>> = mutableMapOf()
 

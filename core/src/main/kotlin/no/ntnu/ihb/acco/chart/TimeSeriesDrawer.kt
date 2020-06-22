@@ -102,9 +102,9 @@ class TimeSeriesDrawer internal constructor(
 
         seriesInfos.forEach {
 
-            val (componentName, variableName, modifier) = it
+            val (entityName, variableName, modifier) = it
 
-            if (componentName == entity.name) {
+            if (entityName == entity.name) {
 
                 val variable = entity.getRealProperty(it.variableName)!!
 
@@ -113,10 +113,19 @@ class TimeSeriesDrawer internal constructor(
                     modifier?.invoke(value) ?: value
                 }
 
-                handles["$componentName.$variableName"] = yProvider
+                handles["$entityName.$variableName"] = yProvider
 
             }
 
+        }
+
+    }
+
+    override fun entityRemoved(entity: Entity) {
+
+        seriesInfos.forEach {
+            val (entityName, variableName) = it
+            handles.remove("$entityName.$variableName")
         }
 
     }

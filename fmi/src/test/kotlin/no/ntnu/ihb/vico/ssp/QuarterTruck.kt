@@ -18,7 +18,7 @@ fun main() {
     val sspDir = TestSsp.get("quarter-truck")
     val structure = SSPLoader(sspDir).load()
 
-    Engine(1e-3).use { engine ->
+    Engine(1e-2).use { engine ->
 
         structure.apply(engine)
 
@@ -33,15 +33,13 @@ fun main() {
         )
 
         measureTime {
-            engine.init()
-
             engine.runner.apply {
                 enableRealTimeTarget = false
-                runUntil(100).get()
+                runUntil(10).get()
             }
 
         }.also {
-            println("simulation took ${it.inSeconds}s")
+            println("Simulation took ${it.inSeconds}s")
         }
 
     }

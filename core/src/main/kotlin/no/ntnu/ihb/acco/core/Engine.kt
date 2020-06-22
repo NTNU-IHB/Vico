@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Predicate
 import kotlin.math.ceil
 import kotlin.math.max
 
@@ -26,7 +27,8 @@ class Engine @JvmOverloads constructor(
 
     private val initialized = AtomicBoolean()
     private val closed = AtomicBoolean()
-    private val queue: Queue<Runnable> = ArrayDeque()
+    private val taskQueue: Queue<Runnable> = ArrayDeque()
+    private val predicateTaskQueue: Queue<Pair<Runnable, Predicate<Engine>>> = ArrayDeque()
 
     val isInitialized: Boolean
         get() = initialized.get()
@@ -34,9 +36,9 @@ class Engine @JvmOverloads constructor(
     val isClosed: Boolean
         get() = closed.get()
 
-    private val entityManager = EntityManager()
-    internal val systemManager = SystemManager(this)
     private val connectionManager = ConnectionManager()
+    private val entityManager = EntityManager(connectionManager)
+    internal val systemManager = SystemManager(this)
 
     val runner by lazy { EngineRunner(this) }
 
@@ -66,7 +68,7 @@ class Engine @JvmOverloads constructor(
 
             connectionManager.update()
 
-            emptyQueue()
+            digestQueue()
         }
 
     }
@@ -82,11 +84,13 @@ class Engine @JvmOverloads constructor(
         return entityManager.getEntitiesFor(family)
     }
 
-    fun addEntity(entity: Entity) = entityManager.addEntity(entity)
-    fun addAllEntities(entity: Entity, vararg additionalEntities: Entity) =
+    fun addEntity(entity: Entity, vararg additionalEntities: Entity) = invokeLater {
         entityManager.addAllEntities(entity, *additionalEntities)
+    }
 
-    fun removeEntity(entity: Entity) = entityManager.removeEntity(entity)
+    fun removeEntity(entity: Entity) = invokeLater {
+        entityManager.removeEntity(entity)
+    }
 
     fun getEntityByName(name: String) = entityManager.getEntityByName(name)
     fun getEntitiesByTag(tag: String) = entityManager.getEntitiesByTag(tag)
@@ -103,17 +107,43 @@ class Engine @JvmOverloads constructor(
     fun addConnection(connection: Connection) = connectionManager.addConnection(connection)
     fun updateConnection(key: Component) = connectionManager.updateConnection(key)
 
-    internal fun safeContext(task: Runnable) {
+    fun invokeLater(task: Runnable) {
         if (initialized.get()) {
-            queue.add(task)
+            taskQueue.add(task)
         } else {
             task.run()
         }
     }
 
-    private fun emptyQueue() {
-        while (!queue.isEmpty()) {
-            queue.poll().run()
+    fun invokeAt(timePoint: Double, task: Runnable) {
+        invokeWhen(task) { it.currentTime >= timePoint }
+    }
+
+    fun invokeIn(t: Double, task: Runnable) {
+        val timeStamp = currentTime
+        invokeWhen(task) {
+            it.currentTime >= timeStamp + t
+        }
+    }
+
+    fun invokeWhen(task: Runnable, predicate: Predicate<Engine>) {
+        if (predicate.test(this)) {
+            invokeLater(task)
+        } else {
+            predicateTaskQueue.add(task to predicate)
+        }
+    }
+
+    private fun digestQueue() {
+        while (taskQueue.isNotEmpty()) {
+            taskQueue.poll().run()
+        }
+        for (i in predicateTaskQueue.indices) {
+            val (task, predicate) = predicateTaskQueue.peek()
+            if (predicate.test(this)) {
+                task.run()
+                predicateTaskQueue.poll()
+            }
         }
     }
 

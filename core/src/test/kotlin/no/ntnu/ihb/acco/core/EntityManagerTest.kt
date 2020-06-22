@@ -12,7 +12,7 @@ internal class EntityManagerTest {
         Engine().use { engine ->
             val e1 = Entity("entity1")
             val e2 = Entity("entity2")
-            engine.addAllEntities(e1, e2)
+            engine.addEntity(e1, e2)
             assertSame(e1, engine.getEntityByName(e1.name))
             assertSame(e2, engine.getEntityByName(e2.name))
             assertThrows<NoSuchElementException> { engine.getEntityByName("") }
@@ -25,7 +25,7 @@ internal class EntityManagerTest {
             val tag = "aTag"
             val e1 = Entity("entity1").apply { this.tag = tag }
             val e2 = Entity("entity2").apply { this.tag = tag }
-            engine.addAllEntities(e1, e2)
+            engine.addEntity(e1, e2)
             assertEquals(listOf(e1, e2), engine.getEntitiesByTag(tag))
             assertTrue(engine.getEntitiesByTag("").isEmpty())
         }

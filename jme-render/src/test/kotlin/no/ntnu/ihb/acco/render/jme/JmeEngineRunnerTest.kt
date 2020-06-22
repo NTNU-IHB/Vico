@@ -79,11 +79,25 @@ fun main() {
         engine.addSystem(SineMoverSystem())
         engine.addSystem(JmeRenderSystem())
 
+        engine.invokeAt(4.0) {
+            engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
+            engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
+
+            engine.invokeIn(2.0) {
+                engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
+                engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
+                engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
+            }
+
+        }
+
+
+
         engine.runner.apply {
             start()
         }
 
-        Thread.sleep(5000)
+        /*Thread.sleep(5000)
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
         Thread.sleep(1000)
@@ -94,7 +108,7 @@ fun main() {
         engine.getEntityByName("e1").removeComponent<SineMoverComponent>()
         Thread.sleep(1000)
         engine.getEntityByName("e1").addComponent(SineMoverComponent(f = 1.0))
-        engine.getEntityByName("e1.e2").removeComponent<GeometryComponent>()
+        engine.getEntityByName("e1.e2").removeComponent<GeometryComponent>()*/
     }
 
 }

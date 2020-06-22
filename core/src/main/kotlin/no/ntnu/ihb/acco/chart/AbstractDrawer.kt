@@ -61,7 +61,6 @@ abstract class AbstractDrawer(
         listen(Properties.PROPERTIES_CHANGED)
     }
 
-
     override fun init(currentTime: Double) {
         updateData(currentTime)
         if (live) {

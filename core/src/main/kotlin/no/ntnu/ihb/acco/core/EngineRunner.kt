@@ -23,7 +23,7 @@ class EngineRunner internal constructor(
         get() = engine.currentTime
 
     var targetRealTimeFactor = 1.0
-    var enableRealTimeTarget = true
+    var enableRealTimeTarget = false
     var actualRealTimeFactor = Double.NaN
 
     private var thread: Thread? = null
