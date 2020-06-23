@@ -85,7 +85,7 @@ open class Entity(
         }
     }
 
-    fun traverseDecendants(traverser: EntityTraverser, option: TraverseOption?) {
+    fun traverseDecendants(traverser: EntityTraverser, option: TraverseOption) {
         when (option) {
             TraverseOption.BREADTH_FIRST -> breadthFirstTraversal(traverser)
             TraverseOption.DEPTH_FIRST -> depthFirstTraversal(traverser)
@@ -155,7 +155,6 @@ open class Entity(
         removeAllComponents()
         componentListeners.clear()
     }
-
 
     fun addComponentListener(listener: ComponentListener) {
         componentListeners.add(listener)
