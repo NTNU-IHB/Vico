@@ -1,14 +1,13 @@
 package no.ntnu.ihb.acco.core
 
-import no.ntnu.ihb.acco.util.ObservableSet
 
 class EntityManager internal constructor(
     private val connectionManager: ConnectionManager
 ) {
 
     private val root = RootEntity()
-
-    private val families: MutableMap<Family, ObservableSet<Entity>> = mutableMapOf()
+    private val families: MutableMap<Family, MutableSet<Entity>> = mutableMapOf()
+    private val entityListeners: MutableList<EntityListener> = mutableListOf()
 
     fun addEntity(entity: Entity) = root.addEntity(entity)
     fun addAllEntities(entity: Entity, vararg additionalEntities: Entity) =
@@ -18,9 +17,9 @@ class EntityManager internal constructor(
     fun removeAllEntities(entity: Entity, vararg additionalEntities: Entity) =
         root.removeAllEntities(entity, *additionalEntities)
 
-    fun getEntitiesFor(family: Family): ObservableSet<Entity> {
+    fun getEntitiesFor(family: Family): Set<Entity> {
         return families.computeIfAbsent(family) {
-            ObservableSet(root.findAllInDescendants { family.test(it) }.toMutableSet())
+            root.findAllInDescendants { family.test(it) }.toMutableSet()
         }
     }
 
@@ -30,6 +29,14 @@ class EntityManager internal constructor(
 
     fun getEntitiesByTag(tag: String): List<Entity> {
         return root.findAllInDescendants { it.tag == tag }
+    }
+
+    fun addEntityListener(entityListener: EntityListener) {
+        entityListeners.add(entityListener)
+    }
+
+    fun removeEntityListener(entityListener: EntityListener) {
+        entityListeners.remove(entityListener)
     }
 
     inner class RootEntity : Entity(""), ComponentListener {
@@ -47,17 +54,37 @@ class EntityManager internal constructor(
         override fun descendantRemoved(entity: Entity) {
             super.descendantRemoved(entity)
             entity.removeComponentListener(this)
-            families.values.forEach { entities ->
-                entities.remove(entity)
+
+            families.forEach { (family, entities) ->
+                if (entities.remove(entity)) {
+                    entityListeners.forEach {
+                        if (it.family == family) {
+                            it.entityRemoved(entity)
+                        }
+                    }
+                }
             }
+
         }
 
         private fun updateFamilyMemberShip(entity: Entity) {
             families.forEach { (family, entities) ->
                 if (family.test(entity)) {
-                    entities.add(entity)
+                    if (entities.add(entity)) {
+                        entityListeners.forEach {
+                            if (it.family == family) {
+                                it.entityAdded(entity)
+                            }
+                        }
+                    }
                 } else {
-                    entities.remove(entity)
+                    if (entities.remove(entity)) {
+                        entityListeners.forEach {
+                            if (it.family == family) {
+                                it.entityRemoved(entity)
+                            }
+                        }
+                    }
                 }
             }
         }

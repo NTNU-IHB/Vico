@@ -1,12 +1,11 @@
 package no.ntnu.ihb.acco.core
 
-import no.ntnu.ihb.acco.util.SetObserver
 import java.io.Closeable
 import java.util.*
 
 sealed class BaseSystem(
-    protected val family: Family
-) : Comparable<BaseSystem>, Closeable {
+    override val family: Family
+) : Comparable<BaseSystem>, EntityListener, Closeable {
 
     var priority = 0
         protected set
@@ -26,19 +25,7 @@ sealed class BaseSystem(
 
     internal fun addedToEngine(engine: Engine) {
         this._engine = engine
-        this.entities = engine.getEntitiesFor(family).apply {
-            observer = object : SetObserver<Entity> {
-
-                override fun onElementAdded(element: Entity) {
-                    entityAdded(element)
-                }
-
-                override fun onElementRemoved(element: Entity) {
-                    entityRemoved(element)
-                }
-
-            }
-        }
+        this.entities = engine.getEntitiesFor(family)
         this.entities.forEach { entity -> entityAdded(entity) }
 
         assignedToEngine(engine)
@@ -57,9 +44,9 @@ sealed class BaseSystem(
 
     protected open fun assignedToEngine(engine: Engine) {}
 
-    protected open fun entityAdded(entity: Entity) {}
+    override fun entityAdded(entity: Entity) {}
 
-    protected open fun entityRemoved(entity: Entity) {}
+    override fun entityRemoved(entity: Entity) {}
 
     protected open fun init(currentTime: Double) {}
 

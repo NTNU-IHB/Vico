@@ -5,9 +5,7 @@ import org.slf4j.LoggerFactory
 import java.io.Closeable
 
 
-class SystemManager internal constructor(
-    private val engine: Engine
-) : Closeable {
+class SystemManager internal constructor() : Closeable {
 
     val systems: MutableList<BaseSystem> = mutableListOf()
     private val systemMap: MutableMap<Class<out BaseSystem>, BaseSystem> = mutableMapOf()
@@ -29,11 +27,11 @@ class SystemManager internal constructor(
         }
     }
 
-    fun step(currentTime: Double, engineStepSize: Double) {
+    fun step(iterations: Long, currentTime: Double, engineStepSize: Double) {
 
         for (system in manipulators) {
             if (system.enabled) {
-                if (engine.iterations % system.decimationFactor == 0L) {
+                if (iterations % system.decimationFactor == 0L) {
                     when (system) {
                         is ObserverSystem -> {
                         }
@@ -48,34 +46,16 @@ class SystemManager internal constructor(
 
     }
 
-    fun add(system: ManipulationSystem) {
-        engine.invokeLater { internalAdd(system) }
-    }
-
-    fun add(system: EventSystem) {
-        engine.invokeLater { internalAdd(system) }
-    }
-
-    private fun internalAdd(system: BaseSystem) {
-
-        when (system) {
-            is EventSystem -> Unit
-            is ManipulationSystem -> {
-                manipulators.add(system)
-            }
+    fun add(system: BaseSystem) {
+        if (system is ManipulationSystem) {
+            manipulators.add(system)
         }
-
         systems.add(system)
         systems.sort()
         systemMap[system::class.java] = system
-        system.addedToEngine(engine)
     }
 
-    fun remove(system: Class<out BaseSystem>) {
-        engine.invokeLater { internalRemove(system) }
-    }
-
-    private fun internalRemove(systemClass: Class<out BaseSystem>) {
+    fun remove(systemClass: Class<out BaseSystem>) {
         systemMap.remove(systemClass)?.also { system ->
             when (system) {
                 is EventSystem -> Unit

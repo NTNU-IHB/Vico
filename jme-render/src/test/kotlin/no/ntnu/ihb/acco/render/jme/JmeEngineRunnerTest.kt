@@ -79,11 +79,11 @@ fun main() {
         engine.addSystem(SineMoverSystem())
         engine.addSystem(JmeRenderSystem())
 
-        engine.invokeAt(4.0) {
+        engine.invokeAt(2.0) {
             engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
             engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
 
-            engine.invokeIn(2.0) {
+            engine.invokeIn(1.0) {
                 engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
                 engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
                 engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
@@ -91,7 +91,16 @@ fun main() {
 
         }
 
+        engine.invokeAt(4.0) {
 
+            Entity().apply {
+                addComponent(GeometryComponent(SphereShape()).apply { setColor(Color.yellow) })
+                engine.addEntity(this)
+            }
+
+            engine.removeEntity(engine.getEntityByName("e1"))
+
+        }
 
         engine.runner.apply {
             start()

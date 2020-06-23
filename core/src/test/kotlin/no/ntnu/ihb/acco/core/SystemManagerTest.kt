@@ -50,19 +50,17 @@ internal class SystemManagerTest {
 
     @Test
     fun testSystemManager() {
-        Engine().use { engine ->
-            val manager = engine.systemManager
 
-            val systems = listOf(
-                SystemB(), SystemB(), SystemC()
-            )
-            systems.forEach { engine.addSystem(it) }
+        val manager = SystemManager()
 
-            assertEquals(3, manager.systems.size)
-            assertEquals(systems.sorted(), manager.systems)
+        val systems = listOf(
+            SystemB(), SystemB(), SystemC()
+        )
+        systems.forEach { manager.add(it) }
 
-            engine.step(1)
+        assertEquals(3, manager.systems.size)
+        assertEquals(systems.sorted(), manager.systems)
 
-        }
     }
+
 }

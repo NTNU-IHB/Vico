@@ -59,35 +59,6 @@ class XYSeriesDrawer internal constructor(
 
     }
 
-    /* override fun assignedToEngine(engine: Engine) {
-
-         fun fail(key: String, component: String) {
-             LOG.warn("Failed to add xyseries as no component named '${component}' exists!")
-             seriesInfos.remove(key)
-         }
-
-         val system = engine.getSystem(SlaveSystem::class.java)
-
-         seriesInfos.forEach { (key, value) ->
-
-             system.getSlaveNoExcept(value.first.componentName)?.also { slave1 ->
-
-                 val variable1 = slave1.modelDescription.getVariableByName(value.first.variableName)
-
-                 system.getSlaveNoExcept(value.second.componentName)?.also { slave2 ->
-
-                     val variable2 = slave2.modelDescription.getVariableByName(value.second.variableName)
-
-                     val xProvider: ValueProvider = { slave1.readReal(variable1.valueReference).value }
-                     val yProvider: ValueProvider = { slave2.readReal(variable2.valueReference).value }
-                     handles[key] = xProvider to yProvider
-
-                 } ?: fail(key, value.second.componentName)
-
-             } ?: fail(key, value.first.componentName)
-         }
-     }*/
-
     override fun init(currentTime: Double) {
 
         seriesInfos.forEach { (key, value) ->
@@ -95,9 +66,9 @@ class XYSeriesDrawer internal constructor(
             val (h1, h2) = value
 
             val variable1 = engine.getEntityByName(h1.componentName).getRealProperty(h1.variableName)
-                ?: throw IllegalStateException()
+                ?: throw IllegalStateException("No variable named '${h1.variableName}' in entity ${h1.componentName}")
             val variable2 = engine.getEntityByName(h2.componentName).getRealProperty(h2.variableName)
-                ?: throw IllegalStateException()
+                ?: throw IllegalStateException("No variable named '${h2.variableName}' in entity ${h2.componentName}")
 
             val xProvider = ValueProvider {
                 variable1.read()[0]

@@ -64,9 +64,8 @@ class JmeRenderSystem : SimulationSystem(
     override fun entityAdded(entity: Entity) {
 
         val geometry = entity.getComponent<GeometryComponent>()
-
         invokeLater {
-            map.computeIfAbsent(entity) {
+            val node = map.computeIfAbsent(entity) {
 
                 geometry.createGeometry(app.assetManager).also { node ->
 
@@ -82,11 +81,12 @@ class JmeRenderSystem : SimulationSystem(
                         node.setColor(it.target())
                     }
 
-                    root.attachChild(node)
                 }
 
             }
+            root.attachChild(node)
         }
+
     }
 
     override fun entityRemoved(entity: Entity) {
@@ -103,17 +103,18 @@ class JmeRenderSystem : SimulationSystem(
         updateTransforms()
     }
 
-    fun updateTransforms() {
+    private fun updateTransforms() {
         for (entity in entities) {
 
-            val node = map.getValue(entity)
-            val transform = entity.getComponent<TransformComponent>()
-            val world = transform.getWorldMatrix()
+            map[entity]?.also { node ->
+                val transform = entity.getComponent<TransformComponent>()
+                val world = transform.getWorldMatrix()
 
-            invokeLater {
-                node.localTranslation.set(world.getTranslation(tmpVec))
-                node.localRotation.set(world.getNormalizedRotation(tmpQuat))
-                node.forceRefresh(true, true, true)
+                invokeLater {
+                    node.localTranslation.set(world.getTranslation(tmpVec))
+                    node.localRotation.set(world.getNormalizedRotation(tmpQuat))
+                    node.forceRefresh(true, true, true)
+                }
             }
         }
 

@@ -24,16 +24,16 @@ fun interface SlaveStepCallback {
 
 
 class SlaveSystem @JvmOverloads constructor(
-    private val algorithm: MasterAlgorithm = FixedStepMaster()
+    algorithm: MasterAlgorithm? = null,
+    private var parameterSet: String? = null
 ) : SimulationSystem(Family.all(SlaveComponent::class.java).build()) {
 
-    var parameterSet: String? = null
+    private val algorithm: MasterAlgorithm = algorithm ?: FixedStepMaster()
 
     private val _slaves: MutableList<SlaveComponent> = mutableListOf()
     val slaves: List<SlaveComponent> = _slaves
 
     fun getSlave(name: String): SlaveComponent = _slaves.first { it.instanceName == name }
-    fun getSlaveNoExcept(name: String): SlaveComponent? = _slaves.firstOrNull { it.instanceName == name }
 
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent<SlaveComponent>()
@@ -47,6 +47,7 @@ class SlaveSystem @JvmOverloads constructor(
                 LOG.warn("No parameterSet named '$parameterSet' found in ${entity.name}!")
             }
         }
+
         _slaves.add(slave)
         algorithm.slaveAdded(slave)
     }
@@ -65,7 +66,9 @@ class SlaveSystem @JvmOverloads constructor(
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
+        println("stepping")
         algorithm.step(currentTime, stepSize) {
+            println("dispatch at t=$currentTime")
             dispatchEvent(Properties.PROPERTIES_CHANGED, it)
         }
     }

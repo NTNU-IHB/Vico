@@ -19,7 +19,7 @@ internal class SlaveSystemTest {
 
         Engine(1.0 / 100).use { engine ->
 
-            val slaveSystem = SlaveSystem(FixedStepMaster())
+            val slaveSystem = SlaveSystem(FixedStepMaster(), "default")
             engine.addSystem(slaveSystem)
 
             val resultDir = File("build/results").also {

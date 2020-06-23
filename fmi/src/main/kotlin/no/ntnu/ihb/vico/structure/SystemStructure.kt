@@ -82,8 +82,7 @@ class SystemStructure @JvmOverloads constructor(
             }
         }
 
-        val system = SlaveSystem()
-        system.parameterSet = parameterSet
+        val system = SlaveSystem(parameterSet = parameterSet)
         engine.addSystem(system)
 
         connections.forEach { c ->

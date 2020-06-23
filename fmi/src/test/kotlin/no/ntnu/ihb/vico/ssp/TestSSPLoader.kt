@@ -46,7 +46,7 @@ internal class TestSSPLoader {
         Assertions.assertEquals(10.0, stopTime, 1e-6)
         Engine(1e-3).use { engine ->
 
-            structure.apply(engine)
+            structure.apply(engine, "default")
 
             engine.init()
 

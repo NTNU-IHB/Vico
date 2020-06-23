@@ -1,6 +1,5 @@
 package no.ntnu.ihb.acco.core
 
-import no.ntnu.ihb.acco.util.ObservableSet
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -28,7 +27,7 @@ class Engine @JvmOverloads constructor(
     private val initialized = AtomicBoolean()
     private val closed = AtomicBoolean()
     private val taskQueue: Queue<Runnable> = ArrayDeque()
-    private val predicateTaskQueue: Queue<Pair<Runnable, Predicate<Engine>>> = ArrayDeque()
+    private val predicateTaskQueue: MutableList<Pair<Runnable, Predicate<Engine>>> = mutableListOf()
 
     val isInitialized: Boolean
         get() = initialized.get()
@@ -38,7 +37,7 @@ class Engine @JvmOverloads constructor(
 
     private val connectionManager = ConnectionManager()
     private val entityManager = EntityManager(connectionManager)
-    internal val systemManager = SystemManager(this)
+    internal val systemManager = SystemManager()
 
     val runner by lazy { EngineRunner(this) }
 
@@ -62,7 +61,7 @@ class Engine @JvmOverloads constructor(
 
         for (i in 0 until numSteps) {
 
-            systemManager.step(currentTime, baseStepSize)
+            systemManager.step(iterations, currentTime, baseStepSize)
             currentTime += baseStepSize
             iterations++
 
@@ -80,7 +79,7 @@ class Engine @JvmOverloads constructor(
         }
     }
 
-    fun getEntitiesFor(family: Family): ObservableSet<Entity> {
+    fun getEntitiesFor(family: Family): Set<Entity> {
         return entityManager.getEntitiesFor(family)
     }
 
@@ -98,13 +97,31 @@ class Engine @JvmOverloads constructor(
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)
 
-    fun addSystem(system: EventSystem) = systemManager.add(system)
-    fun addSystem(system: ManipulationSystem) = systemManager.add(system)
+    fun addSystem(system: EventSystem) = internalAddSystem(system)
+    fun addSystem(system: ManipulationSystem) = internalAddSystem(system)
 
-    fun removeSystem(system: Class<out BaseSystem>) = systemManager.remove(system)
+    private fun internalAddSystem(system: BaseSystem) {
+        invokeLater {
+            systemManager.add(system)
+            entityManager.addEntityListener(system)
+            system.addedToEngine(this)
+        }
+    }
+
+    fun removeSystem(system: Class<out BaseSystem>) {
+        invokeLater {
+            systemManager.remove(system)
+        }
+    }
+
     inline fun <reified E : BaseSystem> removeSystem() = removeSystem(E::class.java)
 
-    fun addConnection(connection: Connection) = connectionManager.addConnection(connection)
+    fun addConnection(connection: Connection) {
+        invokeLater {
+            connectionManager.addConnection(connection)
+        }
+    }
+
     fun updateConnection(key: Component) = connectionManager.updateConnection(key)
 
     fun invokeLater(task: Runnable) {
@@ -138,13 +155,17 @@ class Engine @JvmOverloads constructor(
         while (taskQueue.isNotEmpty()) {
             taskQueue.poll().run()
         }
+        val toBeRemoved = mutableListOf<Int>()
         for (i in predicateTaskQueue.indices) {
-            val (task, predicate) = predicateTaskQueue.peek()
-            if (predicate.test(this)) {
-                task.run()
-                predicateTaskQueue.poll()
+            if (i !in toBeRemoved) {
+                val (task, predicate) = predicateTaskQueue[i]
+                if (predicate.test(this)) {
+                    task.run()
+                    toBeRemoved.add(i)
+                }
             }
         }
+        toBeRemoved.forEach { index -> predicateTaskQueue.removeAt(index) }
     }
 
     override fun close() {
