@@ -10,6 +10,8 @@ import no.ntnu.ihb.fmi4j.writeReal
 import no.ntnu.ihb.fmi4j.writeString
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.master.MasterAlgorithm
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 fun interface SlaveInitCallback {
@@ -25,7 +27,7 @@ class SlaveSystem @JvmOverloads constructor(
     private val algorithm: MasterAlgorithm = FixedStepMaster()
 ) : SimulationSystem(Family.all(SlaveComponent::class.java).build()) {
 
-    var parameterSet: String = "default"
+    var parameterSet: String? = null
 
     private val _slaves: MutableList<SlaveComponent> = mutableListOf()
     val slaves: List<SlaveComponent> = _slaves
@@ -35,11 +37,15 @@ class SlaveSystem @JvmOverloads constructor(
 
     override fun entityAdded(entity: Entity) {
         val slave = entity.getComponent<SlaveComponent>()
-        slave.getParameterSet(parameterSet)?.also {
-            it.integerParameters.forEach { p -> slave.writeInteger(p.name, p.value) }
-            it.realParameters.forEach { p -> slave.writeReal(p.name, p.value) }
-            it.booleanParameters.forEach { p -> slave.writeBoolean(p.name, p.value) }
-            it.stringParameters.forEach { p -> slave.writeString(p.name, p.value) }
+        parameterSet?.also { parameterSet ->
+            slave.getParameterSet(parameterSet)?.also {
+                it.integerParameters.forEach { p -> slave.writeInteger(p.name, p.value) }
+                it.realParameters.forEach { p -> slave.writeReal(p.name, p.value) }
+                it.booleanParameters.forEach { p -> slave.writeBoolean(p.name, p.value) }
+                it.stringParameters.forEach { p -> slave.writeString(p.name, p.value) }
+            } ?: run {
+                LOG.warn("No parameterSet named '$parameterSet' found in ${entity.name}!")
+            }
         }
         _slaves.add(slave)
         algorithm.slaveAdded(slave)
@@ -71,6 +77,10 @@ class SlaveSystem @JvmOverloads constructor(
         _slaves.forEach { slave ->
             slave.close()
         }
+    }
+
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(SlaveSystem::class.java)
     }
 
 }

@@ -68,7 +68,8 @@ class SystemStructure @JvmOverloads constructor(
         check(components.add(component)) { "$component has already been added" }
     }
 
-    fun apply(engine: Engine) {
+    @JvmOverloads
+    fun apply(engine: Engine, parameterSet: String? = null) {
 
         components.forEach { c ->
             Entity(c.instanceName).apply {
@@ -82,6 +83,7 @@ class SystemStructure @JvmOverloads constructor(
         }
 
         val system = SlaveSystem()
+        system.parameterSet = parameterSet
         engine.addSystem(system)
 
         connections.forEach { c ->
