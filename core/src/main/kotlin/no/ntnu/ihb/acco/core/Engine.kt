@@ -112,6 +112,9 @@ class Engine @JvmOverloads constructor(
     fun removeSystem(system: Class<out BaseSystem>) {
         invokeLater {
             systemManager.remove(system)
+            if (system is EntityListener) {
+                entityManager.removeEntityListener(system)
+            }
         }
     }
 

@@ -125,7 +125,10 @@ class TimeSeriesDrawer internal constructor(
 
         seriesInfos.forEach {
             val (entityName, variableName) = it
-            handles.remove("$entityName.$variableName")
+            if (entityName == entity.name) {
+                val key = "$entityName.$variableName"
+                handles.remove(key)
+            }
         }
 
     }

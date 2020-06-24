@@ -43,6 +43,14 @@ subprojects { sub ->
         useJUnitPlatform()
     }
 
+    pluginManager.withPlugin('groovy') {
+
+        dependencies {
+            api group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.8'
+        }
+
+    }
+
     pluginManager.withPlugin('kotlin') {
 
         dependencies {

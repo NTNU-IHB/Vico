@@ -59,8 +59,6 @@ class EntityManager internal constructor(
 
         override fun descendantRemoved(entity: Entity) {
             super.descendantRemoved(entity)
-            entity.removeComponentListener(this)
-
             families.forEach { (family, entities) ->
                 if (entities.remove(entity)) {
                     entityListeners.forEach {
@@ -70,7 +68,8 @@ class EntityManager internal constructor(
                     }
                 }
             }
-
+            entity.components.forEach { connectionManager.onComponentRemoved(it) }
+            entity.removeComponentListener(this)
         }
 
         private fun updateFamilyMemberShip(entity: Entity) {
@@ -100,8 +99,8 @@ class EntityManager internal constructor(
         }
 
         override fun onComponentRemoved(entity: Entity, component: Component) {
-            updateFamilyMemberShip(entity)
             connectionManager.onComponentRemoved(component)
+            updateFamilyMemberShip(entity)
         }
 
     }

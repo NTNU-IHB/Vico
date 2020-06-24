@@ -66,9 +66,7 @@ class SlaveSystem @JvmOverloads constructor(
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
-        println("stepping")
         algorithm.step(currentTime, stepSize) {
-            println("dispatch at t=$currentTime")
             dispatchEvent(Properties.PROPERTIES_CHANGED, it)
         }
     }

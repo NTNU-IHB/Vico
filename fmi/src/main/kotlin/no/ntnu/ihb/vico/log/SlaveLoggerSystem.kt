@@ -74,6 +74,12 @@ class SlaveLoggerSystem(
         }
     }
 
+    override fun entityRemoved(entity: Entity) {
+        loggers.remove(entity.name)?.also {
+            it.close()
+        }
+    }
+
     override fun init(currentTime: Double) {
         loggers.values.forEach { logger ->
             logger.writeLine(currentTime)
