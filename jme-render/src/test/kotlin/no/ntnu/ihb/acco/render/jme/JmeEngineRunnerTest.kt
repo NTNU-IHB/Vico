@@ -8,6 +8,7 @@ import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.shape.BoxShape
+import no.ntnu.ihb.acco.render.shape.CylinderShape
 import no.ntnu.ihb.acco.render.shape.SphereShape
 import no.ntnu.ihb.acco.systems.IteratingSystem
 import org.joml.Vector3d
@@ -94,8 +95,11 @@ fun main() {
         engine.invokeAt(4.0) {
 
             Entity().apply {
-                addComponent(GeometryComponent(SphereShape()).apply { setColor(Color.yellow) })
-                engine.addEntity(this)
+                transform.setLocalTranslation(0.0, 2.0, 0.0)
+                addComponent(GeometryComponent(CylinderShape()).apply {
+                    setColor(Color.blue)
+                })
+                engine.getEntityByName("e2", false).addEntity(this)
             }
 
             engine.removeEntity(engine.getEntityByName("e1"))

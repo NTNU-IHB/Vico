@@ -92,6 +92,7 @@ class Engine @JvmOverloads constructor(
     }
 
     fun getEntityByName(name: String) = entityManager.getEntityByName(name)
+    fun getEntityByName(name: String, hierarchical: Boolean) = entityManager.getEntityByName(name, hierarchical)
     fun getEntitiesByTag(tag: String) = entityManager.getEntitiesByTag(tag)
 
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)

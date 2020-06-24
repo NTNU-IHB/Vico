@@ -23,8 +23,14 @@ class EntityManager internal constructor(
         }
     }
 
-    fun getEntityByName(name: String): Entity {
-        return root.findInDescendants { it.name == name }
+    fun getEntityByName(name: String, hierarchical: Boolean = true): Entity {
+        return root.findInDescendants {
+            if (hierarchical) {
+                it.name == name
+            } else {
+                it.originalName == name
+            }
+        }
     }
 
     fun getEntitiesByTag(tag: String): List<Entity> {
