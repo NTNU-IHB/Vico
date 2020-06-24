@@ -21,8 +21,7 @@ internal object TestXYSeriesChart {
 
             Entity("bouncingBall").apply {
                 val slave = SlaveComponent(
-                    ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
-                        .instantiate(name)
+                    ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu")), name
                 )
                 addComponent(slave)
                 engine.addEntity(this)
@@ -30,8 +29,7 @@ internal object TestXYSeriesChart {
 
             engine.addSystem(SlaveSystem())
 
-            val config =
-                getTestResource("chartconfig/ChartConfig2.xml")
+            val config = getTestResource("chartconfig/ChartConfig2.xml")
             ChartLoader.load(config).forEach {
                 engine.addSystem(it)
             }

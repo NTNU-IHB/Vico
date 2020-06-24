@@ -36,7 +36,7 @@ class FixedStepMaster : MasterAlgorithm() {
             slave.transferCachedSets()
             slave.doStep(stepSize)
             slave.retrieveCachedGets()
-            slaveStepCallback.invoke(tNext to slave)
+            slaveStepCallback.invoke(tNext to slave.component)
         }
     }
 

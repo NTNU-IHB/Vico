@@ -191,7 +191,7 @@ open class Entity(
     }
 
     fun getProperties(): Collection<Property> {
-        return components.flatMap { it.getVariables() }
+        return components.flatMap { it.getProperties() }
     }
 
     fun getProperty(name: String): Property? {

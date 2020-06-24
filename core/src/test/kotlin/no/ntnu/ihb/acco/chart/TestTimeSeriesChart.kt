@@ -21,8 +21,7 @@ private object TestTimeSeriesChart {
 
             Entity("bouncingBall").apply {
                 val slave = SlaveComponent(
-                    ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
-                        .instantiate(name)
+                    ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu")), name
                 )
                 addComponent(slave)
                 engine.addEntity(this)

@@ -2,6 +2,7 @@ package no.ntnu.ihb.acco.core
 
 interface PropertyAccessor {
 
+    fun getProperty(name: String): Property?
     fun getIntegerProperty(name: String): IntProperty?
     fun getRealProperty(name: String): RealProperty?
     fun getStringProperty(name: String): StrProperty?
@@ -51,8 +52,12 @@ open class Properties : PropertyAccessor {
         }
     }
 
-    fun getVariables(): Collection<Property> {
+    fun getProperties(): Collection<Property> {
         return _ints + _reals + _strs + _bools
+    }
+
+    override fun getProperty(name: String): Property? {
+        return getProperties().find { it.name == name }
     }
 
     override fun getIntegerProperty(name: String): IntProperty? {

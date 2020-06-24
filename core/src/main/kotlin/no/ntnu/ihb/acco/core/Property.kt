@@ -11,6 +11,10 @@ fun interface ReferenceProvider<E> {
     fun invoke(values: E)
 }
 
+enum class PropertyType {
+    INT, REAL, STRING, BOOLEAN
+}
+
 sealed class Property(
     val name: String,
     val size: Int
@@ -18,13 +22,20 @@ sealed class Property(
 
     abstract val causality: Causality
 
+    val type: PropertyType
+        get() = when (this) {
+            is IntProperty -> PropertyType.INT
+            is RealProperty -> PropertyType.REAL
+            is StrProperty -> PropertyType.STRING
+            is BoolProperty -> PropertyType.BOOLEAN
+        }
+
 }
 
 abstract class IntProperty(name: String, size: Int) : Property(name, size) {
     fun read(): IntArray = read(IntArray(size))
     abstract fun read(values: IntArray): IntArray
     abstract fun write(values: IntArray)
-
 }
 
 abstract class RealProperty(name: String, size: Int) : Property(name, size) {

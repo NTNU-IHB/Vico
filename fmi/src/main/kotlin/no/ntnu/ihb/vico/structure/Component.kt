@@ -4,7 +4,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.vico.model.Model
 
 class Component(
-    private val model: Model,
+    val model: Model,
     val instanceName: String,
     val stepSizeHint: Double? = null
 ) {

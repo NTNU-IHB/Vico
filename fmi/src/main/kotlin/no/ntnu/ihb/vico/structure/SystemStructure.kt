@@ -73,7 +73,7 @@ class SystemStructure @JvmOverloads constructor(
 
         components.forEach { c ->
             Entity(c.instanceName).apply {
-                addComponent(SlaveComponent(c.instantiate()).apply {
+                addComponent(SlaveComponent(c.model, c.instanceName).apply {
                     c.parametersSets.forEach {
                         addParameterSet(it)
                     }
