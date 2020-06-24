@@ -95,7 +95,7 @@ private fun createSphere(shape: SphereShape): Geometry {
 private fun createCylinder(shape: CylinderShape): Geometry {
     return Geometry(
         "CylinderGeometry",
-        Cylinder(32, 32, shape.radius.toFloat(), shape.height.toFloat())
+        Cylinder(32, 32, shape.radius.toFloat(), shape.height.toFloat(), true)
     )
 }
 
