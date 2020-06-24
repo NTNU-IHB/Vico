@@ -11,13 +11,13 @@ interface PropertyAccessor {
 
 open class Properties : PropertyAccessor {
 
-    private val _ints = mutableSetOf<IntProperty>()
+    private val _ints: MutableSet<IntProperty> = mutableSetOf()
     val ints: Collection<IntProperty> = _ints
-    private val _reals = mutableSetOf<RealProperty>()
+    private val _reals: MutableSet<RealProperty> = mutableSetOf()
     val reals: Collection<RealProperty> = _reals
-    private val _strs = mutableSetOf<StrProperty>()
+    private val _strs: MutableSet<StrProperty> = mutableSetOf()
     val strs: Collection<StrProperty> = _strs
-    private val _bools = mutableSetOf<BoolProperty>()
+    private val _bools: MutableSet<BoolProperty> = mutableSetOf()
     val bools: Collection<BoolProperty> = _bools
 
     protected fun registerProperties(variables: List<Property>) {
