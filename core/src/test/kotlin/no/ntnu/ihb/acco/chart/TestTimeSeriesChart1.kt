@@ -8,10 +8,10 @@ import no.ntnu.ihb.vico.TestFmus
 import no.ntnu.ihb.vico.model.ModelResolver
 import java.io.File
 
-private object TestTimeSeriesChart {
+private object TestTimeSeriesChart1 {
 
     private fun getTestResource(name: String): File {
-        return File(TestTimeSeriesChart::class.java.classLoader.getResource(name)!!.file)
+        return File(TestTimeSeriesChart1::class.java.classLoader.getResource(name)!!.file)
     }
 
     @JvmStatic
