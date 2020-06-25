@@ -6,7 +6,7 @@ import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.variables.Causality
-import no.ntnu.ihb.vico.model.Model
+import no.ntnu.ihb.vico.model.SlaveProvider
 import no.ntnu.ihb.vico.structure.Parameter
 import no.ntnu.ihb.vico.structure.ParameterSet
 import org.slf4j.Logger
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
 private typealias Cache<E> = HashMap<ValueReference, E>
 
 class SlaveComponent(
-    private val model: Model,
+    private val slaveProvider: SlaveProvider,
     val instanceName: String,
     val stepSizeHint: Double? = null
 ) : Component() {
@@ -24,7 +24,7 @@ class SlaveComponent(
         internal set
 
     val modelDescription: CoSimulationModelDescription
-        get() = model.modelDescription
+        get() = slaveProvider.modelDescription
 
     val variablesMarkedForReading: ObservableSet<String> = ObservableSet(mutableSetOf())
 
@@ -93,7 +93,7 @@ class SlaveComponent(
 
     }
 
-    fun instantiate(): SlaveInstance = model.instantiate(instanceName)
+    fun instantiate(): SlaveInstance = slaveProvider.instantiate(instanceName)
 
     fun getParameterSet(name: String): ParameterSet? {
         return parameterSets.firstOrNull { it.name == name }

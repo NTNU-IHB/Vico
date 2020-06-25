@@ -1,25 +1,25 @@
 package no.ntnu.ihb.vico.structure
 
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
-import no.ntnu.ihb.vico.model.Model
+import no.ntnu.ihb.vico.model.SlaveProvider
 
 class Component(
-    val model: Model,
+    val slaveProvider: SlaveProvider,
     val instanceName: String,
     val stepSizeHint: Double? = null
 ) {
 
     val modelName: String
-        get() = model.modelDescription.modelName
+        get() = slaveProvider.modelDescription.modelName
 
     val modelDescription: CoSimulationModelDescription
-        get() = model.modelDescription
+        get() = slaveProvider.modelDescription
 
     private val connectors = mutableSetOf<Connector>()
     private val _parameterSets = mutableSetOf<ParameterSet>()
     val parametersSets: Set<ParameterSet> = _parameterSets
 
-    fun instantiate() = model.instantiate(instanceName)
+    fun instantiate() = slaveProvider.instantiate(instanceName)
 
     fun getConnector(name: String): Connector {
         return connectors.find { it.name == name }

@@ -1,22 +1,22 @@
 package no.ntnu.ihb.vico.fmi
 
-import no.ntnu.ihb.vico.model.Model
 import no.ntnu.ihb.vico.model.ModelResolver
+import no.ntnu.ihb.vico.model.SlaveProvider
 import java.io.File
 import java.net.URI
 
 class FmuResolver internal constructor() : ModelResolver {
 
-    fun resolve(file: File): Model? = resolve(file.parentFile, file.toURI())
+    fun resolve(file: File): SlaveProvider? = resolve(file.parentFile, file.toURI())
 
-    override fun resolve(base: File, uri: URI): Model? {
+    override fun resolve(base: File, uri: URI): SlaveProvider? {
 
         if (!uri.path.endsWith(".fmu")) return null
 
         return if (!uri.isAbsolute) {
-            FmiModel(File(uri))
+            FmiSlaveProvider(File(uri))
         } else {
-            FmiModel(uri.toURL())
+            FmiSlaveProvider(uri.toURL())
         }
 
     }

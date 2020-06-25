@@ -5,7 +5,7 @@ import no.ntnu.ihb.acco.core.RealConnector
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
-import no.ntnu.ihb.vico.model.Model
+import no.ntnu.ihb.vico.model.SlaveProvider
 
 class SystemStructure @JvmOverloads constructor(
     val name: String? = null
@@ -60,8 +60,8 @@ class SystemStructure @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun addComponent(model: Model, instanceName: String, stepSizeHint: Double? = null) {
-        addComponent(Component(model, instanceName, stepSizeHint))
+    fun addComponent(slaveProvider: SlaveProvider, instanceName: String, stepSizeHint: Double? = null) {
+        addComponent(Component(slaveProvider, instanceName, stepSizeHint))
     }
 
     fun addComponent(component: Component) {
@@ -73,7 +73,7 @@ class SystemStructure @JvmOverloads constructor(
 
         components.forEach { c ->
             Entity(c.instanceName).apply {
-                addComponent(SlaveComponent(c.model, c.instanceName).apply {
+                addComponent(SlaveComponent(c.slaveProvider, c.instanceName).apply {
                     c.parametersSets.forEach {
                         addParameterSet(it)
                     }

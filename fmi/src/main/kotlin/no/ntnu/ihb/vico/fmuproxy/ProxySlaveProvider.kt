@@ -2,11 +2,11 @@ package no.ntnu.ihb.vico.fmuproxy
 
 import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmuproxy.AbstractRpcFmuClient
-import no.ntnu.ihb.vico.model.Model
+import no.ntnu.ihb.vico.model.SlaveProvider
 
-class ProxyModel(
+class ProxySlaveProvider(
     private val client: AbstractRpcFmuClient
-) : Model {
+) : SlaveProvider {
 
     override val modelDescription by lazy { client.modelDescription }
 
