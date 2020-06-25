@@ -6,10 +6,10 @@ import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.Properties
 import no.ntnu.ihb.acco.core.SimulationSystem
+import no.ntnu.ihb.acco.util.ElementObserver
 import no.ntnu.ihb.acco.util.StringArray
 import no.ntnu.ihb.fmi4j.*
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
-import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import no.ntnu.ihb.vico.master.FixedStepMaster
@@ -98,13 +98,24 @@ class FmiSlave(
     private var initialized = false
 
     private val _variablesMarkedForReading: MutableList<ScalarVariable> = mutableListOf()
-    val variablesMarkedForReading: List<ScalarVariable> = _variablesMarkedForReading
 
     private val integerVariablesToFetch = mutableSetOf<ValueReference>()
     private val realVariablesToFetch = mutableSetOf<ValueReference>()
     private val booleanVariablesToFetch = mutableSetOf<ValueReference>()
     private val stringVariablesToFetch = mutableSetOf<ValueReference>()
 
+    init {
+        component.variablesMarkedForReading.apply {
+            forEach { markForReading(it) }
+            addObserver(object : ElementObserver<String> {
+                override fun onElementAdded(element: String) {
+                    markForReading(element)
+                }
+
+                override fun onElementRemoved(element: String) {}
+            })
+        }
+    }
 
     override fun exitInitializationMode(): Boolean {
         return slave.exitInitializationMode().also {
@@ -131,82 +142,6 @@ class FmiSlave(
     fun readRealDirect(name: String) = slave.readReal(name)
     fun readBooleanDirect(name: String) = slave.readBoolean(name)
     fun readStringDirect(name: String) = slave.readString(name)
-
-    override fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus {
-        require(vr.size == ref.size)
-        for (i in vr.indices) {
-            component.integerGetCache.also { cache ->
-                check(vr[i], VariableType.INTEGER, cache)
-                ref[i] = cache[vr[i]]!!
-            }
-        }
-        return FmiStatus.OK
-    }
-
-    override fun readReal(vr: ValueReferences, ref: DoubleArray): FmiStatus {
-        require(vr.size == ref.size)
-        for (i in vr.indices) {
-            component.realGetCache.also { cache ->
-                check(vr[i], VariableType.REAL, cache)
-                ref[i] = cache[vr[i]]!!
-            }
-        }
-        return FmiStatus.OK
-    }
-
-    override fun readString(vr: ValueReferences, ref: StringArray): FmiStatus {
-        require(vr.size == ref.size)
-        for (i in vr.indices) {
-            component.stringGetCache.also { cache ->
-                check(vr[i], VariableType.STRING, cache)
-                ref[i] = cache[vr[i]]!!
-            }
-        }
-        return FmiStatus.OK
-    }
-
-    override fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus {
-        require(vr.size == ref.size)
-        for (i in vr.indices) {
-            component.booleanGetCache.also { cache ->
-                check(vr[i], VariableType.BOOLEAN, cache)
-                ref[i] = cache[vr[i]]!!
-            }
-        }
-        return FmiStatus.OK
-    }
-
-    override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
-        require(vr.size == value.size)
-        for (i in vr.indices) {
-            component.integerSetCache[vr[i]] = value[i]
-        }
-        return FmiStatus.OK
-    }
-
-    override fun writeReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
-        require(vr.size == value.size)
-        for (i in vr.indices) {
-            component.realSetCache[vr[i]] = value[i]
-        }
-        return FmiStatus.OK
-    }
-
-    override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
-        require(vr.size == value.size)
-        for (i in vr.indices) {
-            component.stringSetCache[vr[i]] = value[i]
-        }
-        return FmiStatus.OK
-    }
-
-    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        require(vr.size == value.size)
-        for (i in vr.indices) {
-            component.booleanSetCache[vr[i]] = value[i]
-        }
-        return FmiStatus.OK
-    }
 
     fun retrieveCachedGets() {
         if (integerVariablesToFetch.isNotEmpty()) {
@@ -249,7 +184,6 @@ class FmiSlave(
                 }
             }
         }
-
     }
 
     suspend fun asyncRetrieveCachedGets() {
@@ -291,18 +225,6 @@ class FmiSlave(
         }
     }
 
-    private fun check(ref: ValueReference, type: VariableType, cache: MutableMap<*, *>) {
-        if (ref !in cache) {
-            var vars = modelVariables.getByValueReference(ref, type)
-            if (vars.isEmpty() && type == VariableType.INTEGER) {
-                vars = modelVariables.getByValueReference(ref, VariableType.ENUMERATION)
-            }
-            vars.forEach {
-                markForReading(it.name)
-            }
-        }
-    }
-
     private fun markForReading(variableName: String) {
 
         if (variableName in _variablesMarkedForReading.map { it.name }) return
@@ -313,6 +235,7 @@ class FmiSlave(
             VariableType.REAL -> realVariablesToFetch.add(v.valueReference)
             VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
             VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
+            //VariableType.ENUMERATION -> enumerationVariablesToFetch.add(v.valueReference)
         }
         if (added && initialized) {
             when (v.type) {

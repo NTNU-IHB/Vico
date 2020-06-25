@@ -129,10 +129,10 @@ class SlaveLoggerSystem(
             if (slave.stepCount % decimationFactor == 0L) {
                 variables.map {
                     when (it) {
-                        is IntProperty -> it.read()[0]
-                        is RealProperty -> it.read()[0].formatForOutput(decimalPoints)
-                        is StrProperty -> it.read()[0]
-                        is BoolProperty -> it.read()[0]
+                        is IntProperty -> it.read().first()
+                        is RealProperty -> it.read().first().formatForOutput(decimalPoints)
+                        is StrProperty -> it.read().first()
+                        is BoolProperty -> it.read().first()
                     }
                 }.joinToString(
                     separator,

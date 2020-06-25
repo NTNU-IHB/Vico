@@ -1,6 +1,7 @@
 package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.util.ObservableSet
 import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
@@ -25,6 +26,8 @@ class SlaveComponent(
     val modelDescription: CoSimulationModelDescription
         get() = model.modelDescription
 
+    val variablesMarkedForReading: ObservableSet<String> = ObservableSet(mutableSetOf())
+
     internal val integerSetCache by lazy { Cache<Int>() }
     internal val realSetCache by lazy { Cache<Double>() }
     internal val booleanSetCache by lazy { Cache<Boolean>() }
@@ -41,35 +44,47 @@ class SlaveComponent(
 
         val modelVariables = modelDescription.modelVariables
 
-        val ints = modelVariables.integers.map { v ->
+        val ints = (modelVariables.integers + modelVariables.enumerations).map { v ->
             IntLambdaProperty(
                 v.name, 1,
-                getter = { integerGetCache[v.valueReference] },
-                setter = { integerSetCache[v.valueReference] = it[0] },
+                getter = {
+                    variablesMarkedForReading.add(v.name)
+                    it[0] = integerGetCache[v.valueReference] ?: 0
+                },
+                setter = { integerSetCache[v.valueReference] = it.first() },
                 causality = v.causality.convert()
             )
         }
         val reals = modelVariables.reals.map { v ->
             RealLambdaProperty(
                 v.name, 1,
-                getter = { realGetCache[v.valueReference] },
-                setter = { realSetCache[v.valueReference] = it[0] },
+                getter = {
+                    variablesMarkedForReading.add(v.name)
+                    it[0] = realGetCache[v.valueReference] ?: 0.0
+                },
+                setter = { realSetCache[v.valueReference] = it.first() },
                 causality = v.causality.convert()
             )
         }
         val strings = modelVariables.strings.map { v ->
             StrLambdaProperty(
                 v.name, 1,
-                getter = { stringGetCache[v.valueReference] },
-                setter = { stringSetCache[v.valueReference] = it[0] },
+                getter = {
+                    variablesMarkedForReading.add(v.name)
+                    it[0] = stringGetCache[v.valueReference] ?: ""
+                },
+                setter = { stringSetCache[v.valueReference] = it.first() },
                 causality = v.causality.convert()
             )
         }
         val booleans = modelVariables.booleans.map { v ->
             BoolLambdaProperty(
                 v.name, 1,
-                getter = { booleanGetCache[v.valueReference] },
-                setter = { booleanSetCache[v.valueReference] = it[0] },
+                getter = {
+                    variablesMarkedForReading.add(v.name)
+                    it[0] = booleanGetCache[v.valueReference] ?: false
+                },
+                setter = { booleanSetCache[v.valueReference] = it.first() },
                 causality = v.causality.convert()
             )
         }
@@ -96,7 +111,6 @@ class SlaveComponent(
         listOf(realGetCache, integerGetCache, booleanGetCache, stringGetCache).forEach { it.clear() }
         listOf(realSetCache, integerSetCache, booleanSetCache, stringSetCache).forEach { it.clear() }
     }
-
 
     override fun toString(): String {
         return "SlaveComponent(instanceName=$instanceName)"
