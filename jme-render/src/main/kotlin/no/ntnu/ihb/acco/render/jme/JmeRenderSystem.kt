@@ -18,6 +18,7 @@ import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.acco.input.ClickListener
 import no.ntnu.ihb.acco.input.KeyListener
+import no.ntnu.ihb.acco.render.Camera
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.objects.RawInputAdapter
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
@@ -44,6 +45,8 @@ class JmeRenderSystem : SimulationSystem(
 
     private val queue = ArrayDeque<JmeApp.() -> Unit>()
 
+    private var cameraEntity: Entity? = null
+
     init {
         priority = Int.MAX_VALUE
     }
@@ -62,6 +65,10 @@ class JmeRenderSystem : SimulationSystem(
     }
 
     override fun entityAdded(entity: Entity) {
+
+        if (entity.hasComponent<Camera>()) {
+            cameraEntity = entity
+        }
 
         val geometry = entity.getComponent<GeometryComponent>()
         invokeLater {
@@ -103,21 +110,21 @@ class JmeRenderSystem : SimulationSystem(
         updateTransforms()
     }
 
+    private fun updateTransform(node: Node, transform: TransformComponent) {
+        val world = transform.getWorldMatrix()
+        invokeLater {
+            node.localTranslation.set(world.getTranslation(tmpVec))
+            node.localRotation.set(world.getNormalizedRotation(tmpQuat))
+            node.forceRefresh(true, true, true)
+        }
+    }
+
     private fun updateTransforms() {
         for (entity in entities) {
-
             map[entity]?.also { node ->
-                val transform = entity.getComponent<TransformComponent>()
-                val world = transform.getWorldMatrix()
-
-                invokeLater {
-                    node.localTranslation.set(world.getTranslation(tmpVec))
-                    node.localRotation.set(world.getNormalizedRotation(tmpQuat))
-                    node.forceRefresh(true, true, true)
-                }
+                updateTransform(node, entity.getComponent())
             }
         }
-
     }
 
     override fun close() {
@@ -177,6 +184,19 @@ class JmeRenderSystem : SimulationSystem(
 
         override fun simpleUpdate(tpf: Float) {
             emptyQueue()
+            updateCamera()
+        }
+
+        private fun updateCamera() {
+            cameraEntity?.also {
+                val world = it.transform.getWorldMatrix()
+                invokeLater {
+                    cam.location.set(world.getTranslation(tmpVec))
+                    cam.rotation.set(world.getNormalizedRotation(tmpQuat))
+                    cam.update()
+                    println(cam.location)
+                }
+            }
         }
 
         private fun setupLights() {
