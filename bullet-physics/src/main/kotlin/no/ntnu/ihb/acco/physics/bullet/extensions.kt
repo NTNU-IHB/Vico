@@ -15,8 +15,7 @@ fun ColliderComponent.convert(): btCollisionShape {
             btBoxShape(Vector3(shape.width.toFloat(), shape.height.toFloat(), shape.depth.toFloat()).scl(0.5f))
         }
         is PlaneShape -> {
-            val depth = 0.5f
-            btBoxShape(Vector3(shape.height.toFloat(), shape.height.toFloat(), depth))
+            btBoxShape(Vector3(shape.height.toFloat(), shape.height.toFloat(), 0.5f))
         }
         is SphereShape -> {
             btSphereShape(shape.radius.toFloat())

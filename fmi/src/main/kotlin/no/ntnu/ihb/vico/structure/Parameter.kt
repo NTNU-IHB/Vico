@@ -26,11 +26,13 @@ class StringParameter(
 
 class ParameterSet(
     val name: String,
-    private val parameters: List<Parameter>
+    private val parameters: Set<Parameter>
 ) : Iterable<Parameter> by parameters {
 
+    constructor(name: String, parameters: List<Parameter>) : this(name, parameters.toSet())
+
     constructor(name: String, parameter: Parameter, vararg additionalParameters: Parameter)
-            : this(name, listOf(parameter) + additionalParameters.toList())
+            : this(name, listOf(parameter, *additionalParameters))
 
     val integerParameters: List<IntegerParameter>
         get() {
