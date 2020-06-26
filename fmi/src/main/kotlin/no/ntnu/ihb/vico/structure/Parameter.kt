@@ -25,12 +25,6 @@ class StringParameter(
     override val value: String
 ) : Parameter<String>()
 
-class EnumerationParameter(
-    override val name: String,
-    override val value: Int
-) : Parameter<Int>()
-
-
 class ParameterSet(
     val name: String,
     private val parameters: List<Parameter<*>>
@@ -56,9 +50,8 @@ class ParameterSet(
             return parameters.mapNotNull { if (it is StringParameter) it else null }
         }
 
-    val enumerationParameters: List<EnumerationParameter>
-        get() {
-            return parameters.mapNotNull { if (it is EnumerationParameter) it else null }
-        }
+    override fun toString(): String {
+        return "ParameterSet(name=$name, parameters=${parameters.map { it.name }})"
+    }
 
 }

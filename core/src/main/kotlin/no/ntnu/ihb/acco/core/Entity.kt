@@ -24,7 +24,7 @@ open class Entity(
     val components: List<Component>
         get() = mutableComponents
 
-    private val componentMap: MutableMap<Class<out Component>, Component> = mutableMapOf()
+    private val componentMap: MutableMap<ComponentClazz, Component> = mutableMapOf()
     private val componentListeners: MutableList<ComponentListener> = mutableListOf()
 
     var parent: Entity? = null
@@ -112,7 +112,7 @@ open class Entity(
 
     fun addComponent(component: Component) = apply {
 
-        val componentClass = component::class.java
+        val componentClass = ComponentClazz(component::class.java)
         require(componentClass !in componentMap) {
             "Entity $name already contains component of type $componentClass!"
         }
@@ -123,11 +123,7 @@ open class Entity(
 
     }
 
-    inline fun <reified E : Component> removeComponent(): Component {
-        return removeComponent(E::class.java)
-    }
-
-    fun removeComponent(componentClass: Class<out Component>): Component {
+    private fun removeComponent(componentClass: ComponentClazz): Component {
         val component = componentMap[componentClass]
             ?: throw IllegalArgumentException("No component of type $componentClass registered!")
         mutableComponents.remove(component)
@@ -136,12 +132,30 @@ open class Entity(
         return component
     }
 
-    fun hasComponent(componentClass: Class<out Component>): Boolean {
-        return componentClass in componentMap
+    fun removeComponent(componentClass: ComponentClass): Component {
+        return removeComponent(ComponentClazz(componentClass))
+    }
+
+    inline fun <reified E : Component> removeComponent(): Component {
+        return removeComponent(E::class.java)
+    }
+
+    fun hasComponent(componentClass: ComponentClass): Boolean {
+        return ComponentClazz(componentClass) in componentMap
     }
 
     inline fun <reified E : Component> hasComponent(): Boolean {
         return hasComponent(E::class.java)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <E : Component> getComponent(componentClass: Class<E>): E {
+        return componentMap[ComponentClazz(componentClass)] as E?
+            ?: throw RuntimeException("No component of type $componentClass registered with Entity named $name")
+    }
+
+    inline fun <reified E : Component> getComponent(): E {
+        return getComponent(E::class.java)
     }
 
     fun removeAllComponents() {
@@ -162,16 +176,6 @@ open class Entity(
 
     fun removeComponentListener(listener: ComponentListener) {
         componentListeners.remove(listener)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun <E : Component> getComponent(componentClass: Class<E>): E {
-        return componentMap[componentClass] as E?
-            ?: throw RuntimeException("No component of type $componentClass registered with Entity named $name")
-    }
-
-    inline fun <reified E : Component> getComponent(): E {
-        return getComponent(E::class.java)
     }
 
     fun findInChildren(predicate: (Entity) -> Boolean): Entity {

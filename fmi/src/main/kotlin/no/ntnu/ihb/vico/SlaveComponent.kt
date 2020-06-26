@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
 
 private typealias Cache<E> = HashMap<ValueReference, E>
 
-class SlaveComponent(
+open class SlaveComponent(
     private val slaveProvider: SlaveProvider,
     val instanceName: String,
     val stepSizeHint: Double? = null
@@ -38,7 +38,7 @@ class SlaveComponent(
     internal val booleanGetCache by lazy { Cache<Boolean>() }
     internal val stringGetCache by lazy { Cache<String>() }
 
-    private val parameterSets: MutableSet<ParameterSet> = mutableSetOf()
+    private val parameterSets: MutableMap<String, ParameterSet> = mutableMapOf()
 
     init {
 
@@ -96,7 +96,7 @@ class SlaveComponent(
     fun instantiate(): SlaveInstance = slaveProvider.instantiate(instanceName)
 
     fun getParameterSet(name: String): ParameterSet? {
-        return parameterSets.firstOrNull { it.name == name }
+        return parameterSets[name]
     }
 
     fun addParameterSet(name: String, parameters: List<Parameter<*>>) = apply {
@@ -104,7 +104,10 @@ class SlaveComponent(
     }
 
     fun addParameterSet(parameterSet: ParameterSet) = apply {
-        check(parameterSets.add(parameterSet))
+        check(parameterSet.name !in parameterSets) {
+            "ParameterSet named '${parameterSet.name}' has already been added to component '${instanceName}'!"
+        }
+        parameterSets[parameterSet.name] = parameterSet
     }
 
     internal fun clearCaches() {

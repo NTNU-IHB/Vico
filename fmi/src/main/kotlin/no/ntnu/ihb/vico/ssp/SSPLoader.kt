@@ -127,12 +127,16 @@ class SSPLoader @JvmOverloads constructor(
     }
 
     private fun parseParameterSet(p: no.ntnu.ihb.vico.ssp.jaxb.ParameterSet): ParameterSet {
-        val parameters = p.parameters.parameter.map {
+        val parameters = p.parameters.parameter.mapNotNull {
             when {
                 it.integer != null -> IntegerParameter(it.name, it.integer.value)
                 it.real != null -> RealParameter(it.name, it.real.value)
                 it.boolean != null -> BooleanParameter(it.name, it.boolean.isValue)
                 it.string != null -> StringParameter(it.name, it.string.value)
+                it.enumeration != null -> {
+                    LOG.error("Enumerations parameters are unsupported")
+                    null
+                }
                 else -> throw UnsupportedOperationException("Unable to parse parameter: $it")
             }
         }

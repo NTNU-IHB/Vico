@@ -3,7 +3,6 @@ package no.ntnu.ihb.vico.structure
 import no.ntnu.ihb.acco.core.*
 import no.ntnu.ihb.acco.core.RealConnector
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
-import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.model.SlaveProvider
 
@@ -73,57 +72,46 @@ class SystemStructure @JvmOverloads constructor(
 
         components.forEach { c ->
             Entity(c.instanceName).apply {
-                addComponent(SlaveComponent(c.slaveProvider, c.instanceName).apply {
-                    c.parametersSets.forEach {
-                        addParameterSet(it)
-                    }
-                })
+                addComponent(c)
                 engine.addEntity(this)
             }
         }
 
-        val system = SlaveSystem(parameterSet = parameterSet)
-        engine.addSystem(system)
+        engine.addSystem(SlaveSystem(parameterSet = parameterSet))
 
         connections.forEach { c ->
 
-            val source = engine.getEntityByName(c.source.instanceName).getComponent<SlaveComponent>()
-            val target = engine.getEntityByName(c.target.instanceName).getComponent<SlaveComponent>()
+            val source = getComponent(c.source.instanceName)
+            val target = getComponent(c.target.instanceName)
 
-            when (c) {
+            val connection = when (c) {
                 is IntegerConnection -> {
-                    engine.addConnection(
-                        ScalarConnection(
-                            IntConnector(source, c.sourceVariable.name),
-                            IntConnector(target, c.targetVariable.name)
-                        )
+                    ScalarConnection(
+                        IntConnector(source, c.sourceVariable.name),
+                        IntConnector(target, c.targetVariable.name)
                     )
                 }
                 is RealConnection -> {
-                    engine.addConnection(
-                        ScalarConnection(
-                            RealConnector(source, c.sourceVariable.name),
-                            RealConnector(target, c.targetVariable.name)
-                        )
+                    ScalarConnection(
+                        RealConnector(source, c.sourceVariable.name),
+                        RealConnector(target, c.targetVariable.name)
                     )
                 }
                 is BooleanConnection -> {
-                    engine.addConnection(
-                        ScalarConnection(
-                            BoolConnector(source, c.sourceVariable.name),
-                            BoolConnector(target, c.targetVariable.name)
-                        )
+                    ScalarConnection(
+                        BoolConnector(source, c.sourceVariable.name),
+                        BoolConnector(target, c.targetVariable.name)
                     )
                 }
                 is StringConnection -> {
-                    engine.addConnection(
-                        ScalarConnection(
-                            StrConnector(source, c.sourceVariable.name),
-                            StrConnector(target, c.targetVariable.name)
-                        )
+                    ScalarConnection(
+                        StrConnector(source, c.sourceVariable.name),
+                        StrConnector(target, c.targetVariable.name)
                     )
                 }
             }
+
+            engine.addConnection(connection)
 
         }
 
