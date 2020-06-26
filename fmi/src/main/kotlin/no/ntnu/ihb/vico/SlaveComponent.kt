@@ -99,7 +99,7 @@ open class SlaveComponent(
         return parameterSets[name]
     }
 
-    fun addParameterSet(name: String, parameters: List<Parameter<*>>) = apply {
+    fun addParameterSet(name: String, parameters: List<Parameter>) = apply {
         addParameterSet(ParameterSet(name, parameters))
     }
 

@@ -1,36 +1,35 @@
 package no.ntnu.ihb.vico.structure
 
-sealed class Parameter<E> {
+sealed class Parameter {
     abstract val name: String
-    abstract val value: E
 }
 
 class IntegerParameter(
     override val name: String,
-    override val value: Int
-) : Parameter<Int>()
+    val value: Int
+) : Parameter()
 
 class RealParameter(
     override val name: String,
-    override val value: Double
-) : Parameter<Double>()
+    val value: Double
+) : Parameter()
 
 class BooleanParameter(
     override val name: String,
-    override val value: Boolean
-) : Parameter<Boolean>()
+    val value: Boolean
+) : Parameter()
 
 class StringParameter(
     override val name: String,
-    override val value: String
-) : Parameter<String>()
+    val value: String
+) : Parameter()
 
 class ParameterSet(
     val name: String,
-    private val parameters: List<Parameter<*>>
-) : Iterable<Parameter<*>> by parameters {
+    private val parameters: List<Parameter>
+) : Iterable<Parameter> by parameters {
 
-    constructor(name: String, parameter: Parameter<*>, vararg additionalParameters: Parameter<*>)
+    constructor(name: String, parameter: Parameter, vararg additionalParameters: Parameter)
             : this(name, listOf(parameter) + additionalParameters.toList())
 
     val integerParameters: List<IntegerParameter>
