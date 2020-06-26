@@ -30,6 +30,9 @@ class ParameterSet(
     private val parameters: List<Parameter<*>>
 ) : Iterable<Parameter<*>> by parameters {
 
+    constructor(name: String, parameter: Parameter<*>, vararg additionalParameters: Parameter<*>)
+            : this(name, listOf(parameter) + additionalParameters.toList())
+
     val integerParameters: List<IntegerParameter>
         get() {
             return parameters.mapNotNull { if (it is IntegerParameter) it else null }

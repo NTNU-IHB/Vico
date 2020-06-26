@@ -106,7 +106,8 @@ class TimeSeriesDrawer internal constructor(
 
             if (entityName == entity.name) {
 
-                val variable = entity.getRealProperty(it.variableName)!!
+                val variable = entity.getRealProperty(it.variableName)
+                    ?: throw IllegalArgumentException("No variable of type REAL named ${it.variableName} found in $entityName")
 
                 val yProvider = ValueProvider {
                     val value = variable.read(DoubleArray(variable.size))[0]
