@@ -24,10 +24,8 @@ object ChartLoader {
         return config.chart.map { chart ->
             when {
                 chart.xyseries != null -> loadXYSeriesDrawer(chart.xyseries)
-                chart.timeseries != null -> loadTimeSeriesDrawer(
-                    chart.timeseries
-                )
-                else -> throw AssertionError()
+                chart.timeseries != null -> loadTimeSeriesDrawer(chart.timeseries)
+                else -> throw AssertionError("One of 'xyseries' or 'timeseries' required!")
             }
         }
     }
