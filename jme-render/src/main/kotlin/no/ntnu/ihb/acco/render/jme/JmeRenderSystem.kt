@@ -30,7 +30,7 @@ import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-private const val MAX_QUEUE_SIZE = 50
+private const val MAX_QUEUE_SIZE = 5000
 
 class JmeRenderSystem : SimulationSystem(
     Family.all(TransformComponent::class.java).one(GeometryComponent::class.java, Camera::class.java).build()

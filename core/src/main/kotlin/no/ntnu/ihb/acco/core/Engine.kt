@@ -88,18 +88,17 @@ class Engine private constructor(
             init()
         }
 
-        var i = 0
-        while (i++ < numSteps)
-
+        for (i in 0 until numSteps) {
             systemManager.step(iterations, currentTime, baseStepSize)
-        currentTime += baseStepSize
-        iterations++
+            currentTime += baseStepSize
+            iterations++
 
-        connectionManager.update()
+            connectionManager.update()
 
-        digestQueue()
+            digestQueue()
 
-        inputManager.clear()
+            inputManager.clear()
+        }
 
         stopTime?.also {
             if (currentTime >= it) {

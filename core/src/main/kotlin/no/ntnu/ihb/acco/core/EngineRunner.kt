@@ -97,12 +97,13 @@ class EngineRunner internal constructor(
             } else {
                 Thread.sleep(1)
             }
+            wallClock += deltaTime
         } else {
             engine.step()
             stepOccurred = true
+            wallClock += engine.baseStepSize
         }
 
-        wallClock += deltaTime
         actualRealTimeFactor = simulationClock / wallClock
 
         return stepOccurred
@@ -171,30 +172,12 @@ class EngineRunner internal constructor(
                         'a' -> engine.registerKeyPress(KeyStroke.KEY_A)
                         's' -> engine.registerKeyPress(KeyStroke.KEY_S)
                         'd' -> engine.registerKeyPress(KeyStroke.KEY_D)
+                        'q' -> quit = true
                     }
                 } ?: kotlin.run {
                     quit = true
                 }
 
-                /*when (input) {
-                    "r" -> {
-                        enableRealTimeTarget = !enableRealTimeTarget
-                        if (enableRealTimeTarget) {
-                            println("Realtime target enabled, rtf=$targetRealTimeFactor")
-                        } else {
-                            println("Realtime target disabled")
-                        }
-                    }
-                    "p" -> {
-                        paused.set(!paused.get())
-                        if (paused.get()) {
-                            println("Execution paused at t=${engine.currentTime}")
-                        } else {
-                            println("Execution resumed")
-                        }
-                    }
-                    null, "q" -> quit = true
-                }*/
             } while (!quit)
 
             if (!stop.getAndSet(true)) {
