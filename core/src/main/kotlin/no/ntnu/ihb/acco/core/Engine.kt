@@ -1,5 +1,8 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.input.InputAccess
+import no.ntnu.ihb.acco.input.InputManager
+import no.ntnu.ihb.acco.input.KeyStroke
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -11,15 +14,20 @@ import kotlin.math.max
 
 private const val DEFAULT_TIME_STEP = 1.0 / 100
 
-class Engine @JvmOverloads constructor(
+class Engine private constructor(
     startTime: Double? = null,
-    baseStepSize: Double? = null
-) : EventDispatcher by EventDispatcherImpl(), Closeable {
+    val stopTime: Double? = null,
+    baseStepSize: Double? = null,
+    private val inputManager: InputManager = InputManager(),
+    private val connectionManager: ConnectionManager = ConnectionManager(),
+    private val entityManager: EntityManager = EntityManager(connectionManager),
+    private val systemManager: SystemManager = SystemManager(),
+) : EventDispatcher by EventDispatcherImpl(), EntityAccess by entityManager, InputAccess by inputManager, Closeable {
 
-    val startTime = startTime ?: 0.0
-    val baseStepSize = baseStepSize ?: DEFAULT_TIME_STEP
+    val startTime: Double = startTime ?: 0.0
+    val baseStepSize: Double = baseStepSize ?: DEFAULT_TIME_STEP
 
-    var currentTime = this.startTime
+    var currentTime: Double = this.startTime
         private set
     var iterations = 0L
         private set
@@ -35,67 +43,97 @@ class Engine @JvmOverloads constructor(
     val isClosed: Boolean
         get() = closed.get()
 
-    private val connectionManager = ConnectionManager()
-    private val entityManager = EntityManager(connectionManager)
-    internal val systemManager = SystemManager()
+    val runner: EngineRunner by lazy { EngineRunner(this) }
 
-    val runner by lazy { EngineRunner(this) }
+    constructor() : this(null, null, null)
+    constructor(baseStepSize: Double) : this(null, null, baseStepSize)
+    constructor(startTime: Double, baseStepSize: Double) : this(startTime, null, baseStepSize)
 
-    constructor(baseStepSize: Double) : this(null, baseStepSize)
+    class Builder {
+        private var startTime: Double? = null
+        private var stopTime: Double? = null
+        private var stepSize: Double? = null
+
+        fun startTime(value: Double) = apply {
+            startTime = value
+        }
+
+        fun stopTime(value: Double) = apply {
+            stopTime = value
+        }
+
+        fun stepSize(value: Double) = apply {
+            stepSize = value
+        }
+
+        fun build() = Engine(startTime, stopTime, stepSize)
+
+    }
 
     fun init() {
         if (!initialized.getAndSet(true)) {
             systemManager.initialize(currentTime)
             connectionManager.update()
         }
+        digestQueue()
     }
 
+    @JvmOverloads
     fun step(numSteps: Int = 1) {
 
-        require(numSteps > 0) { "Parameter 'numSteps' must be >= 1! Was: $numSteps" }
         check(!closed.get()) { "Engine has been closed!" }
+        require(numSteps > 0) { "Parameter 'numSteps' must be >= 1! Was: $numSteps" }
 
         if (!initialized.get()) {
             init()
         }
 
-        for (i in 0 until numSteps) {
+        var i = 0
+        while (i++ < numSteps)
 
             systemManager.step(iterations, currentTime, baseStepSize)
-            currentTime += baseStepSize
-            iterations++
+        currentTime += baseStepSize
+        iterations++
 
-            connectionManager.update()
+        connectionManager.update()
 
-            digestQueue()
+        digestQueue()
+
+        inputManager.clear()
+
+        stopTime?.also {
+            if (currentTime >= it) {
+                close()
+            }
         }
 
     }
 
     fun stepUntil(timePoint: Number) {
         val doubleTimePoint = timePoint.toDouble()
-        while (doubleTimePoint > currentTime) {
+        stopTime?.also {
+            if (doubleTimePoint > stopTime) {
+                LOG.warn(
+                    "Specified timePoint=$doubleTimePoint exceeds configured stopTime=$it. " +
+                            "Simulation will end prematurely."
+                )
+            }
+        }
+        while (doubleTimePoint > currentTime && !closed.get()) {
             step()
         }
     }
 
-    fun getEntitiesFor(family: Family): Set<Entity> {
-        return entityManager.getEntitiesFor(family)
+    override fun registerKeyPress(keyStroke: KeyStroke) {
+        when (keyStroke) {
+            KeyStroke.KEY_E -> runner.togglePause()
+            KeyStroke.KEY_R -> runner.toggleEnableRealTime()
+            KeyStroke.KEY_Q -> runner.stop()
+            else -> inputManager.registerKeyPress(keyStroke)
+        }
     }
 
-    fun addEntity(entity: Entity, vararg additionalEntities: Entity) = invokeLater {
-        entityManager.addAllEntities(entity, *additionalEntities)
-    }
-
-    fun removeEntity(entity: Entity) = invokeLater {
-        entityManager.removeEntity(entity)
-    }
-
-    fun getEntityByName(name: String) = entityManager.getEntityByName(name)
-    fun getEntityByName(name: String, hierarchical: Boolean) = entityManager.getEntityByName(name, hierarchical)
-    fun getEntitiesByTag(tag: String) = entityManager.getEntitiesByTag(tag)
-
-    fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.get(systemClass)
+    fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.getSystem(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)
 
     fun addSystem(system: EventSystem) = internalAddSystem(system)
@@ -103,7 +141,7 @@ class Engine @JvmOverloads constructor(
 
     private fun internalAddSystem(system: BaseSystem) {
         invokeLater {
-            systemManager.add(system)
+            systemManager.addSystem(system)
             entityManager.addEntityListener(system)
             system.addedToEngine(this)
         }
@@ -111,7 +149,7 @@ class Engine @JvmOverloads constructor(
 
     fun removeSystem(system: Class<out BaseSystem>) {
         invokeLater {
-            systemManager.remove(system)
+            systemManager.removeSystem(system)
             if (system is EntityListener) {
                 entityManager.removeEntityListener(system)
             }

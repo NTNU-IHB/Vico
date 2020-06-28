@@ -17,27 +17,28 @@ private object TestTimeSeriesChart1 {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        Engine().use { engine ->
+        Engine.Builder()
+            .stopTime(5.0)
+            .build().use { engine ->
 
-            Entity("bouncingBall").apply {
-                val slave = SlaveComponent(
-                    ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu")), name
-                )
-                addComponent(slave)
-                engine.addEntity(this)
+                Entity("bouncingBall").apply {
+                    val slave = SlaveComponent(
+                        ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu")), name
+                    )
+                    addComponent(slave)
+                    engine.addEntity(this)
+                }
+
+                engine.addSystem(SlaveSystem())
+
+                val config = getTestResource("chartconfig/ChartConfig1.xml")
+                ChartLoader.load(config).forEach {
+                    engine.addSystem(it)
+                }
+
+                engine.stepUntil(10.0)
+
             }
-
-            engine.addSystem(SlaveSystem())
-
-            val config =
-                getTestResource("chartconfig/ChartConfig1.xml")
-            ChartLoader.load(config).forEach {
-                engine.addSystem(it)
-            }
-
-            engine.stepUntil(10.0)
-
-        }
 
     }
 

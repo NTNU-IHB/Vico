@@ -107,6 +107,7 @@ fun main() {
         }
 
         engine.runner.apply {
+            enableRealTimeTarget = true
             start()
         }
 

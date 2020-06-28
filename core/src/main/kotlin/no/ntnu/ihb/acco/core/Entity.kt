@@ -154,8 +154,17 @@ open class Entity(
             ?: throw RuntimeException("No component of type $componentClass registered with Entity named $name")
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <E : Component> getComponentOrNull(componentClass: Class<E>): E? {
+        return componentMap[ComponentClazz(componentClass)] as E?
+    }
+
     inline fun <reified E : Component> getComponent(): E {
         return getComponent(E::class.java)
+    }
+
+    inline fun <reified E : Component> getComponentOrNull(): E? {
+        return getComponentOrNull(E::class.java)
     }
 
     fun removeAllComponents() {

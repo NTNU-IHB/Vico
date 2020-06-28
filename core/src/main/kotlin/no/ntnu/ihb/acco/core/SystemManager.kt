@@ -12,7 +12,7 @@ class SystemManager internal constructor() : Closeable {
     private val manipulators: MutableList<ManipulationSystem> = mutableListOf()
 
     @Suppress("UNCHECKED_CAST")
-    fun <E : SimulationSystem> get(systemClass: Class<E>): E {
+    fun <E : SimulationSystem> getSystem(systemClass: Class<E>): E {
         return systemMap[systemClass] as E?
             ?: throw IllegalStateException("No system of type $systemClass registered!")
     }
@@ -46,7 +46,7 @@ class SystemManager internal constructor() : Closeable {
 
     }
 
-    fun add(system: BaseSystem) {
+    fun addSystem(system: BaseSystem) {
         if (system is ManipulationSystem) {
             manipulators.add(system)
         }
@@ -55,7 +55,7 @@ class SystemManager internal constructor() : Closeable {
         systemMap[system::class.java] = system
     }
 
-    fun remove(systemClass: Class<out BaseSystem>) {
+    fun removeSystem(systemClass: Class<out BaseSystem>) {
         systemMap.remove(systemClass)?.also { system ->
             when (system) {
                 is EventSystem -> Unit

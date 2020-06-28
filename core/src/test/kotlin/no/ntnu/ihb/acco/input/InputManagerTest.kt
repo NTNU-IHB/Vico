@@ -11,11 +11,11 @@ internal class InputManagerTest {
 
         val inputManager = InputManager()
 
-        assertFalse(inputManager.keyPressed(KeyStroke.KEY_0))
-        assertFalse(inputManager.keyPressed(KeyStroke.KEY_1, KeyStroke.KEY_2))
+        assertFalse(inputManager.isKeyPressed(KeyStroke.KEY_0))
+        assertFalse(inputManager.isKeyPressed(KeyStroke.KEY_1, KeyStroke.KEY_2))
 
         inputManager.registerKeyPress(KeyStroke.KEY_2)
-        assertTrue(inputManager.keyPressed(KeyStroke.KEY_2))
+        assertTrue(inputManager.isKeyPressed(KeyStroke.KEY_2))
 
     }
 

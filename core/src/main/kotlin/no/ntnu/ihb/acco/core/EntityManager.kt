@@ -1,29 +1,48 @@
 package no.ntnu.ihb.acco.core
 
+interface EntityListener {
+    val family: Family
+    fun entityAdded(entity: Entity)
+    fun entityRemoved(entity: Entity)
+}
+
+interface EntityAccess {
+    fun addEntity(entity: Entity, vararg additionalEntities: Entity)
+    fun removeEntity(entity: Entity, vararg additionalEntities: Entity)
+    fun getEntitiesFor(family: Family): Set<Entity>
+    fun getEntityByName(name: String): Entity
+    fun getEntityByName(name: String, hierarchical: Boolean): Entity
+    fun getEntitiesByTag(tag: String): List<Entity>
+    fun addEntityListener(entityListener: EntityListener)
+    fun removeEntityListener(entityListener: EntityListener)
+}
 
 class EntityManager internal constructor(
     private val connectionManager: ConnectionManager
-) {
+) : EntityAccess {
 
     private val root = RootEntity()
     private val families: MutableMap<Family, MutableSet<Entity>> = mutableMapOf()
     private val entityListeners: MutableList<EntityListener> = mutableListOf()
 
-    fun addEntity(entity: Entity) = root.addEntity(entity)
-    fun addAllEntities(entity: Entity, vararg additionalEntities: Entity) =
+    override fun addEntity(entity: Entity, vararg additionalEntities: Entity) {
         root.addAllEntities(entity, *additionalEntities)
+    }
 
-    fun removeEntity(entity: Entity) = root.removeEntity(entity)
-    fun removeAllEntities(entity: Entity, vararg additionalEntities: Entity) =
+    override fun removeEntity(entity: Entity, vararg additionalEntities: Entity) =
         root.removeAllEntities(entity, *additionalEntities)
 
-    fun getEntitiesFor(family: Family): Set<Entity> {
+    override fun getEntitiesFor(family: Family): Set<Entity> {
         return families.computeIfAbsent(family) {
             root.findAllInDescendants { family.test(it) }.toMutableSet()
         }
     }
 
-    fun getEntityByName(name: String, hierarchical: Boolean = true): Entity {
+    override fun getEntityByName(name: String): Entity {
+        return getEntityByName(name, true)
+    }
+
+    override fun getEntityByName(name: String, hierarchical: Boolean): Entity {
         return root.findInDescendants {
             if (hierarchical) {
                 it.name == name
@@ -33,19 +52,19 @@ class EntityManager internal constructor(
         }
     }
 
-    fun getEntitiesByTag(tag: String): List<Entity> {
+    override fun getEntitiesByTag(tag: String): List<Entity> {
         return root.findAllInDescendants { it.tag == tag }
     }
 
-    fun addEntityListener(entityListener: EntityListener) {
+    override fun addEntityListener(entityListener: EntityListener) {
         entityListeners.add(entityListener)
     }
 
-    fun removeEntityListener(entityListener: EntityListener) {
+    override fun removeEntityListener(entityListener: EntityListener) {
         entityListeners.remove(entityListener)
     }
 
-    inner class RootEntity : Entity(""), ComponentListener {
+    private inner class RootEntity : Entity(""), ComponentListener {
 
         init {
             tag = "root"

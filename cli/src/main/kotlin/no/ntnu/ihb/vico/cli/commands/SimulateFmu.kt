@@ -78,21 +78,24 @@ class SimulateFmu : Runnable {
         require(startTime < stopTime) { "stopTime=$stopTime > startTime=$startTime!" }
         require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
 
-        Engine(baseStepSize).use { engine ->
+        Engine.Builder()
+            .startTime(startTime)
+            .stepSize(baseStepSize)
+            .build().use { engine ->
 
-            structure.apply(engine)
+                structure.apply(engine)
 
-            relativeLogConfigPath?.also {
-                val logConfig = File(fmu.parent, it)
-                if (!logConfig.exists()) throw NoSuchFileException(logConfig)
-                engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
-            } ?: run {
-                engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                relativeLogConfigPath?.also {
+                    val logConfig = File(fmu.parent, it)
+                    if (!logConfig.exists()) throw NoSuchFileException(logConfig)
+                    engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
+                } ?: run {
+                    engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                }
+
+                runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)
+
             }
-
-            runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)
-
-        }
 
     }
 

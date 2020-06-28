@@ -1,5 +1,6 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.input.KeyStroke
 import no.ntnu.ihb.acco.util.Clock
 import java.io.BufferedReader
 import java.io.IOException
@@ -32,7 +33,7 @@ class EngineRunner internal constructor(
     var callback: Runnable? = null
     private var predicate: Predicate<Engine>? = null
 
-    val isStarted: Boolean
+    val started: Boolean
         get() {
             return thread != null
         }
@@ -47,7 +48,7 @@ class EngineRunner internal constructor(
     }
 
     fun runWhile(predicate: Predicate<Engine>): Future<Unit> {
-        check(!isStarted && this.predicate == null)
+        check(!started && this.predicate == null)
         this.predicate = predicate
         val executor = Executors.newCachedThreadPool()
         return FutureTask {
@@ -71,6 +72,14 @@ class EngineRunner internal constructor(
         return runWhile(
             predicate = { (it.currentTime + it.startTime) > doubleTime }
         )
+    }
+
+    fun togglePause() {
+        paused.set(!paused.get())
+    }
+
+    fun toggleEnableRealTime() {
+        enableRealTimeTarget = !enableRealTimeTarget
     }
 
     private fun stepEngine(deltaTime: Double): Boolean {
@@ -153,7 +162,21 @@ class EngineRunner internal constructor(
                 } catch (e: InterruptedException) {
                     null
                 }
-                when (input) {
+
+                input?.toCharArray()?.forEach { c ->
+                    when (c) {
+                        'e' -> engine.registerKeyPress(KeyStroke.KEY_E)
+                        'r' -> engine.registerKeyPress(KeyStroke.KEY_R)
+                        'w' -> engine.registerKeyPress(KeyStroke.KEY_W)
+                        'a' -> engine.registerKeyPress(KeyStroke.KEY_A)
+                        's' -> engine.registerKeyPress(KeyStroke.KEY_S)
+                        'd' -> engine.registerKeyPress(KeyStroke.KEY_D)
+                    }
+                } ?: kotlin.run {
+                    quit = true
+                }
+
+                /*when (input) {
                     "r" -> {
                         enableRealTimeTarget = !enableRealTimeTarget
                         if (enableRealTimeTarget) {
@@ -171,7 +194,7 @@ class EngineRunner internal constructor(
                         }
                     }
                     null, "q" -> quit = true
-                }
+                }*/
             } while (!quit)
 
             if (!stop.getAndSet(true)) {

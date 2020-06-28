@@ -56,7 +56,7 @@ internal class SystemManagerTest {
         val systems = listOf(
             SystemB(), SystemB(), SystemC()
         )
-        systems.forEach { manager.add(it) }
+        systems.forEach { manager.addSystem(it) }
 
         assertEquals(3, manager.systems.size)
         assertEquals(systems.sorted(), manager.systems)

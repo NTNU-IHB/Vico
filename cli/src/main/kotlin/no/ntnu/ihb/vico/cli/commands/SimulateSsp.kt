@@ -79,17 +79,20 @@ class SimulateSsp : Runnable {
 
         require(start < stop) { "stop=$stop > start=$start!" }
 
-        Engine(baseStepSize).use { engine ->
+        Engine.Builder()
+            .startTime(start)
+            .stepSize(baseStepSize)
+            .build().use { engine ->
 
-            structure.apply(engine)
+                structure.apply(engine)
 
-            relativeLogConfigPath?.also { configPath ->
-                val logConfig = File(loader.ssdFile.parent, configPath)
-                if (!logConfig.exists()) throw NoSuchFileException(logConfig)
-                engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
-            } ?: run {
-                engine.addSystem(SlaveLoggerSystem(null, resultDir))
-            }
+                relativeLogConfigPath?.also { configPath ->
+                    val logConfig = File(loader.ssdFile.parent, configPath)
+                    if (!logConfig.exists()) throw NoSuchFileException(logConfig)
+                    engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
+                } ?: run {
+                    engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                }
 
             relativeChartConfigPath?.also { configPath ->
                 val chartConfig = File(loader.ssdFile.parent, configPath)

@@ -18,6 +18,7 @@ import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
 import no.ntnu.ihb.acco.input.ClickListener
 import no.ntnu.ihb.acco.input.KeyListener
+import no.ntnu.ihb.acco.input.KeyStroke
 import no.ntnu.ihb.acco.render.Camera
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.objects.RawInputAdapter
@@ -32,7 +33,7 @@ import kotlin.concurrent.withLock
 private const val MAX_QUEUE_SIZE = 50
 
 class JmeRenderSystem : SimulationSystem(
-    Family.all(TransformComponent::class.java, GeometryComponent::class.java).build()
+    Family.all(TransformComponent::class.java).one(GeometryComponent::class.java, Camera::class.java).build()
 ) {
 
     private val app = JmeApp()
@@ -66,39 +67,40 @@ class JmeRenderSystem : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
 
-        if (entity.hasComponent<Camera>()) {
+        entity.getComponentOrNull<Camera>()?.also {
             cameraEntity = entity
         }
 
-        val geometry = entity.getComponent<GeometryComponent>()
-        invokeLater {
-            val node = map.computeIfAbsent(entity) {
+        entity.getComponentOrNull<GeometryComponent>()?.also { geometry ->
+            invokeLater {
+                val node = map.computeIfAbsent(entity) {
 
-                geometry.createGeometry(app.assetManager).also { node ->
+                    geometry.createGeometry(app.assetManager).also { node ->
 
-                    geometry.addEventListener("onVisibilityChanged") {
-                        node.setVisible(it.target())
-                    }
+                        geometry.addEventListener("onVisibilityChanged") {
+                            node.setVisible(it.target())
+                        }
 
-                    geometry.addEventListener("onWireframeChanged") {
-                        node.setWireframe(it.target())
-                    }
+                        geometry.addEventListener("onWireframeChanged") {
+                            node.setWireframe(it.target())
+                        }
 
-                    geometry.addEventListener("onColorChanged") {
-                        node.setColor(it.target())
+                        geometry.addEventListener("onColorChanged") {
+                            node.setColor(it.target())
+                        }
+
                     }
 
                 }
-
+                root.attachChild(node)
             }
-            root.attachChild(node)
         }
 
     }
 
     override fun entityRemoved(entity: Entity) {
         invokeLater {
-            root.detachChild(map.getValue(entity))
+            map[entity]?.also { root.detachChild(it) }
         }
     }
 
@@ -189,12 +191,12 @@ class JmeRenderSystem : SimulationSystem(
 
         private fun updateCamera() {
             cameraEntity?.also {
+                flyCam.isEnabled = false
                 val world = it.transform.getWorldMatrix()
                 invokeLater {
                     cam.location.set(world.getTranslation(tmpVec))
                     cam.rotation.set(world.getNormalizedRotation(tmpQuat))
                     cam.update()
-                    println(cam.location)
                 }
             }
         }
@@ -246,9 +248,12 @@ class JmeRenderSystem : SimulationSystem(
                         KeyInput.KEY_F1 -> {
                             //showCollisionGeometries = !showCollisionGeometries
                         }
-                        KeyInput.KEY_E -> {
-                            engine.runner.paused.set(!engine.runner.paused.get())
-                        }
+                        KeyInput.KEY_E -> engine.registerKeyPress(KeyStroke.KEY_E)
+                        KeyInput.KEY_R -> engine.registerKeyPress(KeyStroke.KEY_R)
+                        KeyInput.KEY_W -> engine.registerKeyPress(KeyStroke.KEY_W)
+                        KeyInput.KEY_A -> engine.registerKeyPress(KeyStroke.KEY_A)
+                        KeyInput.KEY_S -> engine.registerKeyPress(KeyStroke.KEY_S)
+                        KeyInput.KEY_D -> engine.registerKeyPress(KeyStroke.KEY_D)
                     }
                 }
             }
