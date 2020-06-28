@@ -1,7 +1,6 @@
 package no.ntnu.ihb.acco.chart
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestFmus
@@ -21,12 +20,11 @@ private object TestTimeSeriesChart1 {
             .stopTime(5.0)
             .build().use { engine ->
 
-                Entity("bouncingBall").apply {
+                engine.createEntity("bouncingBall").apply {
                     val slave = SlaveComponent(
                         ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu")), name
                     )
                     addComponent(slave)
-                    engine.addEntity(this)
                 }
 
                 engine.addSystem(SlaveSystem())

@@ -59,9 +59,8 @@ object VisualLoaderTest {
 
         Engine().also { engine ->
 
-            Entity("SineMover").apply {
+            engine.createEntity("SineMover").apply {
                 addComponent(SineMoverComponent())
-                engine.addEntity(this)
             }
 
             VisualLoader.load(config, engine)

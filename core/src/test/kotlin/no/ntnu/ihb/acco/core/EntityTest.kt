@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test
 
 internal class EntityTest {
 
-    internal class ComponentA : Component()
+    private class ComponentA : Component()
+    private class ComponentB : Component()
 
     @Test
     fun testAddComponent() {
@@ -17,6 +18,14 @@ internal class EntityTest {
             }
             Assertions.assertThrows(IllegalArgumentException::class.java) {
                 addComponent(ComponentA())
+            }
+
+            addComponent<ComponentB>()
+            Assertions.assertDoesNotThrow {
+                getComponent<ComponentB>()
+            }
+            Assertions.assertThrows(IllegalArgumentException::class.java) {
+                addComponent<ComponentB>()
             }
         }
 

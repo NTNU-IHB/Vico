@@ -1,7 +1,6 @@
 package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
@@ -27,14 +26,13 @@ internal class SlaveSystemTest {
                 engine.addSystem(SlaveLoggerSystem(null, it))
             }
 
-            val slaveEntity = Entity("BouncingBall")
+            val slaveEntity = engine.createEntity("BouncingBall")
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
             SlaveComponent(model, "bouncingBall").apply {
                 addParameterSet("default", listOf(RealParameter("h", 2.0)))
                 slaveEntity.addComponent(this)
             }
 
-            engine.addEntity(slaveEntity)
             engine.init()
 
             val slave = slaveSystem.getSlave("bouncingBall")

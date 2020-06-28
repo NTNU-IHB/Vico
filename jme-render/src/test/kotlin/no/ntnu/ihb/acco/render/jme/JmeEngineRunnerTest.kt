@@ -47,8 +47,8 @@ private class SineMoverSystem : IteratingSystem(
 
 }
 
-private fun e1(): Entity {
-    return Entity("e1").also { e ->
+private fun e1(engine: Engine): Entity {
+    return engine.createEntity("e1").also { e ->
 
         e.addComponent(TransformComponent()).apply {
             setLocalTranslation(-1.0, 0.0, 0.0)
@@ -65,9 +65,8 @@ fun main() {
 
     Engine().also { engine ->
 
-        val e1 = e1()
-        engine.addEntity(e1)
-        Entity("e2").also { e ->
+        val e1 = e1(engine)
+        engine.createEntity("e2").also { e ->
 
             val t = e.addComponent(TransformComponent())
 
@@ -78,7 +77,6 @@ fun main() {
             })
             e.addComponent(SineMoverComponent(f = 0.5))
             t.setParent(e1.getComponent<TransformComponent>())
-            engine.addEntity(e)
             engine.getEntityByName("e1")
         }
 
@@ -99,14 +97,13 @@ fun main() {
 
         engine.invokeAt(4.0) {
 
-            Entity().apply {
+            engine.createEntity().apply {
                 val t = addComponent(TransformComponent())
                 t.setLocalTranslation(0.0, 2.0, 0.0)
                 addComponent(GeometryComponent(CylinderShape()).apply {
                     setColor(Color.blue)
                 })
                 t.setParent(engine.getEntityByName("e2").getComponent<TransformComponent>())
-                engine.addEntity(this)
             }
 
             engine.removeEntity(engine.getEntityByName("e1"))
@@ -118,18 +115,6 @@ fun main() {
             start()
         }
 
-        /*Thread.sleep(5000)
-        engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
-        engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
-        Thread.sleep(1000)
-        engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
-        engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
-        engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
-        Thread.sleep(1000)
-        engine.getEntityByName("e1").removeComponent<SineMoverComponent>()
-        Thread.sleep(1000)
-        engine.getEntityByName("e1").addComponent(SineMoverComponent(f = 1.0))
-        engine.getEntityByName("e1.e2").removeComponent<GeometryComponent>()*/
     }
 
 }

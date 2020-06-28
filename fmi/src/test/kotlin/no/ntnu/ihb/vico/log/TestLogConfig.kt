@@ -1,7 +1,6 @@
 package no.ntnu.ihb.vico.log
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestFmus
@@ -31,12 +30,11 @@ internal class TestLogConfig {
             }
 
             for (i in 1..2) {
-                Entity("BouncingBall_$i").also { slaveEntity ->
+                engine.createEntity("BouncingBall").apply {
                     val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
-                    SlaveComponent(model, "bouncingBall_$i").apply {
-                        slaveEntity.addComponent(this)
+                    SlaveComponent(model, name).apply {
+                        addComponent(this)
                     }
-                    engine.addEntity(slaveEntity)
                 }
             }
 

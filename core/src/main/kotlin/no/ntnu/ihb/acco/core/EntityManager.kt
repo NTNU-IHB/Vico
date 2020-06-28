@@ -1,5 +1,7 @@
 package no.ntnu.ihb.acco.core
 
+private const val DEFAULT_ENTITY_NAME = "Entity"
+
 interface EntityListener {
     val family: Family
     fun entityAdded(entity: Entity)
@@ -7,10 +9,12 @@ interface EntityListener {
 }
 
 interface EntityAccess {
-    fun addEntity(entity: Entity): Boolean
+    fun createEntity(vararg components: Component): Entity
+    fun createEntity(name: String, vararg components: Component): Entity
     fun removeEntity(entity: Entity): Boolean
     fun getEntitiesFor(family: Family): Set<Entity>
     fun getEntityByName(name: String): Entity
+    fun getEntityByNameOrNull(name: String): Entity?
     fun getEntitiesByTag(tag: String): List<Entity>
     fun addEntityListener(entityListener: EntityListener)
     fun removeEntityListener(entityListener: EntityListener)
@@ -20,16 +24,25 @@ class EntityManager internal constructor(
     private val connectionManager: ConnectionManager
 ) : EntityAccess {
 
+    private val componentListener = MyComponentListener()
     private val entities: MutableSet<Entity> = mutableSetOf()
     private val families: MutableMap<Family, MutableSet<Entity>> = mutableMapOf()
     private val entityListeners: MutableList<EntityListener> = mutableListOf()
-    private val componentListener = MyComponentListener()
 
-    override fun addEntity(entity: Entity) = entities.add(entity).also { wasAdded ->
-        if (wasAdded) {
-            entity.addComponentListener(componentListener)
-            updateFamilyMemberShip(entity)
+    override fun createEntity(vararg components: Component): Entity {
+        return createEntity(DEFAULT_ENTITY_NAME, *components)
+    }
+
+    override fun createEntity(name: String, vararg components: Component): Entity {
+        val entity = Entity(name.ensureUnique()).also {
+            components.forEach { c ->
+                it.addComponent(c)
+            }
         }
+        updateFamilyMemberShip(entity)
+        entity.addComponentListener(componentListener)
+        entities.add(entity)
+        return entity
     }
 
     override fun removeEntity(entity: Entity) = entities.remove(entity).also { wasRemoved ->
@@ -55,7 +68,12 @@ class EntityManager internal constructor(
     }
 
     override fun getEntityByName(name: String): Entity {
-        return entities.first { it.name == name }
+        return getEntityByNameOrNull(name)
+            ?: throw NoSuchElementException("No entity named '$name' exists!")
+    }
+
+    override fun getEntityByNameOrNull(name: String): Entity? {
+        return entities.firstOrNull { it.name == name }
     }
 
     override fun getEntitiesByTag(tag: String): List<Entity> {
@@ -90,6 +108,16 @@ class EntityManager internal constructor(
                 }
             }
         }
+    }
+
+    @Synchronized
+    private fun String.ensureUnique(): String {
+        var i = 1
+        var uniqueName = this
+        while (getEntityByNameOrNull(uniqueName) != null) {
+            uniqueName += "(${i++})"
+        }
+        return uniqueName
     }
 
     private inner class MyComponentListener : ComponentListener {

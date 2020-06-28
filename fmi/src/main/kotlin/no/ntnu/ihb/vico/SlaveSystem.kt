@@ -235,7 +235,6 @@ class FmiSlave(
             VariableType.REAL -> realVariablesToFetch.add(v.valueReference)
             VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
             VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
-            //VariableType.ENUMERATION -> enumerationVariablesToFetch.add(v.valueReference)
         }
         if (added && initialized) {
             when (v.type) {

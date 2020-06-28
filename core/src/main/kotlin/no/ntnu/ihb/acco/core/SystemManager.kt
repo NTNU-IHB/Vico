@@ -12,9 +12,19 @@ class SystemManager internal constructor() : Closeable {
     private val manipulators: MutableList<ManipulationSystem> = mutableListOf()
 
     @Suppress("UNCHECKED_CAST")
-    fun <E : SimulationSystem> getSystem(systemClass: Class<E>): E {
+    fun <E : SimulationSystem> getSystemOrNull(systemClass: Class<E>): E? {
         return systemMap[systemClass] as E?
-            ?: throw IllegalStateException("No system of type $systemClass registered!")
+    }
+
+    fun <E : SimulationSystem> getSystem(systemClass: Class<E>): E {
+        val registeredSystems by lazy {
+            systems.map { it.javaClass }
+        }
+        return getSystemOrNull(systemClass)
+            ?: throw NoSuchElementException(
+                "No system of type $systemClass could be located! " +
+                        "The following systems are currently registered: $registeredSystems"
+            )
     }
 
     fun initialize(currentTime: Double) {
@@ -53,6 +63,7 @@ class SystemManager internal constructor() : Closeable {
         systems.add(system)
         systems.sort()
         systemMap[system::class.java] = system
+        LOG.info("Added system ${system.javaClass}..")
     }
 
     fun removeSystem(systemClass: Class<out BaseSystem>) {
@@ -62,6 +73,7 @@ class SystemManager internal constructor() : Closeable {
                 is ManipulationSystem -> manipulators.remove(system)
             }
             systems.remove(system)
+            LOG.info("Removed system ${system.javaClass}..")
         }
     }
 

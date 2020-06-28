@@ -1,15 +1,13 @@
 package no.ntnu.ihb.acco.core
 
 
-open class Entity(
-    name: String? = null
+open class Entity internal constructor(
+    name: String = ""
 ) {
 
-    internal var originalName = name ?: "Entity"
-    var name = originalName
-        private set
-
     var tag: String? = null
+    var name: String = name
+        internal set
 
     private val mutableComponents: MutableList<Component> = mutableListOf()
     val components: List<Component>
@@ -19,8 +17,7 @@ open class Entity(
     private val componentListeners: MutableList<ComponentListener> = mutableListOf()
 
     fun <E : Component> addComponent(componentClass: Class<out E>): E {
-        val ctor = componentClass.getDeclaredConstructor()
-        return addComponent(ctor.newInstance())
+        return addComponent(instantiate(componentClass))
     }
 
     inline fun <reified E : Component> addComponent() = addComponent(E::class.java)
@@ -139,6 +136,11 @@ open class Entity(
 
     fun getIntegerProperties(): List<IntProperty> {
         return components.flatMap { it.ints }
+    }
+
+    fun getRealProperty(name: String): RealProperty {
+        return getRealPropertyOrNull(name)
+            ?: throw NoSuchElementException("No Real values property named '$name' found!")
     }
 
     fun getRealPropertyOrNull(name: String): RealProperty? {

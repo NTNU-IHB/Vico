@@ -3,7 +3,6 @@ package no.ntnu.ihb.acco.systems
 import no.ntnu.ihb.acco.components.Controllable
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.MovementController
 import no.ntnu.ihb.acco.render.PerspectiveCamera
@@ -20,30 +19,28 @@ object MovementControllerSystemTest {
 
             val spacing = 2.0
 
-            val e1 = Entity().apply {
-                addComponent(TransformComponent()).apply {
+            val e1 = engine.createEntity(
+                TransformComponent().apply {
                     localTranslateX(spacing * 0.5)
-                }
-                addComponent(GeometryComponent(BoxShape()))
-                addComponent(Controllable())
-                engine.addEntity(this)
-            }
+                },
+                GeometryComponent(BoxShape()),
+                Controllable()
+            )
 
-            val e2 = Entity().apply {
-                addComponent(TransformComponent()).apply {
+            val e2 = engine.createEntity(
+                TransformComponent().apply {
                     localTranslateX(-spacing * 0.5)
-                }
-                addComponent(GeometryComponent(BoxShape()))
-                engine.addEntity(this)
-            }
+                },
+                GeometryComponent(BoxShape())
+            )
 
-            Entity().apply {
-                addComponent(TransformComponent()).apply {
+            engine.createEntity(
+                TransformComponent().apply {
                     setLocalTranslation(0.0, 0.0, -10.0)
-                }
-                addComponent(PerspectiveCamera())
-                engine.addEntity(this)
-            }
+                },
+                PerspectiveCamera()
+            )
+
 
             engine.addSystem(JmeRenderSystem())
             engine.addSystem(MovementController())

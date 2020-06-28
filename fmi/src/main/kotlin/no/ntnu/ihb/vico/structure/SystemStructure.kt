@@ -71,10 +71,7 @@ class SystemStructure @JvmOverloads constructor(
     fun apply(engine: Engine, parameterSet: String? = null) {
 
         components.forEach { c ->
-            Entity(c.instanceName).apply {
-                addComponent(c)
-                engine.addEntity(this)
-            }
+            engine.createEntity(c.instanceName, c)
         }
 
         engine.addSystem(SlaveSystem(parameterSet = parameterSet))

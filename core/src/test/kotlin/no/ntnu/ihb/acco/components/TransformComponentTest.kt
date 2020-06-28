@@ -5,6 +5,7 @@ import org.joml.Vector3d
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class TransformComponentTest {
 
@@ -16,13 +17,17 @@ internal class TransformComponentTest {
         assertEquals(Vector3d(), t.getLocalTranslation())
 
         val write = DoubleArray(3) { i -> i.toDouble() }
-        val localPosition = e.getRealPropertyOrNull("localPosition")!!
+        val localPosition = e.getRealProperty("localPosition")
         localPosition.write(DoubleArray(3) { i -> i.toDouble() })
         assertEquals(Vector3d().set(write), t.getLocalTranslation())
 
         val read = DoubleArray(3)
         localPosition.read(read)
         assertArrayEquals(write, read)
+
+        assertThrows<NoSuchElementException> {
+            e.getRealProperty("fail")
+        }
 
     }
 

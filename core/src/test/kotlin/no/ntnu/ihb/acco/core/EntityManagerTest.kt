@@ -10,12 +10,13 @@ internal class EntityManagerTest {
     @Test
     fun getByName() {
         Engine().use { engine ->
-            val e1 = Entity("entity1")
-            val e2 = Entity("entity2")
-            listOf(e1, e2).forEach { engine.addEntity(it) }
+            val e1 = engine.createEntity("entity1")
+            val e2 = engine.createEntity("entity2")
+            val e11 = engine.createEntity("entity1")
 
             assertSame(e1, engine.getEntityByName(e1.name))
             assertSame(e2, engine.getEntityByName(e2.name))
+            assertSame(e11, engine.getEntityByName("${e1.name}(1)"))
             assertThrows<NoSuchElementException> { engine.getEntityByName("") }
         }
     }
@@ -24,9 +25,8 @@ internal class EntityManagerTest {
     fun getByTag() {
         Engine().use { engine ->
             val tag = "aTag"
-            val e1 = Entity("entity1").apply { this.tag = tag }
-            val e2 = Entity("entity2").apply { this.tag = tag }
-            listOf(e1, e2).forEach { engine.addEntity(it) }
+            val e1 = engine.createEntity("entity1").apply { this.tag = tag }
+            val e2 = engine.createEntity("entity2").apply { this.tag = tag }
 
             assertEquals(listOf(e1, e2), engine.getEntitiesByTag(tag))
             assertTrue(engine.getEntitiesByTag("").isEmpty())
@@ -43,23 +43,18 @@ internal class EntityManagerTest {
         Engine().use { engine ->
 
             Family.one(ComponentA::class.java, ComponentB::class.java).build().also { family ->
-                Entity("e1").also { e ->
-                    e.addComponent(ComponentA())
-                    engine.addEntity(e)
-                    assertEquals(1, engine.getEntitiesFor(family).size)
-                }
-                Entity("e2").also { e ->
-                    e.addComponent(ComponentB())
-                    engine.addEntity(e)
-                    assertEquals(2, engine.getEntitiesFor(family).size)
-                }
+                engine.createEntity("e1", ComponentA())
+                assertEquals(1, engine.getEntitiesFor(family).size)
+
+                engine.createEntity("e2", ComponentB())
+                assertEquals(2, engine.getEntitiesFor(family).size)
+
             }
             Family.all(ComponentC::class.java).build().also { family ->
                 val entities = engine.getEntitiesFor(family)
                 assertTrue(entities.isEmpty())
-                Entity("e1").also { e ->
+                engine.createEntity("e1").also { e ->
                     e.addComponent(ComponentC())
-                    engine.addEntity(e)
                     assertTrue(entities.isNotEmpty())
                     engine.removeEntity(e)
                     assertTrue(entities.isEmpty())
