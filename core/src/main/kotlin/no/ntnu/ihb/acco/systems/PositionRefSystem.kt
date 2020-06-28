@@ -20,9 +20,9 @@ class PositionRefSystem : SimulationSystem(
 
         val p = entity.getComponent<PositionRefComponent>()
 
-        p.xRef?.also { ref -> entity.getRealProperty(ref)?.also { v -> map[ref] = v } }
-        p.yRef?.also { ref -> entity.getRealProperty(ref)?.also { v -> map[ref] = v } }
-        p.zRef?.also { ref -> entity.getRealProperty(ref)?.also { v -> map[ref] = v } }
+        p.xRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
+        p.yRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
+        p.zRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
 
     }
 
@@ -52,7 +52,7 @@ class PositionRefSystem : SimulationSystem(
             pRef.yRef?.also { tmpVector.y = map.getValue(it).read(tmpArray)[0] }
             pRef.zRef?.also { tmpVector.z = map.getValue(it).read(tmpArray)[0] }
 
-            entity.transform.setTranslation(tmpVector)
+            entity.getComponent<TransformComponent>().setTranslation(tmpVector)
 
         }
     }

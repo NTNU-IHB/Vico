@@ -1,7 +1,5 @@
 package no.ntnu.ihb.acco.core
 
-import no.ntnu.ihb.acco.components.TransformComponent
-import java.util.*
 
 open class Entity(
     name: String? = null
@@ -12,13 +10,6 @@ open class Entity(
         private set
 
     var tag: String? = null
-    val transform = TransformComponent()
-
-    val numChildren: Int
-        get() = children.size
-
-    val numDescendants: Int
-        get() = descendants.size
 
     private val mutableComponents: MutableList<Component> = mutableListOf()
     val components: List<Component>
@@ -27,90 +18,14 @@ open class Entity(
     private val componentMap: MutableMap<ComponentClazz, Component> = mutableMapOf()
     private val componentListeners: MutableList<ComponentListener> = mutableListOf()
 
-    var parent: Entity? = null
-        private set
-    private val children: MutableList<Entity> = mutableListOf()
-    private val descendants: MutableList<Entity> = mutableListOf()
-
-    init {
-        addComponent(transform)
+    fun <E : Component> addComponent(componentClass: Class<out E>): E {
+        val ctor = componentClass.getDeclaredConstructor()
+        return addComponent(ctor.newInstance())
     }
 
-    fun addEntity(child: Entity) {
-        require(child != this) { "Adding self!" }
-        require(child !in descendants) { "$child is already a descendant" }
-        children.add(child)
-        child.parent = this
-        child.transform.setParent(this.transform)
-        if (tag != "root") {
-            child.name = "${name}.${child.originalName}"
-        }
-        descendantAdded(child)
-    }
+    inline fun <reified E : Component> addComponent() = addComponent(E::class.java)
 
-    fun addAllEntities(child: Entity, vararg additionalChildren: Entity) {
-        addEntity(child)
-        additionalChildren.forEach { addEntity(it) }
-    }
-
-    fun removeEntity(child: Entity) {
-        if (children.remove(child)) {
-            child.parent = null
-            child.transform.setParent(null)
-            child.name = child.originalName
-            descendantRemoved(child)
-            child.removeAllComponents()
-        }
-    }
-
-    fun removeAllEntities(child: Entity, vararg additionalChildren: Entity) {
-        removeEntity(child)
-        additionalChildren.forEach { removeEntity(it) }
-    }
-
-    protected open fun descendantAdded(entity: Entity) {
-        descendants.add(entity)
-        parent?.descendantAdded(entity)
-    }
-
-    protected open fun descendantRemoved(entity: Entity) {
-        descendants.remove(entity)
-        parent?.descendantRemoved(entity)
-    }
-
-    fun traverseAncestors(callback: EntityTraverser) {
-        callback.traverse(this)
-        parent?.also {
-            it.traverseAncestors(callback)
-        }
-    }
-
-    fun traverseDecendants(traverser: EntityTraverser, option: TraverseOption) {
-        when (option) {
-            TraverseOption.BREADTH_FIRST -> breadthFirstTraversal(traverser)
-            TraverseOption.DEPTH_FIRST -> depthFirstTraversal(traverser)
-        }
-    }
-
-    fun depthFirstTraversal(traverser: EntityTraverser) {
-        traverser.traverse(this)
-        for (child in children) {
-            child.depthFirstTraversal(traverser)
-        }
-    }
-
-    fun breadthFirstTraversal(traverser: EntityTraverser) {
-        traverser.traverse(this)
-        val queue = ArrayDeque(children)
-        while (!queue.isEmpty()) {
-            queue.remove().also { child ->
-                traverser.traverse(child)
-                child.children.forEach { queue.add(it) }
-            }
-        }
-    }
-
-    fun addComponent(component: Component) = apply {
+    fun <E : Component> addComponent(component: E): E {
 
         val componentClass = ComponentClazz(component::class.java)
         require(componentClass !in componentMap) {
@@ -121,11 +36,20 @@ open class Entity(
         componentMap[componentClass] = component
         componentListeners.forEach { it.onComponentAdded(this, component) }
 
+        return component
     }
 
     private fun removeComponent(componentClass: ComponentClazz): Component {
+        val myComponents by lazy {
+            components.map { it.javaClass.toString() }
+        }
+
         val component = componentMap[componentClass]
-            ?: throw IllegalArgumentException("No component of type $componentClass registered!")
+            ?: throw IllegalArgumentException(
+                "No component of type $componentClass present! " +
+                        "The following components are currently registered: $myComponents"
+            )
+
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
         componentListeners.forEach { it.onComponentRemoved(this, component) }
@@ -151,7 +75,7 @@ open class Entity(
     @Suppress("UNCHECKED_CAST")
     fun <E : Component> getComponent(componentClass: Class<E>): E {
         return componentMap[ComponentClazz(componentClass)] as E?
-            ?: throw RuntimeException("No component of type $componentClass registered with Entity named $name")
+            ?: throw IllegalStateException("No component of type $componentClass registered with Entity named '$name'!")
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -187,31 +111,23 @@ open class Entity(
         componentListeners.remove(listener)
     }
 
-    fun findInChildren(predicate: (Entity) -> Boolean): Entity {
-        return children.first { predicate.invoke(it) }
-    }
-
-    fun findAllInChildren(predicate: (Entity) -> Boolean): List<Entity> {
-        return children.filter { predicate.invoke(it) }
-    }
-
-    fun findInDescendants(predicate: (Entity) -> Boolean): Entity {
-        return descendants.first { predicate.invoke(it) }
-    }
-
-    fun findAllInDescendants(predicate: (Entity) -> Boolean): List<Entity> {
-        return descendants.filter { predicate.invoke(it) }
-    }
-
     fun getProperties(): Collection<Property> {
         return components.flatMap { it.getProperties() }
     }
 
-    fun getProperty(name: String): Property? {
+    fun getProperty(name: String): Property {
+        val properties by lazy {
+            getProperties().map { it.name }
+        }
+        return getPropertyOrNull(name)
+            ?: throw NoSuchElementException("Could not find property named '$name'. Registered properties are $properties")
+    }
+
+    fun getPropertyOrNull(name: String): Property? {
         return getProperties().find { it.name == name }
     }
 
-    fun getIntegerProperty(name: String): IntProperty? {
+    fun getIntegerPropertyOrNull(name: String): IntProperty? {
         for (component in components) {
             val v = component.getIntegerProperty(name)
             if (v != null) {
@@ -225,7 +141,7 @@ open class Entity(
         return components.flatMap { it.ints }
     }
 
-    fun getRealProperty(name: String): RealProperty? {
+    fun getRealPropertyOrNull(name: String): RealProperty? {
         for (component in components) {
             val v = component.getRealProperty(name)
             if (v != null) return v
@@ -237,7 +153,7 @@ open class Entity(
         return components.flatMap { it.reals }
     }
 
-    fun getStringProperty(name: String): StrProperty? {
+    fun getStringPropertyOrNull(name: String): StrProperty? {
         for (component in components) {
             val v = component.getStringProperty(name)
             if (v != null) return v
@@ -249,7 +165,7 @@ open class Entity(
         return components.flatMap { it.strs }
     }
 
-    fun getBooleanProperty(name: String): BoolProperty? {
+    fun getBooleanPropertyOrNull(name: String): BoolProperty? {
         for (component in components) {
             val v = component.getBooleanProperty(name)
             if (v != null) return v
@@ -262,7 +178,8 @@ open class Entity(
     }
 
     override fun toString(): String {
-        return "Entity(name='$name', tag=$tag, numChildren=$numChildren, numDescendants=$numDescendants)"
+        val componentClasses = components.map { it.javaClass.simpleName }
+        return "Entity(name='$name', tag=$tag, components=$componentClasses)"
     }
 
 }

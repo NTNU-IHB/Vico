@@ -8,7 +8,7 @@ import no.ntnu.ihb.acco.math.fromArray
 import no.ntnu.ihb.acco.math.toArray
 import org.joml.Vector3d
 
-class TransformComponent internal constructor() : IFrame by Frame(), Component() {
+class TransformComponent : IFrame by Frame(), Component() {
 
     init {
         val tmp = Vector3d()
@@ -17,7 +17,8 @@ class TransformComponent internal constructor() : IFrame by Frame(), Component()
                 getter = { ref -> getLocalTranslation(tmp).toArray(ref) },
                 setter = { values -> setLocalTranslation(tmp.fromArray(values)) }
             ),
-            RealLambdaProperty("worldPosition", 3,
+            RealLambdaProperty(
+                "worldPosition", 3,
                 getter = { ref -> getTranslation(tmp).toArray(ref) },
                 setter = { values -> setTranslation(tmp.fromArray(values)) }
             ))

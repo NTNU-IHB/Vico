@@ -192,7 +192,7 @@ class JmeRenderSystem : SimulationSystem(
         private fun updateCamera() {
             cameraEntity?.also {
                 flyCam.isEnabled = false
-                val world = it.transform.getWorldMatrix()
+                val world = it.getComponent<TransformComponent>().getWorldMatrix()
                 invokeLater {
                     cam.location.set(world.getTranslation(tmpVec))
                     cam.rotation.set(world.getNormalizedRotation(tmpQuat))

@@ -9,9 +9,8 @@ interface IFrame {
     val children: MutableSet<IFrame>
 
     fun makeDirty()
-    fun setParent(parent: IFrame?)
-    fun add(child: IFrame)
-    fun remove(child: IFrame)
+    fun clearParent()
+    fun setParent(parent: IFrame)
 
     fun getLocalMatrix(store: Matrix4d = Matrix4d()): Matrix4d
     fun getWorldMatrix(store: Matrix4d = Matrix4d()): Matrix4d
@@ -73,7 +72,15 @@ open class Frame : IFrame {
         children.forEach { it.makeDirty() }
     }
 
-    override fun setParent(parent: IFrame?) {
+    override fun clearParent() {
+        parent?.also {
+            it.children.remove(this)
+        }
+        this.parent = null
+        makeDirty()
+    }
+
+    override fun setParent(parent: IFrame) {
         if (hasParent) {
             val w = getWorldMatrix(Matrix4d())
             this.parent = parent
@@ -81,20 +88,8 @@ open class Frame : IFrame {
         } else {
             this.parent = parent
         }
-        parent?.also {
-            it.children.add(this)
-        }
+        parent.children.add(this)
         makeDirty()
-    }
-
-    override fun add(child: IFrame) {
-        child.setParent(this)
-    }
-
-    override fun remove(child: IFrame) {
-        if (children.remove(child)) {
-            child.setParent(null)
-        }
     }
 
     override fun getLocalMatrix(store: Matrix4d): Matrix4d {

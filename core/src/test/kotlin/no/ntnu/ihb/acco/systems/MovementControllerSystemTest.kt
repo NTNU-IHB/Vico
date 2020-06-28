@@ -1,6 +1,7 @@
 package no.ntnu.ihb.acco.systems
 
 import no.ntnu.ihb.acco.components.Controllable
+import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.render.GeometryComponent
@@ -20,20 +21,26 @@ object MovementControllerSystemTest {
             val spacing = 2.0
 
             val e1 = Entity().apply {
-                transform.localTranslateX(-spacing * 0.5)
+                addComponent(TransformComponent()).apply {
+                    localTranslateX(spacing * 0.5)
+                }
                 addComponent(GeometryComponent(BoxShape()))
                 addComponent(Controllable())
                 engine.addEntity(this)
             }
 
             val e2 = Entity().apply {
-                transform.localTranslateX(spacing * 0.5)
+                addComponent(TransformComponent()).apply {
+                    localTranslateX(-spacing * 0.5)
+                }
                 addComponent(GeometryComponent(BoxShape()))
                 engine.addEntity(this)
             }
 
             Entity().apply {
-                transform.setLocalTranslation(0.0, 0.0, -10.0)
+                addComponent(TransformComponent()).apply {
+                    setLocalTranslation(0.0, 0.0, -10.0)
+                }
                 addComponent(PerspectiveCamera())
                 engine.addEntity(this)
             }

@@ -39,7 +39,7 @@ private class SineMoverSystem : IteratingSystem(
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-        val tc = entity.transform
+        val tc = entity.getComponent<TransformComponent>()
         val sc = entity.getComponent<SineMoverComponent>()
         tc.setLocalTranslation(tc.getLocalTranslation(tmp).apply { x = sc.compute(currentTime) })
 
@@ -50,11 +50,13 @@ private class SineMoverSystem : IteratingSystem(
 private fun e1(): Entity {
     return Entity("e1").also { e ->
 
-        e.transform.setLocalTranslation(-1.0, 0.0, 0.0)
+        e.addComponent(TransformComponent()).apply {
+            setLocalTranslation(-1.0, 0.0, 0.0)
+        }
 
-        e.addComponent(GeometryComponent(BoxShape()).apply {
+        e.addComponent(GeometryComponent(BoxShape())).apply {
             setColor(Color.green)
-        })
+        }
         e.addComponent(SineMoverComponent())
     }
 }
@@ -67,13 +69,16 @@ fun main() {
         engine.addEntity(e1)
         Entity("e2").also { e ->
 
-            e.transform.setLocalTranslation(1.0, 0.0, 0.0)
+            val t = e.addComponent(TransformComponent())
+
+            t.setLocalTranslation(1.0, 0.0, 0.0)
 
             e.addComponent(GeometryComponent(SphereShape()).apply {
                 setColor(Color.yellow)
             })
             e.addComponent(SineMoverComponent(f = 0.5))
-            e1.addEntity(e)
+            t.setParent(e1.getComponent<TransformComponent>())
+            engine.addEntity(e)
             engine.getEntityByName("e1")
         }
 
@@ -82,12 +87,12 @@ fun main() {
 
         engine.invokeAt(2.0) {
             engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
-            engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
+            engine.getEntityByName("e2").getComponent<GeometryComponent>().wireframe = true
 
             engine.invokeIn(1.0) {
                 engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
-                engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
-                engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
+                engine.getEntityByName("e2").getComponent<GeometryComponent>().wireframe = false
+                engine.getEntityByName("e2").getComponent<GeometryComponent>().setColor(Color.red)
             }
 
         }
@@ -95,11 +100,13 @@ fun main() {
         engine.invokeAt(4.0) {
 
             Entity().apply {
-                transform.setLocalTranslation(0.0, 2.0, 0.0)
+                val t = addComponent(TransformComponent())
+                t.setLocalTranslation(0.0, 2.0, 0.0)
                 addComponent(GeometryComponent(CylinderShape()).apply {
                     setColor(Color.blue)
                 })
-                engine.getEntityByName("e2", false).addEntity(this)
+                t.setParent(engine.getEntityByName("e2").getComponent<TransformComponent>())
+                engine.addEntity(this)
             }
 
             engine.removeEntity(engine.getEntityByName("e1"))

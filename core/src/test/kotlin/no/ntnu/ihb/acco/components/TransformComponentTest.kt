@@ -12,11 +12,11 @@ internal class TransformComponentTest {
     fun testProperty() {
 
         val e = Entity()
-        val t = e.transform
+        val t = e.addComponent<TransformComponent>()
         assertEquals(Vector3d(), t.getLocalTranslation())
 
         val write = DoubleArray(3) { i -> i.toDouble() }
-        val localPosition = e.getRealProperty("localPosition")!!
+        val localPosition = e.getRealPropertyOrNull("localPosition")!!
         localPosition.write(DoubleArray(3) { i -> i.toDouble() })
         assertEquals(Vector3d().set(write), t.getLocalTranslation())
 

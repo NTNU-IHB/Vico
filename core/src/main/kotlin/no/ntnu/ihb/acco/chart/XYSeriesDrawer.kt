@@ -65,9 +65,9 @@ class XYSeriesDrawer internal constructor(
 
             val (h1, h2) = value
 
-            val variable1 = engine.getEntityByName(h1.componentName).getRealProperty(h1.variableName)
+            val variable1 = engine.getEntityByName(h1.componentName).getRealPropertyOrNull(h1.variableName)
                 ?: throw IllegalStateException("No variable named '${h1.variableName}' in entity ${h1.componentName}")
-            val variable2 = engine.getEntityByName(h2.componentName).getRealProperty(h2.variableName)
+            val variable2 = engine.getEntityByName(h2.componentName).getRealPropertyOrNull(h2.variableName)
                 ?: throw IllegalStateException("No variable named '${h2.variableName}' in entity ${h2.componentName}")
 
             val xProvider = ValueProvider {

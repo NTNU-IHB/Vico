@@ -1,5 +1,6 @@
 package no.ntnu.ihb.acco.physics.bullet
 
+import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.RealConnector
@@ -18,41 +19,46 @@ fun main() {
 
     Engine(1.0 / 100).also { engine ->
 
-        Entity("plane").also { e ->
-            e.transform.setLocalTranslation(0.0, -1.0, 0.0)
-            e.addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
+        Entity("plane").apply {
+            val t = addComponent(TransformComponent())
+            t.setLocalTranslation(0.0, -1.0, 0.0)
+            addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
             val shape = BoxShape(10.0, 0.1, 10.0)
-            e.addComponent(ColliderComponent(shape))
-            e.addComponent(GeometryComponent(shape))
-            engine.addEntity(e)
+            addComponent(ColliderComponent(shape))
+            addComponent(GeometryComponent(shape))
+            engine.addEntity(this)
         }
 
         for (i in 0 until 20) {
-            Entity("sphere_$i").also { e ->
-                e.transform.setLocalTranslation(
-                    Random.nextDouble(-1.0, 1.0),
-                    2.0,
-                    Random.nextDouble(-1.0, 1.0)
-                )
-                e.addComponent(RigidBodyComponent())
+            Entity("sphere_$i").apply {
+                addComponent(TransformComponent()).apply {
+                    setLocalTranslation(
+                        Random.nextDouble(-1.0, 1.0),
+                        2.0,
+                        Random.nextDouble(-1.0, 1.0)
+                    )
+                }
+                addComponent(RigidBodyComponent())
                 val shape = SphereShape(0.1)
-                e.addComponent(ColliderComponent(shape))
-                e.addComponent(GeometryComponent(shape))
-                engine.addEntity(e)
+                addComponent(ColliderComponent(shape))
+                addComponent(GeometryComponent(shape))
+                engine.addEntity(this)
             }
         }
 
-        Entity("test").also { e ->
+        val test = Entity("test").apply {
+            addComponent(TransformComponent())
             val shape = BoxShape(0.1)
-            e.addComponent(ColliderComponent(shape))
-            e.addComponent(GeometryComponent(shape).apply {
+            addComponent(ColliderComponent(shape))
+            addComponent(GeometryComponent(shape).apply {
                 setColor(Color.red)
             })
-            engine.addEntity(e)
+            engine.addEntity(this)
         }
 
-        val source = RealConnector(engine.getEntityByName("sphere_0").transform, "localPosition")
-        val sink = RealConnector(engine.getEntityByName("test").transform, "localPosition")
+        val source =
+            RealConnector(engine.getEntityByName("sphere_0").getComponent<TransformComponent>(), "localPosition")
+        val sink = RealConnector(test.getComponent<TransformComponent>(), "localPosition")
 
         engine.addConnection(ScalarConnection(source, sink))
 

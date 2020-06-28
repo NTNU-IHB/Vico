@@ -7,11 +7,10 @@ interface EntityListener {
 }
 
 interface EntityAccess {
-    fun addEntity(entity: Entity, vararg additionalEntities: Entity)
-    fun removeEntity(entity: Entity, vararg additionalEntities: Entity)
+    fun addEntity(entity: Entity): Boolean
+    fun removeEntity(entity: Entity): Boolean
     fun getEntitiesFor(family: Family): Set<Entity>
     fun getEntityByName(name: String): Entity
-    fun getEntityByName(name: String, hierarchical: Boolean): Entity
     fun getEntitiesByTag(tag: String): List<Entity>
     fun addEntityListener(entityListener: EntityListener)
     fun removeEntityListener(entityListener: EntityListener)
@@ -21,63 +20,20 @@ class EntityManager internal constructor(
     private val connectionManager: ConnectionManager
 ) : EntityAccess {
 
-    private val root = RootEntity()
+    private val entities: MutableSet<Entity> = mutableSetOf()
     private val families: MutableMap<Family, MutableSet<Entity>> = mutableMapOf()
     private val entityListeners: MutableList<EntityListener> = mutableListOf()
+    private val componentListener = MyComponentListener()
 
-    override fun addEntity(entity: Entity, vararg additionalEntities: Entity) {
-        root.addAllEntities(entity, *additionalEntities)
-    }
-
-    override fun removeEntity(entity: Entity, vararg additionalEntities: Entity) =
-        root.removeAllEntities(entity, *additionalEntities)
-
-    override fun getEntitiesFor(family: Family): Set<Entity> {
-        return families.computeIfAbsent(family) {
-            root.findAllInDescendants { family.test(it) }.toMutableSet()
-        }
-    }
-
-    override fun getEntityByName(name: String): Entity {
-        return getEntityByName(name, true)
-    }
-
-    override fun getEntityByName(name: String, hierarchical: Boolean): Entity {
-        return root.findInDescendants {
-            if (hierarchical) {
-                it.name == name
-            } else {
-                it.originalName == name
-            }
-        }
-    }
-
-    override fun getEntitiesByTag(tag: String): List<Entity> {
-        return root.findAllInDescendants { it.tag == tag }
-    }
-
-    override fun addEntityListener(entityListener: EntityListener) {
-        entityListeners.add(entityListener)
-    }
-
-    override fun removeEntityListener(entityListener: EntityListener) {
-        entityListeners.remove(entityListener)
-    }
-
-    private inner class RootEntity : Entity(""), ComponentListener {
-
-        init {
-            tag = "root"
-        }
-
-        override fun descendantAdded(entity: Entity) {
-            super.descendantAdded(entity)
-            entity.addComponentListener(this)
+    override fun addEntity(entity: Entity) = entities.add(entity).also { wasAdded ->
+        if (wasAdded) {
+            entity.addComponentListener(componentListener)
             updateFamilyMemberShip(entity)
         }
+    }
 
-        override fun descendantRemoved(entity: Entity) {
-            super.descendantRemoved(entity)
+    override fun removeEntity(entity: Entity) = entities.remove(entity).also { wasRemoved ->
+        if (wasRemoved) {
             families.forEach { (family, entities) ->
                 if (entities.remove(entity)) {
                     entityListeners.forEach {
@@ -88,31 +44,55 @@ class EntityManager internal constructor(
                 }
             }
             entity.components.forEach { connectionManager.onComponentRemoved(it) }
-            entity.removeComponentListener(this)
+            entity.removeComponentListener(componentListener)
         }
+    }
 
-        private fun updateFamilyMemberShip(entity: Entity) {
-            families.forEach { (family, entities) ->
-                if (family.test(entity)) {
-                    if (entities.add(entity)) {
-                        entityListeners.forEach {
-                            if (it.family == family) {
-                                it.entityAdded(entity)
-                            }
+    override fun getEntitiesFor(family: Family): Set<Entity> {
+        return families.computeIfAbsent(family) {
+            entities.filter { family.test(it) }.toMutableSet()
+        }
+    }
+
+    override fun getEntityByName(name: String): Entity {
+        return entities.first { it.name == name }
+    }
+
+    override fun getEntitiesByTag(tag: String): List<Entity> {
+        return entities.filter { it.tag == tag }
+    }
+
+    override fun addEntityListener(entityListener: EntityListener) {
+        entityListeners.add(entityListener)
+    }
+
+    override fun removeEntityListener(entityListener: EntityListener) {
+        entityListeners.remove(entityListener)
+    }
+
+    private fun updateFamilyMemberShip(entity: Entity) {
+        families.forEach { (family, entities) ->
+            if (family.test(entity)) {
+                if (entities.add(entity)) {
+                    entityListeners.forEach {
+                        if (it.family == family) {
+                            it.entityAdded(entity)
                         }
                     }
-                } else {
-                    if (entities.remove(entity)) {
-                        entityListeners.forEach {
-                            if (it.family == family) {
-                                it.entityRemoved(entity)
-                            }
+                }
+            } else {
+                if (entities.remove(entity)) {
+                    entityListeners.forEach {
+                        if (it.family == family) {
+                            it.entityRemoved(entity)
                         }
                     }
                 }
             }
         }
+    }
 
+    private inner class MyComponentListener : ComponentListener {
         override fun onComponentAdded(entity: Entity, component: Component) {
             updateFamilyMemberShip(entity)
         }
@@ -121,7 +101,6 @@ class EntityManager internal constructor(
             connectionManager.onComponentRemoved(component)
             updateFamilyMemberShip(entity)
         }
-
     }
 
 }
