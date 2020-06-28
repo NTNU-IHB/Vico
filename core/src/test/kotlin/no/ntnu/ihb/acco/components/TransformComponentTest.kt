@@ -16,7 +16,7 @@ internal class TransformComponentTest {
         assertEquals(Vector3d(), t.getLocalTranslation())
 
         val write = DoubleArray(3) { i -> i.toDouble() }
-        val localPosition = e.getRealVariable("localPosition")
+        val localPosition = e.getRealProperty("localPosition")!!
         localPosition.write(DoubleArray(3) { i -> i.toDouble() })
         assertEquals(Vector3d().set(write), t.getLocalTranslation())
 

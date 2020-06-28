@@ -8,6 +8,11 @@ data class Color @JvmOverloads constructor(
     var b: Float = 0f
 ) {
 
+    val hexValue: Int
+        get() = 0xff shl 24 or ((r / 255).toInt()
+                and 0xff shl 16) or ((g / 255).toInt()
+                and 0xff shl 8) or ((b / 100).toInt() and 0xff)
+
     constructor(hex: Int) : this() {
         set(hex)
     }

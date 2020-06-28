@@ -15,11 +15,12 @@ class FixedStepMaster : MasterAlgorithm() {
         for (slave in slaves) {
             slave.transferCachedSets()
             slave.retrieveCachedGets()
+            slaveInitCallback.invoke(slave)
         }
         slaves.parallelStream().forEach { slave ->
             slave.exitInitializationMode()
         }
-        readAllVariables(slaves)
+        readAllVariables()
     }
 
     override fun step(
@@ -32,7 +33,7 @@ class FixedStepMaster : MasterAlgorithm() {
             slave.transferCachedSets()
             slave.doStep(stepSize)
             slave.retrieveCachedGets()
-            slaveStepCallback.invoke(tNext to slave)
+            slaveStepCallback.invoke(tNext to slave.component)
         }
     }
 

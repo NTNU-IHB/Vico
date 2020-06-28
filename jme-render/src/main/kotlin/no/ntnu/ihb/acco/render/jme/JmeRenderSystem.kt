@@ -2,18 +2,27 @@ package no.ntnu.ihb.acco.render.jme
 
 import com.jme3.app.SimpleApplication
 import com.jme3.app.state.AbstractAppState
+import com.jme3.input.KeyInput
+import com.jme3.input.event.KeyInputEvent
+import com.jme3.input.event.MouseButtonEvent
 import com.jme3.light.AmbientLight
 import com.jme3.light.DirectionalLight
 import com.jme3.math.ColorRGBA
+import com.jme3.math.FastMath
+import com.jme3.math.Vector2f
 import com.jme3.math.Vector3f
 import com.jme3.scene.Node
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
+import no.ntnu.ihb.acco.input.ClickListener
+import no.ntnu.ihb.acco.input.KeyListener
+import no.ntnu.ihb.acco.render.Camera
 import no.ntnu.ihb.acco.render.GeometryComponent
-import no.ntnu.ihb.acco.render.GeometryComponentListener
+import no.ntnu.ihb.acco.render.jme.objects.RawInputAdapter
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
+import org.joml.Matrix4f
 import org.joml.Quaterniond
 import org.joml.Vector3d
 import java.util.*
@@ -27,6 +36,7 @@ class JmeRenderSystem : SimulationSystem(
 ) {
 
     private val app = JmeApp()
+    private val queueMutex = Unit
 
     private val tmpVec = Vector3d()
     private val tmpQuat = Quaterniond()
@@ -35,14 +45,18 @@ class JmeRenderSystem : SimulationSystem(
 
     private val queue = ArrayDeque<JmeApp.() -> Unit>()
 
+    private var cameraEntity: Entity? = null
+
     init {
         priority = Int.MAX_VALUE
     }
 
     private fun invokeLater(task: JmeApp.() -> Unit) {
-        queue.add(task)
-        while (queue.size > MAX_QUEUE_SIZE) {
-            queue.poll()
+        synchronized(queueMutex) {
+            queue.add(task)
+            while (queue.size > MAX_QUEUE_SIZE) {
+                queue.poll()
+            }
         }
     }
 
@@ -52,40 +66,34 @@ class JmeRenderSystem : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
 
-        val transform = entity.getComponent<TransformComponent>()
+        if (entity.hasComponent<Camera>()) {
+            cameraEntity = entity
+        }
+
         val geometry = entity.getComponent<GeometryComponent>()
-
-        val world = transform.getWorldMatrix()
-
         invokeLater {
-            map.computeIfAbsent(entity) {
+            val node = map.computeIfAbsent(entity) {
 
                 geometry.createGeometry(app.assetManager).also { node ->
 
-                    geometry.addListener(object : GeometryComponentListener {
+                    geometry.addEventListener("onVisibilityChanged") {
+                        node.setVisible(it.target())
+                    }
 
-                        override fun onColorChanged() {
-                            node.setColor(geometry.getColor())
-                        }
+                    geometry.addEventListener("onWireframeChanged") {
+                        node.setWireframe(it.target())
+                    }
 
-                        override fun onVisibilityChanged() {
-                            node.setVisible(geometry.visible)
-                        }
+                    geometry.addEventListener("onColorChanged") {
+                        node.setColor(it.target())
+                    }
 
-                        override fun onWireframeChanged() {
-                            node.setWireframe(geometry.wireframe)
-                        }
-                    })
-
-                    node.localTranslation.set(world.getTranslation(tmpVec))
-                    node.localRotation.set(world.getNormalizedRotation(tmpQuat))
-                    node.forceRefresh(true, true, true)
-
-                    root.attachChild(node)
                 }
 
             }
+            root.attachChild(node)
         }
+
     }
 
     override fun entityRemoved(entity: Entity) {
@@ -94,28 +102,42 @@ class JmeRenderSystem : SimulationSystem(
         }
     }
 
+    override fun postInit() {
+        updateTransforms()
+    }
+
     override fun step(currentTime: Double, stepSize: Double) {
+        updateTransforms()
+    }
 
-        entities.forEach { entity ->
-
-            val node = map.getValue(entity)
-            val transform = entity.getComponent<TransformComponent>()
-
-            val world = transform.getWorldMatrix()
-
-            invokeLater {
-                node.localTranslation.set(world.getTranslation(tmpVec))
-                node.localRotation.set(world.getNormalizedRotation(tmpQuat))
-                node.forceRefresh(true, true, true)
-            }
-
+    private fun updateTransform(node: Node, transform: TransformComponent) {
+        val world = transform.getWorldMatrix()
+        invokeLater {
+            node.localTranslation.set(world.getTranslation(tmpVec))
+            node.localRotation.set(world.getNormalizedRotation(tmpQuat))
+            node.forceRefresh(true, true, true)
         }
+    }
+
+    private fun updateTransforms() {
+        for (entity in entities) {
+            map[entity]?.also { node ->
+                updateTransform(node, entity.getComponent())
+            }
+        }
+    }
+
+    override fun close() {
+        app.stop()
     }
 
     private inner class JmeApp : SimpleApplication() {
 
         private val lock = ReentrantLock()
         private var initialized = lock.newCondition()
+
+        var keyListener: KeyListener? = null
+        var clickListener: ClickListener? = null
 
         val root = Node()
 
@@ -124,7 +146,6 @@ class JmeRenderSystem : SimulationSystem(
             lock.withLock {
                 initialized.await()
             }
-            Thread.sleep(500)
         }
 
         override fun simpleInitApp() {
@@ -136,6 +157,7 @@ class JmeRenderSystem : SimulationSystem(
             super.flyCam.isDragToRotate = true
             super.flyCam.moveSpeed = 10f
 
+            super.inputManager.addRawInputListener(InputListener())
             super.viewPort.backgroundColor.set(0.6f, 0.7f, 1f, 1f)
 
             setupLights()
@@ -153,13 +175,28 @@ class JmeRenderSystem : SimulationSystem(
         }
 
         private fun emptyQueue() {
-            while (!queue.isEmpty()) {
-                queue.poll().invoke(this)
+            synchronized(queueMutex) {
+                while (!queue.isEmpty()) {
+                    queue.poll().invoke(this)
+                }
             }
         }
 
         override fun simpleUpdate(tpf: Float) {
             emptyQueue()
+            updateCamera()
+        }
+
+        private fun updateCamera() {
+            cameraEntity?.also {
+                val world = it.transform.getWorldMatrix()
+                invokeLater {
+                    cam.location.set(world.getTranslation(tmpVec))
+                    cam.rotation.set(world.getNormalizedRotation(tmpQuat))
+                    cam.update()
+                    println(cam.location)
+                }
+            }
         }
 
         private fun setupLights() {
@@ -179,6 +216,41 @@ class JmeRenderSystem : SimulationSystem(
             AmbientLight().apply {
                 color = ColorRGBA.White.mult(0.3f)
                 rootNode.addLight(this)
+            }
+
+        }
+
+        private inner class InputListener : RawInputAdapter() {
+
+            override fun onMouseButtonEvent(evt: MouseButtonEvent) {
+                clickListener?.also {
+                    val x = evt.x.toFloat()
+                    val y = evt.y.toFloat()
+                    val worldCoordinates = cam.getWorldCoordinates(Vector2f(x, y), 1000f)
+                    val pos = Vector3d().set(cam.location)
+                    val dir = Vector3d().set(Vector3f(cam.location).subtract(worldCoordinates).normalizeLocal())
+                    val m = Matrix4f().rotateX(FastMath.PI / 2)
+                    pos.mulPosition(m)
+                    dir.mulDirection(m)
+                    it.onMousePressed(pos, dir)
+                }
+            }
+
+            override fun onKeyEvent(evt: KeyInputEvent) {
+                if (evt.isPressed) {
+                    val keyCode = evt.keyCode
+                    keyListener?.also {
+                        it.onKeyPressed(keyCode.toKeyStoke())
+                    }
+                    when (keyCode) {
+                        KeyInput.KEY_F1 -> {
+                            //showCollisionGeometries = !showCollisionGeometries
+                        }
+                        KeyInput.KEY_E -> {
+                            engine.runner.paused.set(!engine.runner.paused.get())
+                        }
+                    }
+                }
             }
 
         }

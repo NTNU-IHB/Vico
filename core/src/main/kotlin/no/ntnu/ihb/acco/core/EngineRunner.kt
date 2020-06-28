@@ -8,12 +8,10 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Predicate
 
 
-private typealias Predicate = ((Engine) -> Boolean)
-private typealias Callback = () -> Unit
-
-class EngineRunner(
+class EngineRunner internal constructor(
     private val engine: Engine
 ) {
 
@@ -31,8 +29,8 @@ class EngineRunner(
     private var thread: Thread? = null
     private var stop = AtomicBoolean(false)
 
-    var callback: Callback? = null
-    private var predicate: Predicate? = null
+    var callback: Runnable? = null
+    private var predicate: Predicate<Engine>? = null
 
     val isStarted: Boolean
         get() {
@@ -48,11 +46,11 @@ class EngineRunner(
         }
     }
 
-    fun runWhile(predicate: Predicate): Future<Unit> {
+    fun runWhile(predicate: Predicate<Engine>): Future<Unit> {
         check(!isStarted && this.predicate == null)
         this.predicate = predicate
         val executor = Executors.newCachedThreadPool()
-        return FutureTask<Unit> {
+        return FutureTask {
             start()
             this.thread!!.join()
             executor.shutdown()
@@ -64,18 +62,18 @@ class EngineRunner(
     fun runUntil(timePoint: Number): Future<Unit> {
         val doubleTimePoint = timePoint.toDouble()
         return runWhile(
-            predicate = { it.currentTime >= doubleTimePoint }
+            predicate = { it.currentTime > doubleTimePoint }
         )
     }
 
     fun runFor(time: Number): Future<Unit> {
         val doubleTime = time.toDouble()
         return runWhile(
-            predicate = { it.currentTime + it.startTime >= doubleTime }
+            predicate = { (it.currentTime + it.startTime) > doubleTime }
         )
     }
 
-    fun stepEngine(deltaTime: Double): Boolean {
+    private fun stepEngine(deltaTime: Double): Boolean {
 
         var stepOccurred = false
         if (paused.get()) {
@@ -117,12 +115,12 @@ class EngineRunner(
                 engine.init()
             }
 
-            val inputThread = ConsoleInputReader().apply { start() }
+            val inputThread: ConsoleInputReader = ConsoleInputReader().apply { start() }
             val clock = Clock()
-            while (!engine.isClosed && !stop.get() && predicate?.invoke(engine) != true) {
+            while (!engine.isClosed && !stop.get() && predicate?.test(engine) != true) {
                 val dt = clock.getDelta()
                 if (stepEngine(dt)) {
-                    callback?.invoke()
+                    callback?.run()
                 }
             }
             stop.set(true)
@@ -178,6 +176,7 @@ class EngineRunner(
 
             if (!stop.getAndSet(true)) {
                 println("Manually aborted execution at t=${engine.currentTime}..")
+                engine.close()
             }
 
         }

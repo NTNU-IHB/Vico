@@ -10,7 +10,7 @@ internal class SimulateFmuTest {
     @Test
     fun testControlledTemperature() {
 
-        val resultDir = File("build/results/ContrrolledTemperature").also {
+        val resultDir = File("build/results/ControlledTemperature").also {
             it.deleteRecursively()
         }
 

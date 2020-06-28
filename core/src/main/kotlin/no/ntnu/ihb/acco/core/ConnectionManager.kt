@@ -1,6 +1,6 @@
 package no.ntnu.ihb.acco.core
 
-class ConnectionManager {
+class ConnectionManager internal constructor() {
 
     private val connections: MutableMap<Component, MutableList<Connection>> = mutableMapOf()
 
@@ -18,6 +18,19 @@ class ConnectionManager {
         connections.computeIfAbsent(connection.source) {
             mutableListOf()
         }.add(connection)
+    }
+
+    fun onComponentRemoved(component: Component) {
+        for (connection in connections.values.flatten()) {
+            if (connection.source == component) {
+                connections.remove(connection.source)
+            }
+            for (targetComponent in connection.targets) {
+                if (targetComponent == component) {
+                    connections.remove(connection.source)
+                }
+            }
+        }
     }
 
     private inline fun forEachConnection(f: (Connection) -> Unit) {

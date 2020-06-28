@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 
 internal class SystemManagerTest {
 
-    class ComponentA : Component
+    class ComponentA : Component()
 
     companion object {
         val family = Family.all(ComponentA::class.java).build()
@@ -13,15 +13,7 @@ internal class SystemManagerTest {
 
     abstract class TestSystem(
         family: Family
-    ) : SimulationSystem(family) {
-        override fun entityAdded(entity: Entity) {
-            TODO("Not yet implemented")
-        }
-
-        override fun entityRemoved(entity: Entity) {
-            TODO("Not yet implemented")
-        }
-    }
+    ) : SimulationSystem(family)
 
     class SystemA : TestSystem(family) {
 
@@ -57,20 +49,18 @@ internal class SystemManagerTest {
     }
 
     @Test
-    operator fun iterator() {
-        Engine().use { engine ->
-            val manager = engine.systemManager
+    fun testSystemManager() {
 
-            val systems = listOf(
-                SystemA(), SystemB(), SystemC()
-            )
-            systems.forEach { engine.addSystem(it) }
+        val manager = SystemManager()
 
-            assertEquals(3, manager.systems.size)
-            assertEquals(systems, manager.systems.sorted())
+        val systems = listOf(
+            SystemB(), SystemB(), SystemC()
+        )
+        systems.forEach { manager.add(it) }
 
-            engine.step(1)
+        assertEquals(3, manager.systems.size)
+        assertEquals(systems.sorted(), manager.systems)
 
-        }
     }
+
 }

@@ -1,40 +1,38 @@
 package no.ntnu.ihb.vico.structure
 
-sealed class Parameter<E> {
+sealed class Parameter {
     abstract val name: String
-    abstract val value: E
 }
 
 class IntegerParameter(
     override val name: String,
-    override val value: Int
-) : Parameter<Int>()
+    val value: Int
+) : Parameter()
 
 class RealParameter(
     override val name: String,
-    override val value: Double
-) : Parameter<Double>()
+    val value: Double
+) : Parameter()
 
 class BooleanParameter(
     override val name: String,
-    override val value: Boolean
-) : Parameter<Boolean>()
+    val value: Boolean
+) : Parameter()
 
 class StringParameter(
     override val name: String,
-    override val value: String
-) : Parameter<String>()
-
-class EnumerationParameter(
-    override val name: String,
-    override val value: Int
-) : Parameter<Int>()
-
+    val value: String
+) : Parameter()
 
 class ParameterSet(
     val name: String,
-    private val parameters: List<Parameter<*>>
-) : Iterable<Parameter<*>> by parameters {
+    private val parameters: Set<Parameter>
+) : Iterable<Parameter> by parameters {
+
+    constructor(name: String, parameters: List<Parameter>) : this(name, parameters.toSet())
+
+    constructor(name: String, parameter: Parameter, vararg additionalParameters: Parameter)
+            : this(name, listOf(parameter, *additionalParameters))
 
     val integerParameters: List<IntegerParameter>
         get() {
@@ -56,9 +54,8 @@ class ParameterSet(
             return parameters.mapNotNull { if (it is StringParameter) it else null }
         }
 
-    val enumerationParameters: List<EnumerationParameter>
-        get() {
-            return parameters.mapNotNull { if (it is EnumerationParameter) it else null }
-        }
+    override fun toString(): String {
+        return "ParameterSet(name=$name, parameters=${parameters.map { it.name }})"
+    }
 
 }

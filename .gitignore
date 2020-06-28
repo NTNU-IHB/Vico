@@ -45,3 +45,5 @@ local.properties
 
 # csv files
 *.csv
+
+/data

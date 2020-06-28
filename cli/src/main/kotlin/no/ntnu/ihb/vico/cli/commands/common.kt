@@ -1,7 +1,6 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.EngineRunner
 import no.ntnu.ihb.acco.util.formatForOutput
 import org.slf4j.Logger
 import kotlin.time.ExperimentalTime
@@ -18,18 +17,17 @@ internal fun runSimulation(
 ) {
 
     val totalSimulationTime = stopTime - startTime
-    val stepSize = baseStepSize
-    val numSteps = (totalSimulationTime / stepSize).toLong()
+    val numSteps = (totalSimulationTime / baseStepSize).toLong()
     val aTenth = numSteps / 10
 
-    val runner = EngineRunner(engine)
+    val runner = engine.runner
 
     targetRealtimeFactor?.also {
         runner.targetRealTimeFactor = it
     } ?: run {
         runner.enableRealTimeTarget = false
     }
-    runner.callback = {
+    runner.callback = Runnable {
         val i = engine.iterations
         if (i != 0L && i % aTenth == 0L || i == numSteps) {
             val percentComplete = i / numSteps.toDouble() * 100
@@ -41,7 +39,6 @@ internal fun runSimulation(
                 if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded",
                 runner.actualRealTimeFactor.formatForOutput()
             )
-
         }
     }
 
@@ -49,6 +46,11 @@ internal fun runSimulation(
     measureTime {
         runner.runUntil(stopTime).get()
     }.also { t ->
-        LOG.info("Simulation finished. Simulated ${totalSimulationTime}s in ${t.inSeconds}s.. ")
+        val targetRTF: Any = if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded"
+        LOG.info(
+            "Simulation finished. " +
+                    "Simulated ${totalSimulationTime}s in ${t.inSeconds}s, " +
+                    "RTF: target=$targetRTF, actual=${runner.actualRealTimeFactor}"
+        )
     }
 }

@@ -8,13 +8,15 @@ internal class ConnectionTest {
 
     class ValueComponent(
         var value: Double = 0.0
-    ) : CoSimulationComponent {
+    ) : Component() {
 
-        override val variables: Map<String, Var<*>> by lazy {
-            mapOf("value" to RealLambdaVar(1,
-                getter = { it[0] = value },
-                setter = { value = it[0] }
-            ))
+        init {
+            registerProperties(
+                RealLambdaProperty("value", 1,
+                    getter = { it[0] = value },
+                    setter = { value = it[0] }
+                )
+            )
         }
 
     }
@@ -30,14 +32,14 @@ internal class ConnectionTest {
             engine.addEntity(sourceEntity)
 
             val sourceConnector = RealConnector(
-                sourceEntity.getComponent(ValueComponent::class.java), "value"
+                sourceEntity.getComponent<ValueComponent>(), "value"
             )
 
             val sinkEntity = Entity("sink").addComponent(ValueComponent())
             engine.addEntity(sinkEntity)
 
             val sinkConnector = RealConnector(
-                sinkEntity.getComponent(ValueComponent::class.java), "value"
+                sinkEntity.getComponent<ValueComponent>(), "value"
             )
 
             engine.addConnection(ScalarConnection(sourceConnector, sinkConnector))
@@ -45,7 +47,6 @@ internal class ConnectionTest {
             engine.init()
 
             Assertions.assertEquals(someValue, (sinkConnector.component as ValueComponent).value)
-
 
         }
 

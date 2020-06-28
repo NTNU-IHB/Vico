@@ -1,96 +1,265 @@
 package no.ntnu.ihb.vico
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
+import no.ntnu.ihb.acco.core.Properties
 import no.ntnu.ihb.acco.core.SimulationSystem
-import no.ntnu.ihb.fmi4j.writeBoolean
-import no.ntnu.ihb.fmi4j.writeInteger
-import no.ntnu.ihb.fmi4j.writeReal
-import no.ntnu.ihb.fmi4j.writeString
+import no.ntnu.ihb.acco.util.ElementObserver
+import no.ntnu.ihb.acco.util.StringArray
+import no.ntnu.ihb.fmi4j.*
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
+import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.master.MasterAlgorithm
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-typealias Slaves = List<SlaveComponent>
-typealias SlaveInitCallback = (SlaveComponent) -> Unit
-typealias SlaveStepCallback = (Pair<Double, SlaveComponent>) -> Unit
+
+fun interface SlaveInitCallback {
+    fun invoke(slave: FmiSlave)
+}
+
+fun interface SlaveStepCallback {
+    fun invoke(target: Pair<Double, SlaveComponent>)
+}
 
 
 class SlaveSystem @JvmOverloads constructor(
-    private val algorithm: MasterAlgorithm = FixedStepMaster()
+    algorithm: MasterAlgorithm? = null,
+    private var parameterSet: String? = null
 ) : SimulationSystem(Family.all(SlaveComponent::class.java).build()) {
 
-    var parameterSet: String = "default"
+    private val algorithm: MasterAlgorithm = algorithm ?: FixedStepMaster()
 
-    private val _slaves: MutableList<SlaveComponent> = mutableListOf()
-    val slaves: List<SlaveComponent> = _slaves
+    private val _slaves: MutableMap<Entity, FmiSlave> = mutableMapOf()
+    val slaves: Collection<FmiSlave> = _slaves.values
 
-    private val listeners: MutableList<SlaveSystemListener> = mutableListOf()
-
-    fun getSlave(name: String): SlaveComponent = _slaves.first { it.instanceName == name }
-    fun getSlaveNoExcept(name: String): SlaveComponent? = _slaves.firstOrNull { it.instanceName == name }
+    fun getSlave(name: String): FmiSlave = slaves.first { it.instanceName == name }
 
     override fun entityAdded(entity: Entity) {
-        val slave = entity.getComponent<SlaveComponent>()
-        slave.getParameterSet(parameterSet)?.also {
-            it.integerParameters.forEach { p -> slave.writeInteger(p.name, p.value) }
-            it.realParameters.forEach { p -> slave.writeReal(p.name, p.value) }
-            it.booleanParameters.forEach { p -> slave.writeBoolean(p.name, p.value) }
-            it.stringParameters.forEach { p -> slave.writeString(p.name, p.value) }
+        val c = entity.getComponent<SlaveComponent>()
+        val slave = FmiSlave(c.instantiate(), c)
+        parameterSet?.also { parameterSet ->
+            c.getParameterSet(parameterSet)?.also {
+                it.integerParameters.forEach { p -> slave.writeInteger(p.name, p.value) }
+                it.realParameters.forEach { p -> slave.writeReal(p.name, p.value) }
+                it.booleanParameters.forEach { p -> slave.writeBoolean(p.name, p.value) }
+                it.stringParameters.forEach { p -> slave.writeString(p.name, p.value) }
+            } ?: run {
+                LOG.warn("No parameterSet named '$parameterSet' found in ${entity.name}!")
+            }
         }
-        _slaves.add(slave)
+
+        _slaves[entity] = (slave)
         algorithm.slaveAdded(slave)
-        listeners.forEach { l -> l.slaveAdded(slave) }
     }
 
     override fun entityRemoved(entity: Entity) {
-        val slave = entity.getComponent<SlaveComponent>()
-        _slaves.remove(slave)
+        val slave = _slaves.remove(entity)!!
         algorithm.slaveRemoved(slave)
-        listeners.forEach { l -> l.slaveRemoved(slave) }
         slave.close()
     }
 
     override fun init(currentTime: Double) {
         algorithm.init(currentTime, slaves) { slave ->
-            engine.updateConnection(slave)
+            engine.updateConnection(slave.component)
         }
-        listeners.forEach { l -> l.postInit(currentTime) }
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
         algorithm.step(currentTime, stepSize) {
-            listeners.forEach { l -> l.postSlaveStep(it.first, it.second) }
-            dispatchEvent(SLAVE_STEPPED, it)
-        }
-        listeners.forEach { l -> l.postStep(currentTime + stepSize) }
-    }
-
-    fun addListener(listener: SlaveSystemListener) = apply {
-        listeners.add(listener).also {
-            listener.addedToSystem(this)
-        }
-        if (addedToEngine) {
-            slaves.forEach { slave ->
-                listener.slaveAdded(slave)
-            }
+            dispatchEvent(Properties.PROPERTIES_CHANGED, it)
         }
     }
 
     override fun close() {
-        _slaves.forEach { slave ->
+        slaves.forEach { slave ->
             slave.terminate()
         }
-        listeners.forEach { l -> l.postTerminate() }
-        _slaves.forEach { slave ->
+        slaves.forEach { slave ->
             slave.close()
         }
-        listeners.forEach { l -> l.close() }
     }
 
-    companion object {
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(SlaveSystem::class.java)
+    }
 
-        const val SLAVE_STEPPED = "slaveStepped"
+}
 
+class FmiSlave(
+    private val slave: SlaveInstance,
+    internal val component: SlaveComponent
+) : SlaveInstance by slave {
+
+    private var initialized = false
+
+    private val _variablesMarkedForReading: MutableList<ScalarVariable> = mutableListOf()
+
+    private val integerVariablesToFetch = mutableSetOf<ValueReference>()
+    private val realVariablesToFetch = mutableSetOf<ValueReference>()
+    private val booleanVariablesToFetch = mutableSetOf<ValueReference>()
+    private val stringVariablesToFetch = mutableSetOf<ValueReference>()
+
+    init {
+        component.variablesMarkedForReading.apply {
+            forEach { markForReading(it) }
+            addObserver(object : ElementObserver<String> {
+                override fun onElementAdded(element: String) {
+                    markForReading(element)
+                }
+
+                override fun onElementRemoved(element: String) {}
+            })
+        }
+    }
+
+    override fun exitInitializationMode(): Boolean {
+        return slave.exitInitializationMode().also {
+            initialized = true
+        }
+    }
+
+    override fun doStep(stepSize: Double): Boolean {
+        return slave.doStep(stepSize).also { status ->
+            if (status) {
+                component.stepCount++
+            }
+        }
+    }
+
+    override fun reset(): Boolean {
+        return slave.reset().also {
+            component.clearCaches()
+            initialized = false
+        }
+    }
+
+    fun readIntegerDirect(name: String) = slave.readInteger(name)
+    fun readRealDirect(name: String) = slave.readReal(name)
+    fun readBooleanDirect(name: String) = slave.readBoolean(name)
+    fun readStringDirect(name: String) = slave.readString(name)
+
+    fun retrieveCachedGets() {
+        if (integerVariablesToFetch.isNotEmpty()) {
+            with(component.integerGetCache) {
+                val values = IntArray(integerVariablesToFetch.size)
+                val refs = integerVariablesToFetch.toLongArray()
+                slave.readInteger(refs, values)
+                for (i in refs.indices) {
+                    set(refs[i], values[i])
+                }
+            }
+        }
+        if (realVariablesToFetch.isNotEmpty()) {
+            with(component.realGetCache) {
+                val values = DoubleArray(realVariablesToFetch.size)
+                val refs = realVariablesToFetch.toLongArray()
+                slave.readReal(refs, values)
+                for (i in refs.indices) {
+                    set(refs[i], values[i])
+                }
+            }
+        }
+        if (booleanVariablesToFetch.isNotEmpty()) {
+            with(component.booleanGetCache) {
+                val values = BooleanArray(booleanVariablesToFetch.size)
+                val refs = booleanVariablesToFetch.toLongArray()
+                slave.readBoolean(refs, values)
+                for (i in refs.indices) {
+                    set(refs[i], values[i])
+                }
+            }
+        }
+        if (stringVariablesToFetch.isNotEmpty()) {
+            with(component.stringGetCache) {
+                val values = StringArray(stringVariablesToFetch.size)
+                val refs = stringVariablesToFetch.toLongArray()
+                slave.readString(refs, values)
+                for (i in refs.indices) {
+                    set(refs[i], values[i])
+                }
+            }
+        }
+    }
+
+    suspend fun asyncRetrieveCachedGets() {
+        withContext(Dispatchers.Default) {
+            retrieveCachedGets()
+        }
+    }
+
+    fun transferCachedSets(clear: Boolean = true) {
+        with(component.integerSetCache) {
+            if (!isEmpty()) {
+                slave.writeInteger(keys.toLongArray(), values.toIntArray())
+                if (clear) clear()
+            }
+        }
+        with(component.realSetCache) {
+            if (!isEmpty()) {
+                slave.writeReal(keys.toLongArray(), values.toDoubleArray())
+                if (clear) clear()
+            }
+        }
+        with(component.booleanSetCache) {
+            if (!isEmpty()) {
+                slave.writeBoolean(keys.toLongArray(), values.toBooleanArray())
+                if (clear) clear()
+            }
+        }
+        with(component.stringSetCache) {
+            if (!isEmpty()) {
+                slave.writeString(keys.toLongArray(), values.toTypedArray())
+                if (clear) clear()
+            }
+        }
+    }
+
+    suspend fun asyncTransferCachedSets() {
+        withContext(Dispatchers.Default) {
+            transferCachedSets()
+        }
+    }
+
+    private fun markForReading(variableName: String) {
+
+        if (variableName in _variablesMarkedForReading.map { it.name }) return
+
+        val v: ScalarVariable = modelDescription.modelVariables.getByName(variableName)
+        val added = when (v.type) {
+            VariableType.INTEGER, VariableType.ENUMERATION -> integerVariablesToFetch.add(v.valueReference)
+            VariableType.REAL -> realVariablesToFetch.add(v.valueReference)
+            VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
+            VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
+            //VariableType.ENUMERATION -> enumerationVariablesToFetch.add(v.valueReference)
+        }
+        if (added && initialized) {
+            when (v.type) {
+                VariableType.INTEGER, VariableType.ENUMERATION -> readIntegerDirect(v.name).value.also {
+                    component.integerGetCache[v.valueReference] = it
+                }
+                VariableType.REAL -> readRealDirect(v.name).value.also {
+                    component.realGetCache[v.valueReference] = it
+                }
+                VariableType.BOOLEAN -> readBooleanDirect(v.name).value.also {
+                    component.booleanGetCache[v.valueReference] = it
+                }
+                VariableType.STRING -> readStringDirect(v.name).value.also {
+                    component.stringGetCache[v.valueReference] = it
+                }
+            }
+            _variablesMarkedForReading.add(v)
+            LOG.debug("${v.type} variable '${instanceName}.${v.name}' marked for reading.")
+        }
+
+    }
+
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(FmiSlave::class.java)
     }
 
 }

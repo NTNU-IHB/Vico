@@ -8,7 +8,9 @@ wrapper {
 }
 
 version = rootProject.file("VERSION").readLines()[0]
-println("${rootProject.name} v$version")
+println("Building ${rootProject.name} v$version")
+
+apply from: project.file("gradle/fmuproxy.gradle")
 
 subprojects { sub ->
 
@@ -40,6 +42,14 @@ subprojects { sub ->
     test {
         failFast = true
         useJUnitPlatform()
+    }
+
+    pluginManager.withPlugin('groovy') {
+
+        dependencies {
+            api group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.8'
+        }
+
     }
 
     pluginManager.withPlugin('kotlin') {

@@ -1,14 +1,14 @@
 package no.ntnu.ihb.vico.fmuproxy
 
-import no.ntnu.ihb.vico.model.Model
 import no.ntnu.ihb.vico.model.ModelResolver
+import no.ntnu.ihb.vico.model.SlaveProvider
 import java.io.File
 import java.net.URI
 import java.net.URL
 
 class ProxyResolver internal constructor() : ModelResolver {
 
-    override fun resolve(base: File, uri: URI): Model? {
+    override fun resolve(base: File, uri: URI): SlaveProvider? {
 
         if (uri.scheme != "fmu-proxy") return null
 
@@ -34,7 +34,7 @@ class ProxyResolver internal constructor() : ModelResolver {
                 connection.loadUrl(URL(url))
             }
             else -> throw RuntimeException()
-        }.let { ProxyModel(it) }
+        }.let { ProxySlaveProvider(it) }
 
     }
 

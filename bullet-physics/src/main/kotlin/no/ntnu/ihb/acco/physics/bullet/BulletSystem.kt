@@ -18,6 +18,7 @@ import no.ntnu.ihb.acco.physics.MotionControl
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
 import org.joml.Matrix4d
 
+private const val GRAVITY = -9.81f
 
 class BulletSystem : SimulationSystem(
     Family.all(TransformComponent::class.java).one(RigidBodyComponent::class.java).build()
@@ -28,7 +29,7 @@ class BulletSystem : SimulationSystem(
     private val tmpQuat = Quaternion()
 
     private val world: btDiscreteDynamicsWorld
-    private val rbMap = mutableMapOf<Entity, btRigidBody>()
+    private val rbMap: MutableMap<Entity, btRigidBody> = mutableMapOf()
 
     init {
 
@@ -42,7 +43,7 @@ class BulletSystem : SimulationSystem(
             sequentialImpulseConstraintSolver,
             defaultCollisionConfiguration
         )
-        world.gravity = Vector3(0f, -9.81f, 0f)
+        world.gravity = Vector3(0f, GRAVITY, 0f)
 
     }
 
@@ -68,8 +69,8 @@ class BulletSystem : SimulationSystem(
         val tc = entity.getComponent<TransformComponent>()
         val rc = entity.getComponent<RigidBodyComponent>()
 
-        val (shape, mass) = if (entity.hasComponent(ColliderComponent::class.java)) {
-            val collider = entity.getComponent(ColliderComponent::class.java)
+        val (shape, mass) = if (entity.hasComponent<ColliderComponent>()) {
+            val collider = entity.getComponent<ColliderComponent>()
             collider.convert() to rc.mass.toFloat()
         } else {
             btEmptyShape() to 1f

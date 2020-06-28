@@ -2,56 +2,82 @@ package no.ntnu.ihb.acco.core
 
 interface PropertyAccessor {
 
-    fun getIntegerVariable(name: String): IntVar
-    fun getRealVariable(name: String): RealVar
-    fun getStringVariable(name: String): StrVar
-    fun getBooleanVariable(name: String): BoolVar
+    fun getProperty(name: String): Property?
+    fun getIntegerProperty(name: String): IntProperty?
+    fun getRealProperty(name: String): RealProperty?
+    fun getStringProperty(name: String): StrProperty?
+    fun getBooleanProperty(name: String): BoolProperty?
 
 }
 
-internal class Properties : PropertyAccessor {
+open class Properties : PropertyAccessor {
 
-    val ints = mutableMapOf<String, IntVar>()
-    val reals = mutableMapOf<String, RealVar>()
-    val strs = mutableMapOf<String, StrVar>()
-    val bools = mutableMapOf<String, BoolVar>()
+    private val _ints: MutableSet<IntProperty> = mutableSetOf()
+    val ints: Collection<IntProperty> = _ints
+    private val _reals: MutableSet<RealProperty> = mutableSetOf()
+    val reals: Collection<RealProperty> = _reals
+    private val _strs: MutableSet<StrProperty> = mutableSetOf()
+    val strs: Collection<StrProperty> = _strs
+    private val _bools: MutableSet<BoolProperty> = mutableSetOf()
+    val bools: Collection<BoolProperty> = _bools
 
-    fun add(variables: Map<String, Var<*>>) {
-        variables.forEach { (name, `var`) ->
-            when (`var`) {
-                is IntVar -> ints[name] = `var`
-                is RealVar -> reals[name] = `var`
-                is StrVar -> strs[name] = `var`
-                is BoolVar -> bools[name] = `var`
+    protected fun registerProperties(variables: List<Property>) {
+
+        fun registerProperty(variable: Property) = apply {
+            when (variable) {
+                is IntProperty -> _ints.add(variable)
+                is RealProperty -> _reals.add(variable)
+                is StrProperty -> _strs.add(variable)
+                is BoolProperty -> _bools.add(variable)
+            }
+        }
+
+        variables.forEach {
+            registerProperty(it)
+        }
+    }
+
+    protected fun registerProperties(variable: Property, vararg variables: Property) {
+        registerProperties(listOf(variable, *variables))
+    }
+
+    fun remove(properties: List<Property>) {
+        properties.forEach {
+            when (it) {
+                is IntProperty -> _ints.remove(it)
+                is RealProperty -> _reals.remove(it)
+                is StrProperty -> _strs.remove(it)
+                is BoolProperty -> _bools.remove(it)
             }
         }
     }
 
-    fun remove(variables: Map<String, Var<*>>) {
-        variables.forEach { (name, `var`) ->
-            when (`var`) {
-                is IntVar -> ints.remove(name)
-                is RealVar -> reals.remove(name)
-                is StrVar -> strs.remove(name)
-                is BoolVar -> bools.remove(name)
-            }
-        }
+    fun getProperties(): Collection<Property> {
+        return _ints + _reals + _strs + _bools
     }
 
-    override fun getIntegerVariable(name: String): IntVar {
-        return ints[name] ?: throw IllegalStateException("No variable named '$name' of type Int registered!")
+    override fun getProperty(name: String): Property? {
+        return getProperties().find { it.name == name }
     }
 
-    override fun getRealVariable(name: String): RealVar {
-        return reals[name] ?: throw IllegalStateException("No variable named '$name' of type Real registered!")
+    override fun getIntegerProperty(name: String): IntProperty? {
+        return _ints.find { it.name == name }
     }
 
-    override fun getStringVariable(name: String): StrVar {
-        return strs[name] ?: throw IllegalStateException("No variable named '$name' of type String registered!")
+    override fun getRealProperty(name: String): RealProperty? {
+        return _reals.find { it.name == name }
     }
 
-    override fun getBooleanVariable(name: String): BoolVar {
-        return bools[name] ?: throw IllegalStateException("No variable named '$name' of type Boolean registered!")
+    override fun getStringProperty(name: String): StrProperty? {
+        return _strs.find { it.name == name }
+    }
+
+    override fun getBooleanProperty(name: String): BoolProperty? {
+        return _bools.find { it.name == name }
+    }
+
+    companion object {
+        const val PROPERTIES_CHANGED = "propertiesChanged"
     }
 
 }

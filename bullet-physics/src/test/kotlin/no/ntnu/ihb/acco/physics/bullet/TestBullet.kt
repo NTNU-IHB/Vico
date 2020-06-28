@@ -1,6 +1,9 @@
 package no.ntnu.ihb.acco.physics.bullet
 
-import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.RealConnector
+import no.ntnu.ihb.acco.core.ScalarConnection
 import no.ntnu.ihb.acco.physics.ColliderComponent
 import no.ntnu.ihb.acco.physics.MotionControl
 import no.ntnu.ihb.acco.physics.RigidBodyComponent
@@ -24,9 +27,13 @@ fun main() {
             engine.addEntity(e)
         }
 
-        for (i in 0 until 2) {
+        for (i in 0 until 20) {
             Entity("sphere_$i").also { e ->
-                e.transform.setLocalTranslation(Random.nextDouble(-1.0, 1.0), 2.0, Random.nextDouble(-1.0, 1.0))
+                e.transform.setLocalTranslation(
+                    Random.nextDouble(-1.0, 1.0),
+                    2.0,
+                    Random.nextDouble(-1.0, 1.0)
+                )
                 e.addComponent(RigidBodyComponent())
                 val shape = SphereShape(0.1)
                 e.addComponent(ColliderComponent(shape))
@@ -52,8 +59,8 @@ fun main() {
         engine.addSystem(BulletSystem())
         engine.addSystem(JmeRenderSystem())
 
-        EngineRunner(engine).apply {
-            targetRealTimeFactor = 1.0
+        engine.runner.apply {
+            paused.set(true)
             start()
         }
 

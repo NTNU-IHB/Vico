@@ -1,19 +1,12 @@
 package no.ntnu.ihb.vico.log
 
-import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.acco.core.Event
-import no.ntnu.ihb.acco.core.EventSystem
-import no.ntnu.ihb.acco.core.Family
+import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.core.Properties
 import no.ntnu.ihb.acco.util.formatForOutput
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
-import no.ntnu.ihb.fmi4j.readBoolean
-import no.ntnu.ihb.fmi4j.readInteger
-import no.ntnu.ihb.fmi4j.readReal
-import no.ntnu.ihb.fmi4j.readString
 import no.ntnu.ihb.vico.SlaveComponent
-import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.log.jaxb.TLogConfig
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.BufferedWriter
 import java.io.Closeable
 import java.io.File
@@ -30,7 +23,7 @@ class SlaveLoggerSystem(
     var separator: String = ", "
     var decimalPoints: Int = 6
     val targetDir: File = targetDir ?: File(".")
-    private val loggers: MutableMap<String, Logger> = mutableMapOf()
+    private val loggers: MutableMap<String, SlaveLogger> = mutableMapOf()
 
     constructor(configFile: File, targetDir: File? = null) : this(
         JAXB.unmarshal(configFile, TLogConfig::class.java), targetDir
@@ -50,26 +43,33 @@ class SlaveLoggerSystem(
             }
         }
 
-        listen(SlaveSystem.SLAVE_STEPPED)
+        listen(Properties.PROPERTIES_CHANGED)
     }
 
     override fun entityAdded(entity: Entity) {
-        val slave = entity.getComponent(SlaveComponent::class.java)
+        val slave = entity.getComponent<SlaveComponent>()
         if (logConfig == null) {
-            loggers[slave.instanceName] = Logger(slave, emptyList(), 1)
+            loggers[slave.instanceName] = SlaveLogger(slave, emptyList(), 1)
         } else {
             val logInfo = logConfig.components?.component?.associateBy { it.name } ?: mutableMapOf()
             logInfo[slave.instanceName]?.also { component ->
                 val decimationFactor = component.decimationFactor
                 require(decimationFactor >= 1)
                 val variables = component.variable.map { v ->
-                    slave.modelDescription.getVariableByName(v.name)
+                    slave.getProperty(v.name)!!
                 }
-                loggers[slave.instanceName] = Logger(slave, variables, decimationFactor)
+                loggers[slave.instanceName] =
+                    SlaveLogger(slave, variables, decimationFactor, logConfig.isStaticFileNames)
             }
         }
         loggers[slave.instanceName]?.also {
             it.writeHeader()
+        }
+    }
+
+    override fun entityRemoved(entity: Entity) {
+        loggers.remove(entity.name)?.also {
+            it.close()
         }
     }
 
@@ -81,7 +81,7 @@ class SlaveLoggerSystem(
 
     override fun eventReceived(evt: Event) {
         when (evt.type) {
-            SlaveSystem.SLAVE_STEPPED -> {
+            Properties.PROPERTIES_CHANGED -> {
                 val (currentTime, slave) = evt.target<Pair<Double, SlaveComponent>>()
                 loggers[slave.instanceName]?.also { logger ->
                     logger.writeLine(currentTime)
@@ -94,29 +94,31 @@ class SlaveLoggerSystem(
         loggers.values.forEach { it.close() }
     }
 
-    private inner class Logger(
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(SlaveLoggerSystem::class.java)
+    }
+
+    private inner class SlaveLogger(
         private val slave: SlaveComponent,
-        variables: List<ScalarVariable>,
+        variables: List<Property>,
         private val decimationFactor: Int,
         staticFileNames: Boolean = false
     ) : Closeable {
 
         private val writer: BufferedWriter
-        private val variables: List<ScalarVariable>
+        private val variables: Collection<Property>
 
         init {
             val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
             val fileName = if (staticFileNames) slave.instanceName else "${slave.instanceName}_$dateFormat"
             this.writer = FileOutputStream(File(targetDir, "${fileName}.csv")).bufferedWriter()
-            this.variables = if (variables.isEmpty()) slave.modelVariables.toList() else variables
-            this.variables.forEach {
-                slave.markForReading(it.name)
-            }
+            this.variables = if (variables.isEmpty()) slave.getProperties() else variables
         }
 
         fun writeHeader() {
             variables.joinToString(separator, "time, stepNumber, ", "\n") {
-                "${it.name} [${it.valueReference} ${it.type} ${it.causality}]"
+                val causality = it.causality
+                "${it.name} [${it.type} $causality]"
             }.also {
                 writer.write(it)
             }
@@ -126,11 +128,11 @@ class SlaveLoggerSystem(
         fun writeLine(currentTime: Double) {
             if (slave.stepCount % decimationFactor == 0L) {
                 variables.map {
-                    when (it.type) {
-                        VariableType.INTEGER, VariableType.ENUMERATION -> slave.readInteger(it.valueReference).value
-                        VariableType.REAL -> slave.readReal(it.valueReference).value.formatForOutput(decimalPoints)
-                        VariableType.BOOLEAN -> slave.readBoolean(it.valueReference).value
-                        VariableType.STRING -> slave.readString(it.valueReference).value
+                    when (it) {
+                        is IntProperty -> it.read().first()
+                        is RealProperty -> it.read().first().formatForOutput(decimalPoints)
+                        is StrProperty -> it.read().first()
+                        is BoolProperty -> it.read().first()
                     }
                 }.joinToString(
                     separator,
@@ -145,6 +147,7 @@ class SlaveLoggerSystem(
         override fun close() {
             writer.flush()
             writer.close()
+            LOG.debug("Wrote csv data for slave '${slave.instanceName} to folder '${targetDir.absolutePath}'")
         }
 
     }

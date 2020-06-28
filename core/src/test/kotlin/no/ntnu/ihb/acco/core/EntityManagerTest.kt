@@ -1,7 +1,5 @@
 package no.ntnu.ihb.acco.core
 
-import no.ntnu.ihb.acco.util.Tag
-import no.ntnu.ihb.acco.util.toTag
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -14,7 +12,7 @@ internal class EntityManagerTest {
         Engine().use { engine ->
             val e1 = Entity("entity1")
             val e2 = Entity("entity2")
-            engine.addAllEntities(e1, e2)
+            engine.addEntity(e1, e2)
             assertSame(e1, engine.getEntityByName(e1.name))
             assertSame(e2, engine.getEntityByName(e2.name))
             assertThrows<NoSuchElementException> { engine.getEntityByName("") }
@@ -24,22 +22,21 @@ internal class EntityManagerTest {
     @Test
     fun getByTag() {
         Engine().use { engine ->
-            val tag = Tag("aTag")
+            val tag = "aTag"
             val e1 = Entity("entity1").apply { this.tag = tag }
             val e2 = Entity("entity2").apply { this.tag = tag }
-            engine.addAllEntities(e1, e2)
+            engine.addEntity(e1, e2)
             assertEquals(listOf(e1, e2), engine.getEntitiesByTag(tag))
-            assertTrue(engine.getEntitiesByTag("".toTag()).isEmpty())
+            assertTrue(engine.getEntitiesByTag("").isEmpty())
         }
     }
 
     @Test
     fun getFor() {
 
-        class ComponentA : Component
-        class ComponentB : Component
-        class ComponentC : Component
-
+        class ComponentA : Component()
+        class ComponentB : Component()
+        class ComponentC : Component()
 
         Engine().use { engine ->
 
@@ -69,6 +66,7 @@ internal class EntityManagerTest {
             }
 
         }
+
     }
 
 }

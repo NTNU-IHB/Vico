@@ -412,7 +412,7 @@ data class Box3 @JvmOverloads constructor(
 
     }
 
-    private inner class IntersectsTriangleHelper {
+    private class IntersectsTriangleHelper {
 
         // triangle centered vertices
         var v0 = Vector3d()

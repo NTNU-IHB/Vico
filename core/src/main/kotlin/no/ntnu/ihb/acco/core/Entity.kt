@@ -1,25 +1,17 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.components.TransformComponent
-import no.ntnu.ihb.acco.util.Tag
 import java.util.*
 
-typealias EntityTraverser = (Entity) -> Unit
-
-enum class TraverseOption {
-    DEPTH_FIRST, BREADTH_FIRST
-}
-
-open class Entity private constructor(
-    name: String? = null,
-    private val properties: Properties
-) : PropertyAccessor by properties {
+open class Entity(
+    name: String? = null
+) {
 
     internal var originalName = name ?: "Entity"
     var name = originalName
         private set
 
-    var tag: Tag? = null
+    var tag: String? = null
     val transform = TransformComponent()
 
     val numChildren: Int
@@ -28,12 +20,12 @@ open class Entity private constructor(
     val numDescendants: Int
         get() = descendants.size
 
-    private val mutableComponents = mutableListOf<Component>()
+    private val mutableComponents: MutableList<Component> = mutableListOf()
     val components: List<Component>
         get() = mutableComponents
 
-    private val componentMap = mutableMapOf<Class<out Component>, Component>()
-    private val componentListeners = mutableListOf<ComponentListener>()
+    private val componentMap: MutableMap<ComponentClazz, Component> = mutableMapOf()
+    private val componentListeners: MutableList<ComponentListener> = mutableListOf()
 
     var parent: Entity? = null
         private set
@@ -44,16 +36,13 @@ open class Entity private constructor(
         addComponent(transform)
     }
 
-    @JvmOverloads
-    constructor(name: String? = null) : this(name, Properties())
-
     fun addEntity(child: Entity) {
         require(child != this) { "Adding self!" }
         require(child !in descendants) { "$child is already a descendant" }
         children.add(child)
         child.parent = this
         child.transform.setParent(this.transform)
-        if (tag?.value != "root") {
+        if (tag != "root") {
             child.name = "${name}.${child.originalName}"
         }
         descendantAdded(child)
@@ -90,13 +79,13 @@ open class Entity private constructor(
     }
 
     fun traverseAncestors(callback: EntityTraverser) {
-        callback.invoke(this)
+        callback.traverse(this)
         parent?.also {
             it.traverseAncestors(callback)
         }
     }
 
-    fun traverseDecendants(traverser: EntityTraverser, option: TraverseOption?) {
+    fun traverseDecendants(traverser: EntityTraverser, option: TraverseOption) {
         when (option) {
             TraverseOption.BREADTH_FIRST -> breadthFirstTraversal(traverser)
             TraverseOption.DEPTH_FIRST -> depthFirstTraversal(traverser)
@@ -104,18 +93,18 @@ open class Entity private constructor(
     }
 
     fun depthFirstTraversal(traverser: EntityTraverser) {
-        traverser.invoke(this)
+        traverser.traverse(this)
         for (child in children) {
             child.depthFirstTraversal(traverser)
         }
     }
 
     fun breadthFirstTraversal(traverser: EntityTraverser) {
-        traverser.invoke(this)
+        traverser.traverse(this)
         val queue = ArrayDeque(children)
         while (!queue.isEmpty()) {
             queue.remove().also { child ->
-                traverser.invoke(child)
+                traverser.traverse(child)
                 child.children.forEach { queue.add(it) }
             }
         }
@@ -123,45 +112,50 @@ open class Entity private constructor(
 
     fun addComponent(component: Component) = apply {
 
-        val componentClass = component::class.java
+        val componentClass = ComponentClazz(component::class.java)
         require(componentClass !in componentMap) {
             "Entity $name already contains component of type $componentClass!"
         }
 
         mutableComponents.add(component)
         componentMap[componentClass] = component
+        componentListeners.forEach { it.onComponentAdded(this, component) }
 
-        if (component is CoSimulationComponent) {
-            properties.add(component.variables)
-        }
+    }
 
-        componentListeners.forEach { l ->
-            l.componentAdded(component)
-        }
+    private fun removeComponent(componentClass: ComponentClazz): Component {
+        val component = componentMap[componentClass]
+            ?: throw IllegalArgumentException("No component of type $componentClass registered!")
+        mutableComponents.remove(component)
+        componentMap.remove(componentClass)
+        componentListeners.forEach { it.onComponentRemoved(this, component) }
+        return component
+    }
+
+    fun removeComponent(componentClass: ComponentClass): Component {
+        return removeComponent(ComponentClazz(componentClass))
     }
 
     inline fun <reified E : Component> removeComponent(): Component {
         return removeComponent(E::class.java)
     }
 
-    fun removeComponent(componentClass: Class<out Component>): Component {
-        val component = componentMap[componentClass]
-            ?: throw IllegalArgumentException("No component of type $componentClass registered!")
-        mutableComponents.remove(component)
-        componentMap.remove(componentClass)
-
-        if (component is CoSimulationComponent) {
-            properties.remove(component.variables)
-        }
-
-        componentListeners.forEach { l ->
-            l.componentRemoved(component)
-        }
-        return component
+    fun hasComponent(componentClass: ComponentClass): Boolean {
+        return ComponentClazz(componentClass) in componentMap
     }
 
-    fun hasComponent(componentClass: Class<out Component>): Boolean {
-        return componentClass in componentMap
+    inline fun <reified E : Component> hasComponent(): Boolean {
+        return hasComponent(E::class.java)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <E : Component> getComponent(componentClass: Class<E>): E {
+        return componentMap[ComponentClazz(componentClass)] as E?
+            ?: throw RuntimeException("No component of type $componentClass registered with Entity named $name")
+    }
+
+    inline fun <reified E : Component> getComponent(): E {
+        return getComponent(E::class.java)
     }
 
     fun removeAllComponents() {
@@ -172,26 +166,16 @@ open class Entity private constructor(
     }
 
     fun reset() {
-        componentListeners.clear()
         removeAllComponents()
+        componentListeners.clear()
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <E : Component> getComponent(componentClass: Class<E>): E {
-        return componentMap[componentClass] as E?
-            ?: throw IllegalStateException("Entity does not have component: $componentClass")
+    fun addComponentListener(listener: ComponentListener) {
+        componentListeners.add(listener)
     }
 
-    inline fun <reified E : Component> getComponent(): E {
-        return getComponent(E::class.java)
-    }
-
-    internal fun addComponentListener(listener: ComponentListener) {
-        this.componentListeners.add(listener)
-    }
-
-    internal fun removeComponentListener(listener: ComponentListener) {
-        this.componentListeners.remove(listener)
+    fun removeComponentListener(listener: ComponentListener) {
+        componentListeners.remove(listener)
     }
 
     fun findInChildren(predicate: (Entity) -> Boolean): Entity {
@@ -208,6 +192,64 @@ open class Entity private constructor(
 
     fun findAllInDescendants(predicate: (Entity) -> Boolean): List<Entity> {
         return descendants.filter { predicate.invoke(it) }
+    }
+
+    fun getProperties(): Collection<Property> {
+        return components.flatMap { it.getProperties() }
+    }
+
+    fun getProperty(name: String): Property? {
+        return getProperties().find { it.name == name }
+    }
+
+    fun getIntegerProperty(name: String): IntProperty? {
+        for (component in components) {
+            val v = component.getIntegerProperty(name)
+            if (v != null) {
+                return v
+            }
+        }
+        return null
+    }
+
+    fun getIntegerProperties(): List<IntProperty> {
+        return components.flatMap { it.ints }
+    }
+
+    fun getRealProperty(name: String): RealProperty? {
+        for (component in components) {
+            val v = component.getRealProperty(name)
+            if (v != null) return v
+        }
+        return null
+    }
+
+    fun getRealProperties(): List<RealProperty> {
+        return components.flatMap { it.reals }
+    }
+
+    fun getStringProperty(name: String): StrProperty? {
+        for (component in components) {
+            val v = component.getStringProperty(name)
+            if (v != null) return v
+        }
+        return null
+    }
+
+    fun getStringProperties(): List<StrProperty> {
+        return components.flatMap { it.strs }
+    }
+
+    fun getBooleanProperty(name: String): BoolProperty? {
+        for (component in components) {
+            val v = component.getBooleanProperty(name)
+            if (v != null) return v
+        }
+        return null
+    }
+
+    fun getBooleanProperties(): List<BoolProperty> {
+        return components.flatMap { it.bools }
     }
 
     override fun toString(): String {

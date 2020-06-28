@@ -1,10 +1,14 @@
 package no.ntnu.ihb.acco.render.jme
 
 import no.ntnu.ihb.acco.components.TransformComponent
-import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.core.Component
+import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.shape.BoxShape
+import no.ntnu.ihb.acco.render.shape.CylinderShape
 import no.ntnu.ihb.acco.render.shape.SphereShape
 import no.ntnu.ihb.acco.systems.IteratingSystem
 import org.joml.Vector3d
@@ -16,7 +20,7 @@ private data class SineMoverComponent(
     var A: Double = 1.0,
     var f: Double = 0.1,
     var phi: Double = 0.0
-) : Component {
+) : Component() {
 
     fun compute(t: Double) = A * sin(TWO_PHI * f * t + phi)
 
@@ -76,18 +80,48 @@ fun main() {
         engine.addSystem(SineMoverSystem())
         engine.addSystem(JmeRenderSystem())
 
-        EngineRunner(engine).apply {
+        engine.invokeAt(2.0) {
+            engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
+            engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
+
+            engine.invokeIn(1.0) {
+                engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
+                engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
+                engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
+            }
+
+        }
+
+        engine.invokeAt(4.0) {
+
+            Entity().apply {
+                transform.setLocalTranslation(0.0, 2.0, 0.0)
+                addComponent(GeometryComponent(CylinderShape()).apply {
+                    setColor(Color.blue)
+                })
+                engine.getEntityByName("e2", false).addEntity(this)
+            }
+
+            engine.removeEntity(engine.getEntityByName("e1"))
+
+        }
+
+        engine.runner.apply {
             start()
         }
 
-        Thread.sleep(5000)
+        /*Thread.sleep(5000)
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = false
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = true
         Thread.sleep(1000)
         engine.getEntityByName("e1").getComponent<GeometryComponent>().visible = true
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().wireframe = false
         engine.getEntityByName("e1.e2").getComponent<GeometryComponent>().setColor(Color.red)
-
+        Thread.sleep(1000)
+        engine.getEntityByName("e1").removeComponent<SineMoverComponent>()
+        Thread.sleep(1000)
+        engine.getEntityByName("e1").addComponent(SineMoverComponent(f = 1.0))
+        engine.getEntityByName("e1.e2").removeComponent<GeometryComponent>()*/
     }
 
 }

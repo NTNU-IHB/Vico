@@ -7,7 +7,7 @@ private const val DEFAULT_ASPECT = 1f
 private const val DEFAULT_NEAR = 0.1f
 private const val DEFAULT_FAR = 2000f
 
-sealed class Camera : Component
+sealed class Camera : Component()
 
 class PerspectiveCamera @JvmOverloads constructor(
     val fov: Float = DEFAULT_FOV,

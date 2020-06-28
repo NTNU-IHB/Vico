@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ssd:SystemStructureDescription xmlns:ssd="http://ssp-standard.org/SSP1/SystemStructureDescription"
                                 xmlns:ssc="http://ssp-standard.org/SSP1/SystemStructureCommon"
-                                xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/Vico"
+                                xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VicoAnnotations"
                                 name="test1"
                                 version="1.0">
 

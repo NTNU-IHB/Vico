@@ -13,7 +13,7 @@ dependencies {
     def fmi4j_version = '0.31.2'
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-export", version: fmi4j_version
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-import", version: fmi4j_version
-    implementation group: "no.ntnu.ihb.fmuproxy", name: "fmu-proxy-clients", version: "0.1.3"
+    implementation group: "no.ntnu.ihb.fmuproxy", name: "fmu-proxy-clients", version: "0.2.0"
 
     def libcosim_version = "r1"
     def platform = OperatingSystem.current().isLinux() ? "linux" : "win"
@@ -21,7 +21,6 @@ dependencies {
     runtimeOnly group: "org.osp.cosim4j", name: "natives-$platform", version: libcosim_version
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.6'
-    implementation group: 'org.knowm.xchart', name: 'xchart', version: '3.6.1'
 
     api group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.2'

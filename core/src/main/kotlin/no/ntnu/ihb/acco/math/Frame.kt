@@ -6,6 +6,7 @@ import org.joml.*
 interface IFrame {
 
     val hasParent: Boolean
+    val children: MutableSet<IFrame>
 
     fun makeDirty()
     fun setParent(parent: IFrame?)
@@ -19,8 +20,8 @@ interface IFrame {
     fun getLocalTranslation(store: Vector3d = Vector3d()): Vector3d
     fun getLocalQuaternion(store: Quaterniond = Quaterniond()): Quaterniond?
     fun getTranslation(store: Vector3d = Vector3d()): Vector3d
-
     fun getQuaternion(store: Quaterniond = Quaterniond()): Quaterniond
+
     fun setLocalTranslation(x: Double, y: Double, z: Double)
     fun setLocalTranslation(v: Vector3dc)
     fun setLocalQuaternion(q: Quaterniondc)
@@ -56,7 +57,7 @@ interface IFrame {
 open class Frame : IFrame {
 
     private var parent: IFrame? = null
-    private val children = mutableListOf<IFrame>()
+    override val children: MutableSet<IFrame> = mutableSetOf()
 
     private val localMatrix = Matrix4d()
     private val worldMatrix = Matrix4d()
@@ -79,12 +80,14 @@ open class Frame : IFrame {
             setLocalTransform(worldToLocal(w))
         } else {
             this.parent = parent
-            makeDirty()
         }
+        parent?.also {
+            it.children.add(this)
+        }
+        makeDirty()
     }
 
     override fun add(child: IFrame) {
-        children.add(child)
         child.setParent(this)
     }
 

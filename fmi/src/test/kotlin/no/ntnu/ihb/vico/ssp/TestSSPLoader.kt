@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.ssp
 
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.EngineRunner
+import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
@@ -16,8 +16,10 @@ internal class TestSSPLoader {
     fun testControlledDriveTrain() {
 
         val resultDir = File("build/results/ControlledDriveTrain").also {
-            it.deleteRecursively()
+            Assertions.assertTrue(it.deleteRecursively())
         }
+
+        Assertions.assertEquals(0, resultDir.listFiles()?.size ?: 0)
 
         val structure = SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load()
         val stopTime = structure.defaultExperiment?.stopTime ?: 0.0
@@ -27,7 +29,7 @@ internal class TestSSPLoader {
             engine.addSystem(SlaveLoggerSystem(null, resultDir))
             structure.apply(engine)
 
-            EngineRunner(engine).apply {
+            engine.runner.apply {
                 runFor(stopTime).get()
             }
 
@@ -44,12 +46,13 @@ internal class TestSSPLoader {
         Assertions.assertEquals(10.0, stopTime, 1e-6)
         Engine(1e-3).use { engine ->
 
-            structure.apply(engine)
+            structure.apply(engine, "default")
+
             engine.init()
 
             val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
-            val h = bb.readRealDirect("h").value
-            Assertions.assertEquals(5.0, h, 1e-6)
+            Assertions.assertEquals(5.0, bb.readRealDirect("h").value, 1e-6)
+            Assertions.assertEquals(5.0, bb.readReal("h").value, 1e-6)
 
         }
     }

@@ -1,25 +1,15 @@
 package no.ntnu.ihb.vico.structure
 
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
-import no.ntnu.ihb.vico.model.Model
+import no.ntnu.ihb.vico.SlaveComponent
+import no.ntnu.ihb.vico.model.SlaveProvider
 
 class Component(
-    private val model: Model,
-    val instanceName: String,
-    val stepSizeHint: Double? = null
-) {
+    slaveProvider: SlaveProvider,
+    instanceName: String,
+    stepSizeHint: Double? = null
+) : SlaveComponent(slaveProvider, instanceName, stepSizeHint) {
 
-    val modelName: String
-        get() = model.modelDescription.modelName
-
-    val modelDescription: CoSimulationModelDescription
-        get() = model.modelDescription
-
-    private val connectors = mutableSetOf<Connector>()
-    private val _parameterSets = mutableSetOf<ParameterSet>()
-    val parametersSets: Set<ParameterSet> = _parameterSets
-
-    fun instantiate() = model.instantiate(instanceName)
+    private val connectors: MutableSet<Connector> = mutableSetOf()
 
     fun getConnector(name: String): Connector {
         return connectors.find { it.name == name }
@@ -30,16 +20,6 @@ class Component(
         connector.validate(modelDescription)
         check(connectors.add(connector)) {
             "Connector '${connector.name}' has already been added to component '${instanceName}'!"
-        }
-    }
-
-    fun addParameterSet(name: String, parameters: List<Parameter<*>>) = apply {
-        addParameterSet(ParameterSet(name, parameters))
-    }
-
-    fun addParameterSet(parameterSet: ParameterSet) = apply {
-        check(_parameterSets.add(parameterSet)) {
-            "ParameterSet '${parameterSet.name}' has already been added to component '${instanceName}'!"
         }
     }
 

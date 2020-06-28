@@ -7,7 +7,7 @@ import java.net.URI
 
 interface ModelResolver {
 
-    fun resolve(base: File, uri: URI): Model?
+    fun resolve(base: File, uri: URI): SlaveProvider?
 
     companion object {
 
@@ -20,7 +20,7 @@ interface ModelResolver {
             return resolvers.add(resolver)
         }
 
-        fun resolve(file: File): Model {
+        fun resolve(file: File): SlaveProvider {
             check(resolvers.isNotEmpty()) { "No model resolvers have been added!" }
             return resolve(
                 file.absoluteFile.parentFile,
@@ -28,7 +28,7 @@ interface ModelResolver {
             )
         }
 
-        fun resolve(base: File, uri: URI): Model {
+        fun resolve(base: File, uri: URI): SlaveProvider {
             check(resolvers.isNotEmpty()) { "No model resolvers have been added!" }
             return resolvers.mapNotNull { it.resolve(base, uri) }.firstOrNull()
                 ?: throw Error("Unable to resolve component with URI: $uri")

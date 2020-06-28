@@ -2,21 +2,20 @@ package no.ntnu.ihb.vico.master
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import no.ntnu.ihb.vico.SlaveComponent
+import no.ntnu.ihb.vico.FmiSlave
 import no.ntnu.ihb.vico.SlaveInitCallback
 import no.ntnu.ihb.vico.SlaveStepCallback
-import no.ntnu.ihb.vico.Slaves
 
 abstract class MasterAlgorithm {
 
-    protected lateinit var slaves: List<SlaveComponent>
+    protected lateinit var slaves: Collection<FmiSlave>
         private set
 
-    internal open fun slaveAdded(slave: SlaveComponent) {}
+    internal open fun slaveAdded(slave: FmiSlave) {}
 
-    internal open fun slaveRemoved(slave: SlaveComponent) {}
+    internal open fun slaveRemoved(slave: FmiSlave) {}
 
-    fun init(currentTime: Double, slaves: List<SlaveComponent>, slaveInitCallback: SlaveInitCallback) {
+    fun init(currentTime: Double, slaves: Collection<FmiSlave>, slaveInitCallback: SlaveInitCallback) {
         this.slaves = slaves
         initialize(currentTime, slaveInitCallback)
     }
@@ -29,28 +28,24 @@ abstract class MasterAlgorithm {
         slaveStepCallback: SlaveStepCallback
     )
 
-    protected companion object {
-
-        fun readAllVariables(slaves: Slaves) {
-            runBlocking {
-                slaves.forEach {
-                    launch {
-                        it.asyncRetrieveCachedGets()
-                    }
+    protected fun readAllVariables() {
+        runBlocking {
+            slaves.forEach {
+                launch {
+                    it.asyncRetrieveCachedGets()
                 }
             }
         }
+    }
 
-        fun writeAllVariables(slaves: Slaves) {
-            runBlocking {
-                slaves.forEach { slave ->
-                    launch {
-                        slave.asyncTransferCachedSets()
-                    }
+    protected fun writeAllVariables() {
+        runBlocking {
+            slaves.forEach { slave ->
+                launch {
+                    slave.asyncTransferCachedSets()
                 }
             }
         }
-
     }
 
 }

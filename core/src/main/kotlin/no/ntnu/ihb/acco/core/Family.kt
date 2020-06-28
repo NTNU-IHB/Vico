@@ -2,17 +2,20 @@ package no.ntnu.ihb.acco.core
 
 import java.util.function.Predicate
 
-
 class Family private constructor(
-    private val all: List<ComponentClass>,
-    private val one: List<ComponentClass>,
-    private val exclude: List<ComponentClass>
+    all: List<ComponentClass>,
+    one: List<ComponentClass>,
+    exclude: List<ComponentClass>
 ) : Predicate<Entity> {
+
+    private val all: List<ComponentClazz> = all.map { ComponentClazz(it) }
+    private val one: List<ComponentClazz> = one.map { ComponentClazz(it) }
+    private val exclude: List<ComponentClazz> = exclude.map { ComponentClazz(it) }
 
     override fun test(entity: Entity): Boolean {
 
         val componentClasses = entity.components.map {
-            it::class.java
+            ComponentClazz(it::class.java)
         }
 
         if (!componentClasses.containsAll(all)) {

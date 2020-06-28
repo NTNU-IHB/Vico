@@ -19,7 +19,7 @@ internal class SlaveSystemTest {
 
         Engine(1.0 / 100).use { engine ->
 
-            val slaveSystem = SlaveSystem(FixedStepMaster())
+            val slaveSystem = SlaveSystem(FixedStepMaster(), "default")
             engine.addSystem(slaveSystem)
 
             val resultDir = File("build/results").also {
@@ -29,21 +29,18 @@ internal class SlaveSystemTest {
 
             val slaveEntity = Entity("BouncingBall")
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
-            SlaveComponent(model.instantiate("bouncingBall")).apply {
+            SlaveComponent(model, "bouncingBall").apply {
                 addParameterSet("default", listOf(RealParameter("h", 2.0)))
                 slaveEntity.addComponent(this)
             }
+
             engine.addEntity(slaveEntity)
-
-            val slave = slaveSystem.getSlave("bouncingBall").apply {
-                markForReading("h")
-            }
-
             engine.init()
 
+            val slave = slaveSystem.getSlave("bouncingBall")
             Assertions.assertEquals(2.0, slave.readReal("h").value, 1e-6)
             engine.step(100)
-            Assertions.assertTrue(slave.readReal("h").value > 0)
+            Assertions.assertEquals(1.0, slave.readReal("h").value, 0.1)
 
             Assertions.assertTrue(resultDir.listFiles()?.size ?: 0 > 0)
 
@@ -54,7 +51,7 @@ internal class SlaveSystemTest {
     @Test
     fun testSSP() {
 
-        Engine(1.0 / 100).use { engine ->
+        Engine(1e-3).use { engine ->
 
             SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load().apply(engine)
             val resultDir = File("build/results").also {
