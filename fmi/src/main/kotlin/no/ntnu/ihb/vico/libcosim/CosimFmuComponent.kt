@@ -1,12 +1,12 @@
 package no.ntnu.ihb.vico.libcosim
 
+import com.opensimulationplatform.cosim.CosimExecution
+import com.opensimulationplatform.cosim.CosimLastValueObserver
+import com.opensimulationplatform.cosim.CosimOverrideManipulator
+import com.opensimulationplatform.cosim.CosimSlave
 import no.ntnu.ihb.acco.core.Component
 import no.ntnu.ihb.acco.core.RealLambdaProperty
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
-import org.osp.cosim.CosimExecution
-import org.osp.cosim.CosimLastValueObserver
-import org.osp.cosim.CosimOverrideManipulator
-import org.osp.cosim.CosimSlave
 import java.io.File
 
 class CosimFmuComponent(

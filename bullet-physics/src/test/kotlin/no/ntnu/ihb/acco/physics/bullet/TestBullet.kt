@@ -63,8 +63,7 @@ fun main() {
         engine.addSystem(JmeRenderSystem())
 
         engine.runner.apply {
-            paused.set(true)
-            startAndWait()
+            startAndWait(true)
         }
 
     }

@@ -38,16 +38,20 @@ class EngineRunner internal constructor(
             return thread != null
         }
 
-    fun start() = apply {
+    @JvmOverloads
+    fun start(paused: Boolean? = null) = apply {
         if (this.thread == null) {
             this.stop.set(false)
+            paused?.also { this.paused.set(it) }
             this.thread = Thread(Runner()).apply { start() }
         } else {
             throw IllegalStateException("Start can only be invoked once!")
         }
     }
 
-    fun startAndWait() {
+    @JvmOverloads
+    fun startAndWait(paused: Boolean? = null) {
+        paused?.also { this.paused.set(it) }
         runWhile { false }.get()
     }
 

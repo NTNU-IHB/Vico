@@ -1,12 +1,11 @@
 package no.ntnu.ihb.vico.libcosim
 
+import com.opensimulationplatform.cosim.CosimExecution
+import com.opensimulationplatform.cosim.CosimLastValueObserver
+import com.opensimulationplatform.cosim.CosimOverrideManipulator
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
-import org.osp.cosim.CosimExecution
-import org.osp.cosim.CosimFileObserver
-import org.osp.cosim.CosimLastValueObserver
-import org.osp.cosim.CosimOverrideManipulator
 import java.io.File
 import java.util.*
 
@@ -23,8 +22,6 @@ class CosimSystem @JvmOverloads constructor(
     lateinit var observer: CosimLastValueObserver
     lateinit var manipulator: CosimOverrideManipulator
     private val entityQueue = ArrayDeque<Entity>()
-
-    private var fileObserver: CosimFileObserver? = null
 
     private fun addSlave(entity: Entity) {
         entity.getComponent<CosimFmuComponent>().apply(execution, observer, manipulator)
@@ -43,7 +40,7 @@ class CosimSystem @JvmOverloads constructor(
         }
 
         logConfig?.also {
-            fileObserver = execution.addFileObserver(it.logDir, it.configFile)
+            execution.addFileObserver(it.logDir, it.configFile)
         }
     }
 
@@ -64,7 +61,6 @@ class CosimSystem @JvmOverloads constructor(
     }
 
     override fun close() {
-        fileObserver?.close()
         execution.close()
     }
 
