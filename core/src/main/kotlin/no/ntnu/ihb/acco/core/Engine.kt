@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.ceil
+import kotlin.math.max
 import java.util.function.Predicate
 import kotlin.math.ceil
 import kotlin.math.max
@@ -222,13 +224,10 @@ class Engine private constructor(
 
         private val LOG: Logger = LoggerFactory.getLogger(Engine::class.java)
 
-        fun calculateStepFactor(baseStepSize: Double, stepSizeHint: Double?): Int {
-            if (stepSizeHint == null) return 1
-            val decimationFactor = max(1, ceil(stepSizeHint / baseStepSize).toInt())
-            //val actualStepSize = baseStepSize * decimationFactor
-            return decimationFactor
-        }
+    }
 
+    fun calculateStepFactor(stepSizeHint: Double): Long {
+        return max(1, ceil(stepSizeHint / baseStepSize).toLong())
     }
 
 }
