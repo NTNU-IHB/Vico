@@ -1,30 +1,40 @@
 package no.ntnu.ihb.vico.libcosim
 
+import no.ntnu.ihb.acco.components.PositionRefComponent
+import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.Entity
+import no.ntnu.ihb.acco.render.GeometryComponent
+import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
+import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.systems.PositionRefSystem
 import no.ntnu.ihb.vico.TestFmus
-import org.junit.jupiter.api.Test
 import java.io.File
 
-class TestCosimSystem {
+object TestCosimSystem {
 
-    @Test
-    fun test() {
+    @JvmStatic
+    fun main(args: Array<String>) {
 
         val fmuPath = TestFmus.get("1.0/BouncingBall.fmu")
         val resultDir = File("build/results/cosim/BouncingBall").also {
             it.deleteRecursively()
         }
 
-        Engine().use { engine ->
-
-            engine.addEntity(Entity().apply {
-                addComponent(CosimFmuComponent(fmuPath, "bouncingBall"))
-            })
+        Engine().also { engine ->
 
             engine.addSystem(CosimSystem(CosimLogConfig(resultDir)))
 
-            engine.stepUntil(10.0)
+            engine.createEntity("bouncingBall").apply {
+                addComponent<TransformComponent>()
+                addComponent(CosimFmuComponent(fmuPath, name))
+                addComponent(PositionRefComponent(yRef = "h"))
+                addComponent(GeometryComponent(SphereShape()))
+            }
+
+            engine.addSystem(JmeRenderSystem())
+            engine.addSystem(PositionRefSystem())
+
+            engine.runner.start()
 
         }
 

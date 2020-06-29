@@ -4,6 +4,9 @@ import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.core.SimulationSystem
 import org.osp.cosim.CosimExecution
+import org.osp.cosim.CosimFileObserver
+import org.osp.cosim.CosimLastValueObserver
+import org.osp.cosim.CosimOverrideManipulator
 import java.io.File
 import java.util.*
 
@@ -17,11 +20,14 @@ class CosimSystem @JvmOverloads constructor(
 ) : SimulationSystem(Family.all(CosimFmuComponent::class.java).build()) {
 
     lateinit var execution: CosimExecution
-
+    lateinit var observer: CosimLastValueObserver
+    lateinit var manipulator: CosimOverrideManipulator
     private val entityQueue = ArrayDeque<Entity>()
 
+    private var fileObserver: CosimFileObserver? = null
+
     private fun addSlave(entity: Entity) {
-        entity.getComponent<CosimFmuComponent>().apply(execution)
+        entity.getComponent<CosimFmuComponent>().apply(execution, observer, manipulator)
     }
 
     override fun init(currentTime: Double) {
@@ -29,13 +35,15 @@ class CosimSystem @JvmOverloads constructor(
             startTime = currentTime,
             stepSize = engine.baseStepSize * decimationFactor
         )
+        observer = execution.addLastValueObserver()
+        manipulator = execution.addOverrideManipulator()
 
         while (!entityQueue.isEmpty()) {
             addSlave(entityQueue.poll())
         }
 
         logConfig?.also {
-            execution.addFileObserver(it.logDir, it.configFile)
+            fileObserver = execution.addFileObserver(it.logDir, it.configFile)
         }
     }
 
@@ -48,7 +56,7 @@ class CosimSystem @JvmOverloads constructor(
     }
 
     override fun entityRemoved(entity: Entity) {
-
+        throw UnsupportedOperationException()
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
@@ -56,6 +64,7 @@ class CosimSystem @JvmOverloads constructor(
     }
 
     override fun close() {
+        fileObserver?.close()
         execution.close()
     }
 
