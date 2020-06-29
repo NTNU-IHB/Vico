@@ -14,6 +14,8 @@ import kotlin.math.max
 
 private const val DEFAULT_TIME_STEP = 1.0 / 100
 
+typealias EngineBuilder = Engine.Builder
+
 class Engine private constructor(
     startTime: Double? = null,
     val stopTime: Double? = null,

@@ -2,11 +2,16 @@ package no.ntnu.ihb.acco.core
 
 interface PropertyAccessor {
 
-    fun getProperty(name: String): Property?
-    fun getIntegerProperty(name: String): IntProperty?
-    fun getRealProperty(name: String): RealProperty?
-    fun getStringProperty(name: String): StrProperty?
-    fun getBooleanProperty(name: String): BoolProperty?
+    fun getProperty(name: String): Property
+    fun getPropertyOrNull(name: String): Property?
+    fun getIntegerProperty(name: String): IntProperty
+    fun getIntegerPropertyOrNull(name: String): IntProperty?
+    fun getRealProperty(name: String): RealProperty
+    fun getRealPropertyOrNull(name: String): RealProperty?
+    fun getStringProperty(name: String): StrProperty
+    fun getStringPropertyOrNull(name: String): StrProperty?
+    fun getBooleanProperty(name: String): BoolProperty
+    fun getBooleanPropertyOrNull(name: String): BoolProperty?
 
 }
 
@@ -56,24 +61,64 @@ open class Properties : PropertyAccessor {
         return _ints + _reals + _strs + _bools
     }
 
-    override fun getProperty(name: String): Property? {
+    override fun getPropertyOrNull(name: String): Property? {
         return getProperties().find { it.name == name }
     }
 
-    override fun getIntegerProperty(name: String): IntProperty? {
+    override fun getProperty(name: String): Property {
+        return getPropertyOrNull(name)
+            ?: throw NoSuchElementException(
+                "No property named '$name' could be located! " +
+                        "Currently registered properties are ${getProperties()}."
+            )
+    }
+
+    override fun getIntegerPropertyOrNull(name: String): IntProperty? {
         return _ints.find { it.name == name }
     }
 
-    override fun getRealProperty(name: String): RealProperty? {
+    override fun getIntegerProperty(name: String): IntProperty {
+        return getIntegerPropertyOrNull(name)
+            ?: throw NoSuchElementException(
+                "No property named '$name' could be located! " +
+                        "Currently registered Integer properties are ${getProperties()}."
+            )
+    }
+
+    override fun getRealPropertyOrNull(name: String): RealProperty? {
         return _reals.find { it.name == name }
     }
 
-    override fun getStringProperty(name: String): StrProperty? {
+    override fun getRealProperty(name: String): RealProperty {
+        return getRealPropertyOrNull(name)
+            ?: throw NoSuchElementException(
+                "No property named '$name' could be located! " +
+                        "Currently registered Real properties are ${getProperties()}."
+            )
+    }
+
+    override fun getStringPropertyOrNull(name: String): StrProperty? {
         return _strs.find { it.name == name }
     }
 
-    override fun getBooleanProperty(name: String): BoolProperty? {
+    override fun getStringProperty(name: String): StrProperty {
+        return getStringPropertyOrNull(name)
+            ?: throw NoSuchElementException(
+                "No property named '$name' could be located! " +
+                        "Currently registered String properties are ${getProperties()}."
+            )
+    }
+
+    override fun getBooleanPropertyOrNull(name: String): BoolProperty? {
         return _bools.find { it.name == name }
+    }
+
+    override fun getBooleanProperty(name: String): BoolProperty {
+        return getBooleanPropertyOrNull(name)
+            ?: throw NoSuchElementException(
+                "No property named '$name' could be located! " +
+                        "Currently registered Boolean properties are ${getProperties()}."
+            )
     }
 
     companion object {

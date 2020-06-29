@@ -126,7 +126,7 @@ open class Entity internal constructor(
 
     fun getIntegerPropertyOrNull(name: String): IntProperty? {
         for (component in components) {
-            val v = component.getIntegerProperty(name)
+            val v = component.getIntegerPropertyOrNull(name)
             if (v != null) {
                 return v
             }
@@ -145,7 +145,7 @@ open class Entity internal constructor(
 
     fun getRealPropertyOrNull(name: String): RealProperty? {
         for (component in components) {
-            val v = component.getRealProperty(name)
+            val v = component.getRealPropertyOrNull(name)
             if (v != null) return v
         }
         return null
@@ -157,7 +157,7 @@ open class Entity internal constructor(
 
     fun getStringPropertyOrNull(name: String): StrProperty? {
         for (component in components) {
-            val v = component.getStringProperty(name)
+            val v = component.getStringPropertyOrNull(name)
             if (v != null) return v
         }
         return null
@@ -169,7 +169,7 @@ open class Entity internal constructor(
 
     fun getBooleanPropertyOrNull(name: String): BoolProperty? {
         for (component in components) {
-            val v = component.getBooleanProperty(name)
+            val v = component.getBooleanPropertyOrNull(name)
             if (v != null) return v
         }
         return null

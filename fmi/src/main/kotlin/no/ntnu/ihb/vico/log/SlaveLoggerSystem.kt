@@ -56,7 +56,7 @@ class SlaveLoggerSystem(
                 val decimationFactor = component.decimationFactor
                 require(decimationFactor >= 1)
                 val variables = component.variable.map { v ->
-                    slave.getProperty(v.name)!!
+                    slave.getPropertyOrNull(v.name)!!
                 }
                 loggers[slave.instanceName] =
                     SlaveLogger(slave, variables, decimationFactor, logConfig.isStaticFileNames)

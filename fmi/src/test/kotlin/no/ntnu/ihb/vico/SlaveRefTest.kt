@@ -1,6 +1,7 @@
 package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.acco.components.PositionRefComponent
+import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
@@ -17,17 +18,17 @@ fun main() {
         engine.addSystem(JmeRenderSystem())
 
         engine.createEntity("BouncingBall").also { slaveEntity ->
+
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
             SlaveComponent(model, "bb").apply {
-                getRealProperty("h")!!.write(doubleArrayOf(3.0))
+                getRealProperty("h").write(doubleArrayOf(3.0))
                 slaveEntity.addComponent(this)
             }
-            PositionRefComponent(yRef = "h").apply {
-                slaveEntity.addComponent(this)
-            }
-            GeometryComponent(SphereShape()).apply {
-                slaveEntity.addComponent(this)
-            }
+
+            slaveEntity.addComponent<TransformComponent>()
+            slaveEntity.addComponent(PositionRefComponent(yRef = "h"))
+            slaveEntity.addComponent(GeometryComponent(SphereShape()))
+
         }
 
         engine.runner.apply {
@@ -35,4 +36,5 @@ fun main() {
         }
 
     }
+
 }

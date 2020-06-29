@@ -30,6 +30,10 @@ sealed class Property(
             is BoolProperty -> PropertyType.BOOLEAN
         }
 
+    override fun toString(): String {
+        return "Property(name='$name', type=$type, causality=$causality, size=$size)"
+    }
+
 }
 
 abstract class IntProperty(name: String, size: Int) : Property(name, size) {
