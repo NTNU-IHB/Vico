@@ -20,7 +20,7 @@ object TestCosimSystem {
             it.deleteRecursively()
         }
 
-        Engine().also { engine ->
+        Engine().use { engine ->
 
             engine.addSystem(CosimSystem(CosimLogConfig(resultDir)))
 
@@ -34,7 +34,7 @@ object TestCosimSystem {
             engine.addSystem(JmeRenderSystem())
             engine.addSystem(PositionRefSystem())
 
-            engine.runner.start()
+            engine.runner.startAndWait()
 
         }
 

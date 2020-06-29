@@ -16,7 +16,7 @@ import kotlin.random.Random
 
 fun main() {
 
-    Engine(1.0 / 100).also { engine ->
+    Engine(1.0 / 100).use { engine ->
 
         engine.createEntity("plane").apply {
             val t = addComponent(TransformComponent())
@@ -43,6 +43,8 @@ fun main() {
             }
         }
 
+        val sphere0 = engine.getEntityByName("sphere_0")
+
         val test = engine.createEntity("test").apply {
             addComponent(TransformComponent())
             val shape = BoxShape(0.1)
@@ -52,8 +54,7 @@ fun main() {
             })
         }
 
-        val source =
-            RealConnector(engine.getEntityByName("sphere_0").getComponent<TransformComponent>(), "localPosition")
+        val source = RealConnector(sphere0.getComponent<TransformComponent>(), "localPosition")
         val sink = RealConnector(test.getComponent<TransformComponent>(), "localPosition")
 
         engine.addConnection(ScalarConnection(source, sink))
@@ -63,7 +64,7 @@ fun main() {
 
         engine.runner.apply {
             paused.set(true)
-            start()
+            startAndWait()
         }
 
     }

@@ -38,13 +38,17 @@ class EngineRunner internal constructor(
             return thread != null
         }
 
-    fun start() {
+    fun start() = apply {
         if (this.thread == null) {
             this.stop.set(false)
             this.thread = Thread(Runner()).apply { start() }
         } else {
             throw IllegalStateException("Start can only be invoked once!")
         }
+    }
+
+    fun startAndWait() {
+        runWhile { false }.get()
     }
 
     fun runWhile(predicate: Predicate<Engine>): Future<Unit> {
