@@ -134,13 +134,18 @@ open class Entity internal constructor(
         return null
     }
 
+    fun getIntegerProperty(name: String): IntProperty {
+        return getIntegerPropertyOrNull(name)
+            ?: throw NoSuchElementException("No property named '$name' of type Integer could be located!")
+    }
+
     fun getIntegerProperties(): List<IntProperty> {
         return components.flatMap { it.ints }
     }
 
     fun getRealProperty(name: String): RealProperty {
         return getRealPropertyOrNull(name)
-            ?: throw NoSuchElementException("No Real values property named '$name' found!")
+            ?: throw NoSuchElementException("No property named '$name' of type Real could be located!")
     }
 
     fun getRealPropertyOrNull(name: String): RealProperty? {
@@ -163,6 +168,11 @@ open class Entity internal constructor(
         return null
     }
 
+    fun getStringProperty(name: String): StrProperty {
+        return getStringPropertyOrNull(name)
+            ?: throw NoSuchElementException("No property named '$name' of type String could be located!")
+    }
+
     fun getStringProperties(): List<StrProperty> {
         return components.flatMap { it.strs }
     }
@@ -173,6 +183,11 @@ open class Entity internal constructor(
             if (v != null) return v
         }
         return null
+    }
+
+    fun getBooleanProperty(name: String): BoolProperty {
+        return getBooleanPropertyOrNull(name)
+            ?: throw NoSuchElementException("No property named '$name' of type Boolean could be located!")
     }
 
     fun getBooleanProperties(): List<BoolProperty> {
