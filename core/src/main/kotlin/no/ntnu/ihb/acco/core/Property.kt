@@ -1,6 +1,7 @@
 package no.ntnu.ihb.acco.core
 
 import no.ntnu.ihb.acco.util.StringArray
+import no.ntnu.ihb.acco.util.stringArrayOf
 
 
 enum class Causality {
@@ -38,24 +39,28 @@ sealed class Property(
 
 abstract class IntProperty(name: String, size: Int) : Property(name, size) {
     fun read(): IntArray = read(IntArray(size))
+    fun write(value: Int) = write(intArrayOf(value))
     abstract fun read(values: IntArray): IntArray
     abstract fun write(values: IntArray)
 }
 
 abstract class RealProperty(name: String, size: Int) : Property(name, size) {
     fun read(): DoubleArray = read(DoubleArray(size))
+    fun write(value: Double) = write(doubleArrayOf(value))
     abstract fun read(values: DoubleArray): DoubleArray
     abstract fun write(values: DoubleArray)
 }
 
 abstract class StrProperty(name: String, size: Int) : Property(name, size) {
     fun read(): StringArray = read(StringArray(size))
+    fun write(value: String) = write(stringArrayOf(value))
     abstract fun read(values: StringArray): StringArray
     abstract fun write(values: StringArray)
 }
 
 abstract class BoolProperty(name: String, size: Int) : Property(name, size) {
     fun read(): BooleanArray = read(BooleanArray(size))
+    fun write(value: Boolean) = write(booleanArrayOf(value))
     abstract fun read(values: BooleanArray): BooleanArray
     abstract fun write(values: BooleanArray)
 }
