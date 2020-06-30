@@ -1,0 +1,13 @@
+plugins {
+    id 'groovy'
+}
+
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+
+dependencies {
+
+    implementation project(':core')
+
+    testImplementation project(':jme-render')
+
+}

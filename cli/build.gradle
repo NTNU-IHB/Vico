@@ -17,6 +17,13 @@ dependencies {
     api project(':fmi')
     api project(':jme-render')
 
+    //compile 'org.jetbrains.kotlin:kotlin-compiler'
+
+    compile 'org.jetbrains.kotlin:kotlin-script-util'
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-script-runtime'
+    compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable'
+    compile 'org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable'
+
     compile group: 'info.picocli', name: 'picocli', version: '4.1.1'
 
     testImplementation project(':test-data')
