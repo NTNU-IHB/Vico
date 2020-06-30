@@ -4,10 +4,12 @@ plugins {
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = '6.4'
+    gradleVersion = '6.5.1'
 }
 
 version = rootProject.file("VERSION").readLines()[0]
+
+println "Gradle version is ${gradle.getGradleVersion()}"
 println("Building ${rootProject.name} v$version")
 
 apply from: project.file("gradle/fmuproxy.gradle")
