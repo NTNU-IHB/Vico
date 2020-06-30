@@ -21,7 +21,7 @@ object TestCosimSystem {
             it.deleteRecursively()
         }
 
-        Engine(1e-3).use { engine ->
+        Engine(1e-2).use { engine ->
 
             engine.addSystem(CosimSystem(CosimLogConfig(resultDir)))
 
@@ -34,6 +34,7 @@ object TestCosimSystem {
 
             TimeSeriesDrawer.Builder("BouncingBall", "Height[m]")
                 .registerSeries("bouncingBall", "h")
+                .decimationFactor(1)
                 .build().also { engine.addSystem(it) }
 
             engine.addSystem(JmeRenderSystem())
