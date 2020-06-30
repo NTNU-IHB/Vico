@@ -12,7 +12,7 @@ class TransformComponent : IFrame by Frame(), Component() {
 
     init {
         val tmp = Vector3d()
-        registerProperties(listOf(
+        registerProperties(
             RealLambdaProperty("localPosition", 3,
                 getter = { ref -> getLocalTranslation(tmp).toArray(ref) },
                 setter = { values -> setLocalTranslation(tmp.fromArray(values)) }
@@ -21,7 +21,7 @@ class TransformComponent : IFrame by Frame(), Component() {
                 "worldPosition", 3,
                 getter = { ref -> getTranslation(tmp).toArray(ref) },
                 setter = { values -> setTranslation(tmp.fromArray(values)) }
-            ))
+            )
         )
     }
 

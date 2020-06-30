@@ -3,13 +3,12 @@ package no.ntnu.ihb.acco.core
 import no.ntnu.ihb.acco.input.InputAccess
 import no.ntnu.ihb.acco.input.InputManager
 import no.ntnu.ihb.acco.input.KeyStroke
+import no.ntnu.ihb.acco.scenario.Scenario
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.ceil
-import kotlin.math.max
 import java.util.function.Predicate
 import kotlin.math.ceil
 import kotlin.math.max
@@ -17,6 +16,11 @@ import kotlin.math.max
 private const val DEFAULT_TIME_STEP = 1.0 / 100
 
 typealias EngineBuilder = Engine.Builder
+
+interface EngineInfo {
+    val currentTime: Double
+    val iterations: Long
+}
 
 class Engine private constructor(
     startTime: Double? = null,
@@ -26,14 +30,15 @@ class Engine private constructor(
     private val connectionManager: ConnectionManager = ConnectionManager(),
     private val entityManager: EntityManager = EntityManager(connectionManager),
     private val systemManager: SystemManager = SystemManager(),
-) : EventDispatcher by EventDispatcherImpl(), EntityAccess by entityManager, InputAccess by inputManager, Closeable {
+) : EventDispatcher by EventDispatcherImpl(), EngineInfo, EntityAccess by entityManager, InputAccess by inputManager,
+    Closeable {
 
     val startTime: Double = startTime ?: 0.0
     val baseStepSize: Double = baseStepSize ?: DEFAULT_TIME_STEP
 
-    var currentTime: Double = this.startTime
+    override var currentTime: Double = this.startTime
         private set
-    var iterations = 0L
+    override var iterations: Long = 0L
         private set
 
     private val initialized = AtomicBoolean()
@@ -124,6 +129,14 @@ class Engine private constructor(
         }
         while (doubleTimePoint > currentTime && !closed.get()) {
             step()
+        }
+    }
+
+    fun applyScenario(scenario: Scenario) {
+        scenario.actions.forEach { (timePoint, action) ->
+            invokeAt(timePoint) {
+                action.invoke(this)
+            }
         }
     }
 
