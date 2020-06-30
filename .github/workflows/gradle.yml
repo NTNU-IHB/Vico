@@ -32,4 +32,4 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: vico
-          path: cli/build/libs/vico-cli.jar
+          path: cli/build/libs/vico.jar
