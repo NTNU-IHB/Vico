@@ -25,7 +25,7 @@ subprojects { sub ->
         mavenCentral()
         maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
         maven { url "https://dl.bintray.com/kotlin/kotlin-eap/" }
-        maven { url  "https://dl.bintray.com/open-simulation-platform/maven" }
+        maven { url "https://dl.bintray.com/open-simulation-platform/maven" }
         maven { url "https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
