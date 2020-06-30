@@ -27,4 +27,9 @@ jobs:
           java-version: 1.8
 
       - name: Build with Gradle
-        run: ./gradlew build --info
+        run: ./gradlew build --info shadowJar
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: vico
+          path: cli/build/libs/vico-cli.jar
