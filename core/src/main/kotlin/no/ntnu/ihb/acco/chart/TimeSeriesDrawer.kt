@@ -82,7 +82,8 @@ class TimeSeriesDrawer internal constructor(
         }
 
         override fun build(): TimeSeriesDrawer {
-            check(handles.isNotEmpty() || seriesInfo.isNotEmpty()) { "No series has been added using 'registerSeries'" }
+            check(handles.isNotEmpty() || seriesInfo.isNotEmpty())
+            { "No series has been added using 'registerSeries'" }
             return TimeSeriesDrawer(
                 title,
                 yLabel,

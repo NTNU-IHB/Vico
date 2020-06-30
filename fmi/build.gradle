@@ -15,7 +15,7 @@ dependencies {
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-import", version: fmi4j_version
     implementation group: "no.ntnu.ihb.fmuproxy", name: "fmu-proxy-clients", version: "0.2.0"
 
-    def libcosim_version = "r3"
+    def libcosim_version = "r4"
     def platform = OperatingSystem.current().isLinux() ? "linux" : "win"
     implementation group: "com.opensimulationplatform.cosim4j", name: "core", version: libcosim_version
     runtimeOnly group: "com.opensimulationplatform.cosim4j", name: "natives-$platform", version: libcosim_version

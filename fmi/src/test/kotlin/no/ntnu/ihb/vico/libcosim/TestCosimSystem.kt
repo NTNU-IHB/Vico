@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.libcosim
 
+import no.ntnu.ihb.acco.chart.TimeSeriesDrawer
 import no.ntnu.ihb.acco.components.PositionRefComponent
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.Engine
@@ -20,7 +21,7 @@ object TestCosimSystem {
             it.deleteRecursively()
         }
 
-        Engine().use { engine ->
+        Engine(1e-3).use { engine ->
 
             engine.addSystem(CosimSystem(CosimLogConfig(resultDir)))
 
@@ -30,6 +31,10 @@ object TestCosimSystem {
                 addComponent(PositionRefComponent(yRef = "h"))
                 addComponent(GeometryComponent(SphereShape()))
             }
+
+            TimeSeriesDrawer.Builder("BouncingBall", "Height[m]")
+                .registerSeries("bouncingBall", "h")
+                .build().also { engine.addSystem(it) }
 
             engine.addSystem(JmeRenderSystem())
             engine.addSystem(PositionRefSystem())

@@ -5,6 +5,7 @@ import com.opensimulationplatform.cosim.CosimLastValueObserver
 import com.opensimulationplatform.cosim.CosimOverrideManipulator
 import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
+import no.ntnu.ihb.acco.core.Properties
 import no.ntnu.ihb.acco.core.SimulationSystem
 import java.io.File
 import java.util.*
@@ -57,7 +58,8 @@ class CosimSystem @JvmOverloads constructor(
     }
 
     override fun step(currentTime: Double, stepSize: Double) {
-        execution.step(1)
+        execution.step()
+        dispatchEvent(Properties.PROPERTIES_CHANGED, Unit)
     }
 
     override fun close() {
