@@ -43,12 +43,6 @@ class SimulateSsp : Runnable {
     private var targetRealtimeFactor: Double? = null
 
     @CommandLine.Option(
-        names = ["-s", "--scenario"],
-        description = ["Path to a scenario script. Path relative to the .ssd"]
-    )
-    private var relativeScenarioConfig: String? = null
-
-    @CommandLine.Option(
         names = ["-log", "--logConfig"],
         description = ["Path to a log configuration XML file. Path relative to the .ssd"]
     )
@@ -59,6 +53,12 @@ class SimulateSsp : Runnable {
         description = ["Path to a chart configuration XML file. Path relative to the .ssd"]
     )
     private var relativeChartConfigPath: String? = null
+
+    @CommandLine.Option(
+        names = ["-s", "--scenario"],
+        description = ["Path to a scenario script. Path relative to the .ssd"]
+    )
+    private var relativeScenarioConfig: String? = null
 
     @CommandLine.Option(
         names = ["-res", "--resultDir"],
@@ -94,7 +94,7 @@ class SimulateSsp : Runnable {
                 structure.apply(engine)
 
                 relativeLogConfigPath?.also { configPath ->
-                    val logConfig = File(loader.ssdFile.parent, configPath)
+                    val logConfig = getConfigPath(loader.ssdFile.parentFile, configPath)
                     if (!logConfig.exists()) throw NoSuchFileException(logConfig)
                     engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
                 } ?: run {
@@ -102,7 +102,7 @@ class SimulateSsp : Runnable {
                 }
 
                 relativeChartConfigPath?.also { configPath ->
-                    val chartConfig = File(loader.ssdFile.parent, configPath)
+                    val chartConfig = getConfigPath(loader.ssdFile.parentFile, configPath)
                     if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
                     ChartLoader.load(chartConfig).forEach { chart ->
                         engine.addSystem(chart)
@@ -110,11 +110,7 @@ class SimulateSsp : Runnable {
                 }
 
                 relativeScenarioConfig?.also { configPath ->
-                    val scenarioConfig = if (File(configPath).isAbsolute) {
-                        File(configPath)
-                    } else {
-                        File(loader.ssdFile.parent, configPath)
-                    }
+                    val scenarioConfig = getConfigPath(loader.ssdFile.parentFile, configPath)
                     val scenario = parseScenario(scenarioConfig) ?: throw RuntimeException("Failed to load scenario")
                     engine.applyScenario(scenario)
                 }

@@ -1,6 +1,8 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import no.ntnu.ihb.acco.chart.ChartLoader
 import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.vico.cli.parseScenario
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.structure.SystemStructure
@@ -53,6 +55,12 @@ class SimulateFmu : Runnable {
     private var relativeChartConfigPath: String? = null
 
     @CommandLine.Option(
+        names = ["-s", "--scenario"],
+        description = ["Path to a scenario script. Path relative to the FMU"]
+    )
+    private var relativeScenarioConfig: String? = null
+
+    @CommandLine.Option(
         names = ["-res", "--resultDir"],
         description = ["Directory to save the generated .csv file"]
     )
@@ -85,12 +93,26 @@ class SimulateFmu : Runnable {
 
                 structure.apply(engine)
 
-                relativeLogConfigPath?.also {
-                    val logConfig = File(fmu.parent, it)
+                relativeLogConfigPath?.also { configPath ->
+                    val logConfig = getConfigPath(fmu, configPath)
                     if (!logConfig.exists()) throw NoSuchFileException(logConfig)
                     engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
                 } ?: run {
                     engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                }
+
+                relativeChartConfigPath?.also { configPath ->
+                    val chartConfig = getConfigPath(fmu, configPath)
+                    if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
+                    ChartLoader.load(chartConfig).forEach { chart ->
+                        engine.addSystem(chart)
+                    }
+                }
+
+                relativeScenarioConfig?.also { configPath ->
+                    val scenarioConfig = getConfigPath(fmu, configPath)
+                    val scenario = parseScenario(scenarioConfig) ?: throw RuntimeException("Failed to load scenario")
+                    engine.applyScenario(scenario)
                 }
 
                 runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)

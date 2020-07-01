@@ -3,8 +3,18 @@ package no.ntnu.ihb.vico.cli.commands
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.util.formatForOutput
 import org.slf4j.Logger
+import java.io.File
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
+
+internal fun getConfigPath(parent: File, config: String): File {
+    val file = File(config)
+    return if (file.isAbsolute) {
+        file
+    } else {
+        File(parent, config)
+    }
+}
 
 @ExperimentalTime
 internal fun runSimulation(
