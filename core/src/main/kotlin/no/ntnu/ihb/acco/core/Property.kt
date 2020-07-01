@@ -16,6 +16,11 @@ enum class PropertyType {
     INT, REAL, STRING, BOOLEAN
 }
 
+data class PropertyIdentifier(
+    val entityName: String,
+    val propertyName: String
+)
+
 sealed class Property(
     val name: String,
     val size: Int

@@ -1,5 +1,6 @@
 package no.ntnu.ihb.acco.util
 
+import no.ntnu.ihb.acco.core.PropertyIdentifier
 import java.util.*
 
 fun StringArray(size: Int) = no.ntnu.ihb.acco.util.StringArray(size) { "" }

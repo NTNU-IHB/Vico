@@ -2,23 +2,37 @@ package no.ntnu.ihb.acco.scenario
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.EngineInfo
+import no.ntnu.ihb.acco.util.PredicateTask
 import no.ntnu.ihb.acco.util.extractEntityAndPropertyName
+import java.util.function.Predicate
 
 
 class Scenario {
 
     var endTime: Number? = null
-    internal val actions = mutableListOf<Pair<Double, (Engine) -> Unit>>()
+    internal val timedActions: MutableList<Pair<Double, (Engine) -> Unit>> = mutableListOf()
+    internal val predicateActions: MutableList<(Engine) -> PredicateTask> = mutableListOf()
 
     fun invokeAt(timePoint: Double, action: ActionContext.() -> Unit) {
-        actions.add(timePoint to {
+        timedActions.add(timePoint to {
             action.invoke(ActionContext(it))
         })
     }
 
-    /*fun invokeWhen(action: WhenContext.() -> Pair<Predicate<Engine>, Runnable>) {
-        action.invoke(WhenContext(engine))
-    }*/
+    fun invokeWhen(action: WhenContext.() -> Unit) {
+        predicateActions.add {
+            val ctx = WhenContext(it).apply(action)
+            object : PredicateTask {
+                override fun test(engine: Engine): Boolean {
+                    return ctx.predicate.test(engine)
+                }
+
+                override fun run() {
+                    ctx.task.invoke()
+                }
+            }
+        }
+    }
 
 }
 
@@ -30,197 +44,231 @@ open class ActionContext(
     private val engine: Engine
 ) {
 
-    inner class Integer(
+    abstract class PropertyContext(
         name: String
     ) {
 
         private val propertyIdentifier = name.extractEntityAndPropertyName()
+        val entityName = propertyIdentifier.entityName
+        val propertyName = propertyIdentifier.propertyName
+
+    }
+
+    inner class IntContext(
+        name: String
+    ) : PropertyContext(name) {
 
         fun set(value: Int) {
-            val entity = engine.getEntityByName(propertyIdentifier.entityName)
-            val property = entity.getIntegerProperty(propertyIdentifier.propertyName)
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getIntegerProperty(propertyName)
             property.write(value)
         }
 
-        fun set(value: Integer) {
-            val e1 = engine.getEntityByName(propertyIdentifier.entityName)
-            val e2 = engine.getEntityByName(value.propertyIdentifier.entityName)
-            val p1 = e1.getIntegerProperty(propertyIdentifier.propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyIdentifier.propertyName)
+        fun set(value: IntContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getIntegerProperty(propertyName)
+            val p2 = e2.getIntegerProperty(value.propertyName)
             p1.write(p2.read().first())
         }
 
         operator fun plusAssign(value: Int) {
-            val entity = engine.getEntityByName(propertyIdentifier.entityName)
-            val property = entity.getIntegerProperty(propertyIdentifier.propertyName)
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getIntegerProperty(propertyName)
             val originalValue = property.read().first()
             property.write(originalValue + value)
         }
 
-        operator fun plusAssign(value: Integer) {
-            val e1 = engine.getEntityByName(propertyIdentifier.entityName)
-            val e2 = engine.getEntityByName(value.propertyIdentifier.entityName)
-            val p1 = e1.getRealProperty(propertyIdentifier.propertyName)
-            val p2 = e2.getRealProperty(value.propertyIdentifier.propertyName)
+        operator fun plusAssign(value: IntContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getRealProperty(propertyName)
+            val p2 = e2.getRealProperty(value.propertyName)
             p1.write(p1.read().first() + p2.read().first())
         }
 
         operator fun minusAssign(value: Int) {
-            val entity = engine.getEntityByName(propertyIdentifier.entityName)
-            val property = entity.getIntegerProperty(propertyIdentifier.propertyName)
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getIntegerProperty(propertyName)
             val originalValue = property.read().first()
             property.write(originalValue - value)
         }
 
-        operator fun minusAssign(value: Integer) {
-            val e1 = engine.getEntityByName(propertyIdentifier.entityName)
-            val e2 = engine.getEntityByName(value.propertyIdentifier.entityName)
-            val p1 = e1.getRealProperty(propertyIdentifier.propertyName)
-            val p2 = e2.getRealProperty(value.propertyIdentifier.propertyName)
+        operator fun minusAssign(value: IntContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getRealProperty(propertyName)
+            val p2 = e2.getRealProperty(value.propertyName)
             p1.write(p1.read().first() - p2.read().first())
+        }
+
+        operator fun timesAssign(value: IntContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getIntegerProperty(propertyName)
+            val p2 = e2.getIntegerProperty(value.propertyName)
+            p1.write(p1.read().first() * p2.read().first())
+        }
+
+        operator fun timesAssign(value: RealContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getIntegerProperty(propertyName)
+            val p2 = e2.getRealProperty(value.propertyName)
+            p1.write((p1.read().first() * p2.read().first()).toInt())
         }
 
     }
 
-    inner class Real(
+    inner class RealContext(
         name: String
-    ) {
-
-        private val propertyIdentifier = name.extractEntityAndPropertyName()
+    ) : PropertyContext(name) {
 
         fun set(value: Number) {
-            val entity = engine.getEntityByName(propertyIdentifier.entityName)
-            val property = entity.getRealProperty(propertyIdentifier.propertyName)
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getRealProperty(propertyName)
             property.write(value.toDouble())
         }
 
-        fun set(value: Real) {
-            val e1 = engine.getEntityByName(propertyIdentifier.entityName)
-            val e2 = engine.getEntityByName(value.propertyIdentifier.entityName)
-            val p1 = e1.getRealProperty(propertyIdentifier.propertyName)
-            val p2 = e2.getRealProperty(value.propertyIdentifier.propertyName)
+        fun set(value: RealContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getRealProperty(propertyName)
+            val p2 = e2.getRealProperty(value.propertyName)
             p1.write(p2.read().first())
         }
 
         operator fun plusAssign(value: Number) {
-            val entity = engine.getEntityByName(propertyIdentifier.entityName)
-            val property = entity.getRealProperty(propertyIdentifier.propertyName)
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getRealProperty(propertyName)
             val originalValue = property.read().first()
             property.write(originalValue + value.toDouble())
         }
 
-        operator fun plusAssign(value: Real) {
-            val e1 = engine.getEntityByName(propertyIdentifier.entityName)
-            val e2 = engine.getEntityByName(value.propertyIdentifier.entityName)
-            val p1 = e1.getRealProperty(propertyIdentifier.propertyName)
-            val p2 = e2.getRealProperty(value.propertyIdentifier.propertyName)
+        operator fun plusAssign(value: RealContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getRealProperty(propertyName)
+            val p2 = e2.getRealProperty(value.propertyName)
             p1.write(p1.read().first() + p2.read().first())
         }
 
         operator fun minusAssign(value: Number) {
-            val entity = engine.getEntityByName(propertyIdentifier.entityName)
-            val property = entity.getRealProperty(propertyIdentifier.propertyName)
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getRealProperty(propertyName)
             val originalValue = property.read().first()
             property.write(originalValue - value.toDouble())
         }
 
-        operator fun minusAssign(value: Real) {
-            val e1 = engine.getEntityByName(propertyIdentifier.entityName)
-            val e2 = engine.getEntityByName(value.propertyIdentifier.entityName)
-            val p1 = e1.getRealProperty(propertyIdentifier.propertyName)
-            val p2 = e2.getRealProperty(value.propertyIdentifier.propertyName)
+        operator fun minusAssign(value: RealContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getRealProperty(propertyName)
+            val p2 = e2.getRealProperty(value.propertyName)
             p1.write(p1.read().first() - p2.read().first())
         }
 
         operator fun timesAssign(value: Number) {
-            val entity = engine.getEntityByName(propertyIdentifier.entityName)
-            val property = entity.getRealProperty(propertyIdentifier.propertyName)
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getRealProperty(propertyName)
             val originalValue = property.read().first()
             property.write(originalValue * value.toDouble())
         }
 
-        operator fun timesAssign(value: Real) {
-            val e1 = engine.getEntityByName(propertyIdentifier.entityName)
-            val e2 = engine.getEntityByName(value.propertyIdentifier.entityName)
-            val p1 = e1.getRealProperty(propertyIdentifier.propertyName)
-            val p2 = e2.getRealProperty(value.propertyIdentifier.propertyName)
+        operator fun timesAssign(value: IntContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getRealProperty(propertyName)
+            val p2 = e2.getIntegerProperty(value.propertyName)
+            p1.write(p1.read().first() * p2.read().first())
+        }
+
+        operator fun timesAssign(value: RealContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getRealProperty(propertyName)
+            val p2 = e2.getRealProperty(value.propertyName)
             p1.write(p1.read().first() * p2.read().first())
         }
 
     }
 
-    fun real(name: String) = Real(name)
+    inner class StringContext(
+        name: String
+    ) : PropertyContext(name) {
 
-    /*infix fun String.assign(value: Double) {
-        val entity = engine.getEntityByName(entityName)
-        val property = entity.getRealProperty(this)
-        property.write(value)
-    }
-
-    infix fun String.add(value: Double) {
-        val entity = engine.getEntityByName(entityName)
-        val property = entity.getRealProperty(this)
-        val currentValue = property.read().first()
-        property.write(currentValue + value)
-    }
-
-    infix fun String.sub(value: Double) {
-        val entity = engine.getEntityByName(entityName)
-        val property = entity.getRealProperty(this)
-        val currentValue = property.read().first()
-        property.write(currentValue - value)
-    }
-
-    infix fun String.mul(value: Double) {
-        val entity = engine.getEntityByName(entityName)
-        val property = entity.getRealProperty(this)
-        val currentValue = property.read().first()
-        property.write(currentValue * value)
-    }
-
-    infix fun String.div(value: Double) {
-        val entity = engine.getEntityByName(entityName)
-        val property = entity.getRealProperty(this)
-        val currentValue = property.read().first()
-        property.write(currentValue / value)
-    }
-*/
-
-/*
-        inner class StringContext {
-
-            infix fun String.assign(value: String) {
-                val entity = engine.getEntityByName(entityName)
-                val propertyName = this
-                val property = entity.getStringProperty(propertyName)
-                property.write(value)
-            }
-
+        fun set(value: String) {
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getStringProperty(propertyName)
+            property.write(value)
         }
 
-        inner class BooleanContext {
-
-            infix fun String.assign(value: String) {
-                val entity = engine.getEntityByName(entityName)
-                val propertyName = this
-                val property = entity.getStringProperty(propertyName)
-                property.write(value)
-            }
-
-        }*/
-
-
-    class WhenContext(
-        engine: Engine,
-    ) : ActionContext(engine), EngineInfo by engine {
-
-        infix fun Boolean.`do`(action: ActionContext.() -> Unit) {
-
+        fun set(value: StringContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getStringProperty(propertyName)
+            val p2 = e2.getStringProperty(value.propertyName)
+            p1.write(p2.read().first())
         }
 
+    }
+
+    inner class BooleanContext(
+        name: String
+    ) : PropertyContext(name) {
+
+        fun set(value: Boolean) {
+            val entity = engine.getEntityByName(entityName)
+            val property = entity.getBooleanProperty(propertyName)
+            property.write(value)
+        }
+
+        fun set(value: BooleanContext) {
+            val e1 = engine.getEntityByName(entityName)
+            val e2 = engine.getEntityByName(value.entityName)
+            val p1 = e1.getBooleanProperty(propertyName)
+            val p2 = e2.getBooleanProperty(value.propertyName)
+            p1.write(p2.read().first())
+        }
+
+    }
+
+    fun int(name: String) = RealContext(name)
+    fun real(name: String) = RealContext(name)
+    fun str(name: String) = StringContext(name)
+    fun bool(name: String) = BooleanContext(name)
+
+}
+
+class WhenContext(
+    val engine: Engine,
+) : EngineInfo by engine {
+
+    lateinit var predicate: Predicate<Engine>
+    lateinit var task: () -> Unit
+
+    fun predicate(p: Predicate<Engine>) {
+        this.predicate = p
+    }
+
+    fun int(name: String): Int {
+        val (entityName, propertyName) = name.extractEntityAndPropertyName()
+        return engine.getEntityByName(entityName).getIntegerProperty(propertyName).read().first()
+    }
+
+    fun real(name: String): Double {
+        val (entityName, propertyName) = name.extractEntityAndPropertyName()
+        return engine.getEntityByName(entityName).getRealProperty(propertyName).read().first()
+    }
+
+    infix fun Unit.`do`(action: ActionContext.() -> Unit) {
+        task = {
+            action.invoke(ActionContext(engine))
+        }
     }
 
 }
+
 
 fun main() {
 
@@ -229,9 +277,15 @@ fun main() {
         endTime = 90.0
 
         invokeAt(5.0) {
-
             real("bb.h") += real("bb.y")
+        }
 
+        invokeWhen {
+            predicate {
+                iterations == 2L
+            }.`do` {
+                real("bb.h") += real("bb.y")
+            }
         }
 
     }

@@ -4,12 +4,12 @@ import no.ntnu.ihb.acco.input.InputAccess
 import no.ntnu.ihb.acco.input.InputManager
 import no.ntnu.ihb.acco.input.KeyStroke
 import no.ntnu.ihb.acco.scenario.Scenario
+import no.ntnu.ihb.acco.util.PredicateTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.function.Predicate
 import kotlin.math.ceil
 import kotlin.math.max
 
@@ -43,8 +43,9 @@ class Engine private constructor(
 
     private val initialized = AtomicBoolean()
     private val closed = AtomicBoolean()
+
     private val taskQueue: Queue<Runnable> = ArrayDeque()
-    private val predicateTaskQueue: MutableList<Pair<Runnable, Predicate<Engine>>> = mutableListOf()
+    private val predicateTaskQueue: MutableList<PredicateTask> = mutableListOf()
 
     val isInitialized: Boolean
         get() = initialized.get()
@@ -133,10 +134,13 @@ class Engine private constructor(
     }
 
     fun applyScenario(scenario: Scenario) {
-        scenario.actions.forEach { (timePoint, action) ->
+        scenario.timedActions.forEach { (timePoint, action) ->
             invokeAt(timePoint) {
                 action.invoke(this)
             }
+        }
+        scenario.predicateActions.forEach { action ->
+            invokeWhen(action.invoke(this))
         }
     }
 
@@ -191,21 +195,37 @@ class Engine private constructor(
     }
 
     fun invokeAt(timePoint: Double, task: Runnable) {
-        invokeWhen(task) { it.currentTime >= timePoint }
+        invokeWhen(object : PredicateTask {
+
+            override fun test(it: Engine): Boolean {
+                return it.currentTime >= timePoint
+            }
+
+            override fun run() {
+                task.run()
+            }
+        })
     }
 
     fun invokeIn(t: Double, task: Runnable) {
         val timeStamp = currentTime
-        invokeWhen(task) {
-            it.currentTime >= timeStamp + t
-        }
+        invokeWhen(object : PredicateTask {
+
+            override fun test(it: Engine): Boolean {
+                return it.currentTime >= timeStamp + t
+            }
+
+            override fun run() {
+                task.run()
+            }
+        })
     }
 
-    fun invokeWhen(task: Runnable, predicate: Predicate<Engine>) {
-        if (predicate.test(this)) {
-            invokeLater(task)
+    fun invokeWhen(predicateTask: PredicateTask) {
+        if (predicateTask.test(this)) {
+            invokeLater(predicateTask)
         } else {
-            predicateTaskQueue.add(task to predicate)
+            predicateTaskQueue.add(predicateTask)
         }
     }
 
@@ -213,17 +233,17 @@ class Engine private constructor(
         while (taskQueue.isNotEmpty()) {
             taskQueue.poll().run()
         }
-        val toBeRemoved = mutableListOf<Int>()
+        val toBeRemoved = mutableListOf<PredicateTask>()
         for (i in predicateTaskQueue.indices) {
-            if (i !in toBeRemoved) {
-                val (task, predicate) = predicateTaskQueue[i]
-                if (predicate.test(this)) {
+            val task = predicateTaskQueue[i]
+            if (task !in toBeRemoved) {
+                if (task.test(this)) {
                     task.run()
-                    toBeRemoved.add(i)
+                    toBeRemoved.add(task)
                 }
             }
         }
-        toBeRemoved.forEach { index -> predicateTaskQueue.removeAt(index) }
+        toBeRemoved.forEach { task -> predicateTaskQueue.remove(task) }
     }
 
     override fun close() {
