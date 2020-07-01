@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.acco.chart.ChartLoader
 import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.vico.cli.parseScenario
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.SystemStructure
@@ -40,6 +41,12 @@ class SimulateSsp : Runnable {
         description = ["Target real time factor of the simulation. Defaults to unbounded."]
     )
     private var targetRealtimeFactor: Double? = null
+
+    @CommandLine.Option(
+        names = ["-s", "--scenario"],
+        description = ["Path to a scenario script. Path relative to the .ssd"]
+    )
+    private var relativeScenarioConfig: String? = null
 
     @CommandLine.Option(
         names = ["-log", "--logConfig"],
@@ -94,17 +101,27 @@ class SimulateSsp : Runnable {
                     engine.addSystem(SlaveLoggerSystem(null, resultDir))
                 }
 
-            relativeChartConfigPath?.also { configPath ->
-                val chartConfig = File(loader.ssdFile.parent, configPath)
-                if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
-                ChartLoader.load(chartConfig).forEach { chart ->
-                    engine.addSystem(chart)
+                relativeChartConfigPath?.also { configPath ->
+                    val chartConfig = File(loader.ssdFile.parent, configPath)
+                    if (!chartConfig.exists()) throw NoSuchFileException(chartConfig)
+                    ChartLoader.load(chartConfig).forEach { chart ->
+                        engine.addSystem(chart)
+                    }
                 }
+
+                relativeScenarioConfig?.also { configPath ->
+                    val scenarioConfig = if (File(configPath).isAbsolute) {
+                        File(configPath)
+                    } else {
+                        File(loader.ssdFile.parent, configPath)
+                    }
+                    val scenario = parseScenario(scenarioConfig) ?: throw RuntimeException("Failed to load scenario")
+                    engine.applyScenario(scenario)
+                }
+
+                runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
+
             }
-
-            runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
-
-        }
 
     }
 
