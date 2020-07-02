@@ -194,7 +194,7 @@ class SSPLoader @JvmOverloads constructor(
                     endComponent, endVariable as RealVariable
                 ).also { realConnection ->
                     c.linearTransformation?.also { t ->
-                        realConnection.modifiers.add(LinearTransform(t.factor, t.offset))
+                        realConnection.modifier = LinearTransform(t.factor, t.offset)
                     }
                 }
                 VariableType.STRING -> StringConnection(

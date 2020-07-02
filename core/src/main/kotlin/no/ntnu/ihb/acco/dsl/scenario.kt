@@ -1,7 +1,6 @@
-package no.ntnu.ihb.acco.scenario
+package no.ntnu.ihb.acco.dsl
 
 import no.ntnu.ihb.acco.core.*
-import no.ntnu.ihb.acco.dsl.EntityContext
 import no.ntnu.ihb.acco.util.PredicateTask
 import no.ntnu.ihb.acco.util.extractEntityAndPropertyName
 import java.util.function.Predicate
@@ -311,27 +310,3 @@ class WhenContext(
     }
 
 }
-
-
-fun main() {
-
-    scenario {
-
-        endTime = 90.0
-
-        invokeAt(5.0) {
-            real("bb.h") += real("bb.y")
-        }
-
-        invokeWhen {
-            predicate {
-                iterations == 2L
-            }.`do` {
-                real("bb.h") += real("bb.y")
-            }
-        }
-
-    }
-
-}
-

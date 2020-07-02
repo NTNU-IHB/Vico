@@ -5,8 +5,8 @@ import no.ntnu.ihb.acco.core.*
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.shape.BoxShape
-import no.ntnu.ihb.acco.scenario.ScenarioContext
 import no.ntnu.ihb.acco.systems.PositionRefSystem
+import no.ntnu.ihb.acco.util.extractEntityAndPropertyName
 
 
 fun execution(ctx: ExecutionContext.() -> Unit): Engine {
@@ -15,14 +15,14 @@ fun execution(ctx: ExecutionContext.() -> Unit): Engine {
 
 class ExecutionContext {
 
-    var startTime: Double? = null
-    var stopTime: Double? = null
+    var startTime: Number? = null
+    var stopTime: Number? = null
     var baseStepSize: Double? = null
 
     internal val engine: Engine by lazy {
         EngineBuilder()
-            .startTime(startTime)
-            .stopTime(stopTime)
+            .startTime(startTime?.toDouble())
+            .stopTime(stopTime?.toDouble())
             .stepSize(baseStepSize)
             .build()
     }
@@ -35,6 +35,10 @@ class ExecutionContext {
         SystemsContext(engine).apply(ctx)
     }
 
+    fun connections(ctx: ConnectionsContext.() -> Unit) {
+        ConnectionsContext(engine).apply(ctx)
+    }
+
     fun scenario(ctx: ScenarioContext.() -> Unit) {
         engine.applyScenario(ScenarioContext().apply(ctx))
     }
@@ -44,6 +48,18 @@ class ExecutionContext {
 class EntityContext(
     private val entity: Entity
 ) {
+
+    fun component(component: Component) {
+        entity.addComponent(component)
+    }
+
+    fun component(component: ComponentClass) {
+        entity.addComponent(component)
+    }
+
+    inline fun <reified E : Component> component() {
+        component(E::class.java)
+    }
 
     fun component(ctx: () -> Component) {
         entity.addComponent(ctx.invoke())
@@ -71,6 +87,27 @@ class SystemsContext(
     }
 
 }
+
+class ConnectionsContext(
+    private val engine: Engine
+) {
+
+
+    fun connection(ctx: () -> Connection) {
+        engine.addConnection(ctx.invoke())
+    }
+
+    infix fun String.to(other: String): Connection {
+
+        val p1 = this.extractEntityAndPropertyName()
+        val p2 = other.extractEntityAndPropertyName()
+
+        TODO()
+
+    }
+
+}
+
 
 fun main() {
 
@@ -105,6 +142,11 @@ fun main() {
 
             }
 
+        }
+
+        connections {
+            "e1.value" to "e2.value"
+            "p2.value" to "e2.c"
         }
 
     }

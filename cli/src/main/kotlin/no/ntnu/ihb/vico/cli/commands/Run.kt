@@ -10,7 +10,7 @@ class Run : Runnable {
     @CommandLine.Parameters(
         arity = "1",
         paramLabel = "SCRIPT",
-        description = ["Path to Vico script"]
+        description = ["Path to script"]
     )
     private lateinit var scriptFile: File
 

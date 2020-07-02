@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.cli
 
-import no.ntnu.ihb.acco.scenario.ScenarioContext
+import no.ntnu.ihb.acco.dsl.ScenarioContext
 import java.io.File
 import javax.script.ScriptEngineManager
 

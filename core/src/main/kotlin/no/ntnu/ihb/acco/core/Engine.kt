@@ -1,9 +1,9 @@
 package no.ntnu.ihb.acco.core
 
+import no.ntnu.ihb.acco.dsl.ScenarioContext
 import no.ntnu.ihb.acco.input.InputAccess
 import no.ntnu.ihb.acco.input.InputManager
 import no.ntnu.ihb.acco.input.KeyStroke
-import no.ntnu.ihb.acco.scenario.ScenarioContext
 import no.ntnu.ihb.acco.util.PredicateTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

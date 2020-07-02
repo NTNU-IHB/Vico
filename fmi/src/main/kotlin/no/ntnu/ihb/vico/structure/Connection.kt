@@ -24,7 +24,7 @@ class RealConnection(
     targetVariable: RealVariable
 ) : Connection<RealVariable>(source, sourceVariable, target, targetVariable) {
 
-    val modifiers = mutableListOf<RealModifier>()
+    var modifier: RealModifier? = null
 
 }
 

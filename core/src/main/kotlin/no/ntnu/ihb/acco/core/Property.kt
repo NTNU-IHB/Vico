@@ -19,7 +19,34 @@ enum class PropertyType {
 data class PropertyIdentifier(
     val entityName: String,
     val propertyName: String
-)
+) {
+
+    fun getProperty(engine: Engine): Property {
+        val entity = engine.getEntityByName(entityName)
+        return entity.getProperty(propertyName)
+    }
+
+    fun getIntegerProperty(engine: Engine): IntProperty {
+        val entity = engine.getEntityByName(entityName)
+        return entity.getIntegerProperty(propertyName)
+    }
+
+    fun getRealProperty(engine: Engine): RealProperty {
+        val entity = engine.getEntityByName(entityName)
+        return entity.getRealProperty(propertyName)
+    }
+
+    fun getStringProperty(engine: Engine): StrProperty {
+        val entity = engine.getEntityByName(entityName)
+        return entity.getStringProperty(propertyName)
+    }
+
+    fun getBooleanProperty(engine: Engine): BoolProperty {
+        val entity = engine.getEntityByName(entityName)
+        return entity.getBooleanProperty(propertyName)
+    }
+
+}
 
 sealed class Property(
     val name: String,

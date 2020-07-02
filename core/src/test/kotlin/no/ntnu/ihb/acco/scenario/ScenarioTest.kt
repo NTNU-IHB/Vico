@@ -3,6 +3,7 @@ package no.ntnu.ihb.acco.scenario
 import no.ntnu.ihb.acco.core.Component
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.core.RealLambdaProperty
+import no.ntnu.ihb.acco.dsl.scenario
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
