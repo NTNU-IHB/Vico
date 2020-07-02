@@ -23,7 +23,7 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable'
     compile 'org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable'
 
-    compile group: 'info.picocli', name: 'picocli', version: '4.1.1'
+    compile group: 'info.picocli', name: 'picocli', version: '4.3.2'
 
     testImplementation project(':test-data')
     

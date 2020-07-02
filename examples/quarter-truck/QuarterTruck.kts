@@ -1,7 +1,5 @@
 #!vico run
 
-import no.ntnu.ihb.vico.cli.*
-
 arrayOf(
     "simulate-ssp",
     "quarter-truck.ssp",

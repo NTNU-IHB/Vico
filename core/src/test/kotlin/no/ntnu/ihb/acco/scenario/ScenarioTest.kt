@@ -59,7 +59,7 @@ internal class ScenarioTest {
 
         val engine = Engine()
         val e1 = engine.createEntity("e1", TestComponent1())
-        val e2 = engine.createEntity("e2", TestComponent2())
+        engine.createEntity("e2", TestComponent2())
 
         engine.applyScenario(scenario)
 

@@ -36,6 +36,7 @@ fun invokeScript(scriptFile: File) {
         import no.ntnu.ihb.acco.core.*
         import no.ntnu.ihb.acco.components.*
         
+        import no.ntnu.ihb.vico.cli.*
         import no.ntnu.ihb.acco.chart.*
         
         import no.ntnu.ihb.acco.render.*
