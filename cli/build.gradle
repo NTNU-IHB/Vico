@@ -2,7 +2,6 @@ plugins {
     id 'kotlin'
     id 'application'
     id 'distribution'
-    id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
 mainClassName = "no.ntnu.ihb.vico.cli.VicoCLI"
@@ -27,12 +26,6 @@ dependencies {
 
     testImplementation project(':test-data')
     
-}
-
-shadowJar {
-    archiveBaseName.set('vico')
-    archiveVersion.set(null)
-    version(null)
 }
 
 distributions {
