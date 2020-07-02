@@ -7,6 +7,10 @@ fun StringArray(size: Int) = no.ntnu.ihb.acco.util.StringArray(size) { "" }
 
 fun stringArrayOf(vararg str: String) = arrayOf(*str)
 
+fun String.insert(index: Int, str: String): String {
+    return this.substring(0, index + 1) + str + this.substring(index + 1)
+}
+
 fun String.extractEntityAndPropertyName(): PropertyIdentifier {
     val i = indexOf('.')
     if (i == -1) throw IllegalArgumentException()

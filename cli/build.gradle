@@ -16,8 +16,7 @@ dependencies {
     api project(':core')
     api project(':fmi')
     api project(':jme-render')
-
-    //compile 'org.jetbrains.kotlin:kotlin-compiler'
+    api project(':bullet-physics')
 
     compile 'org.jetbrains.kotlin:kotlin-script-util'
     runtimeOnly 'org.jetbrains.kotlin:kotlin-script-runtime'

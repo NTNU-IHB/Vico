@@ -31,9 +31,27 @@ fun invokeScript(scriptFile: File) {
     if (!validateFile(scriptFile)) return
     setupScriptingEnvironment()
 
+    val imports = """
+        
+        import no.ntnu.ihb.acco.core.*
+        import no.ntnu.ihb.acco.components.*
+        
+        import no.ntnu.ihb.acco.chart.*
+        
+        import no.ntnu.ihb.acco.render.*
+        import no.ntnu.ihb.acco.render.shape.*
+        import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
+        
+        import no.ntnu.ihb.acco.physics.*
+        import no.ntnu.ihb.acco.physics.bullet.BulletSystem
+        
+    """.trimIndent()
+
     scriptEngine.apply {
-        val scriptContent = scriptFile.readText()
-        eval(scriptContent)
+        val scriptContent = scriptFile.readLines().toMutableList()
+        val insertionPoint = if (scriptContent[0].startsWith("#!")) 1 else 0
+        scriptContent.add(insertionPoint, imports)
+        eval(scriptContent.joinToString("\n"))
     }
 
 }

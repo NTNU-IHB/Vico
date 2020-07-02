@@ -1,4 +1,5 @@
 #!vico run
+
 import no.ntnu.ihb.vico.cli.*
 
 arrayOf(
