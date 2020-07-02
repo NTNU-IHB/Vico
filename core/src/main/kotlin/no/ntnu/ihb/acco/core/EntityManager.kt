@@ -10,7 +10,7 @@ interface EntityListener {
 
 interface EntityAccess {
     fun createEntity(vararg components: Component): Entity
-    fun createEntity(name: String, vararg components: Component): Entity
+    fun createEntity(name: String?, vararg components: Component): Entity
     fun removeEntity(entity: Entity): Boolean
     fun getEntitiesFor(family: Family): Set<Entity>
     fun getEntityByName(name: String): Entity
@@ -30,11 +30,11 @@ class EntityManager internal constructor(
     private val entityListeners: MutableList<EntityListener> = mutableListOf()
 
     override fun createEntity(vararg components: Component): Entity {
-        return createEntity(DEFAULT_ENTITY_NAME, *components)
+        return createEntity(null, *components)
     }
 
-    override fun createEntity(name: String, vararg components: Component): Entity {
-        val entity = Entity(name.ensureUnique()).also {
+    override fun createEntity(name: String?, vararg components: Component): Entity {
+        val entity = Entity((name ?: DEFAULT_ENTITY_NAME).ensureUnique()).also {
             components.forEach { c ->
                 it.addComponent(c)
             }

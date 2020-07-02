@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.cli
 
-import no.ntnu.ihb.acco.scenario.Scenario
+import no.ntnu.ihb.acco.scenario.ScenarioContext
 import java.io.File
 import javax.script.ScriptEngineManager
 
@@ -57,7 +57,7 @@ fun invokeScript(scriptFile: File) {
 
 }
 
-fun parseScenario(scriptFile: File): Scenario? {
+fun parseScenario(scriptFile: File): ScenarioContext? {
 
     if (!validateFile(scriptFile)) return null
     setupScriptingEnvironment()
@@ -69,7 +69,7 @@ fun parseScenario(scriptFile: File): Scenario? {
     return try {
         scriptEngine.let {
             val scriptContent = imports + scriptFile.readText()
-            it.eval(scriptContent) as Scenario
+            it.eval(scriptContent) as ScenarioContext
         }
     } catch (ex: Exception) {
         ex.printStackTrace()

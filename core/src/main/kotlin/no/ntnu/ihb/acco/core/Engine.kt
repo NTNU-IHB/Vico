@@ -3,7 +3,7 @@ package no.ntnu.ihb.acco.core
 import no.ntnu.ihb.acco.input.InputAccess
 import no.ntnu.ihb.acco.input.InputManager
 import no.ntnu.ihb.acco.input.KeyStroke
-import no.ntnu.ihb.acco.scenario.Scenario
+import no.ntnu.ihb.acco.scenario.ScenarioContext
 import no.ntnu.ihb.acco.util.PredicateTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -64,15 +64,15 @@ class Engine private constructor(
         private var stopTime: Double? = null
         private var stepSize: Double? = null
 
-        fun startTime(value: Double) = apply {
+        fun startTime(value: Double?) = apply {
             startTime = value
         }
 
-        fun stopTime(value: Double) = apply {
+        fun stopTime(value: Double?) = apply {
             stopTime = value
         }
 
-        fun stepSize(value: Double) = apply {
+        fun stepSize(value: Double?) = apply {
             stepSize = value
         }
 
@@ -133,13 +133,13 @@ class Engine private constructor(
         }
     }
 
-    fun applyScenario(scenario: Scenario) {
-        scenario.timedActions.forEach { (timePoint, action) ->
+    fun applyScenario(scenarioContext: ScenarioContext) {
+        scenarioContext.timedActions.forEach { (timePoint, action) ->
             invokeAt(timePoint) {
                 action.invoke(this)
             }
         }
-        scenario.predicateActions.forEach { action ->
+        scenarioContext.predicateActions.forEach { action ->
             invokeWhen(action.invoke(this))
         }
     }
@@ -156,10 +156,7 @@ class Engine private constructor(
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.getSystem(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)
 
-    fun addSystem(system: EventSystem) = internalAddSystem(system)
-    fun addSystem(system: ManipulationSystem) = internalAddSystem(system)
-
-    private fun internalAddSystem(system: BaseSystem) {
+    fun addSystem(system: BaseSystem) {
         invokeLater {
             systemManager.addSystem(system)
             entityManager.addEntityListener(system)

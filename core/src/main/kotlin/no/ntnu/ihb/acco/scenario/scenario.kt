@@ -1,13 +1,17 @@
 package no.ntnu.ihb.acco.scenario
 
-import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.core.EngineInfo
+import no.ntnu.ihb.acco.core.*
+import no.ntnu.ihb.acco.dsl.EntityContext
 import no.ntnu.ihb.acco.util.PredicateTask
 import no.ntnu.ihb.acco.util.extractEntityAndPropertyName
 import java.util.function.Predicate
 
 
-class Scenario {
+fun scenario(init: ScenarioContext.() -> Unit): ScenarioContext {
+    return ScenarioContext().apply(init)
+}
+
+class ScenarioContext {
 
     var endTime: Number? = null
     internal val timedActions: MutableList<Pair<Double, (Engine) -> Unit>> = mutableListOf()
@@ -36,13 +40,57 @@ class Scenario {
 
 }
 
-fun scenario(init: Scenario.() -> Unit): Scenario {
-    return Scenario().apply(init)
-}
-
 open class ActionContext(
     private val engine: Engine
 ) {
+
+    fun int(name: String) = RealContext(name)
+    fun real(name: String) = RealContext(name)
+    fun str(name: String) = StringContext(name)
+    fun bool(name: String) = BooleanContext(name)
+
+    fun addEntity(name: String? = null, ctx: EntityContext.() -> Unit) {
+        val entity = engine.createEntity(name)
+        EntityContext(entity).apply(ctx)
+    }
+
+    fun removeEntity(entityName: String) {
+        val entity = engine.getEntityByName(entityName)
+        engine.removeEntity(entity)
+    }
+
+    fun removeComponent(entityName: String, clazz: ComponentClass) {
+        val entity = engine.getEntityByName(entityName)
+        entity.removeComponent(clazz)
+    }
+
+    fun addComponent(entityName: String, component: Component) {
+        val entity = engine.getEntityByName(entityName)
+        entity.addComponent(component)
+    }
+
+    fun addComponent(entityName: String, component: ComponentClass) {
+        val entity = engine.getEntityByName(entityName)
+        entity.addComponent(component)
+    }
+
+    inline fun <reified E : Component> addComponent(entityName: String) {
+        addComponent(entityName, E::class.java)
+    }
+
+    inline fun <reified E : Component> removeComponent(entityName: String) {
+        removeComponent(entityName, E::class.java)
+    }
+
+    fun addSystem(ctx: () -> BaseSystem) {
+        engine.addSystem(ctx.invoke())
+    }
+
+    fun removeSystem(systemClazz: Class<out BaseSystem>) {
+        engine.removeSystem(systemClazz)
+    }
+
+    inline fun <reified E : BaseSystem> removeSystem() = removeSystem(E::class.java)
 
     abstract class PropertyContext(
         name: String
@@ -232,11 +280,6 @@ open class ActionContext(
         }
 
     }
-
-    fun int(name: String) = RealContext(name)
-    fun real(name: String) = RealContext(name)
-    fun str(name: String) = StringContext(name)
-    fun bool(name: String) = BooleanContext(name)
 
 }
 
