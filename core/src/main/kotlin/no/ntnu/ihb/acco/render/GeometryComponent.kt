@@ -23,12 +23,12 @@ class GeometryComponent(
 
     fun getColor() = color
 
-    fun setColor(hex: Int) {
+    fun setColor(hex: Int) = apply {
         color.set(hex)
         dispatchEvent("onColorChanged", color)
     }
 
-    fun setColor(color: Color) {
+    fun setColor(color: Color) = apply {
         setColor(color.hexValue)
     }
 

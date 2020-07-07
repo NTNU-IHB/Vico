@@ -30,7 +30,7 @@ import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-private const val MAX_QUEUE_SIZE = 5000
+private const val MAX_TRANSFORM_QUEUE_SIZE = 1000
 
 class JmeRenderSystem : SimulationSystem(
     Family.all(TransformComponent::class.java).one(GeometryComponent::class.java, Camera::class.java).build()
@@ -45,6 +45,7 @@ class JmeRenderSystem : SimulationSystem(
     private val map: MutableMap<Entity, RenderNode> = mutableMapOf()
 
     private val queue = ArrayDeque<JmeApp.() -> Unit>()
+    private val transformQueue = ArrayDeque<JmeApp.() -> Unit>()
 
     private var cameraEntity: Entity? = null
 
@@ -55,8 +56,14 @@ class JmeRenderSystem : SimulationSystem(
     private fun invokeLater(task: JmeApp.() -> Unit) {
         synchronized(queueMutex) {
             queue.add(task)
-            while (queue.size > MAX_QUEUE_SIZE) {
-                queue.poll()
+        }
+    }
+
+    private fun transformContext(task: JmeApp.() -> Unit) {
+        synchronized(queueMutex) {
+            transformQueue.add(task)
+            while (transformQueue.size > MAX_TRANSFORM_QUEUE_SIZE) {
+                transformQueue.poll()
             }
         }
     }
@@ -114,7 +121,7 @@ class JmeRenderSystem : SimulationSystem(
 
     private fun updateTransform(node: Node, transform: TransformComponent) {
         val world = transform.getWorldMatrix()
-        invokeLater {
+        transformContext {
             node.localTranslation.set(world.getTranslation(tmpVec))
             node.localRotation.set(world.getNormalizedRotation(tmpQuat))
             node.forceRefresh(true, true, true)
@@ -180,6 +187,9 @@ class JmeRenderSystem : SimulationSystem(
             synchronized(queueMutex) {
                 while (!queue.isEmpty()) {
                     queue.poll().invoke(this)
+                }
+                while (!transformQueue.isEmpty()) {
+                    transformQueue.poll().invoke(this)
                 }
             }
         }
