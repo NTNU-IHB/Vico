@@ -17,16 +17,16 @@ class MovementController : SimulationSystem(
             val controllable = e.getComponent<Controllable>()
 
             if (engine.isKeyPressed(KeyStroke.KEY_W)) {
-                transform.localTranslateZ(controllable.movementSpeed * stepSize)
+                transform.frame.localTranslateZ(controllable.movementSpeed * stepSize)
             }
             if (engine.isKeyPressed(KeyStroke.KEY_S)) {
-                transform.localTranslateZ(-controllable.movementSpeed * stepSize)
+                transform.frame.localTranslateZ(-controllable.movementSpeed * stepSize)
             }
             if (engine.isKeyPressed(KeyStroke.KEY_A)) {
-                transform.localTranslateX(controllable.movementSpeed * stepSize)
+                transform.frame.localTranslateX(controllable.movementSpeed * stepSize)
             }
             if (engine.isKeyPressed(KeyStroke.KEY_D)) {
-                transform.localTranslateX(-controllable.movementSpeed * stepSize)
+                transform.frame.localTranslateX(-controllable.movementSpeed * stepSize)
             }
         }
 

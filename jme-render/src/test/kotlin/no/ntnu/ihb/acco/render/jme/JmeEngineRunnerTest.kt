@@ -39,9 +39,9 @@ private class SineMoverSystem : IteratingSystem(
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-        val tc = entity.getComponent<TransformComponent>()
+        val frame = entity.getComponent<TransformComponent>().frame
         val sc = entity.getComponent<SineMoverComponent>()
-        tc.setLocalTranslation(tc.getLocalTranslation(tmp).apply { x = sc.compute(currentTime) })
+        frame.setLocalTranslation(frame.getLocalTranslation(tmp).apply { x = sc.compute(currentTime) })
 
     }
 
@@ -51,7 +51,7 @@ private fun e1(engine: Engine): Entity {
     return engine.createEntity("e1").also { e ->
 
         e.addComponent(TransformComponent()).apply {
-            setLocalTranslation(-1.0, 0.0, 0.0)
+            frame.setLocalTranslation(-1.0, 0.0, 0.0)
         }
 
         e.addComponent(GeometryComponent(BoxShape())).apply {
@@ -68,15 +68,15 @@ fun main() {
         val e1 = e1(engine)
         engine.createEntity("e2").also { e ->
 
-            val t = e.addComponent(TransformComponent())
+            val frame = e.addComponent(TransformComponent()).frame
 
-            t.setLocalTranslation(1.0, 0.0, 0.0)
+            frame.setLocalTranslation(1.0, 0.0, 0.0)
 
             e.addComponent(GeometryComponent(SphereShape()).apply {
                 setColor(Color.yellow)
             })
             e.addComponent(SineMoverComponent(f = 0.5))
-            t.setParent(e1.getComponent<TransformComponent>())
+            frame.setParent(e1.getComponent<TransformComponent>().frame)
             engine.getEntityByName("e1")
         }
 
@@ -98,12 +98,12 @@ fun main() {
         engine.invokeAt(4.0) {
 
             engine.createEntity().apply {
-                val t = addComponent(TransformComponent())
-                t.setLocalTranslation(0.0, 2.0, 0.0)
+                val frame = addComponent(TransformComponent()).frame
+                frame.setLocalTranslation(0.0, 2.0, 0.0)
                 addComponent(GeometryComponent(CylinderShape()).apply {
                     setColor(Color.blue)
                 })
-                t.setParent(engine.getEntityByName("e2").getComponent<TransformComponent>())
+                frame.setParent(engine.getEntityByName("e2").getComponent<TransformComponent>().frame)
             }
 
             engine.removeEntity(engine.getEntityByName("e1"))

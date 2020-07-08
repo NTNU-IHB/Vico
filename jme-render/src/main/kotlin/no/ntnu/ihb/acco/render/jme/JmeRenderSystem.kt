@@ -120,7 +120,7 @@ class JmeRenderSystem : SimulationSystem(
     }
 
     private fun updateTransform(node: Node, transform: TransformComponent) {
-        val world = transform.getWorldMatrix()
+        val world = transform.frame.getWorldMatrix()
         transformContext {
             node.localTranslation.set(world.getTranslation(tmpVec))
             node.localRotation.set(world.getNormalizedRotation(tmpQuat))
@@ -202,7 +202,7 @@ class JmeRenderSystem : SimulationSystem(
         private fun updateCamera() {
             cameraEntity?.also {
                 flyCam.isEnabled = false
-                val world = it.getComponent<TransformComponent>().getWorldMatrix()
+                val world = it.getComponent<TransformComponent>().frame.getWorldMatrix()
                 invokeLater {
                     cam.location.set(world.getTranslation(tmpVec))
                     cam.rotation.set(world.getNormalizedRotation(tmpQuat))

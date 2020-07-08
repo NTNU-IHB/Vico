@@ -25,7 +25,7 @@ object MovementControllerSystemTest {
 
                     component {
                         TransformComponent().apply {
-                            localTranslateX(spacing * 0.5)
+                            frame.localTranslateX(spacing * 0.5)
                         }
                     }
                     component { GeometryComponent(BoxShape()) }
@@ -35,7 +35,7 @@ object MovementControllerSystemTest {
                 entity("e2") {
                     component {
                         TransformComponent().apply {
-                            localTranslateX(-spacing * 0.5)
+                            frame.localTranslateX(-spacing * 0.5)
                         }
                     }
                     component { GeometryComponent(BoxShape()) }
@@ -44,7 +44,7 @@ object MovementControllerSystemTest {
                 entity("e3") {
                     component {
                         TransformComponent().apply {
-                            setLocalTranslation(0.0, 0.0, -10.0)
+                            frame.setLocalTranslation(0.0, 0.0, -10.0)
                         }
                     }
                     component {
@@ -67,46 +67,6 @@ object MovementControllerSystemTest {
             }
 
         }.runner.startAndWait()
-
-
-        /* Engine().also { engine ->
-
-             val spacing = 2.0
-
-             val e1 = engine.createEntity(
-                 TransformComponent().apply {
-                     localTranslateX(spacing * 0.5)
-                 },
-                 GeometryComponent(BoxShape()),
-                 Controllable()
-             )
-
-             val e2 = engine.createEntity(
-                 TransformComponent().apply {
-                     localTranslateX(-spacing * 0.5)
-                 },
-                 GeometryComponent(BoxShape())
-             )
-
-             engine.createEntity(
-                 TransformComponent().apply {
-                     setLocalTranslation(0.0, 0.0, -10.0)
-                 },
-                 PerspectiveCamera()
-             )
-
-
-             engine.addSystem(JmeRenderSystem())
-             engine.addSystem(MovementController())
-
-             engine.invokeAt(5.0) {
-                 e1.removeComponent<Controllable>()
-                 e2.addComponent(Controllable())
-             }
-
-             engine.runner.start()
-
-         }*/
 
     }
 

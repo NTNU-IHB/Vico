@@ -19,8 +19,8 @@ fun main() {
     Engine(1.0 / 100).use { engine ->
 
         engine.createEntity("plane").apply {
-            val t = addComponent(TransformComponent())
-            t.setLocalTranslation(0.0, -1.0, 0.0)
+            val frame = addComponent(TransformComponent()).frame
+            frame.setLocalTranslation(0.0, -1.0, 0.0)
             addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
             val shape = BoxShape(10.0, 0.1, 10.0)
             addComponent(ColliderComponent(shape))
@@ -30,7 +30,7 @@ fun main() {
         for (i in 0 until 20) {
             engine.createEntity("sphere_$i").apply {
                 addComponent(TransformComponent()).apply {
-                    setLocalTranslation(
+                    frame.setLocalTranslation(
                         Random.nextDouble(-1.0, 1.0),
                         2.0,
                         Random.nextDouble(-1.0, 1.0)

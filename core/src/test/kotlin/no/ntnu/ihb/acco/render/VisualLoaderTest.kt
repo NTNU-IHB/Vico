@@ -44,9 +44,9 @@ object VisualLoaderTest {
 
         override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-            val tc = entity.getComponent<TransformComponent>()
+            val frame = entity.getComponent<TransformComponent>().frame
             val sc = entity.getComponent<SineMoverComponent>().compute(currentTime)
-            tc.setLocalTranslation(tc.getLocalTranslation(tmp).apply { y = sc.value })
+            frame.setLocalTranslation(frame.getLocalTranslation(tmp).apply { y = sc.value })
 
         }
 
