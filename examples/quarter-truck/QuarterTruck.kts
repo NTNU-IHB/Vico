@@ -7,8 +7,7 @@ arrayOf(
     "--stopTime", "10",
     "-log", "extra/LogConfig.xml",
     "-chart", "extra/ChartConfig.xml",
-    "-res", "results",
-    "-s", "extra/scenario1.kts"
+    "-res", "results"
 ).cliExec()
 
 
