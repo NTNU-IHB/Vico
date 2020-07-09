@@ -61,6 +61,12 @@ class SimulateSsp : Runnable {
     private var relativeScenarioConfig: String? = null
 
     @CommandLine.Option(
+        names = ["-p", "--parameterSet"],
+        description = ["Name of parameterSet to load"]
+    )
+    private var parameterSet: String? = null
+
+    @CommandLine.Option(
         names = ["-res", "--resultDir"],
         description = ["Directory to save the generated .csv file(s)"]
     )
@@ -91,7 +97,7 @@ class SimulateSsp : Runnable {
             .stepSize(baseStepSize)
             .build().use { engine ->
 
-                structure.apply(engine)
+                structure.apply(engine, parameterSet)
 
                 relativeLogConfigPath?.also { configPath ->
                     val logConfig = getConfigPath(loader.ssdFile.parentFile, configPath)
