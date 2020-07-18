@@ -44,16 +44,15 @@ class SlaveSystem @JvmOverloads constructor(
         val slave = FmiSlave(c.instantiate(), c)
         parameterSet?.also { parameterSet ->
             c.getParameterSet(parameterSet)?.also {
+                LOG.info("Applying parameterSet named '$parameterSet' to ${entity.name}!")
                 it.integerParameters.forEach { p -> slave.writeInteger(p.name, p.value) }
                 it.realParameters.forEach { p -> slave.writeReal(p.name, p.value) }
                 it.booleanParameters.forEach { p -> slave.writeBoolean(p.name, p.value) }
                 it.stringParameters.forEach { p -> slave.writeString(p.name, p.value) }
-            } ?: run {
-                LOG.warn("No parameterSet named '$parameterSet' found in ${entity.name}!")
             }
         }
 
-        _slaves[entity] = (slave)
+        _slaves[entity] = slave
         algorithm.slaveAdded(slave)
     }
 

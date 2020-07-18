@@ -7,6 +7,7 @@ arrayOf(
     "--stopTime", "10",
     "-log", "extra/LogConfig.xml",
     "-chart", "extra/ChartConfig.xml",
+    "-p", "initialValues",
     "-res", "results"
 ).cliExec()
 
