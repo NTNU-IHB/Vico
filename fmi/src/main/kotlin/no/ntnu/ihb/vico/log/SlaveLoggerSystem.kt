@@ -21,7 +21,7 @@ class SlaveLoggerSystem(
 ) : EventSystem(Family.all(SlaveComponent::class.java).build()) {
 
     var separator: String = ", "
-    var decimalPoints: Int = 6
+    var decimalPoints: Int = 8
     val targetDir: File = targetDir ?: File(".")
     private val loggers: MutableMap<String, SlaveLogger> = mutableMapOf()
 
