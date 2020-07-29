@@ -1,6 +1,6 @@
 plugins {
     id 'base'
-    id 'org.jetbrains.kotlin.jvm' version '1.4-M3' apply(false)
+    id 'org.jetbrains.kotlin.jvm' version '1.4.0-rc' apply(false)
 }
 
 wrapper {
@@ -25,7 +25,6 @@ subprojects { sub ->
     repositories {
         mavenCentral()
         maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
-        maven { url "https://dl.bintray.com/kotlin/kotlin-eap/" }
         maven { url "https://dl.bintray.com/open-simulation-platform/maven" }
         maven { url "https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
