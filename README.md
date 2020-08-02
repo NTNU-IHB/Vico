@@ -1,4 +1,4 @@
-# Vico
+# Vico (work in progress)
 
 > Vico is an Entity-Component-System (ECS) based co-simulation framework
 
