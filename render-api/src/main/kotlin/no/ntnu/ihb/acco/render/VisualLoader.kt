@@ -2,7 +2,7 @@ package no.ntnu.ihb.acco.render
 
 import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.acco.render.jaxb.*
-import no.ntnu.ihb.acco.render.shape.*
+import no.ntnu.ihb.acco.shapes.*
 import org.joml.Matrix4d
 import java.io.File
 import javax.xml.bind.JAXB

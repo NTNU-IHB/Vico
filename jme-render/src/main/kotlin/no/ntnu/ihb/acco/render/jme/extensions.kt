@@ -18,7 +18,7 @@ import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.objects.JmeCapsule
 import no.ntnu.ihb.acco.render.jme.objects.JmeGrid
 import no.ntnu.ihb.acco.render.jme.objects.RenderNode
-import no.ntnu.ihb.acco.render.shape.*
+import no.ntnu.ihb.acco.shapes.*
 import org.joml.Quaterniondc
 import org.joml.Vector3d
 import org.joml.Vector3dc

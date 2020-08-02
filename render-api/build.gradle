@@ -1,0 +1,12 @@
+plugins {
+    id 'kotlin'
+}
+
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+
+dependencies {
+    implementation project(':core')
+    api project(':shapes')
+
+    testImplementation project(':jme-render')
+}

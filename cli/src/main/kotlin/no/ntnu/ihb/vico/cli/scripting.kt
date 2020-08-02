@@ -40,7 +40,7 @@ fun invokeScript(scriptFile: File) {
         import no.ntnu.ihb.acco.chart.*
         
         import no.ntnu.ihb.acco.render.*
-        import no.ntnu.ihb.acco.render.shape.*
+        import no.ntnu.ihb.acco.shapes.*
         import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
         
         import no.ntnu.ihb.acco.physics.*

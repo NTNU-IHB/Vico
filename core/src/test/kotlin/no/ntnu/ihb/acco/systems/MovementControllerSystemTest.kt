@@ -7,7 +7,7 @@ import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.MovementController
 import no.ntnu.ihb.acco.render.PerspectiveCamera
 import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
-import no.ntnu.ihb.acco.render.shape.BoxShape
+import no.ntnu.ihb.acco.shapes.BoxShape
 
 
 object MovementControllerSystemTest {

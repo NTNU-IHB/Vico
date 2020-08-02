@@ -7,9 +7,8 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 dependencies {
     api group: 'org.joml', name: 'joml', version: '1.9.24'
 
-    implementation group: 'org.knowm.xchart', name: 'xchart', version: '3.6.1'
-
     testImplementation project(':fmi')
+    testImplementation project(':chart')
     testImplementation project(':test-data')
     testImplementation project(':jme-render')
 }

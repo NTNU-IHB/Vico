@@ -6,10 +6,11 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 
 dependencies {
 
-    api project(':core')
+    implementation project(':core')
+    api project(':physics-api')
 
     def gdx_version = '1.9.9'
-    api group: 'com.badlogicgames.gdx', name: 'gdx-bullet', version: gdx_version
+    implementation group: 'com.badlogicgames.gdx', name: 'gdx-bullet', version: gdx_version
     runtime "com.badlogicgames.gdx:gdx-bullet-platform:$gdx_version:natives-desktop"
 
     testImplementation project(':jme-render')

@@ -7,9 +7,9 @@ import no.ntnu.ihb.acco.core.Entity
 import no.ntnu.ihb.acco.core.Family
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
-import no.ntnu.ihb.acco.render.shape.BoxShape
-import no.ntnu.ihb.acco.render.shape.CylinderShape
-import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.shapes.BoxShape
+import no.ntnu.ihb.acco.shapes.CylinderShape
+import no.ntnu.ihb.acco.shapes.SphereShape
 import no.ntnu.ihb.acco.systems.IteratingSystem
 import org.joml.Vector3d
 import kotlin.math.PI

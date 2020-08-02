@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.*
 import no.ntnu.ihb.acco.physics.ColliderComponent
-import no.ntnu.ihb.acco.render.shape.*
+import no.ntnu.ihb.acco.shapes.*
 import org.joml.*
 
 

@@ -2,9 +2,6 @@ package no.ntnu.ihb.acco.dsl
 
 import no.ntnu.ihb.acco.components.TransformComponent
 import no.ntnu.ihb.acco.core.*
-import no.ntnu.ihb.acco.render.Color
-import no.ntnu.ihb.acco.render.GeometryComponent
-import no.ntnu.ihb.acco.render.shape.BoxShape
 import no.ntnu.ihb.acco.systems.PositionRefSystem
 import no.ntnu.ihb.acco.util.extractEntityAndPropertyName
 
@@ -119,9 +116,6 @@ fun main() {
 
                 component {
                     TransformComponent()
-                }
-                component {
-                    GeometryComponent(BoxShape()).apply { setColor(Color.blue) }
                 }
 
             }

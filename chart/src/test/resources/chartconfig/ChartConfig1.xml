@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vico:ChartConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/ChartConfig">
+
+    <vico:chart>
+        <vico:timeseries title="Bouncing ball" label="Height[m]">
+            <vico:series>
+                <vico:component name="bouncingBall">
+                    <vico:variable name="h"/>
+                </vico:component>
+            </vico:series>
+        </vico:timeseries>
+    </vico:chart>
+
+</vico:ChartConfig>

@@ -1,4 +1,4 @@
-package no.ntnu.ihb.acco.render.shape
+package no.ntnu.ihb.acco.shapes
 
 import org.joml.Vector3d
 

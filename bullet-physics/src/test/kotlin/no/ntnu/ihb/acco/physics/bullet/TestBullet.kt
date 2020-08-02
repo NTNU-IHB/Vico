@@ -10,8 +10,8 @@ import no.ntnu.ihb.acco.physics.RigidBodyComponent
 import no.ntnu.ihb.acco.render.Color
 import no.ntnu.ihb.acco.render.GeometryComponent
 import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
-import no.ntnu.ihb.acco.render.shape.BoxShape
-import no.ntnu.ihb.acco.render.shape.SphereShape
+import no.ntnu.ihb.acco.shapes.BoxShape
+import no.ntnu.ihb.acco.shapes.SphereShape
 import kotlin.random.Random
 
 fun main() {

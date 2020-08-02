@@ -1,0 +1,11 @@
+plugins {
+    id 'kotlin'
+}
+
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+
+dependencies {
+    implementation project(':core')
+
+    implementation group: 'org.knowm.xchart', name: 'xchart', version: '3.6.1'
+}

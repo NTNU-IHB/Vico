@@ -1,8 +1,26 @@
+pluginManagement {
+    repositories {
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+
+        mavenCentral()
+
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+}
 rootProject.name = 'acco'
 
-include 'core'
-include 'fmi'
-include 'cli'
-include 'jme-render'
-include 'bullet-physics'
-include 'test-data'
+def subDirs = rootDir.listFiles(new FileFilter() {
+    boolean accept(File file) {
+        if (!file.isDirectory()) {
+            return false
+        }
+        if (file.name == 'buildSrc') {
+            return false
+        }
+        return new File(file, 'build.gradle').isFile()
+    }
+})
+
+subDirs.each { dir ->
+    include dir.name
+}
