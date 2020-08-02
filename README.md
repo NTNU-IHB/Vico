@@ -4,7 +4,7 @@
 
 #### FMI & SSP support
 
-Support for FMI and SSP is provided by the __fmi__ module.
+Support for FMI 1.0 & 2.0 for co-simulation and SSP 1.0 is provided by the __fmi__ module.
 
 #### Time-series and XY charts
 
