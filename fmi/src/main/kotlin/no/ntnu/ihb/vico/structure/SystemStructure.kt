@@ -1,9 +1,9 @@
 package no.ntnu.ihb.vico.structure
 
-import no.ntnu.ihb.acco.core.*
-import no.ntnu.ihb.acco.core.RealConnector
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.vico.SlaveSystem
+import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.core.RealConnector
 import no.ntnu.ihb.vico.model.SlaveProvider
 
 class SystemStructure @JvmOverloads constructor(

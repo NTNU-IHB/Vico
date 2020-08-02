@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.cli.commands
 
-import no.ntnu.ihb.acco.core.Engine
-import no.ntnu.ihb.acco.util.formatForOutput
+import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.util.formatForOutput
 import org.slf4j.Logger
 import java.io.File
 import kotlin.time.ExperimentalTime

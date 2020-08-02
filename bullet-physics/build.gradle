@@ -7,7 +7,7 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 dependencies {
 
     implementation project(':core')
-    api project(':physics-api')
+    api project(':physics-components')
 
     def gdx_version = '1.9.9'
     implementation group: 'com.badlogicgames.gdx', name: 'gdx-bullet', version: gdx_version

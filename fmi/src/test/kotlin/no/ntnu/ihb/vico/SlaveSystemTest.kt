@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico
 
-import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.fmi4j.readReal
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.model.ModelResolver

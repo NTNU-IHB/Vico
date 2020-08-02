@@ -4,8 +4,8 @@ import com.opensimulationplatform.cosim.CosimExecution
 import com.opensimulationplatform.cosim.CosimLastValueObserver
 import com.opensimulationplatform.cosim.CosimOverrideManipulator
 import com.opensimulationplatform.cosim.CosimSlave
-import no.ntnu.ihb.acco.core.*
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
+import no.ntnu.ihb.vico.core.*
 import java.io.File
 
 class CosimFmuComponent(

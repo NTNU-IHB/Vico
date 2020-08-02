@@ -1,10 +1,10 @@
 package no.ntnu.ihb.vico.log
 
-import no.ntnu.ihb.acco.core.*
-import no.ntnu.ihb.acco.core.Properties
-import no.ntnu.ihb.acco.util.formatForOutput
 import no.ntnu.ihb.vico.SlaveComponent
+import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.core.Properties
 import no.ntnu.ihb.vico.log.jaxb.TLogConfig
+import no.ntnu.ihb.vico.util.formatForOutput
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.BufferedWriter

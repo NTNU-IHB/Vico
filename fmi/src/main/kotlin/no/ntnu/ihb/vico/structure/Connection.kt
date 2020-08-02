@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.structure
 
-import no.ntnu.ihb.acco.core.RealModifier
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
+import no.ntnu.ihb.vico.core.RealModifier
 
 sealed class Connection<E : ScalarVariable>(
     val source: Component,

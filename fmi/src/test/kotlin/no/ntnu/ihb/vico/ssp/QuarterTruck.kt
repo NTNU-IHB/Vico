@@ -1,8 +1,8 @@
 package no.ntnu.ihb.vico.ssp
 
-import no.ntnu.ihb.acco.chart.ChartLoader
-import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.vico.TestSsp
+import no.ntnu.ihb.vico.chart.ChartLoader
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import java.io.File
 import kotlin.time.ExperimentalTime

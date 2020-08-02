@@ -1,9 +1,9 @@
 package no.ntnu.ihb.vico.ssp
 
-import no.ntnu.ihb.acco.core.Engine
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestSsp
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

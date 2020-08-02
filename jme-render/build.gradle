@@ -7,7 +7,7 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 dependencies {
 
     implementation project(':core')
-    api project(':render-api')
+    api project(':render-components')
 
     def jme3 = [v:'3.3.2-stable', g:'org.jmonkeyengine']
     implementation "${jme3.g}:jme3-core:${jme3.v}"

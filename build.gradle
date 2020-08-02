@@ -19,7 +19,7 @@ subprojects { sub ->
 
     apply plugin: 'java-library'
 
-    sub.group = 'no.ntnu.ihb.acco'
+    sub.group = 'no.ntnu.ihb.vico'
     sub.version = version
 
     repositories {

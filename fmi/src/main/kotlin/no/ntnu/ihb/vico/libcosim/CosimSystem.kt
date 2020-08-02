@@ -3,10 +3,10 @@ package no.ntnu.ihb.vico.libcosim
 import com.opensimulationplatform.cosim.CosimExecution
 import com.opensimulationplatform.cosim.CosimLastValueObserver
 import com.opensimulationplatform.cosim.CosimOverrideManipulator
-import no.ntnu.ihb.acco.core.Entity
-import no.ntnu.ihb.acco.core.Family
-import no.ntnu.ihb.acco.core.Properties
-import no.ntnu.ihb.acco.core.SimulationSystem
+import no.ntnu.ihb.vico.core.Entity
+import no.ntnu.ihb.vico.core.Family
+import no.ntnu.ihb.vico.core.Properties
+import no.ntnu.ihb.vico.core.SimulationSystem
 import java.io.File
 import java.util.*
 

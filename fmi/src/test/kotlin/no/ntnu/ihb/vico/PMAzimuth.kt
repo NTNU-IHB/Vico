@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico
 
-import no.ntnu.ihb.acco.chart.TimeSeriesDrawer
-import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.vico.chart.TimeSeriesDrawer
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.structure.ParameterSet
 import no.ntnu.ihb.vico.structure.RealParameter

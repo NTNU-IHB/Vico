@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.fmuproxy.gunnerus
 
-import no.ntnu.ihb.acco.core.Engine
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import java.io.File
 

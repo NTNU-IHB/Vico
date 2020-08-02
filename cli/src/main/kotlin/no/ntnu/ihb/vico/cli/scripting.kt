@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.cli
 
-import no.ntnu.ihb.acco.dsl.ScenarioContext
+import no.ntnu.ihb.vico.dsl.ScenarioContext
 import java.io.File
 import javax.script.ScriptEngineManager
 
@@ -33,18 +33,18 @@ fun invokeScript(scriptFile: File) {
 
     val imports = """
         
-        import no.ntnu.ihb.acco.core.*
-        import no.ntnu.ihb.acco.components.*
+        import no.ntnu.ihb.vico.core.*
+        import no.ntnu.ihb.vico.components.*
         
         import no.ntnu.ihb.vico.cli.*
-        import no.ntnu.ihb.acco.chart.*
+        import no.ntnu.ihb.vico.chart.*
         
-        import no.ntnu.ihb.acco.render.*
-        import no.ntnu.ihb.acco.shapes.*
-        import no.ntnu.ihb.acco.render.jme.JmeRenderSystem
+        import no.ntnu.ihb.vico.render.*
+        import no.ntnu.ihb.vico.shapes.*
+        import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
         
-        import no.ntnu.ihb.acco.physics.*
-        import no.ntnu.ihb.acco.physics.bullet.BulletSystem
+        import no.ntnu.ihb.vico.physics.*
+        import no.ntnu.ihb.vico.physics.bullet.BulletSystem
         
     """.trimIndent()
 
@@ -63,7 +63,7 @@ fun parseScenario(scriptFile: File): ScenarioContext? {
     setupScriptingEnvironment()
 
     val imports = """
-        import no.ntnu.ihb.acco.scenario.*
+        import no.ntnu.ihb.vico.scenario.*
     """.trimIndent()
 
     return try {

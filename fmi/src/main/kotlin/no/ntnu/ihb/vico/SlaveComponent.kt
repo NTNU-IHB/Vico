@@ -1,14 +1,14 @@
 package no.ntnu.ihb.vico
 
-import no.ntnu.ihb.acco.core.*
-import no.ntnu.ihb.acco.util.ObservableSet
 import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.variables.Causality
+import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.model.SlaveProvider
 import no.ntnu.ihb.vico.structure.Parameter
 import no.ntnu.ihb.vico.structure.ParameterSet
+import no.ntnu.ihb.vico.util.ObservableSet
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -125,14 +125,14 @@ open class SlaveComponent(
 
 }
 
-private fun Causality?.convert(): no.ntnu.ihb.acco.core.Causality {
+private fun Causality?.convert(): no.ntnu.ihb.vico.core.Causality {
     return when (this) {
-        Causality.INPUT -> no.ntnu.ihb.acco.core.Causality.INPUT
-        Causality.OUTPUT -> no.ntnu.ihb.acco.core.Causality.OUTPUT
-        Causality.LOCAL -> no.ntnu.ihb.acco.core.Causality.LOCAL
-        Causality.PARAMETER -> no.ntnu.ihb.acco.core.Causality.PARAMETER
-        Causality.CALCULATED_PARAMETER -> no.ntnu.ihb.acco.core.Causality.CALCULATED_PARAMETER
-        else -> no.ntnu.ihb.acco.core.Causality.UNKNOWN
+        Causality.INPUT -> no.ntnu.ihb.vico.core.Causality.INPUT
+        Causality.OUTPUT -> no.ntnu.ihb.vico.core.Causality.OUTPUT
+        Causality.LOCAL -> no.ntnu.ihb.vico.core.Causality.LOCAL
+        Causality.PARAMETER -> no.ntnu.ihb.vico.core.Causality.PARAMETER
+        Causality.CALCULATED_PARAMETER -> no.ntnu.ihb.vico.core.Causality.CALCULATED_PARAMETER
+        else -> no.ntnu.ihb.vico.core.Causality.UNKNOWN
     }
 }
 
