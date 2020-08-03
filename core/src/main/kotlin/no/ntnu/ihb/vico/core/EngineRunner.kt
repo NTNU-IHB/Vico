@@ -2,9 +2,6 @@ package no.ntnu.ihb.vico.core
 
 import no.ntnu.ihb.vico.input.KeyStroke
 import no.ntnu.ihb.vico.util.Clock
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
@@ -94,6 +91,7 @@ class EngineRunner internal constructor(
 
         var stepOccurred = false
         if (paused.get()) {
+            wallClock -= deltaTime
             return false
         }
 
@@ -105,13 +103,12 @@ class EngineRunner internal constructor(
             } else {
                 Thread.sleep(1)
             }
-            wallClock += deltaTime
         } else {
             engine.step()
             stepOccurred = true
-            wallClock += engine.baseStepSize
         }
 
+        wallClock += deltaTime
         actualRealTimeFactor = simulationClock / wallClock
 
         return stepOccurred
@@ -152,9 +149,8 @@ class EngineRunner internal constructor(
     //https://stackoverflow.com/questions/4983065/how-to-interrupt-java-util-scanner-nextline-call
     private inner class ConsoleInputReader : Thread() {
 
-        @Throws(IOException::class)
         override fun run() {
-            val br = BufferedReader(InputStreamReader(System.`in`))
+            val br = System.`in`.bufferedReader()
             var quit = false
             println()
             println("Commandline options:\n")
