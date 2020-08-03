@@ -72,11 +72,19 @@ class EngineRunner internal constructor(
         )
     }
 
+    fun runUntilAndWait(time: Number) {
+        runUntil(time).get()
+    }
+
     fun runFor(time: Number): Future<Unit> {
         val doubleTime = time.toDouble()
         return runWhile(
             predicate = { (it.currentTime + it.startTime) > doubleTime }
         )
+    }
+
+    fun runForAndWait(time: Number) {
+        runFor(time).get()
     }
 
     fun togglePause() {
