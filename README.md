@@ -6,7 +6,10 @@ Vico is a generic co-simulation framework running on the JVM that takes advantag
 
 #### FMI & SSP support
 
-Support for FMI 1.0 & 2.0 for co-simulation and SSP 1.0 is provided by the __fmi__ module.
+Support for FMI 1.0 & 2.0 for co-simulation and SSP 1.0 is provided by the __fmi__ module. 
+More specifically this module adds a _SlaveSystem_ that represents a collection of fmus to be simulated together. The SlaveSystem requires an instance of the interface _MasterAlgorithm_, which represents an FMI master algorithm. A _FixedStepMaster_ is provided by the module.
+
+Optional distributed execution of fmus is possible by means of [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy).
 
 #### Time-series and XY charts
 
@@ -24,10 +27,11 @@ An implementation of a physics engine, relying on Bullet, is provided by the __b
 
 ### Command line interface
 ````bash
-Usage: <main class> [-h] [COMMAND]
+
+Usage: vico [-h] [COMMAND]
   -h, --help   display a help message
 Commands:
-  run           Run a Vico script
-  simulate-fmu  Simulate a single FMU
-  simulate-ssp  Simulate a co-simulation system described using SSP
+  run           Run a generic Vico script (.kts)
+  simulate-fmu  Simulate a single FMU.
+  simulate-ssp  Simulate a co-simulation system described using SSP.
 ````
