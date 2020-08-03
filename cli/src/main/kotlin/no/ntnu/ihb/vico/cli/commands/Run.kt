@@ -4,7 +4,7 @@ import no.ntnu.ihb.vico.cli.invokeScript
 import picocli.CommandLine
 import java.io.File
 
-@CommandLine.Command(name = "run", description = ["Run a Vico script"])
+@CommandLine.Command(name = "run", description = ["Run a Vico script (.kts)"])
 class Run : Runnable {
 
     @CommandLine.Parameters(
