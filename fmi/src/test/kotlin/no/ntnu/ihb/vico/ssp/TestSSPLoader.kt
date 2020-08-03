@@ -30,7 +30,7 @@ internal class TestSSPLoader {
             structure.apply(engine)
 
             engine.runner.apply {
-                runFor(stopTime).get()
+                runForAndWait(stopTime)
             }
 
         }

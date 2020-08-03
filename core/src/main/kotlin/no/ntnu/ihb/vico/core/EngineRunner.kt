@@ -89,12 +89,12 @@ class EngineRunner internal constructor(
 
     private fun stepEngine(deltaTime: Double): Boolean {
 
-        var stepOccurred = false
+
         if (paused.get()) {
-            wallClock -= deltaTime
             return false
         }
 
+        var stepOccurred = false
         if (enableRealTimeTarget) {
             val diff = (simulationClock / targetRealTimeFactor) - wallClock
             if (diff <= 0) {
@@ -103,12 +103,13 @@ class EngineRunner internal constructor(
             } else {
                 Thread.sleep(1)
             }
+            wallClock += deltaTime
         } else {
             engine.step()
             stepOccurred = true
+            wallClock += deltaTime
         }
 
-        wallClock += deltaTime
         actualRealTimeFactor = simulationClock / wallClock
 
         return stepOccurred
