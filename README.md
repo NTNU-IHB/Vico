@@ -38,6 +38,6 @@ Commands:
 ````
 To see the input arguments for the sub-commands, run the respective command providing no arguments. 
 
-Want to simplify the creation of SSP archives? Checkout [ssp-gen](https://github.com/NTNU-IHB/sspgen)
-Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j)
-Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) 
+Want to simplify the creation of SSP archives? Checkout [ssp-gen](https://github.com/NTNU-IHB/sspgen) <br>
+Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j) <br>
+Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) <br>
