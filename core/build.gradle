@@ -3,6 +3,7 @@ plugins {
 }
 
 apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
     api group: 'org.joml', name: 'joml', version: '1.9.24'
@@ -12,3 +13,29 @@ dependencies {
     testImplementation project(':test-data')
     testImplementation project(':jme-render')
 }
+
+
+def generatedSourceDir = new File(buildDir, "generated/src/main/kotlin")
+sourceSets.main.kotlin.srcDirs += generatedSourceDir.absolutePath
+
+task injectVersion() {
+    doLast {
+        def packageFolder = project.group.replace(".", "/")
+        def versionFile = new File(generatedSourceDir, "$packageFolder/version.kt")
+        if (!versionFile.parentFile.exists()) {
+            versionFile.parentFile.mkdirs()
+            versionFile.createNewFile()
+        }
+        versionFile.write(
+                "package ${project.group}\n\n" +
+                "object Vico {\n\n" +
+                "   @JvmField\n" +
+                "   val version = \"${project.version}\"\n\n" +
+                "}\n"
+        )
+
+    }
+}
+
+compileKotlin.dependsOn injectVersion
+
