@@ -8,7 +8,7 @@ Vico is a generic co-simulation framework running on the JVM that takes advantag
 
 Support for FMI 1.0 & 2.0 for co-simulation and SSP 1.0 is provided by the __fmi__ module. 
 
-More specifically this module adds a _SlaveSystem_ that represents a collection of fmus to be simulated together. The SlaveSystem requires an instance of the interface _MasterAlgorithm_, which represents an FMI master algorithm. A _FixedStepMaster_ is provided by the module.
+More specifically this module adds a _SlaveSystem_ that represents a collection of fmus to be simulated together. The SlaveSystem requires an instance of a class implementing the interface _MasterAlgorithm_, which represents an FMI master algorithm. A ready to use _FixedStepMaster_ is provided by the module.
 
 Optional distributed execution of fmus is possible by means of [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy).
 
