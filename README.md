@@ -38,14 +38,16 @@ Commands:
 ````
 To see the input arguments for the sub-commands, run the respective command providing no arguments. 
 
-
-> Want to simplify the creation of SSP archives? Check out [ssp-gen](https://github.com/NTNU-IHB/sspgen) <br>
-> Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j) <br>
-> Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) <br>
-
 ### How to build
 Simple execute `./gradlew build` in a shell. The CLI will be located under `cli/build/install`. <br>
 To publish the library to your local maven installtion, execute `./gradlew pulishToMavenLocal`.
 
 ### Development
 As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is the recommended IDE for development. 
+JDK8 is required.
+
+
+> Want to simplify the creation of SSP archives? Check out [ssp-gen](https://github.com/NTNU-IHB/sspgen) <br>
+> Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j) <br>
+> Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) <br>
+
