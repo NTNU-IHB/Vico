@@ -26,8 +26,8 @@ class ScenarioContext {
         predicateActions.add {
             val ctx = WhenContext(it).apply(action)
             object : PredicateTask {
-                override fun test(engine: Engine): Boolean {
-                    return ctx.predicate.test(engine)
+                override fun test(it: Engine): Boolean {
+                    return ctx.predicate.test(it)
                 }
 
                 override fun run() {
