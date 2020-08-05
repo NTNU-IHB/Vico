@@ -23,9 +23,14 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-compiler-embeddable'
     implementation 'org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable'
 
-    implementation group: 'info.picocli', name: 'picocli', version: '4.3.2'
+    implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
+
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.2'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 
     testImplementation project(':test-data')
+    testImplementation group: 'org.graalvm.sdk', name: 'graal-sdk', version: '20.1.0'
     
 }
 
