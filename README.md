@@ -47,7 +47,7 @@ As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) i
 JDK8 is required.
 
 
-> Want to simplify the creation of SSP archives? Check out [ssp-gen](https://github.com/NTNU-IHB/sspgen) <br>
+> Want to simplify the creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
 > Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j) <br>
 > Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) <br>
 
