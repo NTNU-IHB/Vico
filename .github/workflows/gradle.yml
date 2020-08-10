@@ -27,9 +27,9 @@ jobs:
           java-version: 1.8
 
       - name: Build with Gradle
-        run: ./gradlew build --info installDist
+        run: ./gradlew build #--info installDist
 
-      - uses: actions/upload-artifact@master
-        with:
-          name: vico
-          path: cli/build/install/vico
+#      - uses: actions/upload-artifact@master
+#        with:
+#          name: vico
+#          path: cli/build/install/vico
