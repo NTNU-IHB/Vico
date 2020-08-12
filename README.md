@@ -1,9 +1,14 @@
 # Vico (work in progress)
 
-> Vico is an Entity-Component-System (ECS) based co-simulation framework
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/NTNU-IHB/FMU-proxy/issues) 
 
 ![Java CI](https://github.com/NTNU-IHB/Vico/workflows/Java%20CI/badge.svg)
 [![Gitter](https://badges.gitter.im/NTNU-IHB/Vico.svg)](https://gitter.im/NTNU-IHB/Vico?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
+
+> Vico is an Entity-Component-System (ECS) based co-simulation framework
+
 
 Vico is a generic co-simulation framework running on the JVM that takes advantage of the ECS software architecture popularized by game engines. A simulation object is known as an _entity_, which is basically a collection of _components_. A component is just state, with no behavior. Beaviour is added to the simulation through so called _systems_ that acts on entities within a certain _family_. The type of components held by a given entity decides which family it belongs to. Entities, components and systems may be added and removed from the engine at any time, thus family relationships, what an entity represents and which entities a system acts on is highly dynamic. 
 
