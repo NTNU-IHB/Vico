@@ -12,22 +12,20 @@ application {
 
 dependencies {
 
-    api project(':core')
-    api project(':fmi')
-    api project(':chart')
-    api project(':jme-render')
-    api project(':bullet-physics')
+    implementation project(':core')
+    implementation (project(':fmi')) {
+        exclude group: "com.opensimulationplatform.cosim4j"
+    }
+    implementation project(':chart')
+    implementation project(':jme-render')
+    implementation project(':bullet-physics')
 
-    implementation 'org.jetbrains.kotlin:kotlin-script-util'
     runtimeOnly 'org.jetbrains.kotlin:kotlin-script-runtime'
+    implementation 'org.jetbrains.kotlin:kotlin-script-util'
     implementation 'org.jetbrains.kotlin:kotlin-compiler-embeddable'
     implementation 'org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable'
 
     implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
-
-    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.2'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 
     testImplementation project(':test-data')
     
