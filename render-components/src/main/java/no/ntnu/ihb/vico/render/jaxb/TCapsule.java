@@ -16,8 +16,8 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="TCapsule">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="radius" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
- *       &lt;attribute name="height" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *       &lt;attribute name="radius" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
+ *       &lt;attribute name="height" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 public class TCapsule {
 
     @XmlAttribute(name = "radius", required = true)
-    protected double radius;
+    protected float radius;
     @XmlAttribute(name = "height", required = true)
-    protected double height;
+    protected float height;
 
     /**
      * Gets the value of the radius property.
      *
      */
-    public double getRadius() {
+    public float getRadius() {
         return radius;
     }
 
@@ -44,7 +44,7 @@ public class TCapsule {
      * Sets the value of the radius property.
      *
      */
-    public void setRadius(double value) {
+    public void setRadius(float value) {
         this.radius = value;
     }
 
@@ -52,7 +52,7 @@ public class TCapsule {
      * Gets the value of the height property.
      *
      */
-    public double getHeight() {
+    public float getHeight() {
         return height;
     }
 
@@ -60,7 +60,7 @@ public class TCapsule {
      * Sets the value of the height property.
      *
      */
-    public void setHeight(double value) {
+    public void setHeight(float value) {
         this.height = value;
     }
 

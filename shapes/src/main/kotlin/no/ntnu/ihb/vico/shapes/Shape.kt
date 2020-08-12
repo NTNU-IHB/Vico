@@ -1,44 +1,44 @@
 package no.ntnu.ihb.vico.shapes
 
-import org.joml.Vector3d
+import org.joml.Vector3f
 
 
 sealed class Shape
 
 data class SphereShape @JvmOverloads constructor(
-    var radius: Double = 0.5
+        var radius: Float = 0.5f
 ) : Shape()
 
 data class CylinderShape @JvmOverloads constructor(
-    var radius: Double = 0.5,
-    var height: Double = 1.0
+        var radius: Float = 0.5f,
+        var height: Float = 1.0f
 ) : Shape()
 
 data class CapsuleShape @JvmOverloads constructor(
-    var radius: Double = 0.5,
-    var height: Double = 1.0
+        var radius: Float = 0.5f,
+        var height: Float = 1f
 ) : Shape()
 
 data class PlaneShape @JvmOverloads constructor(
-    var width: Double = 1.0,
-    var height: Double = 1.0
+        var width: Float = 1f,
+        var height: Float = 1f
 ) : Shape()
 
 data class BoxShape @JvmOverloads constructor(
-    val extents: Vector3d = Vector3d(1.0, 1.0, 1.0)
+        val extents: Vector3f = Vector3f(1f, 1f, 1f)
 ) : Shape() {
 
-    val width: Double
+    val width: Float
         get() = extents.x
 
-    val height: Double
+    val height: Float
         get() = extents.y
 
-    val depth: Double
+    val depth: Float
         get() = extents.z
 
-    constructor(extents: Double) : this(Vector3d(extents))
-    constructor(width: Double, height: Double, depth: Double) : this(Vector3d(width, height, depth))
+    constructor(extents: Float) : this(Vector3f(extents))
+    constructor(width: Float, height: Float, depth: Float) : this(Vector3f(width, height, depth))
 
 }
 
@@ -63,7 +63,7 @@ class TrimeshShape private constructor(
         internal val colors = mutableListOf<Float>()
         internal val uvs = mutableListOf<Float>()
 
-        var scale = 1.0
+        var scale = 1f
 
         fun indices(indices: List<Int>) = apply {
             this.indices.addAll(indices)
@@ -105,7 +105,7 @@ class TrimeshShape private constructor(
             this.uvs.addAll(uvs.toList())
         }
 
-        fun scale(value: Double) = apply {
+        fun scale(value: Float) = apply {
             this.scale = value
         }
 

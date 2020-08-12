@@ -50,7 +50,7 @@ object VisualLoader {
     }
 
     private fun createShape(b: TBox): BoxShape {
-        return BoxShape(b.xExtent * 0.5, b.yExtent * 0.5, b.zExtent * 0.5)
+        return BoxShape(b.xExtent * 0.5f, b.yExtent * 0.5f, b.zExtent * 0.5f)
     }
 
     private fun createShape(p: TPlane): PlaneShape {

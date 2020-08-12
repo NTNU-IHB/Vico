@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="TSphere">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="radius" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *       &lt;attribute name="radius" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -27,13 +27,13 @@ import javax.xml.bind.annotation.XmlType;
 public class TSphere {
 
     @XmlAttribute(name = "radius", required = true)
-    protected double radius;
+    protected float radius;
 
     /**
      * Gets the value of the radius property.
      *
      */
-    public double getRadius() {
+    public float getRadius() {
         return radius;
     }
 
@@ -41,7 +41,7 @@ public class TSphere {
      * Sets the value of the radius property.
      *
      */
-    public void setRadius(double value) {
+    public void setRadius(float value) {
         this.radius = value;
     }
 

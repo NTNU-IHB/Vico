@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="TBox">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="xExtent" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
- *       &lt;attribute name="yExtent" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
- *       &lt;attribute name="zExtent" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *       &lt;attribute name="xExtent" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
+ *       &lt;attribute name="yExtent" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
+ *       &lt;attribute name="zExtent" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -29,17 +29,17 @@ import javax.xml.bind.annotation.XmlType;
 public class TBox {
 
     @XmlAttribute(name = "xExtent", required = true)
-    protected double xExtent;
+    protected float xExtent;
     @XmlAttribute(name = "yExtent", required = true)
-    protected double yExtent;
+    protected float yExtent;
     @XmlAttribute(name = "zExtent", required = true)
-    protected double zExtent;
+    protected float zExtent;
 
     /**
      * Gets the value of the xExtent property.
      *
      */
-    public double getXExtent() {
+    public float getXExtent() {
         return xExtent;
     }
 
@@ -47,7 +47,7 @@ public class TBox {
      * Sets the value of the xExtent property.
      *
      */
-    public void setXExtent(double value) {
+    public void setXExtent(float value) {
         this.xExtent = value;
     }
 
@@ -55,7 +55,7 @@ public class TBox {
      * Gets the value of the yExtent property.
      *
      */
-    public double getYExtent() {
+    public float getYExtent() {
         return yExtent;
     }
 
@@ -63,7 +63,7 @@ public class TBox {
      * Sets the value of the yExtent property.
      *
      */
-    public void setYExtent(double value) {
+    public void setYExtent(float value) {
         this.yExtent = value;
     }
 
@@ -71,7 +71,7 @@ public class TBox {
      * Gets the value of the zExtent property.
      *
      */
-    public double getZExtent() {
+    public float getZExtent() {
         return zExtent;
     }
 
@@ -79,7 +79,7 @@ public class TBox {
      * Sets the value of the zExtent property.
      *
      */
-    public void setZExtent(double value) {
+    public void setZExtent(float value) {
         this.zExtent = value;
     }
 

@@ -45,28 +45,28 @@
     </xs:complexType>
 
     <xs:complexType name="TSphere">
-        <xs:attribute name="radius" type="xs:double" use="required"/>
+        <xs:attribute name="radius" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TPlane">
-        <xs:attribute name="width" type="xs:double" use="required"/>
-        <xs:attribute name="height" type="xs:double" use="required"/>
+        <xs:attribute name="width" type="xs:float" use="required"/>
+        <xs:attribute name="height" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TBox">
-        <xs:attribute name="xExtent" type="xs:double" use="required"/>
-        <xs:attribute name="yExtent" type="xs:double" use="required"/>
-        <xs:attribute name="zExtent" type="xs:double" use="required"/>
+        <xs:attribute name="xExtent" type="xs:float" use="required"/>
+        <xs:attribute name="yExtent" type="xs:float" use="required"/>
+        <xs:attribute name="zExtent" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TCylinder">
-        <xs:attribute name="radius" type="xs:double" use="required"/>
-        <xs:attribute name="height" type="xs:double" use="required"/>
+        <xs:attribute name="radius" type="xs:float" use="required"/>
+        <xs:attribute name="height" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TCapsule">
-        <xs:attribute name="radius" type="xs:double" use="required"/>
-        <xs:attribute name="height" type="xs:double" use="required"/>
+        <xs:attribute name="radius" type="xs:float" use="required"/>
+        <xs:attribute name="height" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TMesh">

@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each
  * Java content interface and Java element interface
- * generated in the no.ntnu.ihb.acco.render.jaxb package.
+ * generated in the no.ntnu.ihb.vico.render.jaxb package.
  * <p>An ObjectFactory allows you to programatically
  * construct new instances of the Java representation
  * for XML content. The Java representation of XML
@@ -26,7 +26,7 @@ public class ObjectFactory {
     private final static QName _VisualConfig_QNAME = new QName("http://github.com/NTNU-IHB/Vico/schema/VisualConfig", "VisualConfig");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.acco.render.jaxb
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: no.ntnu.ihb.vico.render.jaxb
      *
      */
     public ObjectFactory() {

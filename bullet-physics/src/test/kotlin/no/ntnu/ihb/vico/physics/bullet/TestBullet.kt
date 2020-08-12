@@ -22,7 +22,7 @@ fun main() {
             val frame = addComponent(TransformComponent()).frame
             frame.setLocalTranslation(0.0, -1.0, 0.0)
             addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
-            val shape = BoxShape(10.0, 0.1, 10.0)
+            val shape = BoxShape(10f, 0.1f, 10f)
             addComponent(ColliderComponent(shape))
             addComponent(GeometryComponent(shape))
         }
@@ -37,7 +37,7 @@ fun main() {
                     )
                 }
                 addComponent(RigidBodyComponent())
-                val shape = SphereShape(0.1)
+                val shape = SphereShape(0.1f)
                 addComponent(ColliderComponent(shape))
                 addComponent(GeometryComponent(shape))
             }
@@ -47,7 +47,7 @@ fun main() {
 
         val test = engine.createEntity("test").apply {
             addComponent(TransformComponent())
-            val shape = BoxShape(0.1)
+            val shape = BoxShape(0.1f)
             addComponent(ColliderComponent(shape))
             addComponent(GeometryComponent(shape).apply {
                 setColor(Color.red)

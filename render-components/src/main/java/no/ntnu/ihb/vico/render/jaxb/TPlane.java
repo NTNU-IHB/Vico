@@ -16,8 +16,8 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="TPlane">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="width" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
- *       &lt;attribute name="height" use="required" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *       &lt;attribute name="width" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
+ *       &lt;attribute name="height" use="required" type="{http://www.w3.org/2001/XMLSchema}float" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
 public class TPlane {
 
     @XmlAttribute(name = "width", required = true)
-    protected double width;
+    protected float width;
     @XmlAttribute(name = "height", required = true)
-    protected double height;
+    protected float height;
 
     /**
      * Gets the value of the width property.
      *
      */
-    public double getWidth() {
+    public float getWidth() {
         return width;
     }
 
@@ -44,7 +44,7 @@ public class TPlane {
      * Sets the value of the width property.
      *
      */
-    public void setWidth(double value) {
+    public void setWidth(float value) {
         this.width = value;
     }
 
@@ -52,7 +52,7 @@ public class TPlane {
      * Gets the value of the height property.
      *
      */
-    public double getHeight() {
+    public float getHeight() {
         return height;
     }
 
@@ -60,7 +60,7 @@ public class TPlane {
      * Sets the value of the height property.
      *
      */
-    public void setHeight(double value) {
+    public void setHeight(float value) {
         this.height = value;
     }
 
