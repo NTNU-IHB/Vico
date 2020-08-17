@@ -2,6 +2,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id 'kotlin'
+    id 'java-library'
 }
 
 apply from: rootProject.file("gradle/mavenpublish.gradle")

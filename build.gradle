@@ -18,7 +18,7 @@ apply from: project.file("gradle/fmuproxy.gradle")
 
 subprojects { sub ->
 
-    apply plugin: 'java-library'
+    apply plugin: 'java'
 
     sub.group = 'no.ntnu.ihb.vico'
     sub.version = rootProject.version
