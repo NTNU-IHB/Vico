@@ -1,12 +1,12 @@
 plugins {
     id 'base'
     id "com.jfrog.bintray" version "1.8.4" apply(false)
-    id 'org.jetbrains.kotlin.jvm' version '1.4.0-rc' apply(false)
+    id 'org.jetbrains.kotlin.jvm' version '1.4.0' apply(false)
 }
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = '6.5.1'
+    gradleVersion = '6.6'
 }
 
 version = rootProject.file("VERSION").readLines()[0]
@@ -45,14 +45,6 @@ subprojects { sub ->
     test {
         failFast = true
         useJUnitPlatform()
-    }
-
-    pluginManager.withPlugin('groovy') {
-
-        dependencies {
-            api group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.8'
-        }
-
     }
 
     pluginManager.withPlugin('kotlin') {
