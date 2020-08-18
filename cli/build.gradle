@@ -13,9 +13,7 @@ application {
 dependencies {
 
     implementation project(':core')
-    implementation (project(':fmi')) {
-        exclude group: "com.opensimulationplatform.cosim4j"
-    }
+    implementation (project(':fmi'))
     implementation project(':chart')
     implementation project(':jme-render')
 

@@ -12,21 +12,16 @@ dependencies {
 
     api project(':core')
 
-    def fmi4j_version = '0.31.2'
+    def fmi4j_version = '0.31.4'
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-export", version: fmi4j_version
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-import", version: fmi4j_version
     implementation group: "no.ntnu.ihb.fmuproxy", name: "fmu-proxy-clients", version: "0.2.0"
 
-    def libcosim_version = "r4"
-    def platform = OperatingSystem.current().isLinux() ? "linux" : "win"
-    implementation group: "com.opensimulationplatform.cosim4j", name: "core", version: libcosim_version
-    runtimeOnly group: "com.opensimulationplatform.cosim4j", name: "natives-$platform", version: libcosim_version
-
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.8'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9'
 
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-    runtimeOnly group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.2'
-    runtimeOnly group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
+    runtimeOnly group: 'org.glassfish.jaxb', name: 'jaxb-core', version: '2.3.0.1'
+    runtimeOnly group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.3'
 
     testImplementation project(':chart')
     testImplementation project(':test-data')
