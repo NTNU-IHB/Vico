@@ -3,7 +3,7 @@
 > Vico is an Entity-Component-System (ECS) based co-simulation framework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/NTNU-IHB/FMU-proxy/issues) 
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/NTNU-IHB/Vico/issues) 
 
 ![Java CI](https://github.com/NTNU-IHB/Vico/workflows/Java%20CI/badge.svg)
 [![Gitter](https://badges.gitter.im/NTNU-IHB/Vico.svg)](https://gitter.im/NTNU-IHB/Vico?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
