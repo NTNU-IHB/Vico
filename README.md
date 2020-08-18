@@ -39,7 +39,6 @@ An implementation of a physics engine, relying on Bullet, is provided by the __b
 Usage: vico [-h] [COMMAND]
   -h, --help   display a help message
 Commands:
-  run           Run a generic Vico script (.kts)
   simulate-fmu  Simulate a single FMU.
   simulate-ssp  Simulate a co-simulation system described using SSP.
 ````
@@ -47,7 +46,7 @@ To see the input arguments for the sub-commands, run the respective command prov
 
 ### How to build
 Simple execute `./gradlew build` in a shell. The CLI will be located under `cli/build/install`. <br>
-To publish the library to your local maven installtion, execute `./gradlew pulishToMavenLocal`.
+To publish the library to your local maven installation, execute `./gradlew pulishToMavenLocal`.
 
 ### Development
 As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is the recommended IDE for development. 
