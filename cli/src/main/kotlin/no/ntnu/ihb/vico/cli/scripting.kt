@@ -26,37 +26,6 @@ private fun setupScriptingEnvironment() {
     System.setProperty("idea.io.use.nio2", "true")
 }
 
-fun invokeScript(scriptFile: File) {
-
-    if (!validateFile(scriptFile)) return
-    setupScriptingEnvironment()
-
-    val imports = """
-        
-        import no.ntnu.ihb.vico.core.*
-        import no.ntnu.ihb.vico.components.*
-        
-        import no.ntnu.ihb.vico.cli.*
-        import no.ntnu.ihb.vico.chart.*
-        
-        import no.ntnu.ihb.vico.render.*
-        import no.ntnu.ihb.vico.shapes.*
-        import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
-        
-        import no.ntnu.ihb.vico.physics.*
-        import no.ntnu.ihb.vico.physics.bullet.BulletSystem
-        
-    """.trimIndent()
-
-    scriptEngine.apply {
-        val scriptContent = scriptFile.readLines().toMutableList()
-        val insertionPoint = if (scriptContent[0].startsWith("#!")) 1 else 0
-        scriptContent.add(insertionPoint, imports)
-        eval(scriptContent.joinToString("\n"))
-    }
-
-}
-
 fun parseScenario(scriptFile: File): ScenarioContext? {
 
     if (!validateFile(scriptFile)) return null
