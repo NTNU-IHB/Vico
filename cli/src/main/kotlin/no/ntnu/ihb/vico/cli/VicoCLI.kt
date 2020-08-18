@@ -5,6 +5,12 @@ import no.ntnu.ihb.vico.cli.commands.SimulateFmu
 import no.ntnu.ihb.vico.cli.commands.SimulateSsp
 import picocli.CommandLine
 
+fun cliExec(f: () -> Array<String>) {
+    VicoCLI.main(f.invoke())
+}
+
+fun Array<String>.cliExec() = cliExec { this }
+
 @CommandLine.Command(
         subcommands = [SimulateFmu::class, SimulateSsp::class]
 )
