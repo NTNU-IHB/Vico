@@ -4,7 +4,7 @@ import no.ntnu.ihb.vico.dsl.ScenarioContext
 import java.io.File
 import javax.script.ScriptEngineManager
 
-private val validExtensions = listOf("kts", "vico")
+private val validExtensions = listOf("kts")
 
 private fun validateFile(scriptFile: File): Boolean {
     val ext = scriptFile.extension
