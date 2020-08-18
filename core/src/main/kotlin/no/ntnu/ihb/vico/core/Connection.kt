@@ -2,51 +2,6 @@ package no.ntnu.ihb.vico.core
 
 import no.ntnu.ihb.vico.util.StringArray
 
-
-sealed class Connector {
-
-    abstract val component: Component
-    abstract val property: Property
-
-}
-
-class IntConnector(
-    override val component: Component,
-    override val property: IntProperty
-) : Connector() {
-    constructor(component: Component, name: String) : this(
-        component, component.getIntegerProperty(name)
-    )
-}
-
-class RealConnector(
-    override val component: Component,
-    override val property: RealProperty
-) : Connector() {
-    constructor(component: Component, name: String) : this(
-        component, component.getRealProperty(name)
-    )
-}
-
-class StrConnector(
-    override val component: Component,
-    override val property: StrProperty
-) : Connector() {
-    constructor(component: Component, name: String) : this(
-        component, component.getStringProperty(name)
-    )
-}
-
-class BoolConnector(
-    override val component: Component,
-    override val property: BoolProperty
-) : Connector() {
-    constructor(component: Component, name: String) : this(
-        component, component.getBooleanProperty(name)
-    )
-}
-
-
 interface Connection {
 
     val source: Component

@@ -18,6 +18,7 @@ enum class PropertyType {
 
 data class PropertyIdentifier(
     val entityName: String,
+    val componentName: String,
     val propertyName: String
 ) {
 
@@ -44,6 +45,21 @@ data class PropertyIdentifier(
     fun getBooleanProperty(engine: Engine): BoolProperty {
         val entity = engine.getEntityByName(entityName)
         return entity.getBooleanProperty(propertyName)
+    }
+
+    companion object {
+
+        fun parse(identifier: String): PropertyIdentifier {
+            val split = identifier.split(".")
+            require(split.size >= 3)
+            val entityName = split[0]
+            val componentName = split[1]
+            val propertyName = split.subList(2, split.size).joinToString(".")
+            return PropertyIdentifier(
+                entityName, componentName, propertyName
+            )
+        }
+
     }
 
 }

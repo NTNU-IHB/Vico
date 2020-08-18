@@ -88,6 +88,15 @@ open class Entity internal constructor(
         return getComponentOrNull(E::class.java)
     }
 
+    fun getComponentOrNull(componentName: String): Component? {
+        return componentMap.values.firstOrNull { it.name == componentName }
+    }
+
+    fun getComponent(componentName: String): Component {
+        return getComponentOrNull(componentName)
+            ?: throw NoSuchElementException("No Component named '$componentName' in entity '$name'!")
+    }
+
     fun removeAllComponents() {
         val comps = components.toMutableList()
         comps.forEach { c ->

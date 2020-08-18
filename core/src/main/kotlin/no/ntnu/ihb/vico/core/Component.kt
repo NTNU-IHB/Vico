@@ -3,7 +3,9 @@ package no.ntnu.ihb.vico.core
 
 typealias ComponentClass = Class<out Component>
 
-abstract class Component : Properties()
+abstract class Component : Properties() {
+    open val name: String = javaClass.simpleName.decapitalize()
+}
 
 internal fun <E : Component> instantiate(componentClass: Class<out E>): E {
     val ctor = componentClass.getDeclaredConstructor()

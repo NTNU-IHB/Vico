@@ -3,7 +3,6 @@ package no.ntnu.ihb.vico.dsl
 import no.ntnu.ihb.vico.components.TransformComponent
 import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.systems.PositionRefSystem
-import no.ntnu.ihb.vico.util.extractEntityAndPropertyName
 
 
 fun execution(ctx: ExecutionContext.() -> Unit): Engine {
@@ -89,18 +88,20 @@ class ConnectionsContext(
     private val engine: Engine
 ) {
 
-
     fun connection(ctx: () -> Connection) {
         engine.addConnection(ctx.invoke())
     }
 
     infix fun String.to(other: String): Connection {
 
-        val p1 = this.extractEntityAndPropertyName()
-        val p2 = other.extractEntityAndPropertyName()
+        val p1 = PropertyIdentifier.parse(this)
+        val p2 = PropertyIdentifier.parse(other)
+
+        /* return ScalarConnection(
+             source = Connector.inferConnectorType(p1.)
+         )*/
 
         TODO()
-
     }
 
 }

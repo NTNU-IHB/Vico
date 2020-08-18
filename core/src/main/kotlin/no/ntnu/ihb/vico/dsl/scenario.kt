@@ -3,7 +3,6 @@ package no.ntnu.ihb.vico.dsl
 import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.util.Predicate
 import no.ntnu.ihb.vico.util.PredicateTask
-import no.ntnu.ihb.vico.util.extractEntityAndPropertyName
 
 
 fun scenario(init: ScenarioContext.() -> Unit): ScenarioContext {
@@ -95,7 +94,7 @@ open class ActionContext(
         name: String
     ) {
 
-        private val propertyIdentifier = name.extractEntityAndPropertyName()
+        private val propertyIdentifier = PropertyIdentifier.parse(name)
         val entityName = propertyIdentifier.entityName
         val propertyName = propertyIdentifier.propertyName
 
@@ -294,12 +293,12 @@ class WhenContext(
     }
 
     fun int(name: String): Int {
-        val (entityName, propertyName) = name.extractEntityAndPropertyName()
+        val (entityName, componentName, propertyName) = PropertyIdentifier.parse(name)
         return engine.getEntityByName(entityName).getIntegerProperty(propertyName).read().first()
     }
 
     fun real(name: String): Double {
-        val (entityName, propertyName) = name.extractEntityAndPropertyName()
+        val (entityName, componentName, propertyName) = PropertyIdentifier.parse(name)
         return engine.getEntityByName(entityName).getRealProperty(propertyName).read().first()
     }
 

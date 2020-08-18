@@ -26,6 +26,9 @@ open class SlaveComponent(
     val modelDescription: CoSimulationModelDescription
         get() = slaveProvider.modelDescription
 
+    override val name: String
+        get() = "fmu"
+
     val variablesMarkedForReading: ObservableSet<String> = ObservableSet(mutableSetOf())
 
     internal val integerSetCache by lazy { Cache<Int>() }
