@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.core
 
-
+@Suppress("unused")
 open class Entity internal constructor(
     name: String = ""
 ) {

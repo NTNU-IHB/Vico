@@ -1,6 +1,5 @@
 #!kts
 
-/*@file:Repository("mavenLocal")*/
 @file:Repository("https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine")
 
 @file:DependsOn("no.ntnu.ihb.vico:core:0.1.0")

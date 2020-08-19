@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.util
 
-import no.ntnu.ihb.vico.core.PropertyIdentifier
+import no.ntnu.ihb.vico.core.UnboundProperty
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -26,11 +26,11 @@ internal class ExtensionsKtTest {
 
         val joined = "$entityName.$componentName.$propertyName"
 
-        val (e, c, p) = PropertyIdentifier.parse(joined)
+        val p = UnboundProperty.parse(joined)
 
-        assertEquals(entityName, e)
-        assertEquals(componentName, c)
-        assertEquals(propertyName, p)
+        assertEquals(entityName, p.entityName)
+        assertEquals(componentName, p.componentName)
+        assertEquals(propertyName, p.propertyName)
 
     }
 

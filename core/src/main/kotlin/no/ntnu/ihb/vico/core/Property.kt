@@ -16,51 +16,41 @@ enum class PropertyType {
     INT, REAL, STRING, BOOLEAN
 }
 
-data class PropertyIdentifier(
+open class UnboundProperty(
     val entityName: String,
     val componentName: String,
     val propertyName: String
 ) {
 
-    fun getProperty(engine: Engine): Property {
-        val entity = engine.getEntityByName(entityName)
-        return entity.getProperty(propertyName)
-    }
-
-    fun getIntegerProperty(engine: Engine): IntProperty {
-        val entity = engine.getEntityByName(entityName)
-        return entity.getIntegerProperty(propertyName)
-    }
-
-    fun getRealProperty(engine: Engine): RealProperty {
-        val entity = engine.getEntityByName(entityName)
-        return entity.getRealProperty(propertyName)
-    }
-
-    fun getStringProperty(engine: Engine): StrProperty {
-        val entity = engine.getEntityByName(entityName)
-        return entity.getStringProperty(propertyName)
-    }
-
-    fun getBooleanProperty(engine: Engine): BoolProperty {
-        val entity = engine.getEntityByName(entityName)
-        return entity.getBooleanProperty(propertyName)
-    }
+    fun bounded(engine: Engine) = BoundProperty(engine, entityName, componentName, propertyName)
 
     companion object {
 
-        fun parse(identifier: String): PropertyIdentifier {
+        fun parse(identifier: String): UnboundProperty {
             val split = identifier.split(".")
             require(split.size >= 3)
             val entityName = split[0]
             val componentName = split[1]
             val propertyName = split.subList(2, split.size).joinToString(".")
-            return PropertyIdentifier(
+            return UnboundProperty(
                 entityName, componentName, propertyName
             )
         }
 
     }
+
+}
+
+class BoundProperty(
+    val engine: Engine,
+    entityName: String,
+    componentName: String,
+    propertyName: String
+) : UnboundProperty(entityName, componentName, propertyName) {
+
+    val entity by lazy { engine.getEntityByName(entityName) }
+    val component by lazy { entity.getComponent(componentName) }
+    val property by lazy { component.getProperty(propertyName) }
 
 }
 

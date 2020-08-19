@@ -94,14 +94,14 @@ class ConnectionsContext(
 
     infix fun String.to(other: String): Connection {
 
-        val p1 = PropertyIdentifier.parse(this)
-        val p2 = PropertyIdentifier.parse(other)
+        val p1 = UnboundProperty.parse(this).bounded(engine)
+        val p2 = UnboundProperty.parse(other).bounded(engine)
 
-        /* return ScalarConnection(
-             source = Connector.inferConnectorType(p1.)
-         )*/
+        return ScalarConnection(
+            Connector.inferConnectorType(p1.component, p1.property),
+            Connector.inferConnectorType(p2.component, p2.property)
+        )
 
-        TODO()
     }
 
 }

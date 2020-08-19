@@ -10,7 +10,7 @@ import javax.xml.bind.JAXB
 object VisualLoader {
 
     fun load(configFile: File, engine: Engine) {
-        require(configFile.exists())
+        require(configFile.exists()) { "No such file: ${configFile.absolutePath}" }
         load(JAXB.unmarshal(configFile, TVisualConfig::class.java), engine)
     }
 

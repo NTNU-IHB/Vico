@@ -94,7 +94,7 @@ open class ActionContext(
         name: String
     ) {
 
-        private val propertyIdentifier = PropertyIdentifier.parse(name)
+        private val propertyIdentifier = UnboundProperty.parse(name)
         val entityName = propertyIdentifier.entityName
         val propertyName = propertyIdentifier.propertyName
 
@@ -293,13 +293,13 @@ class WhenContext(
     }
 
     fun int(name: String): Int {
-        val (entityName, componentName, propertyName) = PropertyIdentifier.parse(name)
-        return engine.getEntityByName(entityName).getIntegerProperty(propertyName).read().first()
+        val p = UnboundProperty.parse(name).bounded(engine)
+        return (p.property as IntProperty).read().first()
     }
 
     fun real(name: String): Double {
-        val (entityName, componentName, propertyName) = PropertyIdentifier.parse(name)
-        return engine.getEntityByName(entityName).getRealProperty(propertyName).read().first()
+        val p = UnboundProperty.parse(name).bounded(engine)
+        return (p.property as RealProperty).read().first()
     }
 
     infix fun Unit.`do`(action: ActionContext.() -> Unit) {
