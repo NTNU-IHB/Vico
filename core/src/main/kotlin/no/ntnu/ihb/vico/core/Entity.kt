@@ -134,13 +134,12 @@ open class Entity internal constructor(
     }
 
     fun getIntegerPropertyOrNull(name: String): IntProperty? {
-        for (component in components) {
-            val v = component.getIntegerPropertyOrNull(name)
-            if (v != null) {
-                return v
-            }
+        val properties = components.mapNotNull { it.getIntegerPropertyOrNull(name) }
+        return when {
+            properties.isEmpty() -> null
+            properties.size == 1 -> properties.first()
+            else -> throw IllegalStateException("Entity has multiple properties named: $name")
         }
-        return null
     }
 
     fun getIntegerProperty(name: String): IntProperty {
@@ -158,11 +157,12 @@ open class Entity internal constructor(
     }
 
     fun getRealPropertyOrNull(name: String): RealProperty? {
-        for (component in components) {
-            val v = component.getRealPropertyOrNull(name)
-            if (v != null) return v
+        val properties = components.mapNotNull { it.getRealPropertyOrNull(name) }
+        return when {
+            properties.isEmpty() -> null
+            properties.size == 1 -> properties.first()
+            else -> throw IllegalStateException("Entity has multiple properties named: $name")
         }
-        return null
     }
 
     fun getRealProperties(): List<RealProperty> {
@@ -170,11 +170,12 @@ open class Entity internal constructor(
     }
 
     fun getStringPropertyOrNull(name: String): StrProperty? {
-        for (component in components) {
-            val v = component.getStringPropertyOrNull(name)
-            if (v != null) return v
+        val properties = components.mapNotNull { it.getStringPropertyOrNull(name) }
+        return when {
+            properties.isEmpty() -> null
+            properties.size == 1 -> properties.first()
+            else -> throw IllegalStateException("Entity has multiple properties named: $name")
         }
-        return null
     }
 
     fun getStringProperty(name: String): StrProperty {
@@ -187,11 +188,12 @@ open class Entity internal constructor(
     }
 
     fun getBooleanPropertyOrNull(name: String): BoolProperty? {
-        for (component in components) {
-            val v = component.getBooleanPropertyOrNull(name)
-            if (v != null) return v
+        val properties = components.mapNotNull { it.getBooleanPropertyOrNull(name) }
+        return when {
+            properties.isEmpty() -> null
+            properties.size == 1 -> properties.first()
+            else -> throw IllegalStateException("Entity has multiple properties named: $name")
         }
-        return null
     }
 
     fun getBooleanProperty(name: String): BoolProperty {

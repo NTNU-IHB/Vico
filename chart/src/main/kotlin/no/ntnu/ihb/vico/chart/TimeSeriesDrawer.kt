@@ -23,8 +23,8 @@ class TimeSeriesDrawer internal constructor(
     ) : AbstractDrawer.Builder<TimeSeriesDrawer>(title, "", label) {
 
         private var maxDuration: Double? = null
-        private val handles = mutableMapOf<String, ValueProvider>()
-        private var seriesInfo = mutableListOf<VariableHandle>()
+        private val handles: MutableMap<String, ValueProvider> = mutableMapOf()
+        private var seriesInfo: MutableList<VariableHandle> = mutableListOf()
 
         fun maxDuration(value: Number?) = apply {
             value?.also {
@@ -35,11 +35,11 @@ class TimeSeriesDrawer internal constructor(
 
         fun registerSeries(componentName: String, variableName: String, modifier: RealModifier) = apply {
             registerSeries(
-                VariableHandle(
-                    componentName,
-                    variableName,
-                    modifier
-                )
+                    VariableHandle(
+                            componentName,
+                            variableName,
+                            modifier
+                    )
             )
         }
 
