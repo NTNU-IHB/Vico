@@ -12,8 +12,8 @@ fun scenario(init: ScenarioContext.() -> Unit): ScenarioContext {
 class ScenarioContext {
 
     var endTime: Number? = null
-    internal val timedActions: MutableList<Pair<Double, (Engine) -> Unit>> = mutableListOf()
-    internal val predicateActions: MutableList<(Engine) -> PredicateTask> = mutableListOf()
+    private val timedActions: MutableList<Pair<Double, (Engine) -> Unit>> = mutableListOf()
+    private val predicateActions: MutableList<(Engine) -> PredicateTask> = mutableListOf()
 
     fun invokeAt(timePoint: Double, action: ActionContext.() -> Unit) {
         timedActions.add(timePoint to {
@@ -35,6 +35,18 @@ class ScenarioContext {
             }
         }
     }
+
+    fun applyScenario(engine: Engine) {
+        timedActions.forEach { (timePoint, action) ->
+            engine.invokeAt(timePoint) {
+                action.invoke(engine)
+            }
+        }
+        predicateActions.forEach { action ->
+            engine.invokeWhen(action.invoke(engine))
+        }
+    }
+
 
 }
 

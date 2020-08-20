@@ -36,7 +36,7 @@ class ExecutionContext {
     }
 
     fun scenario(ctx: ScenarioContext.() -> Unit) {
-        engine.applyScenario(ScenarioContext().apply(ctx))
+        ScenarioContext().apply(ctx).applyScenario(engine)
     }
 
 }

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.core
 
-import no.ntnu.ihb.vico.dsl.ScenarioContext
 import no.ntnu.ihb.vico.input.InputAccess
 import no.ntnu.ihb.vico.input.InputManager
 import no.ntnu.ihb.vico.input.KeyStroke
@@ -130,17 +129,6 @@ class Engine private constructor(
         }
         while (doubleTimePoint > currentTime && !closed.get()) {
             step()
-        }
-    }
-
-    fun applyScenario(scenarioContext: ScenarioContext) {
-        scenarioContext.timedActions.forEach { (timePoint, action) ->
-            invokeAt(timePoint) {
-                action.invoke(this)
-            }
-        }
-        scenarioContext.predicateActions.forEach { action ->
-            invokeWhen(action.invoke(this))
         }
     }
 

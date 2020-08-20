@@ -118,7 +118,7 @@ class SimulateSsp : Runnable {
                 relativeScenarioConfig?.also { configPath ->
                     val scenarioConfig = getConfigPath(loader.ssdFile.parentFile, configPath)
                     val scenario = parseScenario(scenarioConfig) ?: throw RuntimeException("Failed to load scenario")
-                    engine.applyScenario(scenario)
+                    scenario.applyScenario(engine)
                 }
 
                 runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)

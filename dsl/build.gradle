@@ -1,0 +1,11 @@
+plugins {
+    id 'kotlin'
+    id 'java-library'
+}
+
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/bintraypublish.gradle")
+
+dependencies {
+    implementation project(':core')
+}

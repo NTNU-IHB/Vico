@@ -13,7 +13,8 @@ application {
 dependencies {
 
     implementation project(':core')
-    implementation (project(':fmi'))
+    implementation project(':dsl')
+    implementation project(':fmi')
     implementation project(':chart')
     implementation project(':jme-render')
 

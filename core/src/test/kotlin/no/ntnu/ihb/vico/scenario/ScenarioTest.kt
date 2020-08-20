@@ -35,7 +35,7 @@ internal class ScenarioTest {
 
     }
 
-    val scenario = scenario {
+    private val scenario = scenario {
 
         invokeAt(1.0) {
             real("e1.testComponent1.value") *= real("e2.testComponent2.value")
@@ -62,14 +62,13 @@ internal class ScenarioTest {
         val e1 = engine.createEntity("e1", TestComponent1())
         engine.createEntity("e2", TestComponent2())
 
-        engine.applyScenario(scenario)
+        scenario.applyScenario(engine)
 
         engine.stepUntil(1.0)
         Assertions.assertEquals(2.0 * 3.0, e1.getComponent<TestComponent1>().value, 1e-6)
 
         engine.stepUntil(2.0)
         Assertions.assertEquals(99.0, e1.getComponent<TestComponent1>().value, 1e-6)
-
 
     }
 

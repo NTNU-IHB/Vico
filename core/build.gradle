@@ -9,6 +9,7 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 dependencies {
     api group: 'org.joml', name: 'joml', version: '1.9.24'
 
+    testImplementation project(':dsl')
     testImplementation project(':fmi')
     testImplementation project(':chart')
     testImplementation project(':test-data')

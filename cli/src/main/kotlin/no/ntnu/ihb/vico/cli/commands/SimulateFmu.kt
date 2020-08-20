@@ -112,7 +112,7 @@ class SimulateFmu : Runnable {
                 relativeScenarioConfig?.also { configPath ->
                     val scenarioConfig = getConfigPath(fmu, configPath)
                     val scenario = parseScenario(scenarioConfig) ?: throw RuntimeException("Failed to load scenario")
-                    engine.applyScenario(scenario)
+                    scenario.applyScenario(engine)
                 }
 
                 runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)
