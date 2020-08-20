@@ -54,10 +54,11 @@ execution {
             SlaveSystem(FixedStepMaster(), "initialValues")
         }
         system {
-            SlaveLoggerSystem(LogConfigBuilder()
-                    .add("wheel", "zWheel")
-                    .add("chassis", "zChassis")
-                    .build())
+            SlaveLoggerSystem(LogConfigBuilder().apply {
+                staticFileNames = true
+                add("wheel", "zWheel")
+                add("chassis", "zChassis")
+            }.build())
         }
         system {
             TimeSeriesDrawer.Builder("zWheel", "Displacement[m]")
