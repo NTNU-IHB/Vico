@@ -28,7 +28,7 @@ open class UnboundProperty(
 
         fun parse(identifier: String): UnboundProperty {
             val split = identifier.split(".")
-            require(split.size >= 3)
+            require(split.size >= 3) { "Illegal identifier format: $identifier" }
             val entityName = split[0]
             val componentName = split[1]
             val propertyName = split.subList(2, split.size).joinToString(".")

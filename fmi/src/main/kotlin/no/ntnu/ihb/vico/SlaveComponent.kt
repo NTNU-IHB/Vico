@@ -5,19 +5,21 @@ import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.variables.Causality
 import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.model.SlaveProvider
 import no.ntnu.ihb.vico.structure.Parameter
 import no.ntnu.ihb.vico.structure.ParameterSet
 import no.ntnu.ihb.vico.util.ObservableSet
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 
 private typealias Cache<E> = HashMap<ValueReference, E>
 
-open class SlaveComponent(
-    private val slaveProvider: SlaveProvider,
-    val instanceName: String,
-    val stepSizeHint: Double? = null
+open class SlaveComponent @JvmOverloads constructor(
+        private val slaveProvider: SlaveProvider,
+        val instanceName: String,
+        val stepSizeHint: Double? = null
 ) : Component() {
 
     var stepCount = 0L
@@ -27,7 +29,7 @@ open class SlaveComponent(
         get() = slaveProvider.modelDescription
 
     override val name: String
-        get() = "fmu"
+        get() = instanceName
 
     val variablesMarkedForReading: ObservableSet<String> = ObservableSet(mutableSetOf())
 
@@ -43,52 +45,67 @@ open class SlaveComponent(
 
     private val parameterSets: MutableMap<String, ParameterSet> = mutableMapOf()
 
+    @JvmOverloads
+    constructor(
+            fmuPath: String,
+            instanceName: String,
+            stepSizeHint: Double? = null
+    ) : this(File(fmuPath), instanceName, stepSizeHint)
+
+    @JvmOverloads
+    constructor(
+            fmuPath: File,
+            instanceName: String,
+            stepSizeHint: Double? = null
+    ) : this(ModelResolver.resolve(fmuPath), instanceName, stepSizeHint)
+
+
     init {
 
         val modelVariables = modelDescription.modelVariables
 
         val ints = (modelVariables.integers + modelVariables.enumerations).map { v ->
             IntLambdaProperty(
-                v.name, 1,
-                getter = {
-                    variablesMarkedForReading.add(v.name)
-                    it[0] = integerGetCache[v.valueReference] ?: 0
-                },
-                setter = { integerSetCache[v.valueReference] = it.first() },
-                causality = v.causality.convert()
+                    v.name, 1,
+                    getter = {
+                        variablesMarkedForReading.add(v.name)
+                        it[0] = integerGetCache[v.valueReference] ?: 0
+                    },
+                    setter = { integerSetCache[v.valueReference] = it.first() },
+                    causality = v.causality.convert()
             )
         }
         val reals = modelVariables.reals.map { v ->
             RealLambdaProperty(
-                v.name, 1,
-                getter = {
-                    variablesMarkedForReading.add(v.name)
-                    it[0] = realGetCache[v.valueReference] ?: 0.0
-                },
-                setter = { realSetCache[v.valueReference] = it.first() },
-                causality = v.causality.convert()
+                    v.name, 1,
+                    getter = {
+                        variablesMarkedForReading.add(v.name)
+                        it[0] = realGetCache[v.valueReference] ?: 0.0
+                    },
+                    setter = { realSetCache[v.valueReference] = it.first() },
+                    causality = v.causality.convert()
             )
         }
         val strings = modelVariables.strings.map { v ->
             StrLambdaProperty(
-                v.name, 1,
-                getter = {
-                    variablesMarkedForReading.add(v.name)
-                    it[0] = stringGetCache[v.valueReference] ?: ""
-                },
-                setter = { stringSetCache[v.valueReference] = it.first() },
-                causality = v.causality.convert()
+                    v.name, 1,
+                    getter = {
+                        variablesMarkedForReading.add(v.name)
+                        it[0] = stringGetCache[v.valueReference] ?: ""
+                    },
+                    setter = { stringSetCache[v.valueReference] = it.first() },
+                    causality = v.causality.convert()
             )
         }
         val booleans = modelVariables.booleans.map { v ->
             BoolLambdaProperty(
-                v.name, 1,
-                getter = {
-                    variablesMarkedForReading.add(v.name)
-                    it[0] = booleanGetCache[v.valueReference] ?: false
-                },
-                setter = { booleanSetCache[v.valueReference] = it.first() },
-                causality = v.causality.convert()
+                    v.name, 1,
+                    getter = {
+                        variablesMarkedForReading.add(v.name)
+                        it[0] = booleanGetCache[v.valueReference] ?: false
+                    },
+                    setter = { booleanSetCache[v.valueReference] = it.first() },
+                    causality = v.causality.convert()
             )
         }
 
@@ -100,6 +117,10 @@ open class SlaveComponent(
 
     fun getParameterSet(name: String): ParameterSet? {
         return parameterSets[name]
+    }
+
+    fun addParameterSet(name: String, vararg parameters: Parameter) = apply {
+        addParameterSet(name, parameters.toList())
     }
 
     fun addParameterSet(name: String, parameters: List<Parameter>) = apply {

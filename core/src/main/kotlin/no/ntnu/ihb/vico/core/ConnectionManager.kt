@@ -1,5 +1,8 @@
 package no.ntnu.ihb.vico.core
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 class ConnectionManager internal constructor() {
 
     private val connections: MutableMap<Component, MutableList<Connection>> = mutableMapOf()
@@ -39,6 +42,10 @@ class ConnectionManager internal constructor() {
                 f.invoke(it)
             }
         }
+    }
+
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(ConnectionManager::class.java)
     }
 
 }
