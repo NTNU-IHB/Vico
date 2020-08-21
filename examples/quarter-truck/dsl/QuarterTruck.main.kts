@@ -71,10 +71,10 @@ execution {
 
     connections {
 
-        connection { "chassis.chassis.p.e" to "wheel.wheel.p1.e" }
-        connection { "wheel.wheel.p1.f" to "chassis.chassis.p.f" }
-        connection { "wheel.wheel.p.e" to "ground.ground.p.e" }
-        connection { "ground.ground.p.f" to "wheel.wheel.p.f" }
+        "chassis.chassis.p.e" to "wheel.wheel.p1.e"
+        "wheel.wheel.p1.f" to "chassis.chassis.p.f"
+        "wheel.wheel.p.e" to "ground.ground.p.e"
+        "ground.ground.p.f" to "wheel.wheel.p.f"
 
     }
 

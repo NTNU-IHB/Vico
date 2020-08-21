@@ -88,18 +88,16 @@ class ConnectionsContext(
     private val engine: Engine
 ) {
 
-    fun connection(ctx: () -> Connection) {
-        engine.addConnection(ctx.invoke())
-    }
-
-    infix fun String.to(other: String): Connection {
+    infix fun String.to(other: String) {
 
         val p1 = UnboundProperty.parse(this).bounded(engine)
         val p2 = UnboundProperty.parse(other).bounded(engine)
 
-        return ScalarConnection(
-            Connector.inferConnectorType(p1.component, p1.property),
-            Connector.inferConnectorType(p2.component, p2.property)
+        engine.addConnection(
+            ScalarConnection(
+                Connector.inferConnectorType(p1.component, p1.property),
+                Connector.inferConnectorType(p2.component, p2.property)
+            )
         )
 
     }
