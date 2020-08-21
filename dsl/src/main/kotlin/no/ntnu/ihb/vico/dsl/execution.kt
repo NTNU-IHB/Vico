@@ -1,8 +1,6 @@
 package no.ntnu.ihb.vico.dsl
 
-import no.ntnu.ihb.vico.components.TransformComponent
 import no.ntnu.ihb.vico.core.*
-import no.ntnu.ihb.vico.systems.PositionRefSystem
 
 
 fun execution(ctx: ExecutionContext.() -> Unit): Engine {
@@ -99,48 +97,6 @@ class ConnectionsContext(
                 Connector.inferConnectorType(p2.component, p2.property)
             )
         )
-
-    }
-
-}
-
-
-fun main() {
-
-    execution {
-
-        entities {
-
-            entity {
-
-                component {
-                    TransformComponent()
-                }
-
-            }
-
-        }
-
-        systems {
-
-            system {
-                PositionRefSystem()
-            }
-
-        }
-
-        scenario {
-
-            invokeAt(2.0) {
-
-            }
-
-        }
-
-        connections {
-            "e1.value" to "e2.value"
-            "p2.value" to "e2.c"
-        }
 
     }
 
