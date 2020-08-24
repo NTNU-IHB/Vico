@@ -55,7 +55,7 @@ class EngineRunner internal constructor(
     fun runWhile(predicate: Predicate<Engine>): Future<Unit> {
         check(!started && this.predicate == null)
         this.predicate = predicate
-        val executor = Executors.newCachedThreadPool()
+        val executor = Executors.newSingleThreadExecutor()
         return FutureTask {
             start()
             this.thread!!.join()
@@ -190,6 +190,8 @@ class EngineRunner internal constructor(
                 } ?: kotlin.run {
                     quit = true
                 }
+
+                sleep(10)
 
             } while (!quit)
 
