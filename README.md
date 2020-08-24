@@ -47,7 +47,7 @@ To see the input arguments for the sub-commands, run the respective command prov
 ### Scripting
 
 [kts](https://github.com/markaren/kts) can be used to run arbitrary Kotlin code with maven dependencies, 
-which means that you may use Vico as a depedency in your script. 
+which means that you may use Vico as a dependency in your script. 
 
 ### How to build
 Simple execute `./gradlew build` in a shell. The CLI will be located under `cli/build/install`. <br>
