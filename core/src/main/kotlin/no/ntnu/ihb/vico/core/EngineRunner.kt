@@ -55,7 +55,7 @@ class EngineRunner internal constructor(
     fun runWhile(predicate: Predicate<Engine>): Future<Unit> {
         check(!started && this.predicate == null)
         this.predicate = predicate
-        val executor = Executors.newCachedThreadPool()
+        val executor = Executors.newFixedThreadPool(1)
         return FutureTask {
             start()
             this.thread!!.join()
@@ -65,11 +65,15 @@ class EngineRunner internal constructor(
         }
     }
 
+    fun runWhileAndWait(predicate: Predicate<Engine>) {
+        runWhile(predicate).get()
+    }
+
     fun runUntil(timePoint: Number): Future<Unit> {
         val doubleTimePoint = timePoint.toDouble()
-        return runWhile(
-            predicate = { it.currentTime > doubleTimePoint }
-        )
+        return runWhile {
+            it.currentTime >= doubleTimePoint
+        }
     }
 
     fun runUntilAndWait(time: Number) {
@@ -79,7 +83,7 @@ class EngineRunner internal constructor(
     fun runFor(time: Number): Future<Unit> {
         val doubleTime = time.toDouble()
         return runWhile(
-            predicate = { (it.currentTime + it.startTime) > doubleTime }
+                predicate = { (it.currentTime + it.startTime) >= doubleTime }
         )
     }
 
