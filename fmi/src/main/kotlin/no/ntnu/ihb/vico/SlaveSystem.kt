@@ -103,6 +103,8 @@ class FmiSlave(
     private val booleanVariablesToFetch = mutableSetOf<ValueReference>()
     private val stringVariablesToFetch = mutableSetOf<ValueReference>()
 
+    private val realBuffer by lazy { mutableMapOf<Int, DoubleArray>() }
+
     init {
         component.variablesMarkedForReading.apply {
             forEach { markForReading(it) }
@@ -155,7 +157,9 @@ class FmiSlave(
         }
         if (realVariablesToFetch.isNotEmpty()) {
             with(component.realGetCache) {
-                val values = DoubleArray(realVariablesToFetch.size)
+                val values = realBuffer.computeIfAbsent(realVariablesToFetch.size) {
+                    DoubleArray(realVariablesToFetch.size)
+                }
                 val refs = realVariablesToFetch.toLongArray()
                 slave.readReal(refs, values)
                 for (i in refs.indices) {
