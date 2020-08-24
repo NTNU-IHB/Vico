@@ -44,6 +44,7 @@ class SystemManager internal constructor() : Closeable {
                 if (iterations % system.decimationFactor == 0L) {
                     when (system) {
                         is ObserverSystem -> {
+                            system.observe(currentTime)
                         }
                         is SimulationSystem -> {
                             val systemStepSize = engineStepSize * system.decimationFactor
