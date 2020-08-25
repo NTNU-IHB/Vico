@@ -27,10 +27,10 @@ execution {
         entity("chassis") {
             component(SlaveComponent("chassis.fmu", "chassis").apply {
                 addParameterSet(
-                        "initialValues",
-                        RealParameter("C.mChassis", 400.0),
-                        RealParameter("C.kChassis", 15000.0),
-                        RealParameter("R.dChassis", 1000.0),
+                    "initialValues",
+                    RealParameter("C.mChassis", 400.0),
+                    RealParameter("C.kChassis", 15000.0),
+                    RealParameter("R.dChassis", 1000.0),
                 )
             })
         }
@@ -38,10 +38,10 @@ execution {
         entity("wheel") {
             component(SlaveComponent("wheel.fmu", "wheel").apply {
                 addParameterSet(
-                        "initialValues",
-                        RealParameter("C.mWheel", 40.0),
-                        RealParameter("C.kWheel", 150000.0),
-                        RealParameter("R.dWheel", 0.0),
+                    "initialValues",
+                    RealParameter("C.mWheel", 40.0),
+                    RealParameter("C.kWheel", 150000.0),
+                    RealParameter("R.dWheel", 0.0),
                 )
             })
         }
@@ -51,7 +51,7 @@ execution {
     systems {
 
         system {
-            SlaveSystem(FixedStepMaster(), "initialValues")
+            SlaveSystem(FixedStepMaster(), parameterSet = "initialValues")
         }
         system {
             SlaveLoggerSystem(LogConfigBuilder().apply {
@@ -62,9 +62,9 @@ execution {
         }
         system {
             TimeSeriesDrawer.Builder("zWheel", "Displacement[m]")
-                    .registerSeries("wheel", "zWheel")
-                    .isLive(true)
-                    .build()
+                .registerSeries("wheel", "zWheel")
+                .isLive(true)
+                .build()
         }
 
     }
