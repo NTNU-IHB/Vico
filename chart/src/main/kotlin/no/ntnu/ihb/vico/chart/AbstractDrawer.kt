@@ -146,7 +146,7 @@ abstract class AbstractDrawer(
         protected var live = false
         protected var width: Int = 600
         protected var height: Int = 400
-        protected var decimationFactor = 10
+        protected var decimationFactor = 1
 
         fun isLive(flag: Boolean) = apply {
             this.live = flag
