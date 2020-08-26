@@ -55,7 +55,7 @@ internal fun runSimulation(
 
     measureTime {
         runner.runWhile {
-            engine.iterations >= numSteps
+            engine.iterations <= numSteps
         }.get()
     }.also { t ->
         val targetRTF: Any = if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded"
