@@ -81,7 +81,7 @@ abstract class AbstractDrawer(
 
             updateData(engine.currentTime)
 
-            if (live && (System.currentTimeMillis() - lastUpdate) > 100L) {
+            if (live && (System.currentTimeMillis() - lastUpdate) > 250L) {
                 updateChart()
                 lastUpdate = System.currentTimeMillis()
             }
