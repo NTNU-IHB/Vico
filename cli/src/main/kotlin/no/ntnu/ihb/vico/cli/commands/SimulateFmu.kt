@@ -48,6 +48,9 @@ class SimulateFmu : Runnable {
     )
     private var relativeLogConfigPath: String? = null
 
+    @CommandLine.Option(names = ["--no-log"], description = ["Don't enable variable logging."])
+    private var disableVariableLogging = false
+
     @CommandLine.Option(
         names = ["-chart", "--chartConfig"],
         description = ["Path to a chart configuration XML file. Path relative to the FMU"]
@@ -77,14 +80,14 @@ class SimulateFmu : Runnable {
     @ExperimentalTime
     override fun run() {
 
+        require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
+        require(startTime < stopTime) { "stopTime=$stopTime > startTime=$startTime!" }
+
         val model = ModelResolver.resolve(fmu)
         val modelName = model.modelDescription.modelName
         val structure = SystemStructure().apply {
             addComponent(model, modelName)
         }
-
-        require(startTime < stopTime) { "stopTime=$stopTime > startTime=$startTime!" }
-        require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
 
         Engine.Builder()
             .startTime(startTime)
@@ -93,12 +96,15 @@ class SimulateFmu : Runnable {
 
                 structure.apply(engine)
 
-                relativeLogConfigPath?.also { configPath ->
-                    val logConfig = getConfigPath(fmu, configPath)
-                    if (!logConfig.exists()) throw NoSuchFileException(logConfig)
-                    engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
-                } ?: run {
-                    engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                if (!disableVariableLogging) {
+                    relativeLogConfigPath?.also { configPath ->
+                        val logConfig = getConfigPath(fmu, configPath)
+                        if (!logConfig.exists()) throw NoSuchFileException(logConfig)
+                        engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
+                    } ?: run {
+                        //log all variables
+                        engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                    }
                 }
 
                 relativeChartConfigPath?.also { configPath ->

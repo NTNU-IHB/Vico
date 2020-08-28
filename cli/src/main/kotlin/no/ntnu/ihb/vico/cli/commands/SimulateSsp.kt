@@ -48,6 +48,9 @@ class SimulateSsp : Runnable {
     )
     private var relativeLogConfigPath: String? = null
 
+    @CommandLine.Option(names = ["--no-log"], description = ["Don't enable variable logging."])
+    private var disableLogging = false
+
     @CommandLine.Option(
         names = ["-chart", "--chartConfig"],
         description = ["Path to a chart configuration XML file. Path relative to the .ssd"]
@@ -99,12 +102,15 @@ class SimulateSsp : Runnable {
 
                 structure.apply(engine, parameterSet)
 
-                relativeLogConfigPath?.also { configPath ->
-                    val logConfig = getConfigPath(loader.ssdFile.parentFile, configPath)
-                    if (!logConfig.exists()) throw NoSuchFileException(logConfig)
-                    engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
-                } ?: run {
-                    engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                if (!disableLogging) {
+                    relativeLogConfigPath?.also { configPath ->
+                        val logConfig = getConfigPath(loader.ssdFile.parentFile, configPath)
+                        if (!logConfig.exists()) throw NoSuchFileException(logConfig)
+                        engine.addSystem(SlaveLoggerSystem(logConfig, resultDir))
+                    } ?: run {
+                        //log all variables
+                        engine.addSystem(SlaveLoggerSystem(null, resultDir))
+                    }
                 }
 
                 relativeChartConfigPath?.also { configPath ->
