@@ -117,20 +117,21 @@ open class Entity internal constructor(
         componentListeners.remove(listener)
     }
 
-    fun getProperties(): Collection<Property> {
-        return components.flatMap { it.getProperties() }
-    }
+    val properties: Collection<Property>
+        get() {
+            return components.flatMap { it.getProperties() }
+        }
 
     fun getProperty(name: String): Property {
         val properties by lazy {
-            getProperties().map { it.name }
+            properties.map { it.name }
         }
         return getPropertyOrNull(name)
             ?: throw NoSuchElementException("Could not find property named '$name'. Registered properties are $properties")
     }
 
     fun getPropertyOrNull(name: String): Property? {
-        return getProperties().find { it.name == name }
+        return properties.find { it.name == name }
     }
 
     fun getIntegerPropertyOrNull(name: String): IntProperty? {
