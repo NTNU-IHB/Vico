@@ -15,18 +15,4 @@ publishing {
         }
     }
 
-    if (project.hasProperty("mvnUser") && project.hasProperty("mvnPw")) {
-
-        repositories {
-            maven {
-                credentials {
-                    username mvnUser
-                    password mvnPw
-                }
-                url "sftp://login.stud.ntnu.no:22/web/folk/laht/mvn"
-            }
-        }
-
-    }
-
 }
