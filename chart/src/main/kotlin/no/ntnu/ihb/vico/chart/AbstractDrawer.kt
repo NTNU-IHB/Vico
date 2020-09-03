@@ -81,7 +81,7 @@ abstract class AbstractDrawer(
 
             updateData(engine.currentTime)
 
-            if (live && (System.currentTimeMillis() - lastUpdate) > 100L) {
+            if (live && (System.currentTimeMillis() - lastUpdate) > 250L) {
                 updateChart()
                 lastUpdate = System.currentTimeMillis()
             }
@@ -146,7 +146,7 @@ abstract class AbstractDrawer(
         protected var live = false
         protected var width: Int = 600
         protected var height: Int = 400
-        protected var decimationFactor = 10
+        protected var decimationFactor = 1
 
         fun isLive(flag: Boolean) = apply {
             this.live = flag

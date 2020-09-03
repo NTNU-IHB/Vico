@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory
 
 class FixedStepMaster : MasterAlgorithm() {
 
+    var parallel: Boolean = false
+
     override fun initialize(currentTime: Double, slaveInitCallback: SlaveInitCallback) {
-        slaves.parallelStream().forEach { slave ->
+        slaves.forEach { slave ->
             slave.setupExperiment(currentTime)
             slave.enterInitializationMode()
         }
@@ -17,7 +19,7 @@ class FixedStepMaster : MasterAlgorithm() {
             slave.retrieveCachedGets()
             slaveInitCallback.invoke(slave)
         }
-        slaves.parallelStream().forEach { slave ->
+        slaves.forEach { slave ->
             slave.exitInitializationMode()
         }
         readAllVariables()
@@ -29,7 +31,8 @@ class FixedStepMaster : MasterAlgorithm() {
         slaveStepCallback: SlaveStepCallback
     ) {
         val tNext = currentTime + stepSize
-        slaves.parallelStream().forEach { slave ->
+        val stream = if (parallel) slaves.parallelStream() else slaves.stream()
+        stream.forEach { slave ->
             slave.transferCachedSets()
             slave.doStep(stepSize)
             slave.retrieveCachedGets()
@@ -41,15 +44,15 @@ class FixedStepMaster : MasterAlgorithm() {
 
         private val LOG: Logger = LoggerFactory.getLogger(MasterAlgorithm::class.java)
 
-       /* fun calculateStepFactor(slave: SlaveComponent, baseStepSize: Double): Long {
-            val stepSizeHint: Double = slave.stepSizeHint ?: return 1
-            val decimationFactor = max(1, ceil(stepSizeHint / baseStepSize).toLong())
-            val actualStepSize = baseStepSize * decimationFactor
-            if (actualStepSize.compareTo(stepSizeHint) != 0) {
-                LOG.warn("Actual step size for ${slave.instanceName} will be $actualStepSize rather than requested value $stepSizeHint.")
-            }
-            return decimationFactor
-        }*/
+        /* fun calculateStepFactor(slave: SlaveComponent, baseStepSize: Double): Long {
+             val stepSizeHint: Double = slave.stepSizeHint ?: return 1
+             val decimationFactor = max(1, ceil(stepSizeHint / baseStepSize).toLong())
+             val actualStepSize = baseStepSize * decimationFactor
+             if (actualStepSize.compareTo(stepSizeHint) != 0) {
+                 LOG.warn("Actual step size for ${slave.instanceName} will be $actualStepSize rather than requested value $stepSizeHint.")
+             }
+             return decimationFactor
+         }*/
 
     }
 

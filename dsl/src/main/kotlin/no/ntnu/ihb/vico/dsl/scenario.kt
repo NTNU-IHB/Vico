@@ -294,8 +294,8 @@ open class ActionContext(
 }
 
 class WhenContext(
-    val engine: Engine,
-) : EngineInfo by engine {
+    private val engine: Engine,
+) {
 
     lateinit var predicate: Predicate<Engine>
     lateinit var task: () -> Unit

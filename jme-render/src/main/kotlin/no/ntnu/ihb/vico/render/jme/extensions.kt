@@ -5,6 +5,7 @@ import com.jme3.input.KeyInput
 import com.jme3.material.Material
 import com.jme3.material.RenderState
 import com.jme3.math.ColorRGBA
+import com.jme3.math.Matrix4f
 import com.jme3.math.Quaternion
 import com.jme3.math.Vector3f
 import com.jme3.scene.Geometry
@@ -13,12 +14,14 @@ import com.jme3.scene.shape.Box
 import com.jme3.scene.shape.Cylinder
 import com.jme3.scene.shape.Sphere
 import no.ntnu.ihb.vico.input.KeyStroke
+import no.ntnu.ihb.vico.math.transposeMatrix4Array
 import no.ntnu.ihb.vico.render.Color
 import no.ntnu.ihb.vico.render.GeometryComponent
 import no.ntnu.ihb.vico.render.jme.objects.JmeCapsule
 import no.ntnu.ihb.vico.render.jme.objects.JmeGrid
 import no.ntnu.ihb.vico.render.jme.objects.RenderNode
 import no.ntnu.ihb.vico.shapes.*
+import org.joml.Matrix4d
 import org.joml.Quaterniondc
 import org.joml.Vector3d
 import org.joml.Vector3dc
@@ -35,8 +38,12 @@ internal fun Quaternion.set(q: Quaterniondc) = apply {
     set(q.x().toFloat(), q.y().toFloat(), q.z().toFloat(), q.w().toFloat())
 }
 
-internal fun Node.setLocalTranslation(v: Vector3dc) {
+internal fun Node.setLocalTranslation(v: Vector3dc) = apply {
     setLocalTranslation(v.x().toFloat(), v.y().toFloat(), v.z().toFloat())
+}
+
+internal fun Matrix4f.set(m: Matrix4d) = apply {
+    this.set(transposeMatrix4Array(m.get(FloatArray(16))))
 }
 
 internal fun AssetManager.getLightingMaterial(color: Color? = null): Material {
@@ -71,36 +78,40 @@ internal fun ColorRGBA.set(c: Color, alpha: Float = 1f) = apply {
     set(c.r, c.g, c.b, alpha)
 }
 
-private fun createBox(shape: BoxShape): Geometry {
+private fun createBox(shape: BoxShape, offsetTransform: Matrix4d): Geometry {
     return Geometry(
         "BoxGeometry",
-        Box(shape.width.toFloat() * 0.5f, shape.height.toFloat() * 0.5f, shape.depth.toFloat() * 0.5f)
-    )
+        Box(shape.width * 0.5f, shape.height * 0.5f, shape.depth * 0.5f)
+    ).apply {
+        localTransform.fromTransformMatrix(Matrix4f().set(offsetTransform))
+    }
 }
 
-private fun createPlane(shape: PlaneShape): Geometry {
+private fun createPlane(shape: PlaneShape, offsetTransform: Matrix4d): Geometry {
     return Geometry(
         "PlaneGeometry",
-        JmeGrid(shape.width.toFloat(), shape.height.toFloat())
-    )
+        JmeGrid(shape.width, shape.height)
+    ).apply {
+        localTransform.fromTransformMatrix(Matrix4f().set(offsetTransform))
+    }
 }
 
 private fun createSphere(shape: SphereShape): Geometry {
     return Geometry(
         "SphereGeometry",
-        Sphere(32, 32, shape.radius.toFloat())
+        Sphere(32, 32, shape.radius)
     )
 }
 
 private fun createCylinder(shape: CylinderShape): Geometry {
     return Geometry(
         "CylinderGeometry",
-        Cylinder(32, 32, shape.radius.toFloat(), shape.height.toFloat(), true)
+        Cylinder(32, 32, shape.radius, shape.height, true)
     )
 }
 
 private fun createCapsule(shape: CapsuleShape): Node {
-    return JmeCapsule(shape.radius.toFloat(), shape.height.toFloat())
+    return JmeCapsule(shape.radius, shape.height)
 }
 
 internal fun GeometryComponent.createGeometry(assetManager: AssetManager): RenderNode {
@@ -108,12 +119,12 @@ internal fun GeometryComponent.createGeometry(assetManager: AssetManager): Rende
     return when (val shape = shape) {
         is BoxShape -> {
             RenderNode(assetManager, visible, wireframe, getColor()).apply {
-                attachChild(createBox(shape))
+                attachChild(createBox(shape, offsetTransform))
             }
         }
         is PlaneShape -> {
             RenderNode(assetManager, visible, wireframe, getColor()).apply {
-                attachChild(createPlane(shape))
+                attachChild(createPlane(shape, offsetTransform))
             }
         }
         is SphereShape -> {

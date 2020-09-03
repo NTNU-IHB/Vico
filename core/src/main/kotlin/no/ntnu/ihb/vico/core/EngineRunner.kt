@@ -49,13 +49,13 @@ class EngineRunner internal constructor(
     @JvmOverloads
     fun startAndWait(paused: Boolean? = null) {
         paused?.also { this.paused.set(it) }
-        runWhile { false }.get()
+        runWhile { true }.get()
     }
 
     fun runWhile(predicate: Predicate<Engine>): Future<Unit> {
         check(!started && this.predicate == null)
         this.predicate = predicate
-        val executor = Executors.newFixedThreadPool(1)
+        val executor = Executors.newSingleThreadExecutor()
         return FutureTask {
             start()
             this.thread!!.join()
@@ -71,9 +71,9 @@ class EngineRunner internal constructor(
 
     fun runUntil(timePoint: Number): Future<Unit> {
         val doubleTimePoint = timePoint.toDouble()
-        return runWhile {
-            it.currentTime >= doubleTimePoint
-        }
+        return runWhile(
+            predicate = { it.currentTime <= doubleTimePoint }
+        )
     }
 
     fun runUntilAndWait(time: Number) {
@@ -83,7 +83,7 @@ class EngineRunner internal constructor(
     fun runFor(time: Number): Future<Unit> {
         val doubleTime = time.toDouble()
         return runWhile(
-                predicate = { (it.currentTime + it.startTime) >= doubleTime }
+            predicate = { (it.currentTime + it.startTime) <= doubleTime }
         )
     }
 
@@ -100,7 +100,6 @@ class EngineRunner internal constructor(
     }
 
     private fun stepEngine(deltaTime: Double): Boolean {
-
 
         if (paused.get()) {
             return false
@@ -145,7 +144,7 @@ class EngineRunner internal constructor(
 
             val inputThread: ConsoleInputReader = ConsoleInputReader().apply { start() }
             val clock = Clock()
-            while (!engine.isClosed && !stop.get() && predicate?.test(engine) != true) {
+            while (!engine.isClosed && !stop.get() && predicate?.test(engine) == true) {
                 val dt = clock.getDelta()
                 if (stepEngine(dt)) {
                     callback?.run()
@@ -194,6 +193,8 @@ class EngineRunner internal constructor(
                 } ?: kotlin.run {
                     quit = true
                 }
+
+                sleep(10)
 
             } while (!quit)
 

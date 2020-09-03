@@ -16,11 +16,6 @@ private const val DEFAULT_TIME_STEP = 1.0 / 100
 
 typealias EngineBuilder = Engine.Builder
 
-interface EngineInfo {
-    val currentTime: Double
-    val iterations: Long
-}
-
 class Engine private constructor(
     startTime: Double? = null,
     val stopTime: Double? = null,
@@ -29,15 +24,15 @@ class Engine private constructor(
     private val connectionManager: ConnectionManager = ConnectionManager(),
     private val entityManager: EntityManager = EntityManager(connectionManager),
     private val systemManager: SystemManager = SystemManager(),
-) : EventDispatcher by EventDispatcherImpl(), EngineInfo, EntityAccess by entityManager, InputAccess by inputManager,
+) : EventDispatcher by EventDispatcherImpl(), EntityAccess by entityManager, InputAccess by inputManager,
     Closeable {
 
     val startTime: Double = startTime ?: 0.0
     val baseStepSize: Double = baseStepSize ?: DEFAULT_TIME_STEP
 
-    override var currentTime: Double = this.startTime
+    var currentTime: Double = this.startTime
         private set
-    override var iterations: Long = 0L
+    var iterations: Long = 0L
         private set
 
     private val initialized = AtomicBoolean()

@@ -54,14 +54,14 @@ internal fun runSimulation(
 
 
     measureTime {
-        runner.runWhileAndWait {
-            engine.iterations >= numSteps
-        }
+        runner.runWhile {
+            engine.iterations <= numSteps
+        }.get()
     }.also { t ->
         val targetRTF: Any = if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded"
         LOG.info(
             "Simulation finished. " +
-                    "Simulated ${totalSimulationTime}s in ${t.inSeconds}s, " +
+                    "Simulated ${engine.currentTime}s in ${t.inSeconds}s, " +
                     "RTF: target=$targetRTF, actual=${runner.actualRealTimeFactor}"
         )
     }
