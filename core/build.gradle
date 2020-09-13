@@ -6,14 +6,16 @@ plugins {
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
+def krender_version = 'r3'
 dependencies {
     api group: 'org.joml', name: 'joml', version: '1.9.24'
+    implementation "info.laht.krender:render-api:$krender_version"
 
     testImplementation project(':dsl')
     testImplementation project(':fmi')
     testImplementation project(':chart')
     testImplementation project(':test-data')
-    testImplementation project(':jme-render')
+    testImplementation "info.laht.krender:threekt-render:$krender_version"
 }
 
 

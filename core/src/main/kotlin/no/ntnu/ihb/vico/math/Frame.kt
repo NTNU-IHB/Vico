@@ -54,6 +54,14 @@ class Frame {
         return store.set(worldMatrix)
     }
 
+    @JvmOverloads
+    fun getWorldMatrixf(store: Matrix4f = Matrix4f()): Matrix4f {
+        if (dirty) {
+            updateWorldMatrix()
+        }
+        return store.set(worldMatrix)
+    }
+
     fun updateWorldMatrix() {
         if (hasParent) {
             parent!!.getWorldMatrix(worldMatrix).mul(localMatrix)

@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.physics.bullet
 
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.RealConnector
 import no.ntnu.ihb.vico.core.ScalarConnection
@@ -19,7 +19,7 @@ fun main() {
     Engine(1.0 / 100).use { engine ->
 
         engine.createEntity("plane").apply {
-            val frame = addComponent(TransformComponent()).frame
+            val frame = addComponent(Transform()).frame
             frame.setLocalTranslation(0.0, -1.0, 0.0)
             addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
             val shape = BoxShape(10f, 0.1f, 10f)
@@ -29,7 +29,7 @@ fun main() {
 
         for (i in 0 until 20) {
             engine.createEntity("sphere_$i").apply {
-                addComponent(TransformComponent()).apply {
+                addComponent(Transform()).apply {
                     frame.setLocalTranslation(
                         Random.nextDouble(-1.0, 1.0),
                         2.0,
@@ -46,7 +46,7 @@ fun main() {
         val sphere0 = engine.getEntityByName("sphere_0")
 
         val test = engine.createEntity("test").apply {
-            addComponent(TransformComponent())
+            addComponent(Transform())
             val shape = BoxShape(0.1f)
             addComponent(ColliderComponent(shape))
             addComponent(GeometryComponent(shape).apply {
@@ -54,8 +54,8 @@ fun main() {
             })
         }
 
-        val source = RealConnector(sphere0.getComponent<TransformComponent>(), "localPosition")
-        val sink = RealConnector(test.getComponent<TransformComponent>(), "localPosition")
+        val source = RealConnector(sphere0.getComponent<Transform>(), "localPosition")
+        val sink = RealConnector(test.getComponent<Transform>(), "localPosition")
 
         engine.addConnection(ScalarConnection(source, sink))
 

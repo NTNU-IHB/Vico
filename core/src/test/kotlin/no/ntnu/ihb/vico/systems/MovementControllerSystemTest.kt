@@ -1,19 +1,20 @@
 package no.ntnu.ihb.vico.systems
 
+import info.laht.krender.mesh.BoxMesh
+import info.laht.krender.mesh.SphereMesh
+import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Controllable
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Geometry
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.dsl.execution
-import no.ntnu.ihb.vico.render.GeometryComponent
-import no.ntnu.ihb.vico.render.MovementController
-import no.ntnu.ihb.vico.render.PerspectiveCamera
-import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
-import no.ntnu.ihb.vico.shapes.BoxShape
 
 
 object MovementControllerSystemTest {
 
     @JvmStatic
     fun main(args: Array<String>) {
+
+        val renderer = ThreektRenderer()
 
         execution {
 
@@ -24,39 +25,39 @@ object MovementControllerSystemTest {
                 entity("e1") {
 
                     component {
-                        TransformComponent().apply {
+                        Transform().apply {
                             frame.localTranslateX(spacing * 0.5)
                         }
                     }
-                    component { GeometryComponent(BoxShape()) }
+                    component { Geometry(SphereMesh()) }
                     component { Controllable() }
                 }
 
                 entity("e2") {
                     component {
-                        TransformComponent().apply {
+                        Transform().apply {
                             frame.localTranslateX(-spacing * 0.5)
                         }
                     }
-                    component { GeometryComponent(BoxShape()) }
+                    component { Geometry(BoxMesh()) }
                 }
 
                 entity("e3") {
                     component {
-                        TransformComponent().apply {
+                        Transform().apply {
                             frame.setLocalTranslation(0.0, 0.0, -10.0)
                         }
                     }
-                    component {
+                    /*component {
                         PerspectiveCamera()
-                    }
+                    }*/
                 }
 
             }
 
             systems {
-                system { MovementController() }
-                system { JmeRenderSystem() }
+                //system { MovementController() }
+                system { GeometryRenderer(renderer) }
             }
 
             scenario {

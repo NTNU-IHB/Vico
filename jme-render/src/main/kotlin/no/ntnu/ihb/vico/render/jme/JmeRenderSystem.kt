@@ -12,7 +12,7 @@ import com.jme3.math.FastMath
 import com.jme3.math.Vector2f
 import com.jme3.math.Vector3f
 import com.jme3.scene.Node
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.SimulationSystem
@@ -33,7 +33,7 @@ import kotlin.concurrent.withLock
 private const val MAX_TRANSFORM_QUEUE_SIZE = 1000
 
 class JmeRenderSystem : SimulationSystem(
-    Family.all(TransformComponent::class.java).one(GeometryComponent::class.java, Camera::class.java).build()
+    Family.all(Transform::class.java).one(GeometryComponent::class.java, Camera::class.java).build()
 ) {
 
     private val app = JmeApp()
@@ -85,15 +85,15 @@ class JmeRenderSystem : SimulationSystem(
                     geometry.createGeometry(app.assetManager).also { node ->
 
                         geometry.addEventListener("onVisibilityChanged") {
-                            node.setVisible(it.target())
+                            node.setVisible(it.value())
                         }
 
                         geometry.addEventListener("onWireframeChanged") {
-                            node.setWireframe(it.target())
+                            node.setWireframe(it.value())
                         }
 
                         geometry.addEventListener("onColorChanged") {
-                            node.setColor(it.target())
+                            node.setColor(it.value())
                         }
 
                     }
@@ -119,7 +119,7 @@ class JmeRenderSystem : SimulationSystem(
         updateTransforms()
     }
 
-    private fun updateTransform(node: Node, transform: TransformComponent) {
+    private fun updateTransform(node: Node, transform: Transform) {
         val world = transform.frame.getWorldMatrix()
         transformContext {
             node.localTranslation.set(world.getTranslation(tmpVec))
@@ -202,7 +202,7 @@ class JmeRenderSystem : SimulationSystem(
         private fun updateCamera() {
             cameraEntity?.also {
                 flyCam.isEnabled = false
-                val world = it.getComponent<TransformComponent>().frame.getWorldMatrix()
+                val world = it.getComponent<Transform>().frame.getWorldMatrix()
                 invokeLater {
                     cam.location.set(world.getTranslation(tmpVec))
                     cam.rotation.set(world.getNormalizedRotation(tmpQuat))

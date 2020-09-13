@@ -2,11 +2,11 @@ package no.ntnu.ihb.vico.core
 
 class Event(
     val type: String,
-    val target: Any?
+    val value: Any?
 ) {
 
-    inline fun <reified E> target(): E {
-        return target as E
+    inline fun <reified E> value(): E {
+        return value as E
     }
 
 }

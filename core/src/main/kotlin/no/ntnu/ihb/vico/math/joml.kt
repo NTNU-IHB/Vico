@@ -23,15 +23,15 @@ fun Vector3d.addScaledVector(v: Vector3dc, s: Double) = apply {
 }
 
 fun Vector3d.clamp(min: Double, max: Double) = apply {
-    x = max(min, kotlin.math.min(max, x))
-    y = max(min, kotlin.math.min(max, y))
-    z = max(min, kotlin.math.min(max, z))
+    x = max(min, min(max, x))
+    y = max(min, min(max, y))
+    z = max(min, min(max, z))
 }
 
 fun Vector3d.clamp(min: Vector3dc, max: Vector3dc) = apply {
-    x = max(min.x(), kotlin.math.min(max.x(), x))
-    y = max(min.y(), kotlin.math.min(max.y(), y))
-    z = max(min.z(), kotlin.math.min(max.z(), z))
+    x = max(min.x(), min(max.x(), x))
+    y = max(min.y(), min(max.y(), y))
+    z = max(min.z(), min(max.z(), z))
 }
 
 fun Vector3d.applyQuaternion(q: Quaterniondc): Vector3d {

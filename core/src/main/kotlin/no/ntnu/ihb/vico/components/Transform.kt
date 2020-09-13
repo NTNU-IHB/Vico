@@ -7,7 +7,7 @@ import no.ntnu.ihb.vico.math.fromArray
 import no.ntnu.ihb.vico.math.toArray
 import org.joml.Vector3d
 
-class TransformComponent : Component() {
+class Transform : Component() {
 
     val frame = Frame()
 
@@ -26,7 +26,7 @@ class TransformComponent : Component() {
         )
     }
 
-    fun setParent(parent: TransformComponent) {
+    fun setParent(parent: Transform) {
         frame.setParent(parent.frame)
     }
 

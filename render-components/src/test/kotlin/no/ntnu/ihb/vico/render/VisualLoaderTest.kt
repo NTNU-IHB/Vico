@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.render
 
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
 import no.ntnu.ihb.vico.systems.IteratingSystem
@@ -37,14 +37,14 @@ object VisualLoaderTest {
     }
 
     private class SineMoverSystem : IteratingSystem(
-        Family.all(TransformComponent::class.java, SineMoverComponent::class.java).build()
+        Family.all(Transform::class.java, SineMoverComponent::class.java).build()
     ) {
 
         private val tmp = Vector3d()
 
         override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-            val frame = entity.getComponent<TransformComponent>().frame
+            val frame = entity.getComponent<Transform>().frame
             val sc = entity.getComponent<SineMoverComponent>().compute(currentTime)
             frame.setLocalTranslation(frame.getLocalTranslation(tmp).apply { y = sc.value })
 

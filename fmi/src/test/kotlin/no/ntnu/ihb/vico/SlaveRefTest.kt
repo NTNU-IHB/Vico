@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico
 
 import no.ntnu.ihb.vico.components.PositionRefComponent
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.render.GeometryComponent
@@ -25,7 +25,7 @@ fun main() {
                 slaveEntity.addComponent(this)
             }
 
-            slaveEntity.addComponent<TransformComponent>()
+            slaveEntity.addComponent<Transform>()
             slaveEntity.addComponent(PositionRefComponent(yRef = "h"))
             slaveEntity.addComponent(GeometryComponent(SphereShape()))
 

@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.systems
 
 import no.ntnu.ihb.vico.components.PositionRefComponent
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.RealProperty
@@ -9,7 +9,7 @@ import no.ntnu.ihb.vico.core.SimulationSystem
 import org.joml.Vector3d
 
 class PositionRefSystem : SimulationSystem(
-    Family.all(TransformComponent::class.java, PositionRefComponent::class.java).build()
+    Family.all(Transform::class.java, PositionRefComponent::class.java).build()
 ) {
 
     private val tmpVector = Vector3d()
@@ -53,7 +53,7 @@ class PositionRefSystem : SimulationSystem(
             pRef.yRef?.also { tmpVector.y = map.getValue(it).read(tmpArray).first() }
             pRef.zRef?.also { tmpVector.z = map.getValue(it).read(tmpArray).first() }
 
-            entity.getComponent<TransformComponent>().frame.setTranslation(tmpVector)
+            entity.getComponent<Transform>().frame.setTranslation(tmpVector)
 
         }
     }
