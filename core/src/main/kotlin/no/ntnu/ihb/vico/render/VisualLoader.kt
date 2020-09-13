@@ -1,9 +1,11 @@
 package no.ntnu.ihb.vico.render
 
+import info.laht.krender.mesh.BoxMesh
+import info.laht.krender.mesh.CylinderMesh
+import info.laht.krender.mesh.PlaneMesh
+import info.laht.krender.mesh.SphereMesh
 import no.ntnu.ihb.vico.core.Engine
-import no.ntnu.ihb.vico.render.jaxb.*
-import no.ntnu.ihb.vico.shapes.*
-import org.joml.Matrix4d
+import org.joml.Matrix4f
 import java.io.File
 import javax.xml.bind.JAXB
 
@@ -21,16 +23,16 @@ object VisualLoader {
         }
     }
 
-    private fun createGeometryComponent(g: TGeometry): GeometryComponent {
+    private fun createGeometryComponent(g: TGeometry): Geometry {
         val shape = when {
             g.shape.box != null -> createShape(g.shape.box)
             g.shape.plane != null -> createShape(g.shape.plane)
             g.shape.sphere != null -> createShape(g.shape.sphere)
             g.shape.cylinder != null -> createShape(g.shape.cylinder)
-            g.shape.capsule != null -> createShape(g.shape.capsule)
+            // g.shape.capsule != null -> createShape(g.shape.capsule)
             else -> TODO()
         }
-        val offset = Matrix4d()
+        val offset = Matrix4f()
         g.offsetPosition?.also { p ->
             offset.setTranslation(p.px, p.py, p.pz)
         }
@@ -43,30 +45,30 @@ object VisualLoader {
                 ry = Math.toRadians(ry)
                 rz = Math.toRadians(rz)
             }
-            offset.setRotationXYZ(rx, ry, rz)
+            offset.setRotationXYZ(rx.toFloat(), ry.toFloat(), rz.toFloat())
         }
 
-        return GeometryComponent(shape, offset)
+        return Geometry(shape, offset)
     }
 
-    private fun createShape(b: TBox): BoxShape {
-        return BoxShape(b.xExtent * 0.5f, b.yExtent * 0.5f, b.zExtent * 0.5f)
+    private fun createShape(b: TBox): BoxMesh {
+        return BoxMesh(b.xExtent, b.yExtent, b.zExtent)
     }
 
-    private fun createShape(p: TPlane): PlaneShape {
-        return PlaneShape(p.width, p.height)
+    private fun createShape(p: TPlane): PlaneMesh {
+        return PlaneMesh(p.width, p.height)
     }
 
-    private fun createShape(s: TSphere): SphereShape {
-        return SphereShape(s.radius)
+    private fun createShape(s: TSphere): SphereMesh {
+        return SphereMesh(s.radius)
     }
 
-    private fun createShape(c: TCylinder): CylinderShape {
-        return CylinderShape(c.radius, c.height)
+    private fun createShape(c: TCylinder): CylinderMesh {
+        return CylinderMesh(c.radius, c.height)
     }
 
-    private fun createShape(c: TCapsule): CapsuleShape {
-        return CapsuleShape(c.radius, c.height)
-    }
+    /*private fun createShape(c: TCapsule): CapsuleMesh {
+        return CapsuleMesh(c.radius, c.height)
+    }*/
 
 }
