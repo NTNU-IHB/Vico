@@ -1,30 +1,37 @@
 package no.ntnu.ihb.vico.physics.bullet
 
+import info.laht.krender.ColorConstants
+import info.laht.krender.mesh.BoxMesh
+import info.laht.krender.mesh.SphereMesh
+import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.RealConnector
 import no.ntnu.ihb.vico.core.ScalarConnection
-import no.ntnu.ihb.vico.physics.ColliderComponent
+import no.ntnu.ihb.vico.physics.Collider
 import no.ntnu.ihb.vico.physics.MotionControl
 import no.ntnu.ihb.vico.physics.RigidBodyComponent
-import no.ntnu.ihb.vico.render.Color
-import no.ntnu.ihb.vico.render.GeometryComponent
-import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
-import no.ntnu.ihb.vico.shapes.BoxShape
-import no.ntnu.ihb.vico.shapes.SphereShape
+import no.ntnu.ihb.vico.render.Geometry
+import no.ntnu.ihb.vico.render.GeometryRenderer
+import org.joml.Matrix4f
 import kotlin.random.Random
 
 fun main() {
+
+    val renderer = ThreektRenderer().apply {
+        init(Matrix4f().setTranslation(0f, 0f, 20f))
+    }
 
     Engine(1.0 / 100).use { engine ->
 
         engine.createEntity("plane").apply {
             val frame = addComponent(Transform()).frame
             frame.setLocalTranslation(0.0, -1.0, 0.0)
+            //frame.localRotateX(Angle.deg(90.0))
             addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
-            val shape = BoxShape(10f, 0.1f, 10f)
-            addComponent(ColliderComponent(shape))
-            addComponent(GeometryComponent(shape))
+            val shape = BoxMesh(10f, 0.1f, 10f)
+            addComponent(Collider(shape))
+            addComponent(Geometry(shape))
         }
 
         for (i in 0 until 20) {
@@ -37,9 +44,9 @@ fun main() {
                     )
                 }
                 addComponent(RigidBodyComponent())
-                val shape = SphereShape(0.1f)
-                addComponent(ColliderComponent(shape))
-                addComponent(GeometryComponent(shape))
+                val shape = SphereMesh(0.1f)
+                addComponent(Collider(shape))
+                addComponent(Geometry(shape))
             }
         }
 
@@ -47,10 +54,10 @@ fun main() {
 
         val test = engine.createEntity("test").apply {
             addComponent(Transform())
-            val shape = BoxShape(0.1f)
-            addComponent(ColliderComponent(shape))
-            addComponent(GeometryComponent(shape).apply {
-                setColor(Color.red)
+            val shape = BoxMesh(0.1f, 0.1f)
+            addComponent(Collider(shape))
+            addComponent(Geometry(shape).apply {
+                color = ColorConstants.red
             })
         }
 
@@ -60,10 +67,10 @@ fun main() {
         engine.addConnection(ScalarConnection(source, sink))
 
         engine.addSystem(BulletSystem())
-        engine.addSystem(JmeRenderSystem())
+        engine.addSystem(GeometryRenderer(renderer))
 
         engine.runner.apply {
-            startAndWait(true)
+            startAndWait(false)
         }
 
     }

@@ -8,8 +8,8 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 def krender_version = 'r3'
 dependencies {
-    api group: 'org.joml', name: 'joml', version: '1.9.24'
-    implementation "info.laht.krender:render-api:$krender_version"
+    api "org.joml:joml:1.9.24"
+    api "info.laht.krender:render-api:$krender_version"
 
     testImplementation project(':dsl')
     testImplementation project(':fmi')

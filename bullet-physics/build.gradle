@@ -15,6 +15,6 @@ dependencies {
     implementation group: 'com.badlogicgames.gdx', name: 'gdx-bullet', version: gdx_version
     runtime "com.badlogicgames.gdx:gdx-bullet-platform:$gdx_version:natives-desktop"
 
-    testImplementation project(':jme-render')
+    testImplementation "info.laht.krender:threekt-render:$krender_version"
 
 }

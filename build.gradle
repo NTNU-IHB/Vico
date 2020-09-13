@@ -16,6 +16,8 @@ println("Building ${rootProject.name} v$version")
 
 apply from: project.file("gradle/fmuproxy.gradle")
 
+ext.krender_version = "r4"
+
 subprojects { sub ->
 
     apply plugin: 'java'

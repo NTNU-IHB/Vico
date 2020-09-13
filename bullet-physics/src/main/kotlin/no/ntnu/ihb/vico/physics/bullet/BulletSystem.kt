@@ -13,7 +13,7 @@ import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.SimulationSystem
-import no.ntnu.ihb.vico.physics.ColliderComponent
+import no.ntnu.ihb.vico.physics.Collider
 import no.ntnu.ihb.vico.physics.MotionControl
 import no.ntnu.ihb.vico.physics.RigidBodyComponent
 import org.joml.Matrix4d
@@ -69,8 +69,8 @@ class BulletSystem : SimulationSystem(
         val tc = entity.getComponent<Transform>()
         val rc = entity.getComponent<RigidBodyComponent>()
 
-        val (shape, mass) = if (entity.hasComponent<ColliderComponent>()) {
-            val collider = entity.getComponent<ColliderComponent>()
+        val (shape, mass) = if (entity.hasComponent<Collider>()) {
+            val collider = entity.getComponent<Collider>()
             collider.convert() to rc.mass.toFloat()
         } else {
             btEmptyShape() to 1f

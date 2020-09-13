@@ -3,29 +3,35 @@ package no.ntnu.ihb.vico.physics.bullet
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Quaternion
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.physics.bullet.collision.*
-import no.ntnu.ihb.vico.physics.ColliderComponent
-import no.ntnu.ihb.vico.shapes.*
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape
+import com.badlogic.gdx.physics.bullet.collision.btCylinderShapeZ
+import com.badlogic.gdx.physics.bullet.collision.btSphereShape
+import info.laht.krender.mesh.BoxShape
+import info.laht.krender.mesh.CylinderShape
+import info.laht.krender.mesh.PlaneShape
+import info.laht.krender.mesh.SphereShape
+import no.ntnu.ihb.vico.physics.Collider
 import org.joml.*
 
 
-fun ColliderComponent.convert(): btCollisionShape {
+fun Collider.convert(): btCollisionShape {
     return when (val shape = shape) {
         is BoxShape -> {
-            btBoxShape(Vector3(shape.width.toFloat(), shape.height.toFloat(), shape.depth.toFloat()).scl(0.5f))
+            btBoxShape(Vector3(shape.width, shape.height, shape.depth).scl(0.5f))
         }
         is PlaneShape -> {
-            btBoxShape(Vector3(shape.height.toFloat(), shape.height.toFloat(), 0.5f))
+            btBoxShape(Vector3(shape.height, shape.height, 0.5f))
         }
         is SphereShape -> {
-            btSphereShape(shape.radius.toFloat())
+            btSphereShape(shape.radius)
         }
         is CylinderShape -> {
-            btCylinderShapeZ(Vector3(shape.radius.toFloat(), shape.radius.toFloat(), shape.height.toFloat() * 0.5f))
+            btCylinderShapeZ(Vector3(shape.radius, shape.radius, shape.height * 0.5f))
         }
-        is CapsuleShape -> {
-            btCapsuleShapeZ(shape.radius.toFloat(), shape.height.toFloat() * 0.5f)
-        }
+        /*is CapsuleShape -> {
+            btCapsuleShapeZ(shape.radius, shape.height * 0.5f)
+        }*/
         else -> TODO("Unsupported shape: $shape")
     }
 }
