@@ -36,6 +36,9 @@ execution {
             component(GeometryComponent(PlaneShape(5f, 2f)).apply {
                 offsetTransform.rotate(-Math.PI / 2, Vector3d_X, offsetTransform)
             })
+            component {
+                PositionRefComponent(yRef = "zGround")
+            }
         }
 
         entity("chassis") {
@@ -48,7 +51,7 @@ execution {
                 )
             })
             component(TransformComponent())
-            component(GeometryComponent(BoxShape(Vector3f(0.75f, 0.25f, 0.75f))).setColor(0x0000ff))
+            component(GeometryComponent(BoxShape(Vector3f(0.75f, 0.35f, 0.5f))).setColor(0x0000ff))
 
             component {
                 PositionRefComponent(yRef = "zChassis")
@@ -65,7 +68,7 @@ execution {
                 )
             })
             component(TransformComponent())
-            component(GeometryComponent(BoxShape(Vector3f(1f, 0.25f, 1f))).setColor(0x0000ff))
+            component(GeometryComponent(BoxShape(Vector3f(1f, 0.35f, 0.75f))).setColor(0x0000ff))
 
             component {
                 PositionRefComponent(yRef = "zWheel")
