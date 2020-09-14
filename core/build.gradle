@@ -6,9 +6,8 @@ plugins {
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
-def krender_version = 'r3'
 dependencies {
-    api "org.joml:joml:1.9.24"
+    api "org.joml:joml:1.9.25"
     api "info.laht.krender:render-api:$krender_version"
 
     testImplementation project(':dsl')
