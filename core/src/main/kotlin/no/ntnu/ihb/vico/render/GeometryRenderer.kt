@@ -19,6 +19,11 @@ class GeometryRenderer(
 
     init {
         priority = Int.MAX_VALUE
+
+        renderer.registerCloseListener {
+            engine.close()
+        }
+
     }
 
     override fun postInit() {
@@ -84,6 +89,10 @@ class GeometryRenderer(
 
     override fun step(currentTime: Double, stepSize: Double) {
         updateTransforms()
+    }
+
+    override fun close() {
+        renderer.close()
     }
 
 }

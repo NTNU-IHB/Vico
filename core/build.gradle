@@ -14,6 +14,7 @@ dependencies {
     testImplementation project(':fmi')
     testImplementation project(':chart')
     testImplementation project(':test-data')
+    //testImplementation "info.laht.krender:jme-render:$krender_version"
     testImplementation "info.laht.krender:threekt-render:$krender_version"
 }
 
