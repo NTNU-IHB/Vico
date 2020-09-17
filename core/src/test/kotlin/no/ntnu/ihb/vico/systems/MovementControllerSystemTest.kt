@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.systems
 
+import info.laht.krender.ColorConstants
 import info.laht.krender.mesh.BoxMesh
 import info.laht.krender.mesh.SphereMesh
 import info.laht.krender.threekt.ThreektRenderer
@@ -16,11 +17,11 @@ object MovementControllerSystemTest {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        val renderer = ThreektRenderer().apply {
-            init(Matrix4f().setTranslation(0f, 0f, 5f))
-        }
-
         execution {
+
+            renderer(ThreektRenderer().apply {
+                setCameraTransform(Matrix4f().setTranslation(0f, 0f, 5f))
+            })
 
             entities {
 
@@ -33,7 +34,7 @@ object MovementControllerSystemTest {
                             frame.localTranslateX(spacing * 0.5)
                         }
                     }
-                    component { Geometry(SphereMesh()) }
+                    component { Geometry(SphereMesh()).apply { color = ColorConstants.greenyellow } }
                     component { Controllable() }
                 }
 
@@ -43,7 +44,7 @@ object MovementControllerSystemTest {
                             frame.localTranslateX(-spacing * 0.5)
                         }
                     }
-                    component { Geometry(BoxMesh()) }
+                    component { Geometry(BoxMesh()).apply { color = ColorConstants.lemonchiffon } }
                 }
 
                 entity("e3") {
@@ -52,16 +53,13 @@ object MovementControllerSystemTest {
                             frame.setLocalTranslation(0.0, 0.0, -10.0)
                         }
                     }
-                    /*component {
-                        PerspectiveCamera()
-                    }*/
                 }
 
             }
 
             systems {
                 system { MovementController() }
-                system { GeometryRenderer(renderer) }
+                system { GeometryRenderer() }
             }
 
             scenario {

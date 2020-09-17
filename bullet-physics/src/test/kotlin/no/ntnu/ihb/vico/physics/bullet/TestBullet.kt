@@ -5,7 +5,7 @@ import info.laht.krender.mesh.BoxMesh
 import info.laht.krender.mesh.SphereMesh
 import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Transform
-import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.core.EngineBuilder
 import no.ntnu.ihb.vico.core.RealConnector
 import no.ntnu.ihb.vico.core.ScalarConnection
 import no.ntnu.ihb.vico.physics.Collider
@@ -19,10 +19,9 @@ import kotlin.random.Random
 fun main() {
 
     val renderer = ThreektRenderer().apply {
-        init(Matrix4f().setTranslation(0f, 0f, 20f))
+        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 20f))
     }
-
-    Engine(1.0 / 100).use { engine ->
+    EngineBuilder().stepSize(1.0 / 100).renderer(renderer).build().use { engine ->
 
         engine.createEntity("plane").apply {
             val frame = addComponent(Transform()).frame
@@ -38,9 +37,9 @@ fun main() {
             engine.createEntity("sphere_$i").apply {
                 addComponent(Transform()).apply {
                     frame.setLocalTranslation(
-                        Random.nextDouble(-1.0, 1.0),
-                        2.0,
-                        Random.nextDouble(-1.0, 1.0)
+                            Random.nextDouble(-1.0, 1.0),
+                            2.0,
+                            Random.nextDouble(-1.0, 1.0)
                     )
                 }
                 addComponent(RigidBodyComponent())
@@ -67,7 +66,7 @@ fun main() {
         engine.addConnection(ScalarConnection(source, sink))
 
         engine.addSystem(BulletSystem())
-        engine.addSystem(GeometryRenderer(renderer))
+        engine.addSystem(GeometryRenderer())
 
         engine.runner.apply {
             startAndWait(false)

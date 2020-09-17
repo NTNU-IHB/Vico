@@ -16,7 +16,7 @@ println("Building ${rootProject.name} v$version")
 
 apply from: project.file("gradle/fmuproxy.gradle")
 
-ext.krender_version = "r7"
+ext.krender_version = "r8"
 
 subprojects { sub ->
 

@@ -7,23 +7,19 @@ import info.laht.krender.proxies.SpatialProxy
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
+import no.ntnu.ihb.vico.core.Inject
 import no.ntnu.ihb.vico.core.SimulationSystem
 
-class GeometryRenderer(
-    private val renderer: RenderEngine
-) : SimulationSystem(
-    Family.all(Transform::class.java, Geometry::class.java).build()
+class GeometryRenderer : SimulationSystem(
+        Family.all(Transform::class.java, Geometry::class.java).build()
 ) {
 
+    @Inject
+    private lateinit var renderer: RenderEngine
     private val proxies = mutableMapOf<Entity, RenderProxy>()
 
     init {
         priority = Int.MAX_VALUE
-
-        renderer.registerCloseListener {
-            engine.close()
-        }
-
     }
 
     override fun postInit() {

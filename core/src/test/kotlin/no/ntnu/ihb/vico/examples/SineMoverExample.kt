@@ -6,10 +6,7 @@ import info.laht.krender.mesh.CylinderMesh
 import info.laht.krender.mesh.SphereMesh
 import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Transform
-import no.ntnu.ihb.vico.core.Component
-import no.ntnu.ihb.vico.core.Engine
-import no.ntnu.ihb.vico.core.Entity
-import no.ntnu.ihb.vico.core.Family
+import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.systems.IteratingSystem
@@ -19,9 +16,9 @@ import kotlin.math.PI
 import kotlin.math.sin
 
 private data class SineMoverComponent(
-    var A: Double = 1.0,
-    var f: Double = 0.1,
-    var phi: Double = 0.0
+        var A: Double = 1.0,
+        var f: Double = 0.1,
+        var phi: Double = 0.0
 ) : Component() {
 
     fun compute(t: Double) = A * sin(TWO_PHI * f * t + phi)
@@ -34,7 +31,7 @@ private data class SineMoverComponent(
 }
 
 private class SineMoverSystem : IteratingSystem(
-    Family.all(Transform::class.java, SineMoverComponent::class.java).build()
+        Family.all(Transform::class.java, SineMoverComponent::class.java).build()
 ) {
 
     private val tmp = Vector3d()
@@ -65,11 +62,9 @@ private fun e1(engine: Engine): Entity {
 
 fun main() {
 
-    val renderer = ThreektRenderer().apply {
-        init(Matrix4f().setTranslation(0f, 0f, 5f))
-    }
-
-    Engine().also { engine ->
+    EngineBuilder().renderer(ThreektRenderer().apply {
+        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 5f))
+    }).build().also { engine ->
 
         val e1 = e1(engine)
         engine.createEntity("e2").also { e ->
@@ -87,7 +82,7 @@ fun main() {
         }
 
         engine.addSystem(SineMoverSystem())
-        engine.addSystem(GeometryRenderer(renderer))
+        engine.addSystem(GeometryRenderer())
 
         engine.invokeAt(2.0) {
             engine.getEntityByName("e1").getComponent<Geometry>().visible = false
