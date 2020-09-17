@@ -41,6 +41,8 @@ class GeometryRenderer : SimulationSystem(
                 is CylinderShape -> {
                     renderer.createCylinder(shape.radius, shape.height)
                 }
+                is CapsuleShape ->
+                    renderer.createCapsule(shape.radius, shape.height)
                 is TrimeshShape -> {
                     renderer.createMesh(shape)
                 }
@@ -64,6 +66,7 @@ class GeometryRenderer : SimulationSystem(
                 g.addEventListener("onOpacityChanged") {
                     p.setOpacity(it.value())
                 }
+
                 proxies[entity] = p
             }
         }
@@ -85,10 +88,6 @@ class GeometryRenderer : SimulationSystem(
 
     override fun step(currentTime: Double, stepSize: Double) {
         updateTransforms()
-    }
-
-    override fun close() {
-        renderer.close()
     }
 
 }

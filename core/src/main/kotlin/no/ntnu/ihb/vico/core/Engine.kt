@@ -231,15 +231,14 @@ class Engine private constructor(
     override fun close() {
         if (!closed.getAndSet(true)) {
             systemManager.close()
+            renderEngine?.close()
             LOG.info("Closed engine..")
         }
     }
 
-
     /* fun calculateStepFactor(stepSizeHint: Double): Long {
          return max(1, ceil(stepSizeHint / baseStepSize).toLong())
      }*/
-
 
     private companion object {
 
