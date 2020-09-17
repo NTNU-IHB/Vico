@@ -90,4 +90,10 @@ class GeometryRenderer : SimulationSystem(
         updateTransforms()
     }
 
+    override fun close() {
+        proxies.values.forEach {
+            it.dispose()
+        }
+        proxies.clear()
+    }
 }
