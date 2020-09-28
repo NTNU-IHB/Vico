@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.physics.bullet
 
-import info.laht.krender.ColorConstants
 import info.laht.krender.mesh.BoxMesh
 import info.laht.krender.mesh.SphereMesh
 import info.laht.krender.threekt.ThreektRenderer
@@ -11,6 +10,7 @@ import no.ntnu.ihb.vico.core.ScalarConnection
 import no.ntnu.ihb.vico.physics.Collider
 import no.ntnu.ihb.vico.physics.MotionControl
 import no.ntnu.ihb.vico.physics.RigidBodyComponent
+import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.GeometryRenderer
 import org.joml.Matrix4f

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.RenderEngine
 import info.laht.krender.proxies.WaterProxy
 import no.ntnu.ihb.vico.core.*
 

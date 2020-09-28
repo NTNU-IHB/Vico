@@ -1,9 +1,9 @@
 package no.ntnu.ihb.vico.core
 
-import info.laht.krender.RenderEngine
 import no.ntnu.ihb.vico.input.InputAccess
 import no.ntnu.ihb.vico.input.InputManager
 import no.ntnu.ihb.vico.input.KeyStroke
+import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.util.PredicateTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,14 +16,14 @@ private const val DEFAULT_TIME_STEP = 1.0 / 100
 typealias EngineBuilder = Engine.Builder
 
 class Engine private constructor(
-        startTime: Double? = null,
-        val stopTime: Double? = null,
-        baseStepSize: Double? = null,
-        private val renderEngine: RenderEngine? = null,
-        private val inputManager: InputManager = InputManager(),
-        private val connectionManager: ConnectionManager = ConnectionManager(),
-        private val entityManager: EntityManager = EntityManager(connectionManager),
-        private val systemManager: SystemManager = SystemManager(),
+    startTime: Double? = null,
+    val stopTime: Double? = null,
+    baseStepSize: Double? = null,
+    private val renderEngine: RenderEngine? = null,
+    private val inputManager: InputManager = InputManager(),
+    private val connectionManager: ConnectionManager = ConnectionManager(),
+    private val entityManager: EntityManager = EntityManager(connectionManager),
+    private val systemManager: SystemManager = SystemManager(),
 ) : EventDispatcher by EventDispatcherImpl(), EntityAccess by entityManager, InputAccess by inputManager, Closeable {
 
     val startTime: Double = startTime ?: 0.0

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.ColorConstants
 import info.laht.krender.mesh.Shape
 import no.ntnu.ihb.vico.core.Component
 import no.ntnu.ihb.vico.core.EventDispatcher

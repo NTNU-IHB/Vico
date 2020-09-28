@@ -1,0 +1,12 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+dependencies {
+
+    api project(':core')
+
+    implementation 'info.laht.threekt:core-jvm:r1-ALPHA-23'
+
+}

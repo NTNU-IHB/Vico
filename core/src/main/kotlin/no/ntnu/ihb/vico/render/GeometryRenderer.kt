@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.RenderEngine
 import info.laht.krender.mesh.*
 import info.laht.krender.proxies.RenderProxy
 import info.laht.krender.proxies.SpatialProxy

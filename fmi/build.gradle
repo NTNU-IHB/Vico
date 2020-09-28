@@ -11,7 +11,7 @@ dependencies {
 
     api project(':core')
 
-    def fmi4j_version = '0.31.5'
+    def fmi4j_version = '0.33.0'
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-export", version: fmi4j_version
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-import", version: fmi4j_version
     implementation group: "no.ntnu.ihb.fmuproxy", name: "fmu-proxy-clients", version: "0.2.0"
@@ -24,6 +24,6 @@ dependencies {
 
     testImplementation project(':chart')
     testImplementation project(':test-data')
-    testImplementation "info.laht.krender:threekt-render:$krender_version"
+    testImplementation project(':threekt-render')
     
 }

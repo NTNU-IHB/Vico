@@ -1,12 +1,12 @@
 package no.ntnu.ihb.vico.systems
 
-import info.laht.krender.ColorConstants
 import info.laht.krender.mesh.BoxMesh
 import info.laht.krender.mesh.SphereMesh
 import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Controllable
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.dsl.execution
+import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.GeometryRenderer
 import org.joml.Matrix4f

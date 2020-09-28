@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.dsl
 
-import info.laht.krender.RenderEngine
 import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.render.RenderEngine
 
 
 fun execution(ctx: ExecutionContext.() -> Unit): Engine {
