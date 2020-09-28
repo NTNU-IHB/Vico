@@ -7,7 +7,7 @@ import org.joml.Matrix4f
 fun main() {
 
     val renderer = ThreektRenderer().apply {
-        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 5f))
+        setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
     }
 
     val engine = EngineBuilder().renderer(renderer).build()
@@ -16,8 +16,10 @@ fun main() {
         engine.addSystem(WaterRenderer())
 
         engine.createEntity("water").apply {
-            addComponent(Water(10f, 10f))
+            addComponent(Water(100f, 100f))
         }
+
+        engine.runner.startAndWait()
 
     }
 
