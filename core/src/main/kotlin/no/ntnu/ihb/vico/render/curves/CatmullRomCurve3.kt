@@ -1,4 +1,4 @@
-package info.laht.krender.curves
+package no.ntnu.ihb.vico.render.curves
 
 import org.joml.Vector3d
 import org.joml.Vector3f
@@ -14,7 +14,9 @@ class CatmullRomCurve3(
 ) : Curve3() {
 
     enum class Type(val typeName: String) {
-        CENTRIPETAL("centripetal"), CHORDAL("chordal"), CATMULLROM("catmullrom");
+        CENTRIPETAL("centripetal"),
+        CHORDAL("chordal"),
+        CATMULLROM("catmullrom");
     }
 
     private val tmp = Vector3f()

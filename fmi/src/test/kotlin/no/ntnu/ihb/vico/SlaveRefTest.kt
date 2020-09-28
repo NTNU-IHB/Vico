@@ -1,7 +1,5 @@
 package no.ntnu.ihb.vico
 
-import info.laht.krender.mesh.PlaneMesh
-import info.laht.krender.mesh.SphereMesh
 import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.PositionRef
 import no.ntnu.ihb.vico.components.Transform
@@ -10,6 +8,8 @@ import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.GeometryRenderer
+import no.ntnu.ihb.vico.render.mesh.PlaneMesh
+import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import no.ntnu.ihb.vico.systems.PositionRefSystem
 import org.joml.Matrix4f
 import kotlin.math.PI

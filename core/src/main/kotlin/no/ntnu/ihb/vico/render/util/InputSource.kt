@@ -1,4 +1,4 @@
-package info.laht.krender.util
+package no.ntnu.ihb.vico.render.util
 
 import java.io.File
 import java.net.URL
@@ -8,7 +8,6 @@ interface InputSource {
     val extension: String
 
     fun readBytes(): ByteArray
-
     fun readText(): String
 
 }

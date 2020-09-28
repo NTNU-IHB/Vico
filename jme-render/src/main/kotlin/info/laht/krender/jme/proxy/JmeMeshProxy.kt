@@ -5,8 +5,8 @@ import com.jme3.asset.plugins.FileLocator
 import com.jme3.scene.*
 import info.laht.krender.jme.JmeContext
 import info.laht.krender.jme.extra.JmeUtils
-import info.laht.krender.mesh.TrimeshShape
 import info.laht.krender.proxies.MeshProxy
+import no.ntnu.ihb.vico.render.mesh.TrimeshShape
 import org.joml.Matrix4fc
 import java.io.File
 

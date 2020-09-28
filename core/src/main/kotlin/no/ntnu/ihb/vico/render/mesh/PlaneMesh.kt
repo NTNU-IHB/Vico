@@ -1,4 +1,4 @@
-package info.laht.krender.mesh
+package no.ntnu.ihb.vico.render.mesh
 
 open class PlaneMesh(
     override val width: Float = 1f,

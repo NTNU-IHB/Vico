@@ -64,9 +64,7 @@ fun Vector3d.subVectors(v1: Vector3dc, v2: Vector3dc): Vector3d {
 }
 
 fun Vector3d.setFromSpherical(s: Spherical): Vector3d {
-
     return this.setFromSphericalCoords(s.radius, s.phi, s.theta)
-
 }
 
 fun Vector3d.setFromSphericalCoords(radius: Double, phi: Double, theta: Double): Vector3d {

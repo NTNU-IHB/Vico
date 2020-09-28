@@ -1,7 +1,5 @@
 package no.ntnu.ihb.vico.physics.bullet
 
-import info.laht.krender.mesh.BoxMesh
-import info.laht.krender.mesh.SphereMesh
 import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.EngineBuilder
@@ -13,6 +11,8 @@ import no.ntnu.ihb.vico.physics.RigidBodyComponent
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.GeometryRenderer
+import no.ntnu.ihb.vico.render.mesh.BoxMesh
+import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import org.joml.Matrix4f
 import kotlin.random.Random
 

@@ -1,7 +1,7 @@
 package info.laht.krender.threekt
 
-import info.laht.krender.util.FileSource
 import no.ntnu.ihb.vico.render.ColorConstants
+import no.ntnu.ihb.vico.render.util.FileSource
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import java.io.File

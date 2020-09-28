@@ -1,7 +1,7 @@
 package info.laht.krender.jme
 
-import info.laht.krender.mesh.ConeMesh
 import no.ntnu.ihb.vico.render.ColorConstants
+import no.ntnu.ihb.vico.render.mesh.ConeMesh
 import org.joml.Vector3f
 
 fun main() {

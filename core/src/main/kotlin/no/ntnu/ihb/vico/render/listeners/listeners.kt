@@ -1,4 +1,4 @@
-package info.laht.krender.listeners
+package no.ntnu.ihb.vico.render.listeners
 
 import org.joml.Vector3dc
 

@@ -15,8 +15,8 @@ import info.laht.krender.jme.extra.JmeUtils.convert
 import info.laht.krender.jme.extra.JmeUtils.getLightingMaterial
 import info.laht.krender.jme.extra.JmeUtils.getWireFrameMaterial
 import info.laht.krender.proxies.*
-import info.laht.krender.util.ExternalSource
 import no.ntnu.ihb.vico.render.ColorConstants
+import no.ntnu.ihb.vico.render.util.ExternalSource
 import org.joml.*
 import java.io.IOException
 import java.util.logging.Level

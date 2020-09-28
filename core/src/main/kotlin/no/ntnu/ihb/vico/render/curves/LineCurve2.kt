@@ -1,4 +1,4 @@
-package info.laht.krender.curves
+package no.ntnu.ihb.vico.render.curves
 
 import org.joml.Vector2d
 

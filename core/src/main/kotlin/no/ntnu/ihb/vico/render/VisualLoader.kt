@@ -1,10 +1,10 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.mesh.BoxMesh
-import info.laht.krender.mesh.CylinderMesh
-import info.laht.krender.mesh.PlaneMesh
-import info.laht.krender.mesh.SphereMesh
 import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.render.mesh.BoxMesh
+import no.ntnu.ihb.vico.render.mesh.CylinderMesh
+import no.ntnu.ihb.vico.render.mesh.PlaneMesh
+import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import org.joml.Matrix4f
 import java.io.File
 import javax.xml.bind.JAXB

@@ -1,9 +1,9 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.mesh.Shape
 import no.ntnu.ihb.vico.core.Component
 import no.ntnu.ihb.vico.core.EventDispatcher
 import no.ntnu.ihb.vico.core.EventDispatcherImpl
+import no.ntnu.ihb.vico.render.mesh.Shape
 import org.joml.Matrix4fc
 import kotlin.properties.Delegates
 

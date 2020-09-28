@@ -1,4 +1,4 @@
-package info.laht.krender.util
+package no.ntnu.ihb.vico.render.util
 
 import java.util.*
 

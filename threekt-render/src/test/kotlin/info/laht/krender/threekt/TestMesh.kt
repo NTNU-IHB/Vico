@@ -1,9 +1,9 @@
 package info.laht.krender.threekt
 
-import info.laht.krender.mesh.BoxMesh
-import info.laht.krender.mesh.RingMesh
-import info.laht.krender.mesh.SphereMesh
 import info.laht.threekt.math.Color
+import no.ntnu.ihb.vico.render.mesh.BoxMesh
+import no.ntnu.ihb.vico.render.mesh.RingMesh
+import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import java.io.File

@@ -1,6 +1,6 @@
-package info.laht.krender.mesh
+package no.ntnu.ihb.vico.render.mesh
 
-import info.laht.krender.util.JomlUtil.fromArray
+import no.ntnu.ihb.vico.render.util.JomlUtil.fromArray
 import org.joml.*
 import java.util.*
 

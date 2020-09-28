@@ -1,6 +1,6 @@
 package info.laht.krender.proxies
 
-import info.laht.krender.util.ExternalSource
+import no.ntnu.ihb.vico.render.util.ExternalSource
 import org.joml.Matrix4fc
 import org.joml.Quaternionfc
 import org.joml.Vector3fc

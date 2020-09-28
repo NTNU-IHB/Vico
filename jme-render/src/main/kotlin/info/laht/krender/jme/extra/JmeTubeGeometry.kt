@@ -3,8 +3,8 @@ package info.laht.krender.jme.extra
 import com.jme3.scene.Geometry
 import com.jme3.scene.Mesh
 import com.jme3.scene.VertexBuffer
-import info.laht.krender.curves.CatmullRomCurve3
-import info.laht.krender.curves.Curve3
+import no.ntnu.ihb.vico.render.curves.CatmullRomCurve3
+import no.ntnu.ihb.vico.render.curves.Curve3
 import org.joml.Vector2d
 import org.joml.Vector3d
 import org.joml.Vector3fc

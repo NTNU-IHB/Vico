@@ -1,10 +1,10 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.listeners.CloseListener
-import info.laht.krender.listeners.KeyListener
-import info.laht.krender.listeners.MouseClickListener
-import info.laht.krender.mesh.TrimeshShape
 import info.laht.krender.proxies.*
+import no.ntnu.ihb.vico.render.listeners.CloseListener
+import no.ntnu.ihb.vico.render.listeners.KeyListener
+import no.ntnu.ihb.vico.render.listeners.MouseClickListener
+import no.ntnu.ihb.vico.render.mesh.TrimeshShape
 import org.joml.Matrix4fc
 import org.joml.Vector3fc
 import java.io.Closeable

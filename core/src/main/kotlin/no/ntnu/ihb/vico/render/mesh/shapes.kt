@@ -1,4 +1,4 @@
-package info.laht.krender.mesh
+package no.ntnu.ihb.vico.render.mesh
 
 interface Shape
 

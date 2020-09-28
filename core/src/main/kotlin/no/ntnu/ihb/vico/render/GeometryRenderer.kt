@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.mesh.*
 import info.laht.krender.proxies.RenderProxy
 import info.laht.krender.proxies.SpatialProxy
 import no.ntnu.ihb.vico.components.Transform
@@ -8,6 +7,7 @@ import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.Inject
 import no.ntnu.ihb.vico.core.SimulationSystem
+import no.ntnu.ihb.vico.render.mesh.*
 
 class GeometryRenderer : SimulationSystem(
         Family.all(Transform::class.java, Geometry::class.java).build()

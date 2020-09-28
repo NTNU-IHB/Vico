@@ -14,10 +14,10 @@ import com.jme3.math.Vector3f
 import com.jme3.scene.Node
 import info.laht.krender.jme.extra.RawInputAdapter
 import info.laht.krender.jme.proxy.*
-import info.laht.krender.mesh.TrimeshShape
 import info.laht.krender.proxies.*
-import info.laht.krender.util.RenderContext
 import no.ntnu.ihb.vico.render.AbstractRenderEngine
+import no.ntnu.ihb.vico.render.mesh.TrimeshShape
+import no.ntnu.ihb.vico.render.util.RenderContext
 import org.joml.*
 import java.awt.event.KeyEvent
 import java.io.File

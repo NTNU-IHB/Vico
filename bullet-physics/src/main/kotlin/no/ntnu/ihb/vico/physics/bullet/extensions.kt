@@ -7,11 +7,11 @@ import com.badlogic.gdx.physics.bullet.collision.btBoxShape
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape
 import com.badlogic.gdx.physics.bullet.collision.btCylinderShapeZ
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape
-import info.laht.krender.mesh.BoxShape
-import info.laht.krender.mesh.CylinderShape
-import info.laht.krender.mesh.PlaneShape
-import info.laht.krender.mesh.SphereShape
 import no.ntnu.ihb.vico.physics.Collider
+import no.ntnu.ihb.vico.render.mesh.BoxShape
+import no.ntnu.ihb.vico.render.mesh.CylinderShape
+import no.ntnu.ihb.vico.render.mesh.PlaneShape
+import no.ntnu.ihb.vico.render.mesh.SphereShape
 import org.joml.*
 
 

@@ -10,10 +10,10 @@ import com.jme3.math.*
 import com.jme3.math.Matrix4f
 import com.jme3.math.Vector3f
 import com.jme3.texture.Texture
-import info.laht.krender.util.ExternalSource
-import info.laht.krender.util.FileSource
-import info.laht.krender.util.JomlUtil
-import info.laht.krender.util.URLSource
+import no.ntnu.ihb.vico.render.util.ExternalSource
+import no.ntnu.ihb.vico.render.util.FileSource
+import no.ntnu.ihb.vico.render.util.JomlUtil
+import no.ntnu.ihb.vico.render.util.URLSource
 import org.joml.*
 
 internal object JmeUtils {

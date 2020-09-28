@@ -1,6 +1,6 @@
 package info.laht.krender.loaders
 
-import info.laht.krender.mesh.Trimesh
+import no.ntnu.ihb.vico.render.mesh.Trimesh
 import java.io.File
 import java.util.regex.Pattern
 

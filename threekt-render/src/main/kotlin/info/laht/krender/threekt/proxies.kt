@@ -1,10 +1,6 @@
 package info.laht.krender.threekt
 
-import info.laht.krender.mesh.TrimeshShape
 import info.laht.krender.proxies.*
-import info.laht.krender.util.ExternalSource
-import info.laht.krender.util.FileSource
-import info.laht.krender.util.RenderContext
 import info.laht.threekt.Colors
 import info.laht.threekt.Side
 import info.laht.threekt.TextureWrapping
@@ -26,6 +22,10 @@ import info.laht.threekt.math.curves.CatmullRomCurve3
 import info.laht.threekt.objects.Line
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.objects.Points
+import no.ntnu.ihb.vico.render.mesh.TrimeshShape
+import no.ntnu.ihb.vico.render.util.ExternalSource
+import no.ntnu.ihb.vico.render.util.FileSource
+import no.ntnu.ihb.vico.render.util.RenderContext
 import org.joml.Matrix4fc
 import org.joml.Quaternionfc
 import org.joml.Vector3fc
