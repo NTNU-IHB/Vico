@@ -13,7 +13,7 @@ internal fun <E : Component> instantiate(componentClass: Class<out E>): E {
 }
 
 internal class ComponentClazz(
-    private val cls: Class<out Component>
+    private val cls: ComponentClass
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -29,15 +29,16 @@ internal class ComponentClazz(
 
     override fun hashCode(): Int {
 
-        if (cls == Component::class.java) {
-            return cls.hashCode()
+        return if (cls == Component::class.java) {
+            cls.hashCode()
         } else {
 
             var clsHashObject: Class<*> = cls
             while (clsHashObject.superclass != Component::class.java) {
                 clsHashObject = clsHashObject.superclass
             }
-            return clsHashObject.hashCode()
+            clsHashObject.hashCode()
         }
     }
+
 }
