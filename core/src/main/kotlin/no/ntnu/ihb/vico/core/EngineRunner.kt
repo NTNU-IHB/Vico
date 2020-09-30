@@ -114,7 +114,7 @@ class EngineRunner internal constructor(
         } else {
             engine.step()
             stepOccurred = true
-            wallClock += deltaTime
+            wallClock += engine.baseStepSize
         }
 
         actualRealTimeFactor = simulationClock / wallClock

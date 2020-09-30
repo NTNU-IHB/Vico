@@ -57,7 +57,10 @@ class Engine private constructor(
         renderEngine?.apply {
             registerCloseListener { this@Engine.close() }
             registerKeyListener {
-                println("key $it pressed")
+                when (it) {
+                    69 -> runner.togglePause()
+                    82 -> runner.toggleEnableRealTime()
+                }
             }
             registerClickListener { _, _ ->
             }
