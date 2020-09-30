@@ -16,7 +16,6 @@ println("Building ${rootProject.name} v$version")
 
 apply from: project.file("gradle/fmuproxy.gradle")
 
-ext.krender_version = "r10"
 
 subprojects { sub ->
 
@@ -31,7 +30,6 @@ subprojects { sub ->
         maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
         maven { url "https://dl.bintray.com/open-simulation-platform/maven" }
         maven { url "https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
 
     dependencies {
@@ -53,11 +51,12 @@ subprojects { sub ->
     pluginManager.withPlugin('kotlin') {
 
         dependencies {
-            implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+            implementation "org.jetbrains.kotlin:kotlin-stdlib"
         }
 
         compileKotlin {
             kotlinOptions.jvmTarget = "1.8"
+            kotlinOptions.javaParameters = true
         }
         compileTestKotlin {
             kotlinOptions.jvmTarget = "1.8"
