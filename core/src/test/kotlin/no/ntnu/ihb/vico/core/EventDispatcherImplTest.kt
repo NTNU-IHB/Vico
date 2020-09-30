@@ -18,7 +18,7 @@ internal class EventDispatcherImplTest {
             eventReceived = true
 
             assertEquals(type, it.type)
-            assertEquals(target, it.target<String>())
+            assertEquals(target, it.value<String>())
         }
 
         dispatcher.dispatchEvent(type, target)

@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.physics
 
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import org.joml.Matrix4d
 import org.joml.Vector3d
@@ -36,10 +36,10 @@ class ConstraintData(
 
 
     init {
-        require(e1.hasComponent(TransformComponent::class.java))
+        require(e1.hasComponent(Transform::class.java))
         require(e1.hasComponent(RigidBodyComponent::class.java))
         e2?.also { e2 ->
-            require(e2.hasComponent(TransformComponent::class.java))
+            require(e2.hasComponent(Transform::class.java))
             require(e2.hasComponent(RigidBodyComponent::class.java))
         }
     }

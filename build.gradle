@@ -1,12 +1,12 @@
 plugins {
     id 'base'
     id "com.jfrog.bintray" version "1.8.4" apply(false)
-    id 'org.jetbrains.kotlin.jvm' version '1.4.0' apply(false)
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10' apply(false)
 }
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = '6.6'
+    gradleVersion = '6.6.1'
 }
 
 version = rootProject.file("VERSION").readLines()[0]
@@ -15,6 +15,8 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 println("Building ${rootProject.name} v$version")
 
 apply from: project.file("gradle/fmuproxy.gradle")
+
+ext.krender_version = "r10"
 
 subprojects { sub ->
 
@@ -25,6 +27,7 @@ subprojects { sub ->
 
     repositories {
         mavenCentral()
+        maven { url "https://dl.bintray.com/laht/mvn" }
         maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
         maven { url "https://dl.bintray.com/open-simulation-platform/maven" }
         maven { url "https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }

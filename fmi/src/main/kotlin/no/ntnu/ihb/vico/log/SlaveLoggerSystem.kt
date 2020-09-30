@@ -82,7 +82,7 @@ class SlaveLoggerSystem(
     override fun eventReceived(evt: Event) {
         when (evt.type) {
             Properties.PROPERTIES_CHANGED -> {
-                val (currentTime, slave) = evt.target<Pair<Double, SlaveComponent>>()
+                val (currentTime, slave) = evt.value<Pair<Double, SlaveComponent>>()
                 loggers[slave.instanceName]?.also { logger ->
                     logger.writeLine(currentTime)
                 }

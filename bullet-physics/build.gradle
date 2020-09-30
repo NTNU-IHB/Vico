@@ -13,8 +13,7 @@ dependencies {
 
     def gdx_version = '1.9.9'
     implementation group: 'com.badlogicgames.gdx', name: 'gdx-bullet', version: gdx_version
-    runtime "com.badlogicgames.gdx:gdx-bullet-platform:$gdx_version:natives-desktop"
+    runtimeOnly "com.badlogicgames.gdx:gdx-bullet-platform:$gdx_version:natives-desktop"
 
-    testImplementation project(':jme-render')
-
+    testImplementation project(':threekt-render')
 }

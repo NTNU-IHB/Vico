@@ -1,13 +1,15 @@
 package no.ntnu.ihb.vico.systems
 
+import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Controllable
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.dsl.execution
-import no.ntnu.ihb.vico.render.GeometryComponent
-import no.ntnu.ihb.vico.render.MovementController
-import no.ntnu.ihb.vico.render.PerspectiveCamera
-import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
-import no.ntnu.ihb.vico.shapes.BoxShape
+import no.ntnu.ihb.vico.render.ColorConstants
+import no.ntnu.ihb.vico.render.Geometry
+import no.ntnu.ihb.vico.render.GeometryRenderer
+import no.ntnu.ihb.vico.render.mesh.BoxMesh
+import no.ntnu.ihb.vico.render.mesh.SphereMesh
+import org.joml.Matrix4f
 
 
 object MovementControllerSystemTest {
@@ -17,6 +19,10 @@ object MovementControllerSystemTest {
 
         execution {
 
+            renderer(ThreektRenderer().apply {
+                setCameraTransform(Matrix4f().setTranslation(0f, 0f, 5f))
+            })
+
             entities {
 
                 val spacing = 2.0
@@ -24,31 +30,28 @@ object MovementControllerSystemTest {
                 entity("e1") {
 
                     component {
-                        TransformComponent().apply {
+                        Transform().apply {
                             frame.localTranslateX(spacing * 0.5)
                         }
                     }
-                    component { GeometryComponent(BoxShape()) }
+                    component { Geometry(SphereMesh()).apply { color = ColorConstants.greenyellow } }
                     component { Controllable() }
                 }
 
                 entity("e2") {
                     component {
-                        TransformComponent().apply {
+                        Transform().apply {
                             frame.localTranslateX(-spacing * 0.5)
                         }
                     }
-                    component { GeometryComponent(BoxShape()) }
+                    component { Geometry(BoxMesh()).apply { color = ColorConstants.lemonchiffon } }
                 }
 
                 entity("e3") {
                     component {
-                        TransformComponent().apply {
+                        Transform().apply {
                             frame.setLocalTranslation(0.0, 0.0, -10.0)
                         }
-                    }
-                    component {
-                        PerspectiveCamera()
                     }
                 }
 
@@ -56,7 +59,7 @@ object MovementControllerSystemTest {
 
             systems {
                 system { MovementController() }
-                system { JmeRenderSystem() }
+                system { GeometryRenderer() }
             }
 
             scenario {

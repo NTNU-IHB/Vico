@@ -1,69 +1,75 @@
 package no.ntnu.ihb.vico.physics.bullet
 
-import no.ntnu.ihb.vico.components.TransformComponent
-import no.ntnu.ihb.vico.core.Engine
+import info.laht.krender.threekt.ThreektRenderer
+import no.ntnu.ihb.vico.components.Transform
+import no.ntnu.ihb.vico.core.EngineBuilder
 import no.ntnu.ihb.vico.core.RealConnector
 import no.ntnu.ihb.vico.core.ScalarConnection
-import no.ntnu.ihb.vico.physics.ColliderComponent
+import no.ntnu.ihb.vico.physics.Collider
 import no.ntnu.ihb.vico.physics.MotionControl
 import no.ntnu.ihb.vico.physics.RigidBodyComponent
-import no.ntnu.ihb.vico.render.Color
-import no.ntnu.ihb.vico.render.GeometryComponent
-import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
-import no.ntnu.ihb.vico.shapes.BoxShape
-import no.ntnu.ihb.vico.shapes.SphereShape
+import no.ntnu.ihb.vico.render.ColorConstants
+import no.ntnu.ihb.vico.render.Geometry
+import no.ntnu.ihb.vico.render.GeometryRenderer
+import no.ntnu.ihb.vico.render.mesh.BoxMesh
+import no.ntnu.ihb.vico.render.mesh.SphereMesh
+import org.joml.Matrix4f
 import kotlin.random.Random
 
 fun main() {
 
-    Engine(1.0 / 100).use { engine ->
+    val renderer = ThreektRenderer().apply {
+        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 20f))
+    }
+    EngineBuilder().stepSize(1.0 / 100).renderer(renderer).build().use { engine ->
 
         engine.createEntity("plane").apply {
-            val frame = addComponent(TransformComponent()).frame
+            val frame = addComponent(Transform()).frame
             frame.setLocalTranslation(0.0, -1.0, 0.0)
+            //frame.localRotateX(Angle.deg(90.0))
             addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
-            val shape = BoxShape(10f, 0.1f, 10f)
-            addComponent(ColliderComponent(shape))
-            addComponent(GeometryComponent(shape))
+            val shape = BoxMesh(10f, 0.1f, 10f)
+            addComponent(Collider(shape))
+            addComponent(Geometry(shape))
         }
 
         for (i in 0 until 20) {
             engine.createEntity("sphere_$i").apply {
-                addComponent(TransformComponent()).apply {
+                addComponent(Transform()).apply {
                     frame.setLocalTranslation(
-                        Random.nextDouble(-1.0, 1.0),
-                        2.0,
-                        Random.nextDouble(-1.0, 1.0)
+                            Random.nextDouble(-1.0, 1.0),
+                            2.0,
+                            Random.nextDouble(-1.0, 1.0)
                     )
                 }
                 addComponent(RigidBodyComponent())
-                val shape = SphereShape(0.1f)
-                addComponent(ColliderComponent(shape))
-                addComponent(GeometryComponent(shape))
+                val shape = SphereMesh(0.1f)
+                addComponent(Collider(shape))
+                addComponent(Geometry(shape))
             }
         }
 
         val sphere0 = engine.getEntityByName("sphere_0")
 
         val test = engine.createEntity("test").apply {
-            addComponent(TransformComponent())
-            val shape = BoxShape(0.1f)
-            addComponent(ColliderComponent(shape))
-            addComponent(GeometryComponent(shape).apply {
-                setColor(Color.red)
+            addComponent(Transform())
+            val shape = BoxMesh(0.1f, 0.1f)
+            addComponent(Collider(shape))
+            addComponent(Geometry(shape).apply {
+                color = ColorConstants.red
             })
         }
 
-        val source = RealConnector(sphere0.getComponent<TransformComponent>(), "localPosition")
-        val sink = RealConnector(test.getComponent<TransformComponent>(), "localPosition")
+        val source = RealConnector(sphere0.getComponent<Transform>(), "localPosition")
+        val sink = RealConnector(test.getComponent<Transform>(), "localPosition")
 
         engine.addConnection(ScalarConnection(source, sink))
 
         engine.addSystem(BulletSystem())
-        engine.addSystem(JmeRenderSystem())
+        engine.addSystem(GeometryRenderer())
 
         engine.runner.apply {
-            startAndWait(true)
+            startAndWait(false)
         }
 
     }

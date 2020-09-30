@@ -3,14 +3,13 @@ package no.ntnu.ihb.vico.core
 import no.ntnu.ihb.vico.input.InputAccess
 import no.ntnu.ihb.vico.input.InputManager
 import no.ntnu.ihb.vico.input.KeyStroke
+import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.util.PredicateTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.ceil
-import kotlin.math.max
 
 private const val DEFAULT_TIME_STEP = 1.0 / 100
 
@@ -20,12 +19,12 @@ class Engine private constructor(
     startTime: Double? = null,
     val stopTime: Double? = null,
     baseStepSize: Double? = null,
+    private val renderEngine: RenderEngine? = null,
     private val inputManager: InputManager = InputManager(),
     private val connectionManager: ConnectionManager = ConnectionManager(),
     private val entityManager: EntityManager = EntityManager(connectionManager),
     private val systemManager: SystemManager = SystemManager(),
-) : EventDispatcher by EventDispatcherImpl(), EntityAccess by entityManager, InputAccess by inputManager,
-    Closeable {
+) : EventDispatcher by EventDispatcherImpl(), EntityAccess by entityManager, InputAccess by inputManager, Closeable {
 
     val startTime: Double = startTime ?: 0.0
     val baseStepSize: Double = baseStepSize ?: DEFAULT_TIME_STEP
@@ -53,24 +52,19 @@ class Engine private constructor(
     constructor(baseStepSize: Double) : this(null, null, baseStepSize)
     constructor(startTime: Double, baseStepSize: Double) : this(startTime, null, baseStepSize)
 
-    class Builder {
-        private var startTime: Double? = null
-        private var stopTime: Double? = null
-        private var stepSize: Double? = null
+    init {
 
-        fun startTime(value: Double?) = apply {
-            startTime = value
+        renderEngine?.apply {
+            registerCloseListener { this@Engine.close() }
+            registerKeyListener {
+                when (it) {
+                    69 -> runner.togglePause()
+                    82 -> runner.toggleEnableRealTime()
+                }
+            }
+            registerClickListener { _, _ ->
+            }
         }
-
-        fun stopTime(value: Double?) = apply {
-            stopTime = value
-        }
-
-        fun stepSize(value: Double?) = apply {
-            stepSize = value
-        }
-
-        fun build() = Engine(startTime, stopTime, stepSize)
 
     }
 
@@ -116,9 +110,8 @@ class Engine private constructor(
         val doubleTimePoint = timePoint.toDouble()
         stopTime?.also {
             if (doubleTimePoint > stopTime) {
-                LOG.warn(
-                    "Specified timePoint=$doubleTimePoint exceeds configured stopTime=$it. " +
-                            "Simulation will end prematurely."
+                LOG.warn("Specified timePoint=$doubleTimePoint exceeds configured stopTime=$it. " +
+                        "Simulation will end prematurely."
                 )
             }
         }
@@ -140,6 +133,18 @@ class Engine private constructor(
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)
 
     fun addSystem(system: BaseSystem) {
+
+        if (renderEngine != null) {
+
+            system.javaClass.declaredFields.firstOrNull {
+                it.getAnnotation(Inject::class.java) != null && RenderEngine::class.java.isAssignableFrom(it.type)
+            }?.also { field ->
+                field.isAccessible = true
+                field.set(system, renderEngine)
+            }
+
+        }
+
         invokeLater {
             systemManager.addSystem(system)
             entityManager.addEntityListener(system)
@@ -229,18 +234,49 @@ class Engine private constructor(
     override fun close() {
         if (!closed.getAndSet(true)) {
             systemManager.close()
+            renderEngine?.close()
             LOG.info("Closed engine..")
         }
     }
 
-    companion object {
+    /* fun calculateStepFactor(stepSizeHint: Double): Long {
+         return max(1, ceil(stepSizeHint / baseStepSize).toLong())
+     }*/
+
+    private companion object {
 
         private val LOG: Logger = LoggerFactory.getLogger(Engine::class.java)
 
     }
 
-    fun calculateStepFactor(stepSizeHint: Double): Long {
-        return max(1, ceil(stepSizeHint / baseStepSize).toLong())
+    class Builder(
+            private var startTime: Double? = null,
+            private var stopTime: Double? = null,
+            private var stepSize: Double? = null,
+            private var renderEngine: RenderEngine? = null
+    ) {
+
+        constructor() : this(null, null, null, null)
+
+        fun startTime(value: Double?) = apply {
+            startTime = value
+        }
+
+        fun stopTime(value: Double?) = apply {
+            stopTime = value
+        }
+
+        fun stepSize(value: Double?) = apply {
+            stepSize = value
+        }
+
+        fun renderer(renderEngine: RenderEngine?) = apply {
+            this.renderEngine = renderEngine
+        }
+
+        fun build() = Engine(startTime, stopTime, stepSize, renderEngine)
+
     }
+
 
 }

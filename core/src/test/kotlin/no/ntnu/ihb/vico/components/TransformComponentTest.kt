@@ -13,7 +13,7 @@ internal class TransformComponentTest {
     fun testProperty() {
 
         val e = Entity()
-        val frame = e.addComponent<TransformComponent>().frame
+        val frame = e.addComponent<Transform>().frame
         assertEquals(Vector3d(), frame.getLocalTranslation())
 
         val write = DoubleArray(3) { i -> i.toDouble() }

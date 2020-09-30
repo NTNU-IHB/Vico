@@ -1,6 +1,6 @@
 plugins {
-    id 'kotlin'
     id 'java-library'
+    id 'kotlin'
 }
 
 apply from: rootProject.file("gradle/mavenpublish.gradle")
@@ -8,12 +8,10 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
-    implementation project(':core')
-    api project(':render-components')
+    api project(':core')
 
     def jme3 = [v:'3.3.2-stable', g:'org.jmonkeyengine']
     implementation "${jme3.g}:jme3-core:${jme3.v}"
     runtimeOnly "${jme3.g}:jme3-desktop:${jme3.v}"
     runtimeOnly "${jme3.g}:jme3-lwjgl:${jme3.v}"
-
 }
