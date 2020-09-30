@@ -55,7 +55,11 @@ object VisualLoader {
         return Geometry(shape, offset).also {
 
             g.color?.also { c ->
-                val color = ColorConstants.getByName(c)
+                val color = if (c.startsWith("#")) {
+                    Integer.decode(c)
+                } else {
+                    ColorConstants.getByName(c)
+                }
                 it.color = color
             }
 
