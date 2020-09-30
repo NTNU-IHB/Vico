@@ -7,8 +7,7 @@ import com.jme3.input.event.KeyInputEvent
 import com.jme3.input.event.MouseButtonEvent
 import com.jme3.light.AmbientLight
 import com.jme3.light.DirectionalLight
-import com.jme3.math.ColorRGBA
-import com.jme3.math.FastMath
+import com.jme3.math.*
 import com.jme3.math.Vector2f
 import com.jme3.math.Vector3f
 import com.jme3.scene.Node
@@ -19,6 +18,7 @@ import no.ntnu.ihb.vico.render.AbstractRenderEngine
 import no.ntnu.ihb.vico.render.mesh.TrimeshShape
 import no.ntnu.ihb.vico.render.util.RenderContext
 import org.joml.*
+import org.joml.Matrix4f
 import java.awt.event.KeyEvent
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
@@ -52,8 +52,8 @@ class JmeRenderEngine : AbstractRenderEngine() {
         ctx.invokeLater {
             val pos = cameraTransform.getTranslation(org.joml.Vector3f())
             val rot = cameraTransform.getNormalizedRotation(Quaternionf())
-            renderer.camera.location.set(pos)
-            renderer.camera.rotation.set(rot)
+            renderer.camera.location = Vector3f().set(pos)
+            renderer.camera.rotation = Quaternion().set(rot)
         }
     }
 

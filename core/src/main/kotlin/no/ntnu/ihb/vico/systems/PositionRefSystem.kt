@@ -53,7 +53,7 @@ class PositionRefSystem : SimulationSystem(
             pRef.yRef?.also { tmpVector.y = map.getValue(it).read(tmpArray).first() }
             pRef.zRef?.also { tmpVector.z = map.getValue(it).read(tmpArray).first() }
 
-            entity.getComponent<Transform>().frame.setTranslation(tmpVector)
+            entity.getComponent<Transform>().setTranslation(tmpVector)
 
         }
     }

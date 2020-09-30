@@ -8,9 +8,9 @@ import org.joml.Matrix4fc
 import kotlin.properties.Delegates
 
 class Geometry(
-    val shape: Shape,
-    val offset: Matrix4fc? = null
-) : Component(), EventDispatcher by EventDispatcherImpl() {
+        val shape: Shape,
+        val offset: Matrix4fc? = null
+) : Component, EventDispatcher by EventDispatcherImpl() {
 
     var color: Int by Delegates.observable(ColorConstants.gray) { _, _, newValue ->
         dispatchEvent("onColorChanged", newValue)

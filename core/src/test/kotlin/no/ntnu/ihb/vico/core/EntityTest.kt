@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test
 
 internal class EntityTest {
 
-    private class ComponentA : Component() {
+    private class ComponentA : AbstractComponent() {
+
         private val value = "Hello"
 
         init {
-            registerProperties(
-                StrLambdaProperty(VALUE_PROP_NAME, 1,
-                    getter = { it[0] = value })
+            properties.registerProperties(
+                    StrLambdaProperty(VALUE_PROP_NAME, 1,
+                            getter = { it[0] = value })
             )
         }
 
@@ -20,7 +21,7 @@ internal class EntityTest {
         }
     }
 
-    private class ComponentB : Component()
+    private class ComponentB : Component
 
     @Test
     fun testAddComponent() {

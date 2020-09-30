@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 
 internal class SystemManagerTest {
 
-    class ComponentA : Component()
+    class ComponentA : Component
 
     companion object {
         val family = Family.all(ComponentA::class.java).build()

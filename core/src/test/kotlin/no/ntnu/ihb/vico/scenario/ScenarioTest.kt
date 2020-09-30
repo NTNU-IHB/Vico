@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.scenario
 
-import no.ntnu.ihb.vico.core.Component
+import no.ntnu.ihb.vico.core.AbstractComponent
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.RealLambdaProperty
 import no.ntnu.ihb.vico.dsl.scenario
@@ -9,27 +9,27 @@ import org.junit.jupiter.api.Test
 
 internal class ScenarioTest {
 
-    private class TestComponent1 : Component() {
+    private class TestComponent1 : AbstractComponent() {
 
         var value = 2.0
 
         init {
-            registerProperties(RealLambdaProperty("value", 1,
-                getter = { it[0] = value },
-                setter = { value = it.first() }
+            properties.registerProperties(RealLambdaProperty("value", 1,
+                    getter = { it[0] = value },
+                    setter = { value = it.first() }
             ))
         }
 
     }
 
-    private class TestComponent2 : Component() {
+    private class TestComponent2 : AbstractComponent() {
 
         var value = 3.0
 
         init {
-            registerProperties(RealLambdaProperty("value", 1,
-                getter = { it[0] = value },
-                setter = { value = it.first() }
+            properties.registerProperties(RealLambdaProperty("value", 1,
+                    getter = { it[0] = value },
+                    setter = { value = it.first() }
             ))
         }
 

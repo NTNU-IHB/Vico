@@ -19,14 +19,13 @@ private data class SineMoverComponent(
         var A: Double = 1.0,
         var f: Double = 0.1,
         var phi: Double = 0.0
-) : Component() {
+) : Component {
 
     fun compute(t: Double) = A * sin(TWO_PHI * f * t + phi)
 
     private companion object {
         private const val TWO_PHI = 2 * PI
     }
-
 
 }
 
@@ -38,9 +37,9 @@ private class SineMoverSystem : IteratingSystem(
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-        val frame = entity.getComponent<Transform>().frame
+        val transform = entity.getComponent<Transform>()
         val sc = entity.getComponent<SineMoverComponent>()
-        frame.setLocalTranslation(frame.getLocalTranslation(tmp).apply { x = sc.compute(currentTime) })
+        transform.setLocalTranslation(transform.getLocalTranslation(tmp).apply { x = sc.compute(currentTime) })
 
     }
 
@@ -50,7 +49,7 @@ private fun e1(engine: Engine): Entity {
     return engine.createEntity("e1").also { e ->
 
         e.addComponent(Transform()).apply {
-            frame.setLocalTranslation(-1.0, 0.0, 0.0)
+            setLocalTranslation(-1.0, 0.0, 0.0)
         }
 
         e.addComponent(Geometry(BoxMesh())).apply {
@@ -69,15 +68,15 @@ fun main() {
         val e1 = e1(engine)
         engine.createEntity("e2").also { e ->
 
-            val frame = e.addComponent(Transform()).frame
-
-            frame.setLocalTranslation(1.0, 0.0, 0.0)
+            val transform = e.addComponent(Transform()).apply {
+                setLocalTranslation(1.0, 0.0, 0.0)
+            }
 
             e.addComponent(Geometry(SphereMesh()).apply {
                 color = ColorConstants.yellow
             })
             e.addComponent(SineMoverComponent(f = 0.5))
-            frame.setParent(e1.getComponent<Transform>().frame)
+            transform.setParent(e1.getComponent<Transform>())
             engine.getEntityByName("e1")
         }
 
@@ -99,13 +98,14 @@ fun main() {
         engine.invokeAt(4.0) {
 
             engine.createEntity().apply {
-                val frame = addComponent(Transform()).frame
-                frame.setLocalTranslation(0.0, 2.0, 0.0)
+                val transform = addComponent(Transform()).apply {
+                    setLocalTranslation(0.0, 2.0, 0.0)
+                }
                 addComponent(Geometry(CylinderMesh(0.5f, 1f)).apply {
                     color = ColorConstants.blue
                     wireframe = true
                 })
-                frame.setParent(engine.getEntityByName("e2").getComponent<Transform>().frame)
+                transform.setParent(engine.getEntityByName("e2").getComponent<Transform>())
             }
 
             engine.removeEntity(engine.getEntityByName("e1"))

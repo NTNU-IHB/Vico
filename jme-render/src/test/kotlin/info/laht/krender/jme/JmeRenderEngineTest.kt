@@ -11,6 +11,7 @@ fun main() {
     JmeRenderEngine().apply {
 
         setBackGroundColor(0xF0F8FF)
+        setCameraTransform(Matrix4f().setTranslation(0f, 0f, -5f))
 
         val sphere = createSphere(0.1f).apply {
             setColor(ColorConstants.black)
@@ -24,7 +25,7 @@ fun main() {
         val bunny = createMesh(load).apply {
             setOffsetTransform(Matrix4f().setTranslation(2f, 0f, 0f))
         }
-        val bunny2 = createMesh(source, 2f)
+        createMesh(source, 2f)
 
         Thread.sleep(1000)
 

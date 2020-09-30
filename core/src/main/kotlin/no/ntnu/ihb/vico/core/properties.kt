@@ -1,6 +1,11 @@
 package no.ntnu.ihb.vico.core
 
-interface PropertyAccessor {
+interface PropertyAccessor : Iterable<Property> {
+
+    val ints: Collection<IntProperty>
+    val reals: Collection<RealProperty>
+    val bools: Collection<BoolProperty>
+    val strs: Collection<StrProperty>
 
     fun getProperty(name: String): Property
     fun getPropertyOrNull(name: String): Property?
@@ -15,25 +20,21 @@ interface PropertyAccessor {
 
 }
 
-open class Properties : PropertyAccessor {
+open class Properties : PropertyAccessor, Iterable<Property> {
 
-    private val _ints: MutableSet<IntProperty> = mutableSetOf()
-    val ints: Collection<IntProperty> = _ints
-    private val _reals: MutableSet<RealProperty> = mutableSetOf()
-    val reals: Collection<RealProperty> = _reals
-    private val _strs: MutableSet<StrProperty> = mutableSetOf()
-    val strs: Collection<StrProperty> = _strs
-    private val _bools: MutableSet<BoolProperty> = mutableSetOf()
-    val bools: Collection<BoolProperty> = _bools
+    override val ints: MutableSet<IntProperty> = mutableSetOf()
+    override val reals: MutableSet<RealProperty> = mutableSetOf()
+    override val bools: MutableSet<BoolProperty> = mutableSetOf()
+    override val strs: MutableSet<StrProperty> = mutableSetOf()
 
-    protected fun registerProperties(variables: List<Property>) {
+    fun registerProperties(variables: List<Property>) {
 
         fun registerProperty(variable: Property) = apply {
             when (variable) {
-                is IntProperty -> _ints.add(variable)
-                is RealProperty -> _reals.add(variable)
-                is StrProperty -> _strs.add(variable)
-                is BoolProperty -> _bools.add(variable)
+                is IntProperty -> ints.add(variable)
+                is RealProperty -> reals.add(variable)
+                is BoolProperty -> bools.add(variable)
+                is StrProperty -> strs.add(variable)
             }
         }
 
@@ -42,83 +43,87 @@ open class Properties : PropertyAccessor {
         }
     }
 
-    protected fun registerProperties(variable: Property, vararg variables: Property) {
+    fun registerProperties(variable: Property, vararg variables: Property) {
         registerProperties(listOf(variable, *variables))
     }
 
     fun remove(properties: List<Property>) {
         properties.forEach {
             when (it) {
-                is IntProperty -> _ints.remove(it)
-                is RealProperty -> _reals.remove(it)
-                is StrProperty -> _strs.remove(it)
-                is BoolProperty -> _bools.remove(it)
+                is IntProperty -> ints.remove(it)
+                is RealProperty -> reals.remove(it)
+                is StrProperty -> strs.remove(it)
+                is BoolProperty -> bools.remove(it)
             }
         }
     }
 
-    fun getProperties(): Collection<Property> {
-        return _ints + _reals + _strs + _bools
+    fun getAllProperties(): Collection<Property> {
+        return ints + reals + strs + bools
     }
 
     override fun getPropertyOrNull(name: String): Property? {
-        return getProperties().find { it.name == name }
+        return getAllProperties().find { it.name == name }
     }
 
     override fun getProperty(name: String): Property {
         return getPropertyOrNull(name)
-            ?: throw NoSuchElementException(
-                "No property named '$name' could be located! " +
-                        "Currently registered properties are ${getProperties()}."
-            )
+                ?: throw NoSuchElementException(
+                        "No property named '$name' could be located! " +
+                                "Currently registered properties are ${getAllProperties()}."
+                )
     }
 
     override fun getIntegerPropertyOrNull(name: String): IntProperty? {
-        return _ints.find { it.name == name }
+        return ints.find { it.name == name }
     }
 
     override fun getIntegerProperty(name: String): IntProperty {
         return getIntegerPropertyOrNull(name)
             ?: throw NoSuchElementException(
-                "No property named '$name' could be located! " +
-                        "Currently registered Integer properties are ${getProperties()}."
+                    "No property named '$name' could be located! " +
+                            "Currently registered Integer properties are ${getAllProperties()}."
             )
     }
 
     override fun getRealPropertyOrNull(name: String): RealProperty? {
-        return _reals.find { it.name == name }
+        return reals.find { it.name == name }
     }
 
     override fun getRealProperty(name: String): RealProperty {
         return getRealPropertyOrNull(name)
             ?: throw NoSuchElementException(
-                "No property named '$name' could be located! " +
-                        "Currently registered Real properties are ${getProperties()}."
+                    "No property named '$name' could be located! " +
+                            "Currently registered Real properties are ${getAllProperties()}."
             )
     }
 
     override fun getStringPropertyOrNull(name: String): StrProperty? {
-        return _strs.find { it.name == name }
+        return strs.find { it.name == name }
     }
 
     override fun getStringProperty(name: String): StrProperty {
         return getStringPropertyOrNull(name)
             ?: throw NoSuchElementException(
-                "No property named '$name' could be located! " +
-                        "Currently registered String properties are ${getProperties()}."
+                    "No property named '$name' could be located! " +
+                            "Currently registered String properties are ${getAllProperties()}."
             )
     }
 
     override fun getBooleanPropertyOrNull(name: String): BoolProperty? {
-        return _bools.find { it.name == name }
+        return bools.find { it.name == name }
     }
 
     override fun getBooleanProperty(name: String): BoolProperty {
         return getBooleanPropertyOrNull(name)
-            ?: throw NoSuchElementException(
-                "No property named '$name' could be located! " +
-                        "Currently registered Boolean properties are ${getProperties()}."
-            )
+                ?: throw NoSuchElementException(
+                        "No property named '$name' could be located! " +
+                                "Currently registered Boolean properties are ${getAllProperties()}."
+                )
+    }
+
+    override fun iterator(): Iterator<Property> {
+        return (ints + reals + strs + bools).iterator()
     }
 
     companion object {

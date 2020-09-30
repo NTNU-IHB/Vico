@@ -31,7 +31,7 @@ object MovementControllerSystemTest {
 
                     component {
                         Transform().apply {
-                            frame.localTranslateX(spacing * 0.5)
+                            localTranslateX(spacing * 0.5)
                         }
                     }
                     component { Geometry(SphereMesh()).apply { color = ColorConstants.greenyellow } }
@@ -41,7 +41,7 @@ object MovementControllerSystemTest {
                 entity("e2") {
                     component {
                         Transform().apply {
-                            frame.localTranslateX(-spacing * 0.5)
+                            localTranslateX(-spacing * 0.5)
                         }
                     }
                     component { Geometry(BoxMesh()).apply { color = ColorConstants.lemonchiffon } }
@@ -50,7 +50,7 @@ object MovementControllerSystemTest {
                 entity("e3") {
                     component {
                         Transform().apply {
-                            frame.setLocalTranslation(0.0, 0.0, -10.0)
+                            setLocalTranslation(0.0, 0.0, -10.0)
                         }
                     }
                 }

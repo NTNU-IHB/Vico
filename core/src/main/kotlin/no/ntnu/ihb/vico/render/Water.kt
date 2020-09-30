@@ -4,9 +4,9 @@ import info.laht.krender.proxies.WaterProxy
 import no.ntnu.ihb.vico.core.*
 
 class Water(
-    val width: Float,
-    val height: Float
-) : Component()
+        val width: Float,
+        val height: Float
+) : Component
 
 
 class WaterRenderer : SimulationSystem(

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 internal class ComponentClazzTest {
 
-    open class ComponentA : Component()
+    open class ComponentA : Component
     class ComponentB : ComponentA()
 
     @Test

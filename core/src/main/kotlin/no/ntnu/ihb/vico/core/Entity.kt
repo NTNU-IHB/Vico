@@ -119,7 +119,7 @@ open class Entity internal constructor(
 
     val properties: Collection<Property>
         get() {
-            return components.flatMap { it.getProperties() }
+            return components.flatMap { it.properties }
         }
 
     fun getProperty(name: String): Property {
@@ -135,7 +135,9 @@ open class Entity internal constructor(
     }
 
     fun getIntegerPropertyOrNull(name: String): IntProperty? {
-        val properties = components.mapNotNull { it.getIntegerPropertyOrNull(name) }
+        val properties = components.mapNotNull {
+            it.properties.getIntegerPropertyOrNull(name)
+        }
         return when {
             properties.isEmpty() -> null
             properties.size == 1 -> properties.first()
@@ -149,7 +151,7 @@ open class Entity internal constructor(
     }
 
     fun getIntegerProperties(): List<IntProperty> {
-        return components.flatMap { it.ints }
+        return components.flatMap { it.properties.ints }
     }
 
     fun getRealProperty(name: String): RealProperty {
@@ -158,7 +160,9 @@ open class Entity internal constructor(
     }
 
     fun getRealPropertyOrNull(name: String): RealProperty? {
-        val properties = components.mapNotNull { it.getRealPropertyOrNull(name) }
+        val properties = components.mapNotNull {
+            it.properties.getRealPropertyOrNull(name)
+        }
         return when {
             properties.isEmpty() -> null
             properties.size == 1 -> properties.first()
@@ -167,11 +171,13 @@ open class Entity internal constructor(
     }
 
     fun getRealProperties(): List<RealProperty> {
-        return components.flatMap { it.reals }
+        return components.flatMap { it.properties.reals }
     }
 
     fun getStringPropertyOrNull(name: String): StrProperty? {
-        val properties = components.mapNotNull { it.getStringPropertyOrNull(name) }
+        val properties = components.mapNotNull {
+            it.properties.getStringPropertyOrNull(name)
+        }
         return when {
             properties.isEmpty() -> null
             properties.size == 1 -> properties.first()
@@ -185,11 +191,13 @@ open class Entity internal constructor(
     }
 
     fun getStringProperties(): List<StrProperty> {
-        return components.flatMap { it.strs }
+        return components.flatMap { it.properties.strs }
     }
 
     fun getBooleanPropertyOrNull(name: String): BoolProperty? {
-        val properties = components.mapNotNull { it.getBooleanPropertyOrNull(name) }
+        val properties = components.mapNotNull {
+            it.properties.getBooleanPropertyOrNull(name)
+        }
         return when {
             properties.isEmpty() -> null
             properties.size == 1 -> properties.first()
@@ -203,7 +211,7 @@ open class Entity internal constructor(
     }
 
     fun getBooleanProperties(): List<BoolProperty> {
-        return components.flatMap { it.bools }
+        return components.flatMap { it.properties.bools }
     }
 
     override fun toString(): String {

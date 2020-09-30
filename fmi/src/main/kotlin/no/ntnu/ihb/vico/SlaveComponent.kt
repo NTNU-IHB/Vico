@@ -20,7 +20,7 @@ open class SlaveComponent @JvmOverloads constructor(
         private val slaveProvider: SlaveProvider,
         val instanceName: String,
         val stepSizeHint: Double? = null
-) : Component() {
+) : AbstractComponent() {
 
     var stepCount = 0L
         internal set
@@ -109,7 +109,7 @@ open class SlaveComponent @JvmOverloads constructor(
             )
         }
 
-        registerProperties(ints + reals + strings + booleans)
+        properties.registerProperties(ints + reals + strings + booleans)
 
     }
 

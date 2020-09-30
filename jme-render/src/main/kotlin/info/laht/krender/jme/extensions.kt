@@ -20,5 +20,5 @@ internal fun Vector3f.set(v: Vector3fc): Vector3f {
 }
 
 internal fun Quaternion.set(v: org.joml.Quaternionfc): Quaternion {
-    return set(v.x(), v.y(), v.z(), v.z())
+    return set(v.x(), v.y(), v.z(), v.w())
 }

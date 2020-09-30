@@ -15,13 +15,13 @@ private data class SineMover(
         var A: Double = 1.0,
         var f: Double = 0.1,
         var phi: Double = 0.0
-) : Component() {
+) : AbstractComponent() {
 
     var value: Double = 0.0
         private set
 
     init {
-        registerProperties(RealLambdaProperty("value", 1,
+        properties.registerProperties(RealLambdaProperty("value", 1,
                 getter = { value }
         ))
     }
@@ -40,9 +40,9 @@ private class SineMoverSystem : IteratingSystem(
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-        val frame = entity.getComponent<Transform>().frame
+        val transform = entity.getComponent<Transform>()
         val sc = entity.getComponent<SineMover>().compute(currentTime)
-        frame.setLocalTranslation(frame.getLocalTranslation(tmp).apply { y = sc.value })
+        transform.setLocalTranslation(transform.getLocalTranslation(tmp).apply { y = sc.value })
 
     }
 

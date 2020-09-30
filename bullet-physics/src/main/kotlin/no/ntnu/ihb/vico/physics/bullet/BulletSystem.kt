@@ -55,7 +55,7 @@ class BulletSystem : SimulationSystem(
             val tc = entity.getComponent<Transform>()
             val rc = entity.getComponent<RigidBodyComponent>()
             rbMap[entity]?.also { rb ->
-                tc.frame.setTransform(tmpMat.copy(rb.worldTransform))
+                tc.setTransform(tmpMat.copy(rb.worldTransform))
                 rc.linearVelocity.set(rb.linearVelocity)
                 rc.angularVelocity.set(rb.angularVelocity)
             }
@@ -76,7 +76,7 @@ class BulletSystem : SimulationSystem(
             btEmptyShape() to 1f
         }
 
-        val motionState = btDefaultMotionState(Matrix4().copy(tc.frame.getWorldMatrix(tmpMat)))
+        val motionState = btDefaultMotionState(Matrix4().copy(tc.getWorldMatrix(tmpMat)))
         rbMap[entity] = btRigidBody(mass, motionState, shape).also { rb ->
             rb.activationState = CollisionConstants.DISABLE_DEACTIVATION
             when (rc.motionControl) {

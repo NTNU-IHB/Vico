@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test
 internal class ConnectionTest {
 
     class ValueComponent(
-        var value: Double = 0.0
-    ) : Component() {
+            var value: Double = 0.0
+    ) : AbstractComponent() {
 
         init {
-            registerProperties(
-                RealLambdaProperty("value", 1,
-                    getter = { it[0] = value },
-                    setter = { value = it[0] }
-                )
+            properties.registerProperties(
+                    RealLambdaProperty("value", 1,
+                            getter = { it[0] = value },
+                            setter = { value = it[0] }
+                    )
             )
         }
 

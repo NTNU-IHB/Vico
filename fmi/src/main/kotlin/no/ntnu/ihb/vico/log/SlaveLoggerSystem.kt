@@ -112,7 +112,7 @@ class SlaveLoggerSystem(
             val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
             val fileName = if (staticFileNames) slave.instanceName else "${slave.instanceName}_$dateFormat"
             this.writer = FileOutputStream(File(targetDir, "${fileName}.csv")).bufferedWriter()
-            this.variables = if (variables.isEmpty()) slave.getProperties() else variables
+            this.variables = if (variables.isEmpty()) slave.properties.getAllProperties() else variables
         }
 
         fun writeHeader() {

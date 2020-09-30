@@ -80,7 +80,7 @@ class GeometryRenderer : SimulationSystem(
             val t = e.getComponent<Transform>()
 
             p as SpatialProxy
-            val m = t.frame.getWorldMatrixf()
+            val m = t.getWorldMatrixf()
             p.setTransform(m)
         }
     }

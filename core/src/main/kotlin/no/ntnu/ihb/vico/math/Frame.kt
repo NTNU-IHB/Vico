@@ -2,10 +2,11 @@ package no.ntnu.ihb.vico.math
 
 import org.joml.*
 
-class Frame {
+open class Frame {
 
     private var parent: Frame? = null
-    val children: MutableSet<Frame> = mutableSetOf()
+    private val children_: MutableSet<Frame> = mutableSetOf()
+    val children: Set<Frame> = children_
 
     private val localMatrix = Matrix4d()
     private val worldMatrix = Matrix4d()
@@ -18,12 +19,12 @@ class Frame {
 
     fun makeDirty() {
         dirty = true
-        children.forEach { it.makeDirty() }
+        children_.forEach { it.makeDirty() }
     }
 
     fun clearParent() {
         parent?.also {
-            it.children.remove(this)
+            it.children_.remove(this)
         }
         this.parent = null
         makeDirty()
@@ -37,7 +38,7 @@ class Frame {
         } else {
             this.parent = parent
         }
-        parent.children.add(this)
+        parent.children_.add(this)
         makeDirty()
     }
 
