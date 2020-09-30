@@ -9,7 +9,6 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 dependencies {
     api "org.joml:joml:1.9.25"
 
-    testImplementation project(':dsl')
     testImplementation project(':fmi')
     testImplementation project(':chart')
     testImplementation project(':test-data')
