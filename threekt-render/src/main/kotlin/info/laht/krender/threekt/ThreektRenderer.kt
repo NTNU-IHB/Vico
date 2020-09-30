@@ -52,7 +52,11 @@ class ThreektRenderer : AbstractRenderEngine() {
     }
 
     override fun createAxis(size: Float): AxisProxy {
-        TODO("Not yet implemented")
+        return ThreektAxisProxy(ctx, size).also {
+            ctx.invokeLater {
+                scene.add(it.parentNode)
+            }
+        }
     }
 
     override fun createArrow(length: Float): ArrowProxy {
