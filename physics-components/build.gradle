@@ -8,8 +8,6 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
     implementation project(':core')
-    api project(':shapes')
 
     testImplementation project(':test-data')
-    testImplementation project(':jme-render')
 }

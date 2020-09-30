@@ -9,11 +9,11 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.SimulationSystem
-import no.ntnu.ihb.vico.physics.ColliderComponent
+import no.ntnu.ihb.vico.physics.Collider
 import no.ntnu.ihb.vico.physics.MotionControl
 import no.ntnu.ihb.vico.physics.RigidBodyComponent
 import org.joml.Matrix4d
@@ -21,7 +21,7 @@ import org.joml.Matrix4d
 private const val GRAVITY = -9.81f
 
 class BulletSystem : SimulationSystem(
-    Family.all(TransformComponent::class.java).one(RigidBodyComponent::class.java).build()
+    Family.all(Transform::class.java).one(RigidBodyComponent::class.java).build()
 ) {
 
     private val tmpMat = Matrix4d()
@@ -52,7 +52,7 @@ class BulletSystem : SimulationSystem(
         world.stepSimulation(stepSize.toFloat())
         entities.forEach { entity ->
 
-            val tc = entity.getComponent<TransformComponent>()
+            val tc = entity.getComponent<Transform>()
             val rc = entity.getComponent<RigidBodyComponent>()
             rbMap[entity]?.also { rb ->
                 tc.frame.setTransform(tmpMat.copy(rb.worldTransform))
@@ -66,11 +66,11 @@ class BulletSystem : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
 
-        val tc = entity.getComponent<TransformComponent>()
+        val tc = entity.getComponent<Transform>()
         val rc = entity.getComponent<RigidBodyComponent>()
 
-        val (shape, mass) = if (entity.hasComponent<ColliderComponent>()) {
-            val collider = entity.getComponent<ColliderComponent>()
+        val (shape, mass) = if (entity.hasComponent<Collider>()) {
+            val collider = entity.getComponent<Collider>()
             collider.convert() to rc.mass.toFloat()
         } else {
             btEmptyShape() to 1f

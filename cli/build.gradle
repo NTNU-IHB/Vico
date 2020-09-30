@@ -16,7 +16,7 @@ dependencies {
     implementation project(':dsl')
     implementation project(':fmi')
     implementation project(':chart')
-    implementation project(':jme-render')
+    implementation "info.laht.krender:threekt-render:$krender_version"
 
     runtimeOnly 'org.jetbrains.kotlin:kotlin-script-runtime'
     implementation 'org.jetbrains.kotlin:kotlin-script-util'

@@ -1,6 +1,7 @@
 package no.ntnu.ihb.vico.dsl
 
 import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.render.RenderEngine
 
 
 fun execution(ctx: ExecutionContext.() -> Unit): Engine {
@@ -12,13 +13,19 @@ class ExecutionContext {
     var startTime: Number? = null
     var stopTime: Number? = null
     var baseStepSize: Double? = null
+    var renderEngine: RenderEngine? = null
 
     internal val engine: Engine by lazy {
         EngineBuilder()
-            .startTime(startTime?.toDouble())
-            .stopTime(stopTime?.toDouble())
-            .stepSize(baseStepSize)
-            .build()
+                .startTime(startTime?.toDouble())
+                .stopTime(stopTime?.toDouble())
+                .stepSize(baseStepSize)
+                .renderer(renderEngine)
+                .build()
+    }
+
+    fun renderer(renderEngine: RenderEngine) {
+        this.renderEngine = renderEngine
     }
 
     fun entities(ctx: EntitiesContext.() -> Unit) {
@@ -40,7 +47,7 @@ class ExecutionContext {
 }
 
 class EntityContext(
-    private val entity: Entity
+        private val entity: Entity
 ) {
 
     fun component(component: Component) {
@@ -62,7 +69,7 @@ class EntityContext(
 }
 
 class EntitiesContext(
-    private val engine: Engine
+        private val engine: Engine
 ) {
 
     fun entity(name: String? = null, ctx: EntityContext.() -> Unit) {
@@ -73,7 +80,7 @@ class EntitiesContext(
 }
 
 class SystemsContext(
-    private val engine: Engine
+        private val engine: Engine
 ) {
 
     fun system(ctx: () -> BaseSystem) {
@@ -83,7 +90,7 @@ class SystemsContext(
 }
 
 class ConnectionsContext(
-    private val engine: Engine
+        private val engine: Engine
 ) {
 
     infix fun String.to(other: String) {
@@ -92,10 +99,10 @@ class ConnectionsContext(
         val p2 = UnboundProperty.parse(other).bounded(engine)
 
         engine.addConnection(
-            ScalarConnection(
-                Connector.inferConnectorType(p1.component, p1.property),
-                Connector.inferConnectorType(p2.component, p2.property)
-            )
+                ScalarConnection(
+                        Connector.inferConnectorType(p1.component, p1.property),
+                        Connector.inferConnectorType(p2.component, p2.property)
+                )
         )
 
     }

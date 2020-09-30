@@ -1,0 +1,15 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/bintraypublish.gradle")
+
+dependencies {
+
+    api project(':core')
+
+    implementation 'info.laht.threekt:core-jvm:r1-ALPHA-23'
+
+}
