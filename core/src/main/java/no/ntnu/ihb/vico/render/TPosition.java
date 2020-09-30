@@ -45,7 +45,7 @@ public class TPosition {
      */
     public float getPx() {
         if (px == null) {
-            return 0.0F;
+            return  0.0F;
         } else {
             return px;
         }
@@ -73,7 +73,7 @@ public class TPosition {
      */
     public float getPy() {
         if (py == null) {
-            return 0.0F;
+            return  0.0F;
         } else {
             return py;
         }
@@ -101,7 +101,7 @@ public class TPosition {
      */
     public float getPz() {
         if (pz == null) {
-            return 0.0F;
+            return  0.0F;
         } else {
             return pz;
         }

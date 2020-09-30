@@ -1,10 +1,7 @@
 
 package no.ntnu.ihb.vico.render;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -21,6 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="OffsetRotation" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TEuler" minOccurs="0"/>
  *         &lt;element name="Shape" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TShape"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="color" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="wireframe" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -40,14 +39,16 @@ public class TGeometry {
     protected TEuler offsetRotation;
     @XmlElement(name = "Shape", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", required = true)
     protected TShape shape;
+    @XmlAttribute(name = "color")
+    protected String color;
+    @XmlAttribute(name = "wireframe")
+    protected Boolean wireframe;
 
     /**
      * Gets the value of the offsetPosition property.
      *
-     * @return
-     *     possible object is
-     *     {@link TPosition }
-     *
+     * @return possible object is
+     * {@link TPosition }
      */
     public TPosition getOffsetPosition() {
         return offsetPosition;
@@ -111,6 +112,46 @@ public class TGeometry {
      */
     public void setShape(TShape value) {
         this.shape = value;
+    }
+
+    /**
+     * Gets the value of the color property.
+     *
+     * @return possible object is
+     * {@link String }
+     */
+    public String getColor() {
+        return color;
+    }
+
+    /**
+     * Sets the value of the color property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setColor(String value) {
+        this.color = value;
+    }
+
+    /**
+     * Gets the value of the wireframe property.
+     *
+     * @return possible object is
+     * {@link Boolean }
+     */
+    public Boolean isWireframe() {
+        return wireframe;
+    }
+
+    /**
+     * Sets the value of the wireframe property.
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
+     */
+    public void setWireframe(Boolean value) {
+        this.wireframe = value;
     }
 
 }

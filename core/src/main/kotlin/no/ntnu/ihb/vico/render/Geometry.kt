@@ -11,6 +11,7 @@ class Geometry(
     val shape: Shape,
     val offset: Matrix4fc? = null
 ) : Component(), EventDispatcher by EventDispatcherImpl() {
+
     var color: Int by Delegates.observable(ColorConstants.gray) { _, _, newValue ->
         dispatchEvent("onColorChanged", newValue)
     }
@@ -23,4 +24,5 @@ class Geometry(
     var wireframe by Delegates.observable(false) { _, _, newValue ->
         dispatchEvent("onWireframeChanged", newValue)
     }
+
 }

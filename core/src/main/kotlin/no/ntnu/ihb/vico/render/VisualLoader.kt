@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.render
 
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
 import no.ntnu.ihb.vico.render.mesh.CylinderMesh
@@ -18,18 +19,21 @@ object VisualLoader {
 
     fun load(config: TVisualConfig, engine: Engine) {
         config.transforms.transform.forEach { t ->
-            val entity = engine.getEntityByName(t.name)
-            entity.addComponent(createGeometryComponent(t.geometry))
+            engine.getEntityByName(t.name).apply {
+                if (!hasComponent<Transform>()) {
+                    addComponent<Transform>()
+                }
+                addComponent(createGeometry(t.geometry))
+            }
         }
     }
 
-    private fun createGeometryComponent(g: TGeometry): Geometry {
+    private fun createGeometry(g: TGeometry): Geometry {
         val shape = when {
             g.shape.box != null -> createShape(g.shape.box)
             g.shape.plane != null -> createShape(g.shape.plane)
             g.shape.sphere != null -> createShape(g.shape.sphere)
             g.shape.cylinder != null -> createShape(g.shape.cylinder)
-            // g.shape.capsule != null -> createShape(g.shape.capsule)
             else -> TODO()
         }
         val offset = Matrix4f()
@@ -48,7 +52,16 @@ object VisualLoader {
             offset.setRotationXYZ(rx.toFloat(), ry.toFloat(), rz.toFloat())
         }
 
-        return Geometry(shape, offset)
+        return Geometry(shape, offset).also {
+
+            g.color?.also { c ->
+                val color = ColorConstants.getByName(c)
+                it.color = color
+            }
+
+            g.wireframe?.also { w -> it.wireframe = w }
+
+        }
     }
 
     private fun createShape(b: TBox): BoxMesh {
@@ -66,9 +79,5 @@ object VisualLoader {
     private fun createShape(c: TCylinder): CylinderMesh {
         return CylinderMesh(c.radius, c.height)
     }
-
-    /*private fun createShape(c: TCapsule): CapsuleMesh {
-        return CapsuleMesh(c.radius, c.height)
-    }*/
 
 }

@@ -31,6 +31,8 @@
             <xs:element name="OffsetRotation" type="vico:TEuler" minOccurs="0"/>
             <xs:element name="Shape" type="vico:TShape"/>
         </xs:sequence>
+        <xs:attribute name="color" type="xs:string"/>
+        <xs:attribute name="wireframe" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="TShape">

@@ -446,4 +446,13 @@ object ColorConstants {
     @JvmField
     val yellowgreen = 0x9ACD32
 
+    @JvmStatic
+    fun getByName(name: String): Int {
+        return try {
+            javaClass.getDeclaredField(name).get(null) as Int
+        } catch (ex: NoSuchFieldException) {
+            throw IllegalArgumentException("No color named $name!")
+        }
+    }
+
 }
