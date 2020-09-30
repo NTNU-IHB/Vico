@@ -3,7 +3,7 @@
 
     <vico:Transforms>
         <vico:Transform name="SineMover">
-            <vico:Geometry color="red">
+            <vico:Geometry color="red" opacity="0.5">
                 <vico:Shape>
                     <vico:Sphere radius="0.5"/>
                 </vico:Shape>

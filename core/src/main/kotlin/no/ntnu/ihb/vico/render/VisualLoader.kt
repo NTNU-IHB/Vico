@@ -64,6 +64,7 @@ object VisualLoader {
             }
 
             g.wireframe?.also { w -> it.wireframe = w }
+            g.opacity?.also { o -> it.opacity = o.toFloat() }
 
         }
     }

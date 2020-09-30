@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.*;
  *         &lt;element name="Shape" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TShape"/>
  *       &lt;/sequence>
  *       &lt;attribute name="color" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="opacity" type="{http://www.w3.org/2001/XMLSchema}double" />
  *       &lt;attribute name="wireframe" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,6 +42,8 @@ public class TGeometry {
     protected TShape shape;
     @XmlAttribute(name = "color")
     protected String color;
+    @XmlAttribute(name = "opacity")
+    protected Double opacity;
     @XmlAttribute(name = "wireframe")
     protected Boolean wireframe;
 
@@ -117,8 +120,10 @@ public class TGeometry {
     /**
      * Gets the value of the color property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getColor() {
         return color;
@@ -127,11 +132,33 @@ public class TGeometry {
     /**
      * Sets the value of the color property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setColor(String value) {
         this.color = value;
+    }
+
+    /**
+     * Gets the value of the opacity property.
+     *
+     * @return possible object is
+     * {@link Double }
+     */
+    public Double getOpacity() {
+        return opacity;
+    }
+
+    /**
+     * Sets the value of the opacity property.
+     *
+     * @param value allowed object is
+     *              {@link Double }
+     */
+    public void setOpacity(Double value) {
+        this.opacity = value;
     }
 
     /**
@@ -146,9 +173,11 @@ public class TGeometry {
 
     /**
      * Sets the value of the wireframe property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
      *
-     * @param value allowed object is
-     *              {@link Boolean }
      */
     public void setWireframe(Boolean value) {
         this.wireframe = value;

@@ -32,6 +32,7 @@
             <xs:element name="Shape" type="vico:TShape"/>
         </xs:sequence>
         <xs:attribute name="color" type="xs:string"/>
+        <xs:attribute name="opacity" type="xs:double"/>
         <xs:attribute name="wireframe" type="xs:boolean"/>
     </xs:complexType>
 
