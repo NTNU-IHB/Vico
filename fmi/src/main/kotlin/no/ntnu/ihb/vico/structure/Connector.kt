@@ -23,10 +23,18 @@ sealed class Connector(
 
         val variable = md.modelVariables.getByName(name)
         when (kind) {
-            ConnectorKind.INPUT -> require(variable.causality == Causality.INPUT) { "Illegal kind for connector '${md.modelName}.$name': ${variable.causality}" }
-            ConnectorKind.OUTPUT -> require(variable.causality == Causality.OUTPUT) { "Illegal kind for connector '${md.modelName}.$name': ${variable.causality}" }
-            ConnectorKind.PARAMETER -> require(variable.causality == Causality.PARAMETER) { "Illegal kind for connector '$${md.modelName}.$name': ${variable.causality}" }
-            ConnectorKind.CALCULATED_PARAMETER -> require(variable.causality == Causality.CALCULATED_PARAMETER) { "Illegal kind for connector '$${md.modelName}.$name': ${variable.causality}" }
+            ConnectorKind.INPUT -> require(variable.causality == Causality.INPUT) {
+                "Illegal kind for connector '${md.modelName}.$name': ${variable.causality}"
+            }
+            ConnectorKind.OUTPUT -> require(variable.causality == Causality.OUTPUT) {
+                "Illegal kind for connector '${md.modelName}.$name': ${variable.causality}"
+            }
+            ConnectorKind.PARAMETER -> require(variable.causality == Causality.PARAMETER) {
+                "Illegal kind for connector '$${md.modelName}.$name': ${variable.causality}"
+            }
+            ConnectorKind.CALCULATED_PARAMETER -> require(variable.causality == Causality.CALCULATED_PARAMETER) {
+                "Illegal kind for connector '$${md.modelName}.$name': ${variable.causality}"
+            }
             else -> throw UnsupportedOperationException("Unsupported connector kind: $kind")
         }
 
