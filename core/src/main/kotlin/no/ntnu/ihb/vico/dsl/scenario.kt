@@ -1,8 +1,8 @@
 package no.ntnu.ihb.vico.dsl
 
 import no.ntnu.ihb.vico.core.*
-import no.ntnu.ihb.vico.util.Predicate
 import no.ntnu.ihb.vico.util.PredicateTask
+import java.util.function.Predicate
 
 
 fun scenario(init: ScenarioContext.() -> Unit): ScenarioContext {
