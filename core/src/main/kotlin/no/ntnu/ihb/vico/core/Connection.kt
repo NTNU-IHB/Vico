@@ -62,22 +62,3 @@ class ScalarConnection(
 
     }
 }
-
-/*class ConvertingConnection<E: Var<*>, T: Var<*>>(
-    override val source: Connector<E>,
-    override val sinks: List<Connector<T>>,
-    private val converter: Converter<E, T>
-) : Connection<E, T> {
-
-    constructor(source: Connector<Var<E>>, sink: Connector<T>, converter: Converter<E, T>)
-            : this(source, listOf(sink), converter)
-
-    override fun transferData() {
-        *//*val value = source.variable
-        val convertedValue = converter.convert(value)
-        sinks.forEach { sink ->
-            sink.set(convertedValue)
-        }*//*
-    }
-
-}*/
