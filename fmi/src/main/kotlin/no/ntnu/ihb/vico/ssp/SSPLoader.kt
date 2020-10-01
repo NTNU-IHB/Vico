@@ -210,31 +210,10 @@ class SSPLoader @JvmOverloads constructor(
         } ?: emptyList()
     }
 
-    /*private fun parseSystem(elem: Element): System {
-        val algorithmNode = elem.firstChild
-        if ("FixedStepAlgorithm" in algorithmNode.nodeName) {
-            val baseStepSize = algorithmNode.attributes
-                .getNamedItem("baseStepSize").nodeValue.toDouble()
-            return SlaveSystem(baseStepSize)
-        }
-        throw UnsupportedOperationException("Unsupported algorithm: ${algorithmNode.nodeName}")
-    }
-    */
     private fun parseDefaultExperiment(ssd: SystemStructureDescription): DefaultExperiment? {
         return ssd.defaultExperiment?.let {
             val startTime = it.startTime ?: 0.0
             val stopTime: Double? = it.stopTime
-            /*var system: System? = null
-            it.annotations?.annotation?.forEach { annotation ->
-                when (annotation.type.toLowerCase()) {
-                    VICO_NAMESPACE, OSP_NAMESPACE -> {
-                        val elem = annotation.any as Element
-                        when (elem.nodeName) {
-                            "vico:Algorithm", "osp:Algorithm" -> algorithm = parseAlgorithm(elem)
-                        }
-                    }
-                }
-            }*/
             DefaultExperiment(startTime, stopTime)
         }
     }
