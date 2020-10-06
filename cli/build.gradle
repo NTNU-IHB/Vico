@@ -16,11 +16,7 @@ dependencies {
     implementation project(':fmi')
     implementation project(':chart')
     implementation project(':threekt-render')
-
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-script-runtime'
-    implementation 'org.jetbrains.kotlin:kotlin-script-util'
-    implementation 'org.jetbrains.kotlin:kotlin-compiler-embeddable'
-    implementation 'org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable'
+    implementation project(':scenario-scripting')
 
     implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
 

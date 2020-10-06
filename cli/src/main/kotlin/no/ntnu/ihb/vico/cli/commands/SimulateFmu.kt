@@ -1,10 +1,10 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import no.ntnu.ihb.vico.chart.ChartLoader
-import no.ntnu.ihb.vico.cli.parseScenario
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.model.ModelResolver
+import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.structure.SystemStructure
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

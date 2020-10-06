@@ -19,7 +19,7 @@ private fun validateFile(scriptFile: File): Boolean {
 }
 
 private val scriptEngine
-    get() = ScriptEngineManager().getEngineByExtension("kts")
+    get() = ScriptEngineManager().getEngineByExtension("main.kts")
 
 
 private fun setupScriptingEnvironment() {

@@ -54,7 +54,7 @@ open class ActionContext(
     private val engine: Engine
 ) {
 
-    fun int(name: String) = RealContext(name)
+    fun int(name: String) = IntContext(name)
     fun real(name: String) = RealContext(name)
     fun str(name: String) = StringContext(name)
     fun bool(name: String) = BooleanContext(name)
@@ -112,8 +112,8 @@ open class ActionContext(
 
     }
 
-    inner class IntContext(
-        name: String
+    inner class IntContext internal constructor(
+            name: String
     ) : PropertyContext(name) {
 
         fun set(value: Int) {
@@ -178,8 +178,8 @@ open class ActionContext(
 
     }
 
-    inner class RealContext(
-        name: String
+    inner class RealContext internal constructor(
+            name: String
     ) : PropertyContext(name) {
 
         fun set(value: Number) {
@@ -251,8 +251,8 @@ open class ActionContext(
 
     }
 
-    inner class StringContext(
-        name: String
+    inner class StringContext internal constructor(
+            name: String
     ) : PropertyContext(name) {
 
         fun set(value: String) {
@@ -271,8 +271,8 @@ open class ActionContext(
 
     }
 
-    inner class BooleanContext(
-        name: String
+    inner class BooleanContext internal constructor(
+            name: String
     ) : PropertyContext(name) {
 
         fun set(value: Boolean) {
