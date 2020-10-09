@@ -25,14 +25,9 @@ fun parseScenario(script: String): ScenarioContext? {
 
     setupScriptingEnvironment()
 
-    val imports = """
-        import no.ntnu.ihb.vico.dsl.*
-    """.trimIndent()
-
     return try {
         scriptEngine.let {
-            val scriptContent = imports + script
-            it.eval(scriptContent) as ScenarioContext
+            it.eval(script) as ScenarioContext
         }
     } catch (ex: Exception) {
         ex.printStackTrace()
