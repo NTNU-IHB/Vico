@@ -27,20 +27,20 @@ internal class EntityTest {
     fun testAddComponent() {
 
         Entity().apply {
-            addComponent(ComponentA())
+            add(ComponentA())
             Assertions.assertDoesNotThrow {
-                getComponent<ComponentA>()
+                get<ComponentA>()
             }
             Assertions.assertThrows(IllegalArgumentException::class.java) {
-                addComponent(ComponentA())
+                add(ComponentA())
             }
 
-            addComponent<ComponentB>()
+            add<ComponentB>()
             Assertions.assertDoesNotThrow {
-                getComponent<ComponentB>()
+                get<ComponentB>()
             }
             Assertions.assertThrows(IllegalArgumentException::class.java) {
-                addComponent<ComponentB>()
+                add<ComponentB>()
             }
         }
 
@@ -49,7 +49,7 @@ internal class EntityTest {
     @Test
     fun testPropertyAccess() {
         val e = Entity().apply {
-            addComponent(ComponentA())
+            add(ComponentA())
         }
 
         Assertions.assertNotNull(e.getPropertyOrNull(ComponentA.VALUE_PROP_NAME))

@@ -24,7 +24,7 @@ private object TestTimeSeriesChart1 {
                     val slave = SlaveComponent(
                         ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu")), name
                     )
-                    addComponent(slave)
+                    add(slave)
                 }
 
                 engine.addSystem(SlaveSystem())

@@ -16,8 +16,8 @@ internal class FamilyTest {
     fun testFamily() {
 
         Entity().apply {
-            addComponent(ComponentA())
-            addComponent(ComponentB())
+            add(ComponentA())
+            add(ComponentB())
             assertTrue(Family.all(ComponentA::class.java).build().test(this))
             assertTrue(Family.all(ComponentA::class.java, ComponentB::class.java).build().test(this))
             assertFalse(Family.all(ComponentA::class.java, ComponentC::class.java).build().test(this))
@@ -26,34 +26,34 @@ internal class FamilyTest {
         }
 
         Entity().apply {
-            addComponent(ComponentA())
-            addComponent(ComponentB())
+            add(ComponentA())
+            add(ComponentB())
             val f1 = Family.one(ComponentA::class.java, ComponentB::class.java).build()
             val f2 = Family.one(ComponentC::class.java, ComponentD::class.java).build()
             assertTrue(f1.test(this))
             assertFalse(f2.test(this))
-            removeComponent<ComponentA>()
-            removeComponent<ComponentB>()
+            remove<ComponentA>()
+            remove<ComponentB>()
             assertFalse(f1.test(this))
-            addComponent(ComponentA())
+            add(ComponentA())
             assertTrue(f1.test(this))
         }
 
         Entity().apply {
-            addComponent(ComponentA())
-            addComponent(ComponentB())
+            add(ComponentA())
+            add(ComponentB())
             assertTrue(Family.exclude(ComponentC::class.java, ComponentD::class.java).build().test(this))
             assertTrue(
-                Family.exclude(ComponentC::class.java, ComponentD::class.java)
-                    .all(ComponentA::class.java, ComponentB::class.java).build().test(this)
+                    Family.exclude(ComponentC::class.java, ComponentD::class.java)
+                            .all(ComponentA::class.java, ComponentB::class.java).build().test(this)
             )
             assertTrue(
-                Family.exclude(ComponentC::class.java, ComponentD::class.java)
-                    .one(ComponentE::class.java, ComponentB::class.java).build().test(this)
+                    Family.exclude(ComponentC::class.java, ComponentD::class.java)
+                            .one(ComponentE::class.java, ComponentB::class.java).build().test(this)
             )
             assertFalse(
-                Family.exclude(ComponentC::class.java, ComponentD::class.java).one(ComponentE::class.java).build()
-                    .test(this)
+                    Family.exclude(ComponentC::class.java, ComponentD::class.java).one(ComponentE::class.java).build()
+                            .test(this)
             )
         }
 

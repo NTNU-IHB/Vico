@@ -16,7 +16,7 @@ fun main() {
         engine.addSystem(WaterRenderer())
 
         engine.createEntity("water").apply {
-            addComponent(Water(100f, 100f))
+            add(Water(100f, 100f))
         }
 
         engine.runner.startAndWait()

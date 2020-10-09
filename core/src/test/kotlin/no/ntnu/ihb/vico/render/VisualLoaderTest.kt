@@ -40,8 +40,8 @@ private class SineMoverSystem : IteratingSystem(
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
-        val transform = entity.getComponent<Transform>()
-        val sc = entity.getComponent<SineMover>().compute(currentTime)
+        val transform = entity.get<Transform>()
+        val sc = entity.get<SineMover>().compute(currentTime)
         transform.setLocalTranslation(transform.getLocalTranslation(tmp).apply { y = sc.value })
 
     }
@@ -61,7 +61,7 @@ fun main() {
     ).build().use { engine ->
 
         engine.createEntity("SineMover").apply {
-            addComponent(SineMover())
+            add(SineMover())
         }
 
         VisualLoader.load(config, engine)

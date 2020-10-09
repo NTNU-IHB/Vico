@@ -18,7 +18,7 @@ class PositionRefSystem : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
 
-        val p: PositionRef = entity.getComponent()
+        val p: PositionRef = entity.get()
 
         p.xRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
         p.yRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
@@ -28,7 +28,7 @@ class PositionRefSystem : SimulationSystem(
 
     override fun entityRemoved(entity: Entity) {
 
-        val p: PositionRef = entity.getComponent()
+        val p: PositionRef = entity.get()
 
         p.xRef?.also { map.remove(it) }
         p.yRef?.also { map.remove(it) }
@@ -47,13 +47,13 @@ class PositionRefSystem : SimulationSystem(
     private fun update() {
         for (entity in entities) {
 
-            val pRef = entity.getComponent<PositionRef>()
+            val pRef = entity.get<PositionRef>()
 
             pRef.xRef?.also { tmpVector.x = map.getValue(it).read(tmpArray).first() }
             pRef.yRef?.also { tmpVector.y = map.getValue(it).read(tmpArray).first() }
             pRef.zRef?.also { tmpVector.z = map.getValue(it).read(tmpArray).first() }
 
-            entity.getComponent<Transform>().setTranslation(tmpVector)
+            entity.get<Transform>().setTranslation(tmpVector)
 
         }
     }

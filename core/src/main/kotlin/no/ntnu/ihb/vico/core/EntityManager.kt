@@ -36,7 +36,7 @@ class EntityManager internal constructor(
     override fun createEntity(name: String?, vararg components: Component): Entity {
         val entity = Entity((name ?: DEFAULT_ENTITY_NAME).ensureUnique()).also {
             components.forEach { c ->
-                it.addComponent(c)
+                it.add(c)
             }
         }
         updateFamilyMemberShip(entity)
@@ -56,7 +56,7 @@ class EntityManager internal constructor(
                     }
                 }
             }
-            entity.components.forEach { connectionManager.onComponentRemoved(it) }
+            entity.forEach { connectionManager.onComponentRemoved(it) }
             entity.removeComponentListener(componentListener)
         }
     }

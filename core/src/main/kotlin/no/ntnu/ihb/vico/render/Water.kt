@@ -19,7 +19,7 @@ class WaterRenderer : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
         if (waterProxy == null) {
-            val water = entity.getComponent<Water>()
+            val water = entity.get<Water>()
             waterProxy = renderer.createWater(water.width, water.height)
         }
     }

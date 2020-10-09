@@ -51,11 +51,11 @@ class EntityContext(
 ) {
 
     fun component(component: Component) {
-        entity.addComponent(component)
+        entity.add(component)
     }
 
     fun component(component: ComponentClass) {
-        entity.addComponent(component)
+        entity.add(component)
     }
 
     inline fun <reified E : Component> component() {
@@ -63,7 +63,7 @@ class EntityContext(
     }
 
     fun component(ctx: () -> Component) {
-        entity.addComponent(ctx.invoke())
+        entity.add(ctx.invoke())
     }
 
 }

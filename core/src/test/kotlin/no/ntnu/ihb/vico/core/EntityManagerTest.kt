@@ -54,7 +54,7 @@ internal class EntityManagerTest {
                 val entities = engine.getEntitiesFor(family)
                 assertTrue(entities.isEmpty())
                 engine.createEntity("e1").also { e ->
-                    e.addComponent(ComponentC())
+                    e.add(ComponentC())
                     assertTrue(entities.isNotEmpty())
                     engine.removeEntity(e)
                     assertTrue(entities.isEmpty())

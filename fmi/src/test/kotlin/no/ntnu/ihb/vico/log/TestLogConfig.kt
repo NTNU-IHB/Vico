@@ -33,7 +33,7 @@ internal class TestLogConfig {
                 engine.createEntity("BouncingBall").apply {
                     val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
                     SlaveComponent(model, name).apply {
-                        addComponent(this)
+                        add(this)
                     }
                 }
             }

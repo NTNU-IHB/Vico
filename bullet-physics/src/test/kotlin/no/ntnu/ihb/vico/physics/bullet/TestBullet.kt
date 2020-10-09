@@ -24,45 +24,45 @@ fun main() {
     EngineBuilder().stepSize(1.0 / 100).renderer(renderer).build().use { engine ->
 
         engine.createEntity("plane").apply {
-            addComponent(Transform()).apply {
+            add(Transform()).apply {
                 setLocalTranslation(0.0, -1.0, 0.0)
                 //localRotateX(Angle.deg(90.0))
             }
-            addComponent(RigidBodyComponent(motionControl = MotionControl.STATIC))
+            add(RigidBodyComponent(motionControl = MotionControl.STATIC))
             val shape = BoxMesh(10f, 0.1f, 10f)
-            addComponent(Collider(shape))
-            addComponent(Geometry(shape))
+            add(Collider(shape))
+            add(Geometry(shape))
         }
 
         for (i in 0 until 20) {
             engine.createEntity("sphere_$i").apply {
-                addComponent(Transform()).apply {
+                add(Transform()).apply {
                     setLocalTranslation(
                             Random.nextDouble(-1.0, 1.0),
                             2.0,
                             Random.nextDouble(-1.0, 1.0)
                     )
                 }
-                addComponent(RigidBodyComponent())
+                add(RigidBodyComponent())
                 val shape = SphereMesh(0.1f)
-                addComponent(Collider(shape))
-                addComponent(Geometry(shape))
+                add(Collider(shape))
+                add(Geometry(shape))
             }
         }
 
         val sphere0 = engine.getEntityByName("sphere_0")
 
         val test = engine.createEntity("test").apply {
-            addComponent(Transform())
+            add(Transform())
             val shape = BoxMesh(0.1f, 0.1f)
-            addComponent(Collider(shape))
-            addComponent(Geometry(shape).apply {
+            add(Collider(shape))
+            add(Geometry(shape).apply {
                 color = ColorConstants.red
             })
         }
 
-        val source = RealConnector(sphere0.getComponent<Transform>(), "localPosition")
-        val sink = RealConnector(test.getComponent<Transform>(), "localPosition")
+        val source = RealConnector(sphere0.get<Transform>(), "localPosition")
+        val sink = RealConnector(test.get<Transform>(), "localPosition")
 
         engine.addConnection(ScalarConnection(source, sink))
 

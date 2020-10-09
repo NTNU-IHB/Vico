@@ -65,10 +65,10 @@ internal class ScenarioTest {
         scenario.applyScenario(engine)
 
         engine.stepUntil(1.0)
-        Assertions.assertEquals(2.0 * 3.0, e1.getComponent<TestComponent1>().value, 1e-6)
+        Assertions.assertEquals(2.0 * 3.0, e1.get<TestComponent1>().value, 1e-6)
 
         engine.stepUntil(2.0)
-        Assertions.assertEquals(99.0, e1.getComponent<TestComponent1>().value, 1e-6)
+        Assertions.assertEquals(99.0, e1.get<TestComponent1>().value, 1e-6)
 
     }
 

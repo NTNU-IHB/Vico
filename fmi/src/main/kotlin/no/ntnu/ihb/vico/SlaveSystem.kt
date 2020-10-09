@@ -40,7 +40,7 @@ class SlaveSystem @JvmOverloads constructor(
     fun getSlave(name: String): FmiSlave = slaves.first { it.instanceName == name }
 
     override fun entityAdded(entity: Entity) {
-        val c = entity.getComponent<SlaveComponent>()
+        val c = entity.get<SlaveComponent>()
         val slave = FmiSlave(c.instantiate(), c)
         parameterSet?.also { parameterSet ->
             c.getParameterSet(parameterSet)?.also {

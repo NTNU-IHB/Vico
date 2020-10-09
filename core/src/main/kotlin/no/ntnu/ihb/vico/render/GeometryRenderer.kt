@@ -26,7 +26,7 @@ class GeometryRenderer : SimulationSystem(
     }
 
     override fun entityAdded(entity: Entity) {
-        entity.getComponentOrNull<Geometry>()?.also { g ->
+        entity.getOrNull<Geometry>()?.also { g ->
             val proxy = when (val shape = g.shape) {
                 is PlaneShape -> {
                     renderer.createPlane(shape.width, shape.height, g.offset)
@@ -77,7 +77,7 @@ class GeometryRenderer : SimulationSystem(
 
     private fun updateTransforms() {
         proxies.forEach { (e, p) ->
-            val t = e.getComponent<Transform>()
+            val t = e.get<Transform>()
 
             p as SpatialProxy
             val m = t.getWorldMatrixf()

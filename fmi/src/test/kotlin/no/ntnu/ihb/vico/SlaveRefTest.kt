@@ -31,12 +31,12 @@ fun main() {
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
             SlaveComponent(model, "bb").apply {
                 getRealProperty("h").write(doubleArrayOf(3.0))
-                slaveEntity.addComponent(this)
+                slaveEntity.add(this)
             }
 
-            slaveEntity.addComponent<Transform>()
-            slaveEntity.addComponent(PositionRef(yRef = "h"))
-            slaveEntity.addComponent(Geometry(SphereMesh()).apply {
+            slaveEntity.add<Transform>()
+            slaveEntity.add(PositionRef(yRef = "h"))
+            slaveEntity.add(Geometry(SphereMesh()).apply {
                 wireframe = true
                 color = ColorConstants.blue
             })
@@ -44,8 +44,8 @@ fun main() {
         }
 
         engine.createEntity("Plane").also { planeEntity ->
-            planeEntity.addComponent<Transform>()
-            planeEntity.addComponent(Geometry(PlaneMesh(10f, 10f), Matrix4f().translate(0f, -0.5f, 0f).rotateX(PI.toFloat() / 2)))
+            planeEntity.add<Transform>()
+            planeEntity.add(Geometry(PlaneMesh(10f, 10f), Matrix4f().translate(0f, -0.5f, 0f).rotateX(PI.toFloat() / 2)))
         }
 
         engine.runner.apply {

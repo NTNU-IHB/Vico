@@ -49,7 +49,7 @@ class BoundProperty(
 ) : UnboundProperty(entityName, componentName, propertyName) {
 
     val entity by lazy { engine.getEntityByName(entityName) }
-    val component by lazy { entity.getComponent(componentName) }
+    val component by lazy { entity.get(componentName) }
     val property by lazy { component.getProperty(propertyName) }
 
 }

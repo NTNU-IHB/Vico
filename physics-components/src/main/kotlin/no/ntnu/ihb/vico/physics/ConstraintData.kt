@@ -15,11 +15,11 @@ class ConstraintData(
     val hasConnectedBody = e2 != null
 
     val rb1 by lazy {
-        e1.getComponent<RigidBodyComponent>()
+        e1.get<RigidBodyComponent>()
     }
 
     val rb2 by lazy {
-        e2?.getComponent<RigidBodyComponent>() ?: throw IllegalStateException()
+        e2?.get<RigidBodyComponent>() ?: throw IllegalStateException()
     }
 
     val frame1 by lazy { Matrix4d().setTranslation(anchor) }
@@ -36,11 +36,11 @@ class ConstraintData(
 
 
     init {
-        require(e1.hasComponent(Transform::class.java))
-        require(e1.hasComponent(RigidBodyComponent::class.java))
+        require(e1.has(Transform::class.java))
+        require(e1.has(RigidBodyComponent::class.java))
         e2?.also { e2 ->
-            require(e2.hasComponent(Transform::class.java))
-            require(e2.hasComponent(RigidBodyComponent::class.java))
+            require(e2.has(Transform::class.java))
+            require(e2.has(RigidBodyComponent::class.java))
         }
     }
 

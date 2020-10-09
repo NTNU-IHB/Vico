@@ -42,4 +42,5 @@ internal class ComponentClazzTest {
         assertTrue(list.containsAll(listOf(ComponentClazz(ComponentA::class.java))))
 
     }
+
 }

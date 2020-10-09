@@ -13,8 +13,8 @@ class MovementController : SimulationSystem(
     override fun step(currentTime: Double, stepSize: Double) {
 
         entities.forEach { e ->
-            val transform = e.getComponent<Transform>()
-            val controllable = e.getComponent<Controllable>()
+            val transform = e.get<Transform>()
+            val controllable = e.get<Controllable>()
 
             if (engine.isKeyPressed(KeyStroke.KEY_W)) {
                 transform.localTranslateZ(controllable.movementSpeed * stepSize)

@@ -14,7 +14,7 @@ class Family private constructor(
 
     override fun test(entity: Entity): Boolean {
 
-        val componentClasses = entity.components.map {
+        val componentClasses = entity.map {
             ComponentClazz(it::class.java)
         }
 

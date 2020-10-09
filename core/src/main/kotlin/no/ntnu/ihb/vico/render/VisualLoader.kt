@@ -20,10 +20,10 @@ object VisualLoader {
     fun load(config: TVisualConfig, engine: Engine) {
         config.transforms.transform.forEach { t ->
             engine.getEntityByName(t.name).apply {
-                if (!hasComponent<Transform>()) {
-                    addComponent<Transform>()
+                if (!has<Transform>()) {
+                    add<Transform>()
                 }
-                addComponent(createGeometry(t.geometry))
+                add(createGeometry(t.geometry))
             }
         }
     }

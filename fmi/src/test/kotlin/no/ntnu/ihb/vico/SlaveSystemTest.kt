@@ -30,7 +30,7 @@ internal class SlaveSystemTest {
             val model = ModelResolver.resolve(TestFmus.get("1.0/BouncingBall.fmu"))
             SlaveComponent(model, "bouncingBall").apply {
                 addParameterSet("default", listOf(RealParameter("h", 2.0)))
-                slaveEntity.addComponent(this)
+                slaveEntity.add(this)
             }
 
             engine.init()

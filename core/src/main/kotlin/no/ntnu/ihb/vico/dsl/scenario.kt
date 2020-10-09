@@ -71,17 +71,17 @@ open class ActionContext(
 
     fun removeComponent(entityName: String, clazz: ComponentClass) {
         val entity = engine.getEntityByName(entityName)
-        entity.removeComponent(clazz)
+        entity.remove(clazz)
     }
 
     fun addComponent(entityName: String, component: Component) {
         val entity = engine.getEntityByName(entityName)
-        entity.addComponent(component)
+        entity.add(component)
     }
 
     fun addComponent(entityName: String, component: ComponentClass) {
         val entity = engine.getEntityByName(entityName)
-        entity.addComponent(component)
+        entity.add(component)
     }
 
     inline fun <reified E : Component> addComponent(entityName: String) {
