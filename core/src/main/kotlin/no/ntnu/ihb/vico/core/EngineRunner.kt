@@ -15,14 +15,15 @@ class EngineRunner internal constructor(
 
     val paused = AtomicBoolean(false)
 
-    var wallClock = 0.0
-        private set
+    private var wallClock = 0.0
     val simulationClock: Double
         get() = engine.currentTime
 
     var targetRealTimeFactor = 1.0
     var enableRealTimeTarget = true
     var actualRealTimeFactor = Double.NaN
+    var timeSpentSimulating = 0.0
+        private set
 
     private var thread: Thread? = null
     private var stop = AtomicBoolean(false)
@@ -118,10 +119,10 @@ class EngineRunner internal constructor(
         } else {
             engine.step()
             stepOccurred = true
-            wallClock += engine.baseStepSize
         }
 
-        actualRealTimeFactor = simulationClock / wallClock
+        timeSpentSimulating += deltaTime
+        actualRealTimeFactor = simulationClock / timeSpentSimulating
 
         return stepOccurred
 

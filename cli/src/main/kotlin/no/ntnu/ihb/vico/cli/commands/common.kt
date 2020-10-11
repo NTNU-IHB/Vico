@@ -45,24 +45,21 @@ internal fun runSimulation(
                 "{}% complete, simulated {}s in {}s, target RTF={}, actual RTF={}",
                 percentComplete,
                 runner.simulationClock.formatForOutput(),
-                runner.wallClock.formatForOutput(),
+                runner.timeSpentSimulating.formatForOutput(),
                 if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded",
                 runner.actualRealTimeFactor.formatForOutput()
             )
         }
     }
 
-
     measureTime {
-        runner.runWhile {
-            engine.iterations <= numSteps
-        }.get()
+        runner.runUntilAndWait(stopTime)
     }.also { t ->
         val targetRTF: Any = if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded"
         LOG.info(
             "Simulation finished. " +
-                    "Simulated ${engine.currentTime}s in ${t.inSeconds}s, " +
-                    "RTF: target=$targetRTF, actual=${runner.actualRealTimeFactor}"
+                    "Simulated ${engine.currentTime.formatForOutput()}s in ${t.inSeconds.formatForOutput()}s, " +
+                    "RTF: target=$targetRTF, actual=${runner.actualRealTimeFactor.formatForOutput()}"
         )
     }
 }
