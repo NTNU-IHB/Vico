@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 class FixedStepMaster : MasterAlgorithm() {
 
-    var parallel: Boolean = false
+    var parallel: Boolean = true
 
     override fun initialize(currentTime: Double, slaveInitCallback: SlaveInitCallback) {
         slaves.forEach { slave ->
