@@ -3,12 +3,14 @@
 
 import no.ntnu.ihb.vico.dsl.scenario
 
+val tReset = 50.0
+
 scenario {
 
-    invokeAt(30.0) {
+    invokeAt(tReset) {
         bool("vesselModel.slaveComponent.reset_position").set(true)
     }
-    invokeAt(30.1) {
+    invokeAt(tReset + 0.1) {
         bool("vesselModel.slaveComponent.reset_position").set(false)
         bool("trackController.slaveComponent.enable").set(true)
     }
