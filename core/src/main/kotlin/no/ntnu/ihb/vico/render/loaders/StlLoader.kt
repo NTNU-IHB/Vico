@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico.render.loaders
 
 import no.ntnu.ihb.vico.render.mesh.Trimesh
 import java.io.File
+import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.*
@@ -19,14 +20,17 @@ class StlLoader {
 
     fun load(source: File): Trimesh {
         //MeshLoader.testExtension(supportedExtension, source.extension)
-        return loadBinary(source.readBytes().let {
-            ByteBuffer.wrap(it).apply {
-                order(ByteOrder.nativeOrder())
-            }
-        })
+        return loadBinary(source)
     }
 
-    private fun loadBinary(reader: ByteBuffer): Trimesh {
+    private fun loadBinary(source: File): Trimesh {
+        val reader = FileInputStream(source).buffered().use { bis ->
+            bis.readBytes().let { bytes ->
+                ByteBuffer.wrap(bytes).apply {
+                    order(ByteOrder.nativeOrder())
+                }
+            }
+        }
         val faces = reader.getInt(80)
         var r = 0f
         var g = 0f
@@ -39,8 +43,8 @@ class StlLoader {
         var colors: MutableList<Float>? = null
         for (index in 0 until 80 - 10) {
             if (reader.getInt(index) == 0x434F4C4F /*COLO*/
-                && reader[index + 4].toInt() == 0x52
-                && reader[index + 5].toInt() == 0x3D
+                    && reader[index + 4].toInt() == 0x52
+                    && reader[index + 5].toInt() == 0x3D
             ) {
                 hasColors = true
                 colors = ArrayList()
@@ -89,8 +93,9 @@ class StlLoader {
             }
         }
         return Trimesh(
-            vertices = vertices,
-            normals = normals
+                vertices = vertices,
+                normals = normals,
+                source = source
         ).also {
             it.generateIndices()
         }

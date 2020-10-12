@@ -14,9 +14,11 @@ import javax.xml.bind.annotation.*;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Geometry" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TGeometry" minOccurs="0"/>
+ *         &lt;element name="Geometry" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TGeometry"/>
+ *         &lt;element name="PositionRef" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TPositionRef" minOccurs="0"/>
+ *         &lt;element name="RotationRef" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TRotationRef" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -24,22 +26,26 @@ import javax.xml.bind.annotation.*;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TTransform", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", propOrder = {
-        "geometry"
+        "geometry",
+        "positionRef",
+        "rotationRef"
 })
 public class TTransform {
 
-    @XmlElement(name = "Geometry", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
+    @XmlElement(name = "Geometry", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", required = true)
     protected TGeometry geometry;
-    @XmlAttribute(name = "name", required = true)
+    @XmlElement(name = "PositionRef", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
+    protected TPositionRef positionRef;
+    @XmlElement(name = "RotationRef", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
+    protected TRotationRef rotationRef;
+    @XmlAttribute(name = "name")
     protected String name;
 
     /**
      * Gets the value of the geometry property.
      *
-     * @return
-     *     possible object is
-     *     {@link TGeometry }
-     *
+     * @return possible object is
+     * {@link TGeometry }
      */
     public TGeometry getGeometry() {
         return geometry;
@@ -58,12 +64,50 @@ public class TTransform {
     }
 
     /**
+     * Gets the value of the positionRef property.
+     *
+     * @return possible object is
+     * {@link TPositionRef }
+     */
+    public TPositionRef getPositionRef() {
+        return positionRef;
+    }
+
+    /**
+     * Sets the value of the positionRef property.
+     *
+     * @param value allowed object is
+     *              {@link TPositionRef }
+     */
+    public void setPositionRef(TPositionRef value) {
+        this.positionRef = value;
+    }
+
+    /**
+     * Gets the value of the rotationRef property.
+     *
+     * @return possible object is
+     * {@link TRotationRef }
+     */
+    public TRotationRef getRotationRef() {
+        return rotationRef;
+    }
+
+    /**
+     * Sets the value of the rotationRef property.
+     *
+     * @param value allowed object is
+     *              {@link TRotationRef }
+     */
+    public void setRotationRef(TRotationRef value) {
+        this.rotationRef = value;
+    }
+
+    /**
      * Gets the value of the name property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -71,11 +115,11 @@ public class TTransform {
 
     /**
      * Sets the value of the name property.
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link String }
-     *
+     *     
      */
     public void setName(String value) {
         this.name = value;

@@ -1,11 +1,12 @@
 package no.ntnu.ihb.vico.render
 
+import no.ntnu.ihb.vico.components.PositionRef
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
-import no.ntnu.ihb.vico.render.mesh.BoxMesh
-import no.ntnu.ihb.vico.render.mesh.CylinderMesh
-import no.ntnu.ihb.vico.render.mesh.PlaneMesh
-import no.ntnu.ihb.vico.render.mesh.SphereMesh
+import no.ntnu.ihb.vico.render.loaders.ObjLoader
+import no.ntnu.ihb.vico.render.loaders.StlLoader
+import no.ntnu.ihb.vico.render.mesh.*
+import no.ntnu.ihb.vico.systems.PositionRefSystem
 import org.joml.Matrix4f
 import java.io.File
 import javax.xml.bind.JAXB
@@ -19,13 +20,33 @@ object VisualLoader {
 
     fun load(config: TVisualConfig, engine: Engine) {
         config.transforms.transform.forEach { t ->
+
             engine.getEntityByName(t.name).apply {
+
                 if (!has<Transform>()) {
                     add<Transform>()
                 }
                 add(createGeometry(t.geometry))
+
+                t.positionRef?.also { ref ->
+                    add(PositionRef(
+                            xRef = ref.xRef,
+                            yRef = ref.yRef,
+                            zRef = ref.zRef
+                    ))
+                    if (!engine.hasSystem<PositionRefSystem>()) {
+                        engine.addSystem(PositionRefSystem())
+                    }
+                }
+
+                t.rotationRef.also { _ ->
+                    //TODO add RotationRef
+                }
+
             }
+
         }
+        engine.addSystem(GeometryRenderer())
     }
 
     private fun createGeometry(g: TGeometry): Geometry {
@@ -34,7 +55,8 @@ object VisualLoader {
             g.shape.plane != null -> createShape(g.shape.plane)
             g.shape.sphere != null -> createShape(g.shape.sphere)
             g.shape.cylinder != null -> createShape(g.shape.cylinder)
-            else -> TODO()
+            g.shape.mesh != null -> createShape(g.shape.mesh)
+            else -> TODO("Unsupported shape")
         }
         val offset = Matrix4f()
         g.offsetPosition?.also { p ->
@@ -83,6 +105,16 @@ object VisualLoader {
 
     private fun createShape(c: TCylinder): CylinderMesh {
         return CylinderMesh(c.radius, c.height)
+    }
+
+    private fun createShape(c: TMesh): Trimesh {
+        val source = File(c.source.toLowerCase())
+        require(source.exists()) { "No such file: ${source.absolutePath}" }
+        return when (source.extension) {
+            "obj" -> ObjLoader().load((source))
+            "stl" -> StlLoader().load((source))
+            else -> TODO("Unsupported extension: ${source.extension}")
+        }
     }
 
 }

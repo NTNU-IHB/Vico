@@ -1,4 +1,4 @@
-package info.laht.krender.loaders
+package no.ntnu.ihb.vico.render.loaders
 
 import no.ntnu.ihb.vico.render.mesh.Trimesh
 import java.io.File
@@ -12,11 +12,11 @@ class ObjLoader {
 
     fun load(source: File): Trimesh {
         //MeshLoader.testExtension(supportedExtension, source.extension)
-        val parse = load(source.readText())
-        return parse
+        return load(source.readText(), source)
     }
 
-    fun load(text: String): Trimesh {
+    @JvmOverloads
+    fun load(text: String, source: File? = null): Trimesh {
 
         val indices = mutableListOf<Int>()
         val vertices = mutableListOf<Float>()
@@ -27,8 +27,8 @@ class ObjLoader {
             val matcher = compile.matcher(text)
             while (matcher.find()) {
                 val result = matcher.group()
-                    .replace("  ", " ")
-                    .split(" ").toTypedArray()
+                        .replace("  ", " ")
+                        .split(" ").toTypedArray()
                 vertices.add(result[1].toFloat())
                 vertices.add(result[2].toFloat())
                 vertices.add(result[3].toFloat())
@@ -39,8 +39,8 @@ class ObjLoader {
             val matcher = compile.matcher(text)
             while (matcher.find()) {
                 val result = matcher.group()
-                    .replace("  ", " ")
-                    .split(" ").toTypedArray()
+                        .replace("  ", " ")
+                        .split(" ").toTypedArray()
                 normals.add(result[1].toFloat())
                 normals.add(result[2].toFloat())
                 normals.add(result[3].toFloat())
@@ -87,33 +87,34 @@ class ObjLoader {
             }
         }
         return Trimesh(
-            indices = indices,
-            vertices = vertices,
-            normals = normals
+                indices = indices,
+                vertices = vertices,
+                normals = normals,
+                source = source
         )
     }
 
     companion object {
 
         private const val VERTEX_PATTERN =
-            "v( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)"
+                "v( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)"
         private const val NORMAL_PATTERN =
-            "vn( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)"
+                "vn( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)( +[\\d|\\.|\\+|\\-|e|E]+)"
 
         // f vertex vertex vertex ...
         private const val FACE_PATTERN1 = "f( +-?\\d+)( +-?\\d+)( +-?\\d+)( +-?\\d+)?"
 
         // f vertex/uv vertex/uv vertex/uv ...
         private const val FACE_PATTERN2 =
-            "f( +(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+))?"
+                "f( +(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+))?"
 
         // f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
         private const val FACE_PATTERN3 =
-            "f( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))?"
+                "f( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))( +(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))?"
 
         // f vertex//normal vertex//normal vertex//normal ...
         private const val FACE_PATTERN4 =
-            "f( +(-?\\d+)\\/\\/(-?\\d+))( +(-?\\d+)\\/\\/(-?\\d+))( +(-?\\d+)\\/\\/(-?\\d+))( +(-?\\d+)\\/\\/(-?\\d+))?"
+                "f( +(-?\\d+)\\/\\/(-?\\d+))( +(-?\\d+)\\/\\/(-?\\d+))( +(-?\\d+)\\/\\/(-?\\d+))( +(-?\\d+)\\/\\/(-?\\d+))?"
     }
 
 }

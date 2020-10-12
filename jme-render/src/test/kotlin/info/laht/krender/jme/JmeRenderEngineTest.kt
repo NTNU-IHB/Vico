@@ -1,7 +1,7 @@
 package info.laht.krender.jme
 
-import info.laht.krender.loaders.ObjLoader
 import no.ntnu.ihb.vico.render.ColorConstants
+import no.ntnu.ihb.vico.render.loaders.ObjLoader
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import java.io.File

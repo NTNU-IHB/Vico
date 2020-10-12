@@ -254,7 +254,6 @@ ssp("gunnerus-trajectory") {
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/ThrusterDrive2.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/TrajectoryController.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/WaypointProvider2DOF.fmu")
-        file("LogConfig.xml")
     }
 
 }.build()

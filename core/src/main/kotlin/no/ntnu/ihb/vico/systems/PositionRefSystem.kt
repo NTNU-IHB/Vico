@@ -47,7 +47,7 @@ class PositionRefSystem : SimulationSystem(
     private fun update() {
         for (entity in entities) {
 
-            val pRef = entity.get<PositionRef>()
+            val pRef: PositionRef = entity.get()
 
             pRef.xRef?.also { tmpVector.x = map.getValue(it).read(tmpArray).first() }
             pRef.yRef?.also { tmpVector.y = map.getValue(it).read(tmpArray).first() }

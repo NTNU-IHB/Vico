@@ -24,6 +24,7 @@ import info.laht.threekt.objects.Line
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.objects.Points
 import no.ntnu.ihb.vico.render.mesh.TrimeshShape
+import no.ntnu.ihb.vico.render.mesh.TrimeshShapeWithSource
 import no.ntnu.ihb.vico.render.util.ExternalSource
 import no.ntnu.ihb.vico.render.util.FileSource
 import no.ntnu.ihb.vico.render.util.RenderContext
@@ -240,32 +241,40 @@ internal class ThreektTrimeshProxy private constructor(
 ) : ThreektProxy(ctx), MeshProxy {
 
     constructor(ctx: RenderContext, trimesh: TrimeshShape) : this(ctx) {
-        val geometry = BufferGeometry().apply {
-            setIndex(IntBufferAttribute(trimesh.indices.toIntArray(), 1))
-            addAttribute("position", FloatBufferAttribute(trimesh.vertices.toFloatArray(), 3))
-            addAttribute("normal", FloatBufferAttribute(trimesh.normals.toFloatArray(), 3))
-            addAttribute("uv", FloatBufferAttribute(trimesh.uvs.toFloatArray(), 2))
-        }
-        geometry.computeBoundingSphere()
+        if (trimesh is TrimeshShapeWithSource && trimesh.source != null) {
+            loadFromFile(trimesh.source!!, 1f)
+        } else {
+            val geometry = BufferGeometry().apply {
+                setIndex(IntBufferAttribute(trimesh.indices.toIntArray(), 1))
+                addAttribute("position", FloatBufferAttribute(trimesh.vertices.toFloatArray(), 3))
+                addAttribute("normal", FloatBufferAttribute(trimesh.normals.toFloatArray(), 3))
+                addAttribute("uv", FloatBufferAttribute(trimesh.uvs.toFloatArray(), 2))
+            }
+            geometry.computeBoundingSphere()
 
-        val mesh = Mesh(geometry).apply {
-            material.side = Side.Double
-        }
-        ctx.invokeLater {
-            attachChild(mesh)
+            val mesh = Mesh(geometry).apply {
+                material.side = Side.Double
+            }
+            ctx.invokeLater {
+                attachChild(mesh)
+            }
         }
     }
 
     constructor(ctx: RenderContext, source: File, scale: Float) : this(ctx) {
+        loadFromFile(source, scale)
+    }
 
+    private fun loadFromFile(source: File, scale: Float) {
         val mesh = when (val ext = source.extension.toLowerCase()) {
             "obj" -> OBJLoader().load(source.absolutePath)
             "stl" -> Mesh(STLLoader().load(source.absolutePath))
             else -> throw UnsupportedOperationException("Unsupported extension: $ext")
         }
         mesh.scale.set(scale, scale, scale)
-        attachChild(mesh)
-
+        ctx.invokeLater {
+            attachChild(mesh)
+        }
     }
 
 }

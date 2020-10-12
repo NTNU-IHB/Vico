@@ -1,5 +1,7 @@
 package no.ntnu.ihb.vico.render.mesh
 
+import java.io.File
+
 interface Shape
 
 interface SphereShape : Shape {
@@ -44,4 +46,8 @@ interface TrimeshShape : Shape {
     val vertices: List<Float>
     val normals: List<Float>
     val uvs: List<Float>
+}
+
+interface TrimeshShapeWithSource : TrimeshShape {
+    val source: File?
 }

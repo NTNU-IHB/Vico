@@ -2,14 +2,16 @@ package no.ntnu.ihb.vico.render.mesh
 
 import no.ntnu.ihb.vico.render.util.JomlUtil.fromArray
 import org.joml.*
+import java.io.File
 import java.util.*
 
-class Trimesh(
-    override val indices: MutableList<Int> = mutableListOf(),
-    override val vertices: MutableList<Float> = mutableListOf(),
-    override val normals: MutableList<Float> = mutableListOf(),
-    override val uvs: MutableList<Float> = mutableListOf()
-) : TrimeshShape {
+open class Trimesh(
+        override val indices: MutableList<Int> = mutableListOf(),
+        override val vertices: MutableList<Float> = mutableListOf(),
+        override val normals: MutableList<Float> = mutableListOf(),
+        override val uvs: MutableList<Float> = mutableListOf(),
+        override val source: File? = null
+) : TrimeshShapeWithSource {
 
     fun hasIndices(): Boolean {
         return indices.isNotEmpty()

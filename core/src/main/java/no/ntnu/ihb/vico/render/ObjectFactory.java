@@ -49,8 +49,21 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TRotationRef }
+     */
+    public TRotationRef createTRotationRef() {
+        return new TRotationRef();
+    }
+
+    /**
+     * Create an instance of {@link TAngleRef }
+     */
+    public TAngleRef createTAngleRef() {
+        return new TAngleRef();
+    }
+
+    /**
      * Create an instance of {@link TSphere }
-     *
      */
     public TSphere createTSphere() {
         return new TSphere();
@@ -58,7 +71,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TEuler }
-     *
      */
     public TEuler createTEuler() {
         return new TEuler();
@@ -121,8 +133,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TPositionRef }
+     */
+    public TPositionRef createTPositionRef() {
+        return new TPositionRef();
+    }
+
+    /**
      * Create an instance of {@link TPlane }
-     *
      */
     public TPlane createTPlane() {
         return new TPlane();
@@ -130,7 +148,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TPosition }
-     *
      */
     public TPosition createTPosition() {
         return new TPosition();

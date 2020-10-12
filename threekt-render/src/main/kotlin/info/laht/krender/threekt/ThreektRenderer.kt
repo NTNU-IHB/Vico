@@ -7,6 +7,7 @@ import info.laht.threekt.cameras.PerspectiveCamera
 import info.laht.threekt.controls.OrbitControls
 import info.laht.threekt.core.Clock
 import info.laht.threekt.input.KeyAction
+import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.math.Color
 import info.laht.threekt.math.Matrix4
 import info.laht.threekt.renderers.GLRenderer
@@ -140,11 +141,11 @@ class ThreektRenderer : AbstractRenderEngine() {
     }
 
     override fun createHeightmap(
-        width: Float,
-        height: Float,
-        widthSegments: Int,
-        heightSegments: Int,
-        heights: FloatArray
+            width: Float,
+            height: Float,
+            widthSegments: Int,
+            heightSegments: Int,
+            heights: FloatArray
     ): HeightmapProxy {
         return ThreektHeightmapProxy(ctx, width, height, widthSegments, heightSegments, heights).also {
             ctx.invokeLater {
@@ -202,12 +203,13 @@ class ThreektRenderer : AbstractRenderEngine() {
 
         fun run() {
 
-            window = Window(
-                antialias = 4,
-                resizeable = true
-            )
+            Window(
+                    title = "Vico",
+                    antialias = 4,
+                    resizeable = true
+            ).use { window ->
 
-            window?.use { window ->
+                this.window = window
 
                 lock.withLock {
                     initialized.signalAll()
@@ -222,6 +224,8 @@ class ThreektRenderer : AbstractRenderEngine() {
                     position.set(0f, 0f, 5f)
                 }
                 controls = OrbitControls(camera, window)
+
+                scene.add(AmbientLight())
 
                 window.onWindowResize { width, height ->
                     camera.aspect = window.aspect

@@ -11,6 +11,10 @@ class SystemManager internal constructor() : Closeable {
     private val systemMap: MutableMap<Class<out BaseSystem>, BaseSystem> = mutableMapOf()
     private val manipulators: MutableList<ManipulationSystem> = mutableListOf()
 
+    fun <E : SimulationSystem> hasSystem(systemClass: Class<E>): Boolean {
+        return getSystemOrNull(systemClass) != null
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun <E : SimulationSystem> getSystemOrNull(systemClass: Class<E>): E? {
         return systemMap[systemClass] as E?

@@ -20,9 +20,11 @@
 
     <xs:complexType name="TTransform">
         <xs:sequence>
-            <xs:element name="Geometry" type="vico:TGeometry" minOccurs="0"/>
+            <xs:element name="Geometry" type="vico:TGeometry"/>
+            <xs:element name="PositionRef" type="vico:TPositionRef" minOccurs="0"/>
+            <xs:element name="RotationRef" type="vico:TRotationRef" minOccurs="0"/>
         </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="TGeometry">
@@ -87,6 +89,27 @@
         <xs:attribute name="px" type="xs:float" default="0"/>
         <xs:attribute name="py" type="xs:float" default="0"/>
         <xs:attribute name="pz" type="xs:float" default="0"/>
+    </xs:complexType>
+
+    <xs:complexType name="TPositionRef">
+        <xs:sequence>
+            <xs:element name="xRef" type="xs:string" minOccurs="0"/>
+            <xs:element name="yRef" type="xs:string" minOccurs="0"/>
+            <xs:element name="zRef" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TRotationRef">
+        <xs:sequence>
+            <xs:element name="xRef" type="vico:TAngleRef" minOccurs="0"/>
+            <xs:element name="yRef" type="vico:TAngleRef" minOccurs="0"/>
+            <xs:element name="zRef" type="vico:TAngleRef" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TAngleRef">
+        <xs:attribute name="ref" type="xs:string"/>
+        <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
     </xs:complexType>
 
     <xs:simpleType name="TAngleRepr">

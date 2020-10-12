@@ -50,8 +50,10 @@ public class TGeometry {
     /**
      * Gets the value of the offsetPosition property.
      *
-     * @return possible object is
-     * {@link TPosition }
+     * @return
+     *     possible object is
+     *     {@link TPosition }
+     *
      */
     public TPosition getOffsetPosition() {
         return offsetPosition;
@@ -144,8 +146,10 @@ public class TGeometry {
     /**
      * Gets the value of the opacity property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public Double getOpacity() {
         return opacity;
@@ -154,8 +158,10 @@ public class TGeometry {
     /**
      * Sets the value of the opacity property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setOpacity(Double value) {
         this.opacity = value;
@@ -164,8 +170,10 @@ public class TGeometry {
     /**
      * Gets the value of the wireframe property.
      *
-     * @return possible object is
-     * {@link Boolean }
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *
      */
     public Boolean isWireframe() {
         return wireframe;
@@ -173,7 +181,7 @@ public class TGeometry {
 
     /**
      * Sets the value of the wireframe property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
