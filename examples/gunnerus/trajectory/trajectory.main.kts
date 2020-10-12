@@ -248,12 +248,12 @@ ssp("gunnerus-trajectory") {
     }
 
     resources {
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/VesselFmu.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/PMAzimuth-proxy.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/PowerPlant.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/ThrusterDrive2.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/TrajectoryController.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/proxy/WaypointProvider2DOF.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/TrajectoryController.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/WaypointProvider2DOF.fmu")
     }
 
 }.build()
