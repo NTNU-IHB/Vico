@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.proxies.WaterProxy
 import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.render.proxies.WaterProxy
 
 class Water(
         val width: Float,

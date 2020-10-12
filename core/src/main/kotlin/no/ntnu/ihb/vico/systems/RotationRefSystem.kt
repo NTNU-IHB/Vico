@@ -24,9 +24,9 @@ class RotationRefSystem : SimulationSystem(
 
         val p: RotationRef = entity.get()
 
-        p.xRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
-        p.yRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
-        p.zRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
+        p.xRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
+        p.yRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
+        p.zRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
 
     }
 
@@ -34,9 +34,9 @@ class RotationRefSystem : SimulationSystem(
 
         val p: RotationRef = entity.get()
 
-        p.xRef?.also { map.remove(it) }
-        p.yRef?.also { map.remove(it) }
-        p.zRef?.also { map.remove(it) }
+        p.xRef?.also { map.remove(it.name) }
+        p.yRef?.also { map.remove(it.name) }
+        p.zRef?.also { map.remove(it.name) }
 
     }
 
@@ -51,11 +51,22 @@ class RotationRefSystem : SimulationSystem(
     private fun update() {
         for (entity in entities) {
 
-            val ref: RotationRef = entity.get()
+            entity.get<RotationRef>().also { ref ->
 
-            ref.xRef?.also { tmpEuler.x = ensureRadians(map.getValue(it).read(tmpArray).first(), ref.repr) }
-            ref.yRef?.also { tmpEuler.y = ensureRadians(map.getValue(it).read(tmpArray).first(), ref.repr) }
-            ref.zRef?.also { tmpEuler.z = ensureRadians(map.getValue(it).read(tmpArray).first(), ref.repr) }
+                ref.xRef?.also {
+                    val read = map.getValue(it.name).read(tmpArray).first()
+                    tmpEuler.x = ensureRadians(it.linearTransform?.invoke(read) ?: read, ref.repr)
+                }
+                ref.yRef?.also {
+                    val read = map.getValue(it.name).read(tmpArray).first()
+                    tmpEuler.y = ensureRadians(it.linearTransform?.invoke(read) ?: read, ref.repr)
+                }
+                ref.zRef?.also {
+                    val read = map.getValue(it.name).read(tmpArray).first()
+                    tmpEuler.z = ensureRadians(it.linearTransform?.invoke(read) ?: read, ref.repr)
+                }
+
+            }
 
             tmpQuat.setFromEuler(tmpEuler)
             entity.get<Transform>().setQuaternion(tmpQuat)

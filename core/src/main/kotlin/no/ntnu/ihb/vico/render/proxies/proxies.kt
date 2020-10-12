@@ -1,4 +1,4 @@
-package info.laht.krender.proxies
+package no.ntnu.ihb.vico.render.proxies
 
 import no.ntnu.ihb.vico.render.util.ExternalSource
 import org.joml.Matrix4fc

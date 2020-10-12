@@ -36,8 +36,10 @@ public class TRealRef {
     /**
      * Gets the value of the linearTransformation property.
      *
-     * @return possible object is
-     * {@link TLinearTransformation }
+     * @return
+     *     possible object is
+     *     {@link TLinearTransformation }
+     *
      */
     public TLinearTransformation getLinearTransformation() {
         return linearTransformation;
@@ -46,8 +48,10 @@ public class TRealRef {
     /**
      * Sets the value of the linearTransformation property.
      *
-     * @param value allowed object is
-     *              {@link TLinearTransformation }
+     * @param value
+     *     allowed object is
+     *     {@link TLinearTransformation }
+     *
      */
     public void setLinearTransformation(TLinearTransformation value) {
         this.linearTransformation = value;
@@ -56,8 +60,10 @@ public class TRealRef {
     /**
      * Gets the value of the name property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -66,8 +72,10 @@ public class TRealRef {
     /**
      * Sets the value of the name property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;

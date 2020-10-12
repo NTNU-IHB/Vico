@@ -3,7 +3,7 @@ package info.laht.krender.jme.proxy
 import com.jme3.scene.Geometry
 import com.jme3.scene.shape.Box
 import info.laht.krender.jme.JmeContext
-import info.laht.krender.proxies.BoxProxy
+import no.ntnu.ihb.vico.render.proxies.BoxProxy
 
 internal class JmeBoxProxy(
     ctx: JmeContext,

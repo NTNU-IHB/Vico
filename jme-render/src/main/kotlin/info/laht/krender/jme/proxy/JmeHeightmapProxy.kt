@@ -4,7 +4,7 @@ import com.jme3.renderer.queue.RenderQueue
 import com.jme3.scene.Geometry
 import info.laht.krender.jme.JmeContext
 import info.laht.krender.jme.extra.JmeGrid
-import info.laht.krender.proxies.HeightmapProxy
+import no.ntnu.ihb.vico.render.proxies.HeightmapProxy
 
 internal class JmeHeightmapProxy(
     ctx: JmeContext,

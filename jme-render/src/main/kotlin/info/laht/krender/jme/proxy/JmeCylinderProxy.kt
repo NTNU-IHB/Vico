@@ -3,7 +3,7 @@ package info.laht.krender.jme.proxy
 import com.jme3.scene.Geometry
 import com.jme3.scene.shape.Cylinder
 import info.laht.krender.jme.JmeContext
-import info.laht.krender.proxies.CylinderProxy
+import no.ntnu.ihb.vico.render.proxies.CylinderProxy
 
 internal class JmeCylinderProxy(
     ctx: JmeContext,

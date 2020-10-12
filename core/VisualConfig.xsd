@@ -9,8 +9,14 @@
     <xs:complexType name="TVisualConfig">
         <xs:sequence>
             <xs:element name="Transforms" type="vico:TTransforms"/>
+            <xs:element name="Water" type="vico:TWater" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="decimationFactor" type="xs:unsignedInt" default="1"/>
+    </xs:complexType>
+
+    <xs:complexType name="TWater">
+        <xs:attribute name="width" type="xs:float"/>
+        <xs:attribute name="height" type="xs:float"/>
     </xs:complexType>
 
     <xs:complexType name="TTransforms">
@@ -102,9 +108,9 @@
 
     <xs:complexType name="TRotationRef">
         <xs:sequence>
-            <xs:element name="xRef" type="xs:string" minOccurs="0"/>
-            <xs:element name="yRef" type="xs:string" minOccurs="0"/>
-            <xs:element name="zRef" type="xs:string" minOccurs="0"/>
+            <xs:element name="xRef" type="vico:TRealRef" minOccurs="0"/>
+            <xs:element name="yRef" type="vico:TRealRef" minOccurs="0"/>
+            <xs:element name="zRef" type="vico:TRealRef" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
     </xs:complexType>

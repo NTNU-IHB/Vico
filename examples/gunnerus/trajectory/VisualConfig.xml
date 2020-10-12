@@ -9,22 +9,35 @@
                 </vico:Shape>
             </vico:Geometry>
             <vico:PositionRef>
-                <vico:xRef name="cgShipMotion.ned.east">
-                    <vico:linearTransformation factor="-1"/>
-                </vico:xRef>
+                <vico:xRef name="cgShipMotion.ned.east"/>
                 <vico:yRef name="cgShipMotion.ned.down">
                     <vico:linearTransformation factor="-1"/>
                 </vico:yRef>
-                <vico:zRef name="cgShipMotion.ned.north">
-                    <vico:linearTransformation factor="-1"/>
-                </vico:zRef>
+                <vico:zRef name="cgShipMotion.ned.north"/>
             </vico:PositionRef>
             <vico:RotationRef>
-                <vico:xRef>cgShipMotion.angularDisplacement.yaw</vico:xRef>
-                <vico:yRef>cgShipMotion.angularDisplacement.pitch</vico:yRef>
-                <vico:zRef>cgShipMotion.angularDisplacement.roll</vico:zRef>
+                <vico:xRef name="cgShipMotion.angularDisplacement.pitch"/>
+                <vico:yRef name="cgShipMotion.angularDisplacement.yaw">
+                    <vico:linearTransformation offset="180"/>
+                </vico:yRef>
+                <vico:zRef name="cgShipMotion.angularDisplacement.roll"/>
             </vico:RotationRef>
         </vico:Transform>
+
+        <vico:Transform name="wpProvider">
+            <vico:Geometry color="green">
+                <vico:Shape>
+                    <vico:Cylinder radius="2" height="10"/>
+                </vico:Shape>
+            </vico:Geometry>
+            <vico:PositionRef>
+                <vico:xRef name="targetWP.east"/>
+                <vico:zRef name="targetWP.north"/>
+            </vico:PositionRef>
+        </vico:Transform>
+
     </vico:Transforms>
+
+    <vico:Water width="1000" height="1000"/>
 
 </vico:VisualConfig>

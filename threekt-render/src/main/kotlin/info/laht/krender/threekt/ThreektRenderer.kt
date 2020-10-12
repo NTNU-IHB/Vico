@@ -1,6 +1,5 @@
 package info.laht.krender.threekt
 
-import info.laht.krender.proxies.*
 import info.laht.threekt.Window
 import info.laht.threekt.WindowClosingCallback
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -14,6 +13,7 @@ import info.laht.threekt.renderers.GLRenderer
 import info.laht.threekt.scenes.Scene
 import no.ntnu.ihb.vico.render.AbstractRenderEngine
 import no.ntnu.ihb.vico.render.mesh.TrimeshShape
+import no.ntnu.ihb.vico.render.proxies.*
 import no.ntnu.ihb.vico.render.util.RenderContext
 import org.joml.Matrix4fc
 import org.joml.Vector3fc

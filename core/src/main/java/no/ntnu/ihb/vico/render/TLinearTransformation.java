@@ -35,12 +35,14 @@ public class TLinearTransformation {
     /**
      * Gets the value of the offset property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getOffset() {
         if (offset == null) {
-            return 0.0D;
+            return  0.0D;
         } else {
             return offset;
         }
@@ -49,8 +51,10 @@ public class TLinearTransformation {
     /**
      * Sets the value of the offset property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setOffset(Double value) {
         this.offset = value;
@@ -59,12 +63,14 @@ public class TLinearTransformation {
     /**
      * Gets the value of the factor property.
      *
-     * @return possible object is
-     * {@link Double }
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *
      */
     public double getFactor() {
         if (factor == null) {
-            return 1.0D;
+            return  1.0D;
         } else {
             return factor;
         }
@@ -73,8 +79,10 @@ public class TLinearTransformation {
     /**
      * Sets the value of the factor property.
      *
-     * @param value allowed object is
-     *              {@link Double }
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *
      */
     public void setFactor(Double value) {
         this.factor = value;

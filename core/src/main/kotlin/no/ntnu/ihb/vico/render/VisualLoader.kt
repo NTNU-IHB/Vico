@@ -25,6 +25,11 @@ object VisualLoader {
 
     fun load(config: TVisualConfig, engine: Engine) {
 
+        config.water?.also { w ->
+            engine.createEntity("waterVisual", Water(w.width, w.height))
+            engine.addSystem(WaterRenderer())
+        }
+
         config.transforms.transform.forEach { t ->
 
             engine.getEntityByName(t.name).apply {
@@ -46,12 +51,14 @@ object VisualLoader {
                 }
 
                 t.rotationRef?.also { ref ->
-                    add(RotationRef(
-                            xRef = ref.xRef,
-                            yRef = ref.yRef,
-                            zRef = ref.zRef,
+                    add(
+                        RotationRef(
+                            xRef = ref.xRef.toRealRef(),
+                            yRef = ref.yRef.toRealRef(),
+                            zRef = ref.zRef.toRealRef(),
                             repr = if (ref.getRepr() == TAngleRepr.DEG) Angle.Unit.DEG else Angle.Unit.RAD
-                    ))
+                        )
+                    )
                     if (!engine.hasSystem<RotationRefSystem>()) {
                         engine.addSystem(RotationRefSystem())
                     }

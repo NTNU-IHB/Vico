@@ -1,7 +1,5 @@
-package info.laht.krender.curves
+package no.ntnu.ihb.vico.render.curves
 
-import no.ntnu.ihb.vico.render.curves.Curve2
-import no.ntnu.ihb.vico.render.curves.Interpolations
 import org.joml.Vector2d
 
 class CubicBezierCurve2(

@@ -1,6 +1,5 @@
 package info.laht.krender.threekt
 
-import info.laht.krender.proxies.*
 import info.laht.threekt.Colors
 import info.laht.threekt.Side
 import info.laht.threekt.TextureWrapping
@@ -25,6 +24,7 @@ import info.laht.threekt.objects.Mesh
 import info.laht.threekt.objects.Points
 import no.ntnu.ihb.vico.render.mesh.TrimeshShape
 import no.ntnu.ihb.vico.render.mesh.TrimeshShapeWithSource
+import no.ntnu.ihb.vico.render.proxies.*
 import no.ntnu.ihb.vico.render.util.ExternalSource
 import no.ntnu.ihb.vico.render.util.FileSource
 import no.ntnu.ihb.vico.render.util.RenderContext

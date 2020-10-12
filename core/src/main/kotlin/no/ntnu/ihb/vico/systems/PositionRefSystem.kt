@@ -47,19 +47,21 @@ class PositionRefSystem : SimulationSystem(
     private fun update() {
         for (entity in entities) {
 
-            val pRef: PositionRef = entity.get()
+            entity.get<PositionRef>().also { ref ->
 
-            pRef.xRef?.also {
-                val read = map.getValue(it.name).read(tmpArray).first()
-                tmpVector.x = it.linearTransform?.invoke(read) ?: read
-            }
-            pRef.yRef?.also {
-                val read = map.getValue(it.name).read(tmpArray).first()
-                tmpVector.y = it.linearTransform?.invoke(read) ?: read
-            }
-            pRef.zRef?.also {
-                val read = map.getValue(it.name).read(tmpArray).first()
-                tmpVector.z = it.linearTransform?.invoke(read) ?: read
+                ref.xRef?.also {
+                    val read = map.getValue(it.name).read(tmpArray).first()
+                    tmpVector.x = it.linearTransform?.invoke(read) ?: read
+                }
+                ref.yRef?.also {
+                    val read = map.getValue(it.name).read(tmpArray).first()
+                    tmpVector.y = it.linearTransform?.invoke(read) ?: read
+                }
+                ref.zRef?.also {
+                    val read = map.getValue(it.name).read(tmpArray).first()
+                    tmpVector.z = it.linearTransform?.invoke(read) ?: read
+                }
+
             }
 
             entity.get<Transform>().setTranslation(tmpVector)

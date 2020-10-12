@@ -2,7 +2,7 @@ package info.laht.krender.jme.proxy
 
 import info.laht.krender.jme.JmeContext
 import info.laht.krender.jme.extra.JmeAxis
-import info.laht.krender.proxies.AxisProxy
+import no.ntnu.ihb.vico.render.proxies.AxisProxy
 
 
 internal class JmeAxisProxy(

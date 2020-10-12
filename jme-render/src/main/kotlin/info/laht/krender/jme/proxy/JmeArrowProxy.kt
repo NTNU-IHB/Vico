@@ -2,7 +2,7 @@ package info.laht.krender.jme.proxy
 
 import info.laht.krender.jme.JmeContext
 import info.laht.krender.jme.extra.JmeArrow
-import info.laht.krender.proxies.ArrowProxy
+import no.ntnu.ihb.vico.render.proxies.ArrowProxy
 
 internal class JmeArrowProxy(
     ctx: JmeContext,

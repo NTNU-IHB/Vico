@@ -2,7 +2,7 @@ package info.laht.krender.jme.proxy
 
 import info.laht.krender.jme.JmeContext
 import info.laht.krender.jme.extra.JmeCapsule
-import info.laht.krender.proxies.CapsuleProxy
+import no.ntnu.ihb.vico.render.proxies.CapsuleProxy
 
 internal class JmeCapsuleProxy(
     ctx: JmeContext,

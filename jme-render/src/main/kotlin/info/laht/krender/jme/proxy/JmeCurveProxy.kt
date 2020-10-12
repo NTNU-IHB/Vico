@@ -8,8 +8,8 @@ import com.jme3.scene.Node
 import info.laht.krender.jme.JmeContext
 import info.laht.krender.jme.extra.JmeTubeGeometry
 import info.laht.krender.jme.extra.JmeUtils
-import info.laht.krender.proxies.CurveProxy
 import no.ntnu.ihb.vico.render.ColorConstants
+import no.ntnu.ihb.vico.render.proxies.CurveProxy
 import org.joml.Vector3fc
 
 internal class JmeCurveProxy(
