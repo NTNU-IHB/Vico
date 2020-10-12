@@ -20,9 +20,9 @@ class PositionRefSystem : SimulationSystem(
 
         val p: PositionRef = entity.get()
 
-        p.xRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
-        p.yRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
-        p.zRef?.also { ref -> entity.getRealPropertyOrNull(ref)?.also { v -> map[ref] = v } }
+        p.xRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
+        p.yRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
+        p.zRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
 
     }
 
@@ -30,9 +30,9 @@ class PositionRefSystem : SimulationSystem(
 
         val p: PositionRef = entity.get()
 
-        p.xRef?.also { map.remove(it) }
-        p.yRef?.also { map.remove(it) }
-        p.zRef?.also { map.remove(it) }
+        p.xRef?.also { map.remove(it.name) }
+        p.yRef?.also { map.remove(it.name) }
+        p.zRef?.also { map.remove(it.name) }
 
     }
 
@@ -49,9 +49,18 @@ class PositionRefSystem : SimulationSystem(
 
             val pRef: PositionRef = entity.get()
 
-            pRef.xRef?.also { tmpVector.x = map.getValue(it).read(tmpArray).first() }
-            pRef.yRef?.also { tmpVector.y = map.getValue(it).read(tmpArray).first() }
-            pRef.zRef?.also { tmpVector.z = map.getValue(it).read(tmpArray).first() }
+            pRef.xRef?.also {
+                val read = map.getValue(it.name).read(tmpArray).first()
+                tmpVector.x = it.linearTransform?.invoke(read) ?: read
+            }
+            pRef.yRef?.also {
+                val read = map.getValue(it.name).read(tmpArray).first()
+                tmpVector.y = it.linearTransform?.invoke(read) ?: read
+            }
+            pRef.zRef?.also {
+                val read = map.getValue(it.name).read(tmpArray).first()
+                tmpVector.z = it.linearTransform?.invoke(read) ?: read
+            }
 
             entity.get<Transform>().setTranslation(tmpVector)
 

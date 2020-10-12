@@ -106,7 +106,7 @@ fun Matrix4dc.getNormalMatrix(): Matrix3d {
     return Matrix3d(this).invert().transpose()
 }
 
-fun Quaterniond.setFromUnitVectors(vFrom: Vector3dc, vTo: Vector3dc): Quaterniond {
+fun Quaterniond.setFromUnitVectors(vFrom: Vector3dc, vTo: Vector3dc) = apply {
     // assumes direction vectors vFrom and vTo are normalized
 
     val EPS = 0.000001
@@ -144,5 +144,69 @@ fun Quaterniond.setFromUnitVectors(vFrom: Vector3dc, vTo: Vector3dc): Quaternion
 
     }
 
-    return this.normalize()
+    this.normalize()
+}
+
+fun Quaterniond.setFromEuler(euler: Euler) = apply {
+
+    val x = euler.x
+    val y = euler.y
+    val z = euler.z
+
+    // http://www.mathworks.com/matlabcentral/fileexchange/
+    // 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
+    //	content/SpinCalc.m
+
+    val c1 = cos(x / 2)
+    val c2 = cos(y / 2)
+    val c3 = cos(z / 2)
+
+    val s1 = sin(x / 2)
+    val s2 = sin(y / 2)
+    val s3 = sin(z / 2)
+
+    if (euler.order == EulerOrder.XYZ) {
+
+        this.x = s1 * c2 * c3 + c1 * s2 * s3
+        this.y = c1 * s2 * c3 - s1 * c2 * s3
+        this.z = c1 * c2 * s3 + s1 * s2 * c3
+        this.w = c1 * c2 * c3 - s1 * s2 * s3
+
+    } else if (euler.order == EulerOrder.YXZ) {
+
+        this.x = s1 * c2 * c3 + c1 * s2 * s3
+        this.y = c1 * s2 * c3 - s1 * c2 * s3
+        this.z = c1 * c2 * s3 - s1 * s2 * c3
+        this.w = c1 * c2 * c3 + s1 * s2 * s3
+
+    } else if (euler.order == EulerOrder.ZXY) {
+
+        this.x = s1 * c2 * c3 - c1 * s2 * s3
+        this.y = c1 * s2 * c3 + s1 * c2 * s3
+        this.z = c1 * c2 * s3 + s1 * s2 * c3
+        this.w = c1 * c2 * c3 - s1 * s2 * s3
+
+    } else if (euler.order == EulerOrder.ZYX) {
+
+        this.x = s1 * c2 * c3 - c1 * s2 * s3
+        this.y = c1 * s2 * c3 + s1 * c2 * s3
+        this.z = c1 * c2 * s3 - s1 * s2 * c3
+        this.w = c1 * c2 * c3 + s1 * s2 * s3
+
+    } else if (euler.order == EulerOrder.YZX) {
+
+        this.x = s1 * c2 * c3 + c1 * s2 * s3
+        this.y = c1 * s2 * c3 + s1 * c2 * s3
+        this.z = c1 * c2 * s3 - s1 * s2 * c3
+        this.w = c1 * c2 * c3 - s1 * s2 * s3
+
+    } else if (euler.order == EulerOrder.XZY) {
+
+        this.x = s1 * c2 * c3 - c1 * s2 * s3
+        this.y = c1 * s2 * c3 - s1 * c2 * s3
+        this.z = c1 * c2 * s3 + s1 * s2 * c3
+        this.w = c1 * c2 * c3 + s1 * s2 * s3
+
+    }
+
 }

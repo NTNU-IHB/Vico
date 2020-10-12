@@ -10,6 +10,7 @@
         <xs:sequence>
             <xs:element name="Transforms" type="vico:TTransforms"/>
         </xs:sequence>
+        <xs:attribute name="decimationFactor" type="xs:unsignedInt" default="1"/>
     </xs:complexType>
 
     <xs:complexType name="TTransforms">
@@ -93,23 +94,31 @@
 
     <xs:complexType name="TPositionRef">
         <xs:sequence>
-            <xs:element name="xRef" type="xs:string" minOccurs="0"/>
-            <xs:element name="yRef" type="xs:string" minOccurs="0"/>
-            <xs:element name="zRef" type="xs:string" minOccurs="0"/>
+            <xs:element name="xRef" type="vico:TRealRef" minOccurs="0"/>
+            <xs:element name="yRef" type="vico:TRealRef" minOccurs="0"/>
+            <xs:element name="zRef" type="vico:TRealRef" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="TRotationRef">
         <xs:sequence>
-            <xs:element name="xRef" type="vico:TAngleRef" minOccurs="0"/>
-            <xs:element name="yRef" type="vico:TAngleRef" minOccurs="0"/>
-            <xs:element name="zRef" type="vico:TAngleRef" minOccurs="0"/>
+            <xs:element name="xRef" type="xs:string" minOccurs="0"/>
+            <xs:element name="yRef" type="xs:string" minOccurs="0"/>
+            <xs:element name="zRef" type="xs:string" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
     </xs:complexType>
 
-    <xs:complexType name="TAngleRef">
-        <xs:attribute name="ref" type="xs:string"/>
-        <xs:attribute name="repr" type="vico:TAngleRepr" default="deg"/>
+    <xs:complexType name="TRealRef">
+        <xs:sequence>
+            <xs:element name="linearTransformation" type="vico:TLinearTransformation" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="TLinearTransformation">
+        <xs:attribute name="offset" type="xs:double" default="0"/>
+        <xs:attribute name="factor" type="xs:double" default="1"/>
     </xs:complexType>
 
     <xs:simpleType name="TAngleRepr">

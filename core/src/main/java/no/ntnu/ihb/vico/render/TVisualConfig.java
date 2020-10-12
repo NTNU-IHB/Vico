@@ -1,10 +1,7 @@
 
 package no.ntnu.ihb.vico.render;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -19,6 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="Transforms" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TTransforms"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="decimationFactor" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" default="1" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -32,6 +30,9 @@ public class TVisualConfig {
 
     @XmlElement(name = "Transforms", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", required = true)
     protected TTransforms transforms;
+    @XmlAttribute(name = "decimationFactor")
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long decimationFactor;
 
     /**
      * Gets the value of the transforms property.
@@ -55,6 +56,30 @@ public class TVisualConfig {
      */
     public void setTransforms(TTransforms value) {
         this.transforms = value;
+    }
+
+    /**
+     * Gets the value of the decimationFactor property.
+     *
+     * @return possible object is
+     * {@link Long }
+     */
+    public long getDecimationFactor() {
+        if (decimationFactor == null) {
+            return 1L;
+        } else {
+            return decimationFactor;
+        }
+    }
+
+    /**
+     * Sets the value of the decimationFactor property.
+     *
+     * @param value allowed object is
+     *              {@link Long }
+     */
+    public void setDecimationFactor(Long value) {
+        this.decimationFactor = value;
     }
 
 }

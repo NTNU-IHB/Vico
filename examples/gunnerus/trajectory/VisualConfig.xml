@@ -9,9 +9,21 @@
                 </vico:Shape>
             </vico:Geometry>
             <vico:PositionRef>
-                <vico:xRef>cgShipMotion.ned.east</vico:xRef>
-                <vico:zRef>cgShipMotion.ned.north</vico:zRef>
+                <vico:xRef name="cgShipMotion.ned.east">
+                    <vico:linearTransformation factor="-1"/>
+                </vico:xRef>
+                <vico:yRef name="cgShipMotion.ned.down">
+                    <vico:linearTransformation factor="-1"/>
+                </vico:yRef>
+                <vico:zRef name="cgShipMotion.ned.north">
+                    <vico:linearTransformation factor="-1"/>
+                </vico:zRef>
             </vico:PositionRef>
+            <vico:RotationRef>
+                <vico:xRef>cgShipMotion.angularDisplacement.yaw</vico:xRef>
+                <vico:yRef>cgShipMotion.angularDisplacement.pitch</vico:yRef>
+                <vico:zRef>cgShipMotion.angularDisplacement.roll</vico:zRef>
+            </vico:RotationRef>
         </vico:Transform>
     </vico:Transforms>
 

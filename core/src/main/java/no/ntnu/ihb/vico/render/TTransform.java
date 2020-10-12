@@ -44,8 +44,10 @@ public class TTransform {
     /**
      * Gets the value of the geometry property.
      *
-     * @return possible object is
-     * {@link TGeometry }
+     * @return
+     *     possible object is
+     *     {@link TGeometry }
+     *
      */
     public TGeometry getGeometry() {
         return geometry;
@@ -66,8 +68,10 @@ public class TTransform {
     /**
      * Gets the value of the positionRef property.
      *
-     * @return possible object is
-     * {@link TPositionRef }
+     * @return
+     *     possible object is
+     *     {@link TPositionRef }
+     *
      */
     public TPositionRef getPositionRef() {
         return positionRef;
@@ -76,8 +80,10 @@ public class TTransform {
     /**
      * Sets the value of the positionRef property.
      *
-     * @param value allowed object is
-     *              {@link TPositionRef }
+     * @param value
+     *     allowed object is
+     *     {@link TPositionRef }
+     *
      */
     public void setPositionRef(TPositionRef value) {
         this.positionRef = value;
@@ -86,8 +92,10 @@ public class TTransform {
     /**
      * Gets the value of the rotationRef property.
      *
-     * @return possible object is
-     * {@link TRotationRef }
+     * @return
+     *     possible object is
+     *     {@link TRotationRef }
+     *
      */
     public TRotationRef getRotationRef() {
         return rotationRef;
@@ -96,8 +104,10 @@ public class TTransform {
     /**
      * Sets the value of the rotationRef property.
      *
-     * @param value allowed object is
-     *              {@link TRotationRef }
+     * @param value
+     *     allowed object is
+     *     {@link TRotationRef }
+     *
      */
     public void setRotationRef(TRotationRef value) {
         this.rotationRef = value;
@@ -106,8 +116,10 @@ public class TTransform {
     /**
      * Gets the value of the name property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getName() {
         return name;

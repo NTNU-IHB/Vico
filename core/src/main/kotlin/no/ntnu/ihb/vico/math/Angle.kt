@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.math
 
-import java.lang.Math.toDegrees
 
 class Angle private constructor(
     var phi: Double = 0.0
@@ -111,7 +110,7 @@ class Angle private constructor(
     }
 
     override fun toString(): String {
-        return "Angle{" + "inDegrees=" + toDegrees(phi) + ", inRadians=" + phi + '}'
+        return "Angle{" + "inDegrees=" + inDegrees() + ", inRadians=" + inRadians() + '}'
     }
 
     companion object {

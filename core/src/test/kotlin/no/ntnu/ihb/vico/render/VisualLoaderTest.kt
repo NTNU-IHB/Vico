@@ -67,7 +67,6 @@ fun main() {
         VisualLoader.load(config, engine)
 
         engine.addSystem(SineMoverSystem())
-      //  engine.addSystem(GeometryRenderer().apply { decimationFactor = 2 })
 
         engine.runner.startAndWait()
 

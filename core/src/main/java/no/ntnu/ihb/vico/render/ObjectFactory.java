@@ -49,17 +49,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TRealRef }
+     */
+    public TRealRef createTRealRef() {
+        return new TRealRef();
+    }
+
+    /**
      * Create an instance of {@link TRotationRef }
      */
     public TRotationRef createTRotationRef() {
         return new TRotationRef();
-    }
-
-    /**
-     * Create an instance of {@link TAngleRef }
-     */
-    public TAngleRef createTAngleRef() {
-        return new TAngleRef();
     }
 
     /**
@@ -71,6 +71,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TEuler }
+     *
      */
     public TEuler createTEuler() {
         return new TEuler();
@@ -134,6 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TPositionRef }
+     *
      */
     public TPositionRef createTPositionRef() {
         return new TPositionRef();
@@ -141,9 +143,17 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TPlane }
+     *
      */
     public TPlane createTPlane() {
         return new TPlane();
+    }
+
+    /**
+     * Create an instance of {@link TLinearTransformation }
+     */
+    public TLinearTransformation createTLinearTransformation() {
+        return new TLinearTransformation();
     }
 
     /**
@@ -155,7 +165,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TVisualConfig }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", name = "VisualConfig")
     public JAXBElement<TVisualConfig> createVisualConfig(TVisualConfig value) {

@@ -1,12 +1,17 @@
 package no.ntnu.ihb.vico.render
 
 import no.ntnu.ihb.vico.components.PositionRef
+import no.ntnu.ihb.vico.components.RealRef
+import no.ntnu.ihb.vico.components.RotationRef
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.core.LinearTransform
+import no.ntnu.ihb.vico.math.Angle
 import no.ntnu.ihb.vico.render.loaders.ObjLoader
 import no.ntnu.ihb.vico.render.loaders.StlLoader
 import no.ntnu.ihb.vico.render.mesh.*
 import no.ntnu.ihb.vico.systems.PositionRefSystem
+import no.ntnu.ihb.vico.systems.RotationRefSystem
 import org.joml.Matrix4f
 import java.io.File
 import javax.xml.bind.JAXB
@@ -19,6 +24,7 @@ object VisualLoader {
     }
 
     fun load(config: TVisualConfig, engine: Engine) {
+
         config.transforms.transform.forEach { t ->
 
             engine.getEntityByName(t.name).apply {
@@ -30,23 +36,41 @@ object VisualLoader {
 
                 t.positionRef?.also { ref ->
                     add(PositionRef(
-                            xRef = ref.xRef,
-                            yRef = ref.yRef,
-                            zRef = ref.zRef
+                            xRef = ref.xRef.toRealRef(),
+                            yRef = ref.yRef.toRealRef(),
+                            zRef = ref.zRef.toRealRef()
                     ))
                     if (!engine.hasSystem<PositionRefSystem>()) {
                         engine.addSystem(PositionRefSystem())
                     }
                 }
 
-                t.rotationRef.also { _ ->
-                    //TODO add RotationRef
+                t.rotationRef?.also { ref ->
+                    add(RotationRef(
+                            xRef = ref.xRef,
+                            yRef = ref.yRef,
+                            zRef = ref.zRef,
+                            repr = if (ref.getRepr() == TAngleRepr.DEG) Angle.Unit.DEG else Angle.Unit.RAD
+                    ))
+                    if (!engine.hasSystem<RotationRefSystem>()) {
+                        engine.addSystem(RotationRefSystem())
+                    }
                 }
 
             }
 
         }
-        engine.addSystem(GeometryRenderer())
+        engine.addSystem(GeometryRenderer().apply {
+            decimationFactor = config.getDecimationFactor()
+        })
+    }
+
+    private fun TRealRef?.toRealRef(): RealRef? {
+        if (this == null) return null
+        val linearTransformation = this.linearTransformation?.let {
+            LinearTransform(factor = it.getFactor(), offset = it.getOffset())
+        }
+        return RealRef(this.name, linearTransformation)
     }
 
     private fun createGeometry(g: TGeometry): Geometry {
