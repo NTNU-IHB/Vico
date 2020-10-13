@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vico:VisualConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig" decimationFactor="2">
 
-    <vico:Transforms>
-        <vico:Transform name="SineMover">
-            <vico:Geometry color="red" opacity="0.5">
-                <vico:Shape>
-                    <vico:Sphere radius="0.5"/>
-                </vico:Shape>
-            </vico:Geometry>
-        </vico:Transform>
-    </vico:Transforms>
+    <vico:Transform name="SineMover">
+        <vico:Geometry color="red" opacity="0.5">
+            <vico:Shape>
+                <vico:Sphere radius="0.5"/>
+            </vico:Shape>
+        </vico:Geometry>
+        <vico:Trail color="red"/>
+    </vico:Transform>
 
 </vico:VisualConfig>

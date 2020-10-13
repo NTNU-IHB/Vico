@@ -34,33 +34,41 @@ object VisualLoader {
 
             engine.getEntityByName(t.name).apply {
 
-                if (!has<Transform>()) {
-                    add<Transform>()
-                }
                 add(createGeometry(t.geometry))
 
-                t.positionRef?.also { ref ->
-                    add(PositionRef(
-                            xRef = ref.xRef.toRealRef(),
-                            yRef = ref.yRef.toRealRef(),
-                            zRef = ref.zRef.toRealRef()
-                    ))
-                    if (!engine.hasSystem<PositionRefSystem>()) {
-                        engine.addSystem(PositionRefSystem())
+                if (!has<Transform>()) {
+
+                    add<Transform>()
+
+                    t.positionRef?.also { ref ->
+                        add(PositionRef(
+                                xRef = ref.xRef.toRealRef(),
+                                yRef = ref.yRef.toRealRef(),
+                                zRef = ref.zRef.toRealRef()
+                        ))
+                        if (!engine.hasSystem<PositionRefSystem>()) {
+                            engine.addSystem(PositionRefSystem().apply { decimationFactor = 2 })
+                        }
                     }
+
+                    t.rotationRef?.also { ref ->
+                        add(RotationRef(
+                                xRef = ref.xRef.toRealRef(),
+                                yRef = ref.yRef.toRealRef(),
+                                zRef = ref.zRef.toRealRef(),
+                                repr = if (ref.getRepr() == TAngleRepr.DEG) Angle.Unit.DEG else Angle.Unit.RAD
+                        ))
+                        if (!engine.hasSystem<RotationRefSystem>()) {
+                            engine.addSystem(RotationRefSystem().apply { decimationFactor = 2 })
+                        }
+                    }
+
                 }
 
-                t.rotationRef?.also { ref ->
-                    add(
-                        RotationRef(
-                            xRef = ref.xRef.toRealRef(),
-                            yRef = ref.yRef.toRealRef(),
-                            zRef = ref.zRef.toRealRef(),
-                            repr = if (ref.getRepr() == TAngleRepr.DEG) Angle.Unit.DEG else Angle.Unit.RAD
-                        )
-                    )
-                    if (!engine.hasSystem<RotationRefSystem>()) {
-                        engine.addSystem(RotationRefSystem())
+                t.trail?.also { trail ->
+                    add(Trail(trail.length, trail.color?.toColor()))
+                    if (!engine.hasSystem<TrailRenderer>()) {
+                        engine.addSystem(TrailRenderer().apply { decimationFactor = 10 })
                     }
                 }
 
@@ -78,6 +86,14 @@ object VisualLoader {
             LinearTransform(factor = it.getFactor(), offset = it.getOffset())
         }
         return RealRef(this.name, linearTransformation)
+    }
+
+    private fun String.toColor(): Int {
+        return if (startsWith("#")) {
+            Integer.decode(this)
+        } else {
+            ColorConstants.getByName(this)
+        }
     }
 
     private fun createGeometry(g: TGeometry): Geometry {
@@ -108,12 +124,7 @@ object VisualLoader {
         return Geometry(shape, offset).also {
 
             g.color?.also { c ->
-                val color = if (c.startsWith("#")) {
-                    Integer.decode(c)
-                } else {
-                    ColorConstants.getByName(c)
-                }
-                it.color = color
+                it.color = c.toColor()
             }
 
             g.wireframe?.also { w -> it.wireframe = w }

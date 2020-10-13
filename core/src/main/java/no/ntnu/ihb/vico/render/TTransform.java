@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.*;
  *         &lt;element name="Geometry" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TGeometry"/>
  *         &lt;element name="PositionRef" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TPositionRef" minOccurs="0"/>
  *         &lt;element name="RotationRef" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TRotationRef" minOccurs="0"/>
+ *         &lt;element name="Trail" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TTrail" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -28,7 +29,8 @@ import javax.xml.bind.annotation.*;
 @XmlType(name = "TTransform", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", propOrder = {
         "geometry",
         "positionRef",
-        "rotationRef"
+        "rotationRef",
+        "trail"
 })
 public class TTransform {
 
@@ -38,16 +40,16 @@ public class TTransform {
     protected TPositionRef positionRef;
     @XmlElement(name = "RotationRef", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
     protected TRotationRef rotationRef;
+    @XmlElement(name = "Trail", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
+    protected TTrail trail;
     @XmlAttribute(name = "name")
     protected String name;
 
     /**
      * Gets the value of the geometry property.
      *
-     * @return
-     *     possible object is
-     *     {@link TGeometry }
-     *
+     * @return possible object is
+     * {@link TGeometry }
      */
     public TGeometry getGeometry() {
         return geometry;
@@ -114,12 +116,30 @@ public class TTransform {
     }
 
     /**
+     * Gets the value of the trail property.
+     *
+     * @return possible object is
+     * {@link TTrail }
+     */
+    public TTrail getTrail() {
+        return trail;
+    }
+
+    /**
+     * Sets the value of the trail property.
+     *
+     * @param value allowed object is
+     *              {@link TTrail }
+     */
+    public void setTrail(TTrail value) {
+        this.trail = value;
+    }
+
+    /**
      * Gets the value of the name property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;

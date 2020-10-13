@@ -170,6 +170,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TTrail }
+     *
      */
     public TTrail createTTrail() {
         return new TTrail();
@@ -177,6 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TVisualConfig }{@code >}}
+     *
      */
     @XmlElementDecl(namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", name = "VisualConfig")
     public JAXBElement<TVisualConfig> createVisualConfig(TVisualConfig value) {

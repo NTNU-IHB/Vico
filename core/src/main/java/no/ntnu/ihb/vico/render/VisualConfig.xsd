@@ -10,7 +10,6 @@
         <xs:sequence>
             <xs:element name="Transform" type="vico:TTransform" maxOccurs="unbounded"/>
             <xs:element name="Water" type="vico:TWater" minOccurs="0"/>
-            <xs:element name="Trail" type="vico:TTrail" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="decimationFactor" type="xs:unsignedInt" default="1"/>
     </xs:complexType>
@@ -25,6 +24,7 @@
             <xs:element name="Geometry" type="vico:TGeometry"/>
             <xs:element name="PositionRef" type="vico:TPositionRef" minOccurs="0"/>
             <xs:element name="RotationRef" type="vico:TRotationRef" minOccurs="0"/>
+            <xs:element name="Trail" type="vico:TTrail" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
@@ -123,8 +123,7 @@
     </xs:complexType>
 
     <xs:complexType name="TTrail">
-        <xs:attribute name="xRef" type="xs:string" use="required"/>
-        <xs:attribute name="yRef" type="xs:string" use="required"/>
+        <xs:attribute name="length" type="xs:float" default="10"/>
         <xs:attribute name="color" type="xs:string" default="blue"/>
     </xs:complexType>
 

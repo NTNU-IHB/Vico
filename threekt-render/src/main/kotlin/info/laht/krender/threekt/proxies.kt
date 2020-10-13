@@ -347,9 +347,7 @@ internal class ThreektLineProxy(
         points: List<Vector3fc>
 ) : ThreektProxy(ctx), LineProxy {
 
-    private val line = Line(
-            createGeometry(points)
-    )
+    private val line = Line(createGeometry(points))
 
     init {
         ctx.invokeLater {

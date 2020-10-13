@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<vico:VisualConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig">
+<vico:VisualConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig" decimationFactor="4">
 
-    <vico:Transforms>
-        <vico:Transform name="vesselModel">
-            <vico:Geometry>
-                <vico:Shape>
-                    <vico:Mesh source="../obj/Gunnerus.obj"/>
-                </vico:Shape>
-            </vico:Geometry>
-            <vico:PositionRef>
-                <vico:xRef name="cgShipMotion.ned.east"/>
-                <vico:yRef name="cgShipMotion.ned.down">
-                    <vico:linearTransformation factor="-1"/>
+    <vico:Transform name="vesselModel">
+        <vico:Geometry>
+            <vico:Shape>
+                <vico:Mesh source="../obj/Gunnerus.obj"/>
+            </vico:Shape>
+        </vico:Geometry>
+        <vico:PositionRef>
+            <vico:xRef name="cgShipMotion.ned.east"/>
+            <vico:yRef name="cgShipMotion.ned.down">
+                <vico:LinearTransformation factor="-1"/>
                 </vico:yRef>
                 <vico:zRef name="cgShipMotion.ned.north"/>
             </vico:PositionRef>
             <vico:RotationRef>
                 <vico:xRef name="cgShipMotion.angularDisplacement.pitch"/>
                 <vico:yRef name="cgShipMotion.angularDisplacement.yaw">
-                    <vico:linearTransformation offset="180"/>
+                    <vico:LinearTransformation offset="180"/>
                 </vico:yRef>
                 <vico:zRef name="cgShipMotion.angularDisplacement.roll"/>
             </vico:RotationRef>
+        <vico:Trail length="100"/>
         </vico:Transform>
 
         <vico:Transform name="wpProvider">
@@ -35,8 +35,6 @@
                 <vico:zRef name="targetWP.north"/>
             </vico:PositionRef>
         </vico:Transform>
-
-    </vico:Transforms>
 
     <vico:Water width="1000" height="1000"/>
 

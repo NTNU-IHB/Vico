@@ -18,7 +18,6 @@ import java.util.List;
  *       &lt;sequence>
  *         &lt;element name="Transform" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TTransform" maxOccurs="unbounded"/>
  *         &lt;element name="Water" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TWater" minOccurs="0"/>
- *         &lt;element name="Trail" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TTrail" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="decimationFactor" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" default="1" />
  *     &lt;/restriction>
@@ -29,8 +28,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TVisualConfig", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", propOrder = {
         "transform",
-        "water",
-        "trail"
+        "water"
 })
 public class TVisualConfig {
 
@@ -38,8 +36,6 @@ public class TVisualConfig {
     protected List<TTransform> transform;
     @XmlElement(name = "Water", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
     protected TWater water;
-    @XmlElement(name = "Trail", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
-    protected TTrail trail;
     @XmlAttribute(name = "decimationFactor")
     @XmlSchemaType(name = "unsignedInt")
     protected Long decimationFactor;
@@ -95,30 +91,6 @@ public class TVisualConfig {
      */
     public void setWater(TWater value) {
         this.water = value;
-    }
-
-    /**
-     * Gets the value of the trail property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TTrail }
-     *
-     */
-    public TTrail getTrail() {
-        return trail;
-    }
-
-    /**
-     * Sets the value of the trail property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TTrail }
-     *
-     */
-    public void setTrail(TTrail value) {
-        this.trail = value;
     }
 
     /**
