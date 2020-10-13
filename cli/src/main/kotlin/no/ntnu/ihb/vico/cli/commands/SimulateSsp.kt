@@ -85,7 +85,7 @@ class SimulateSsp : Runnable {
     private var resultDir: File = File("results")
 
     @CommandLine.Parameters(
-            arity = "1..*",
+            arity = "1",
             paramLabel = "SSP_CONFIG",
             description = ["Path to a either a .ssp file, a .ssd file or a directory containing a file named SystemStructure.ssd"]
     )
