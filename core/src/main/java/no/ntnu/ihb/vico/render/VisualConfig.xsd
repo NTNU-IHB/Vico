@@ -8,8 +8,9 @@
 
     <xs:complexType name="TVisualConfig">
         <xs:sequence>
-            <xs:element name="Transforms" type="vico:TTransforms"/>
+            <xs:element name="Transform" type="vico:TTransform" maxOccurs="unbounded"/>
             <xs:element name="Water" type="vico:TWater" minOccurs="0"/>
+            <xs:element name="Trail" type="vico:TTrail" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="decimationFactor" type="xs:unsignedInt" default="1"/>
     </xs:complexType>
@@ -17,12 +18,6 @@
     <xs:complexType name="TWater">
         <xs:attribute name="width" type="xs:float"/>
         <xs:attribute name="height" type="xs:float"/>
-    </xs:complexType>
-
-    <xs:complexType name="TTransforms">
-        <xs:sequence>
-            <xs:element name="Transform" type="vico:TTransform" maxOccurs="unbounded"/>
-        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="TTransform">
@@ -117,7 +112,7 @@
 
     <xs:complexType name="TRealRef">
         <xs:sequence>
-            <xs:element name="linearTransformation" type="vico:TLinearTransformation" minOccurs="0"/>
+            <xs:element name="LinearTransformation" type="vico:TLinearTransformation" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
@@ -125,6 +120,12 @@
     <xs:complexType name="TLinearTransformation">
         <xs:attribute name="offset" type="xs:double" default="0"/>
         <xs:attribute name="factor" type="xs:double" default="1"/>
+    </xs:complexType>
+
+    <xs:complexType name="TTrail">
+        <xs:attribute name="xRef" type="xs:string" use="required"/>
+        <xs:attribute name="yRef" type="xs:string" use="required"/>
+        <xs:attribute name="color" type="xs:string" default="blue"/>
     </xs:complexType>
 
     <xs:simpleType name="TAngleRepr">

@@ -140,7 +140,7 @@ class Engine private constructor(
         if (renderEngine != null) {
 
             system.javaClass.declaredFields.firstOrNull {
-                it.getAnnotation(Inject::class.java) != null && RenderEngine::class.java.isAssignableFrom(it.type)
+                it.getAnnotation(InjectRenderer::class.java) != null && RenderEngine::class.java.isAssignableFrom(it.type)
             }?.also { field ->
                 field.isAccessible = true
                 field.set(system, renderEngine)

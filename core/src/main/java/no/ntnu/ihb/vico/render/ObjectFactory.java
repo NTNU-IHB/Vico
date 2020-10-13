@@ -74,6 +74,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TWater }
+     *
      */
     public TWater createTWater() {
         return new TWater();
@@ -81,16 +82,10 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TEuler }
+     *
      */
     public TEuler createTEuler() {
         return new TEuler();
-    }
-
-    /**
-     * Create an instance of {@link TTransforms }
-     */
-    public TTransforms createTTransforms() {
-        return new TTransforms();
     }
 
     /**
@@ -174,8 +169,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TTrail }
+     */
+    public TTrail createTTrail() {
+        return new TTrail();
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TVisualConfig }{@code >}}
-     *
      */
     @XmlElementDecl(namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", name = "VisualConfig")
     public JAXBElement<TVisualConfig> createVisualConfig(TVisualConfig value) {

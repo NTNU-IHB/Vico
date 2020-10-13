@@ -30,7 +30,7 @@ object VisualLoader {
             engine.addSystem(WaterRenderer())
         }
 
-        config.transforms.transform.forEach { t ->
+        config.transform.forEach { t ->
 
             engine.getEntityByName(t.name).apply {
 

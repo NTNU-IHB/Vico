@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.*;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="linearTransformation" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TLinearTransformation" minOccurs="0"/>
+ *         &lt;element name="LinearTransformation" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TLinearTransformation" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.*;
 })
 public class TRealRef {
 
-    @XmlElement(namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
+    @XmlElement(name = "LinearTransformation", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
     protected TLinearTransformation linearTransformation;
     @XmlAttribute(name = "name")
     protected String name;

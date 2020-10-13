@@ -13,7 +13,7 @@ class WaterRenderer : SimulationSystem(
     Family.all(Water::class.java).build()
 ) {
 
-    @Inject
+    @InjectRenderer
     private lateinit var renderer: RenderEngine
     private var waterProxy: WaterProxy? = null
 

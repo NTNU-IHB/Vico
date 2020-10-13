@@ -35,8 +35,10 @@ public class TWater {
     /**
      * Gets the value of the width property.
      *
-     * @return possible object is
-     * {@link Float }
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *
      */
     public Float getWidth() {
         return width;
@@ -45,8 +47,10 @@ public class TWater {
     /**
      * Sets the value of the width property.
      *
-     * @param value allowed object is
-     *              {@link Float }
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *
      */
     public void setWidth(Float value) {
         this.width = value;
@@ -55,8 +59,10 @@ public class TWater {
     /**
      * Gets the value of the height property.
      *
-     * @return possible object is
-     * {@link Float }
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *
      */
     public Float getHeight() {
         return height;
@@ -65,8 +71,10 @@ public class TWater {
     /**
      * Sets the value of the height property.
      *
-     * @param value allowed object is
-     *              {@link Float }
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *
      */
     public void setHeight(Float value) {
         this.height = value;

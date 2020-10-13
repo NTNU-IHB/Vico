@@ -3,7 +3,7 @@ package no.ntnu.ihb.vico.render
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
-import no.ntnu.ihb.vico.core.Inject
+import no.ntnu.ihb.vico.core.InjectRenderer
 import no.ntnu.ihb.vico.core.SimulationSystem
 import no.ntnu.ihb.vico.render.mesh.*
 import no.ntnu.ihb.vico.render.proxies.RenderProxy
@@ -13,8 +13,9 @@ class GeometryRenderer : SimulationSystem(
         Family.all(Transform::class.java, Geometry::class.java).build()
 ) {
 
-    @Inject
+    @InjectRenderer
     private lateinit var renderer: RenderEngine
+
     private val proxies = mutableMapOf<Entity, RenderProxy>()
 
     init {
