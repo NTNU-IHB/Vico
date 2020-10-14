@@ -8,6 +8,7 @@
 ![Java CI](https://github.com/NTNU-IHB/Vico/workflows/Java%20CI/badge.svg)
 [![Gitter](https://badges.gitter.im/NTNU-IHB/Vico.svg)](https://gitter.im/NTNU-IHB/Vico?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+<img src="Vico_logo.PNG" alt="logo" width="200"/>
 
 Vico is a generic co-simulation framework running on the JVM that takes advantage of the ECS software architecture popularized by game engines. 
 A simulation object is known as an _entity_, which is basically a collection of _components_. A component is just state, with no behavior.
