@@ -141,11 +141,11 @@ class ThreektRenderer : AbstractRenderEngine() {
     }
 
     override fun createHeightmap(
-            width: Float,
-            height: Float,
-            widthSegments: Int,
-            heightSegments: Int,
-            heights: FloatArray
+        width: Float,
+        height: Float,
+        widthSegments: Int,
+        heightSegments: Int,
+        heights: FloatArray
     ): HeightmapProxy {
         return ThreektHeightmapProxy(ctx, width, height, widthSegments, heightSegments, heights).also {
             ctx.invokeLater {
@@ -204,9 +204,9 @@ class ThreektRenderer : AbstractRenderEngine() {
         fun run() {
 
             Window(
-                    title = "Vico",
-                    antialias = 4,
-                    resizeable = true
+                title = "Vico",
+                antialias = 4,
+                resizeable = true
             ).use { window ->
 
                 this.window = window
