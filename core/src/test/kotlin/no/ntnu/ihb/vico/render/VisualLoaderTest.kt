@@ -12,9 +12,9 @@ import kotlin.math.sin
 
 
 private data class SineMover(
-        var A: Double = 1.0,
-        var f: Double = 0.1,
-        var phi: Double = 0.0
+    var A: Double = 1.0,
+    var f: Double = 0.1,
+    var phi: Double = 0.0
 ) : AbstractComponent() {
 
     var value: Double = 0.0
@@ -22,7 +22,7 @@ private data class SineMover(
 
     init {
         properties.registerProperties(RealLambdaProperty("value", 1,
-                getter = { value }
+            getter = { value }
         ))
     }
 
@@ -33,7 +33,7 @@ private data class SineMover(
 }
 
 private class SineMoverSystem : IteratingSystem(
-        Family.all(Transform::class.java, SineMover::class.java).build()
+    Family.all(Transform::class.java, SineMover::class.java).build()
 ) {
 
     private val tmp = Vector3d()
@@ -57,7 +57,7 @@ fun main() {
     val config = File(SineMover::class.java.classLoader.getResource("visualconfig/VisualConfig.xml")!!.file)
 
     EngineBuilder(
-            renderEngine = renderer
+        renderEngine = renderer
     ).build().use { engine ->
 
         engine.createEntity("SineMover").apply {

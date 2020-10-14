@@ -15,8 +15,8 @@ internal class ScenarioTest {
 
         init {
             properties.registerProperties(RealLambdaProperty("value", 1,
-                    getter = { it[0] = value },
-                    setter = { value = it.first() }
+                getter = { it[0] = value },
+                setter = { value = it.first() }
             ))
         }
 
@@ -28,8 +28,8 @@ internal class ScenarioTest {
 
         init {
             properties.registerProperties(RealLambdaProperty("value", 1,
-                    getter = { it[0] = value },
-                    setter = { value = it.first() }
+                getter = { it[0] = value },
+                setter = { value = it.first() }
             ))
         }
 
