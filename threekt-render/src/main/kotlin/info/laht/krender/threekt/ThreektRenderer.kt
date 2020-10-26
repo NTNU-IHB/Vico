@@ -241,7 +241,6 @@ class ThreektRenderer : AbstractRenderEngine() {
 
                 val clock = Clock()
                 window.animate {
-                    ctx.invokePendingTasks()
 
                     water?.water?.apply {
                         val wTime = uniforms["time"]!!.value as Float
@@ -249,6 +248,9 @@ class ThreektRenderer : AbstractRenderEngine() {
                     }
 
                     renderer.render(scene, camera)
+
+                    ctx.invokePendingTasks() // invoke after render to avoid crash related to dispose
+
                 }
 
             }

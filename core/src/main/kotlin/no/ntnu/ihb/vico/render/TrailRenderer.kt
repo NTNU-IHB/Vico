@@ -23,7 +23,7 @@ class TrailRenderer : SimulationSystem(
     @InjectRenderer
     private lateinit var renderer: RenderEngine
 
-    private val proxies = mutableMapOf<Entity, Pair<LineProxy, MutableList<Vector3f>>>()
+    private val proxies: MutableMap<Entity, Pair<LineProxy, MutableList<Vector3f>>> = mutableMapOf()
 
     init {
         priority = Int.MAX_VALUE
@@ -53,7 +53,7 @@ class TrailRenderer : SimulationSystem(
             }
             //TODO compute line length
 
-            if (points.size > 200) {
+            if (points.size > 100) {
                 points.removeAt(0)
             }
 

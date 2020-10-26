@@ -47,7 +47,7 @@ object VisualLoader {
                                 zRef = ref.zRef.toRealRef()
                         ))
                         if (!engine.hasSystem<PositionRefSystem>()) {
-                            engine.addSystem(PositionRefSystem().apply { decimationFactor = 2 })
+                            engine.addSystem(PositionRefSystem().apply { decimationFactor = config.decimationFactor * 2 })
                         }
                     }
 
@@ -59,7 +59,7 @@ object VisualLoader {
                                 repr = if (ref.getRepr() == TAngleRepr.DEG) Angle.Unit.DEG else Angle.Unit.RAD
                         ))
                         if (!engine.hasSystem<RotationRefSystem>()) {
-                            engine.addSystem(RotationRefSystem().apply { decimationFactor = 2 })
+                            engine.addSystem(RotationRefSystem().apply { decimationFactor = config.decimationFactor * 2 })
                         }
                     }
 
@@ -68,7 +68,7 @@ object VisualLoader {
                 t.trail?.also { trail ->
                     add(Trail(trail.length, trail.color?.toColor()))
                     if (!engine.hasSystem<TrailRenderer>()) {
-                        engine.addSystem(TrailRenderer().apply { decimationFactor = 10 })
+                        engine.addSystem(TrailRenderer().apply { decimationFactor = config.decimationFactor * 5 })
                     }
                 }
 
