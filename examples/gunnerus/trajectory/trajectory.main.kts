@@ -13,7 +13,7 @@ ssp("gunnerus-trajectory") {
 
             elements {
 
-                component("vesselModel", "resources/VesselFmu_fixed.fmu") {
+                component("vesselModel", "resources/VesselFmu.fmu") {
                     connectors {
                         real("additionalBodyForce[0].force.heave", input)
                         real("additionalBodyForce[0].force.surge", input)
@@ -38,6 +38,11 @@ ssp("gunnerus-trajectory") {
                         real("cgShipMotion.linearVelocity.sway", output)
                         real("cgShipMotion.angularVelocity.yaw", output)
                         real("cgShipMotion.angularDisplacement.yaw", output)
+                    }
+                    parameterBindings {
+                        parameterSet("initialValues") {
+                            string("vesselZipFile", "%fmu%/resources/ShipModel-gunnerus-elongated.zip")
+                        }
                     }
                 }
 
@@ -243,7 +248,7 @@ ssp("gunnerus-trajectory") {
     }
 
     resources {
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu_fixed.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
