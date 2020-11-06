@@ -1,7 +1,5 @@
 package no.ntnu.ihb.vico.master
 
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import no.ntnu.ihb.vico.FmiSlave
 import no.ntnu.ihb.vico.SlaveInitCallback
 import no.ntnu.ihb.vico.SlaveStepCallback
@@ -29,22 +27,14 @@ abstract class MasterAlgorithm {
     )
 
     protected fun readAllVariables() {
-        runBlocking {
-            slaves.forEach {
-                launch {
-                    it.asyncRetrieveCachedGets()
-                }
-            }
+        slaves.parallelStream().forEach {
+            it.retrieveCachedGets()
         }
     }
 
     protected fun writeAllVariables() {
-        runBlocking {
-            slaves.forEach { slave ->
-                launch {
-                    slave.asyncTransferCachedSets()
-                }
-            }
+        slaves.parallelStream().forEach {
+            it.transferCachedSets()
         }
     }
 
