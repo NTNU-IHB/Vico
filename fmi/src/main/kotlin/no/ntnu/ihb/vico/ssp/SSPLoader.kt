@@ -47,10 +47,10 @@ class SSPLoader @JvmOverloads constructor(
             sspFile.isDirectory -> {
                 File(sspFile, systemStructureFile)
             }
-            else -> throw IllegalArgumentException("Unsupported input file: $sspFile")
+            else -> throw IllegalArgumentException("Unsupported input file: ${sspFile.absolutePath}")
         }
 
-        require(this.ssdFile.exists()) { "No such file: '$sspFile'" }
+        require(this.ssdFile.exists()) { "No such file: '${sspFile.absolutePath}'" }
     }
 
     fun load(): SystemStructure {
