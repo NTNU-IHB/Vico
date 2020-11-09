@@ -12,11 +12,14 @@ class FmuResolver internal constructor() : ModelResolver {
     override fun resolve(base: File, uri: URI): SlaveProvider? {
 
         if (!uri.path.endsWith(".fmu")) return null
-
-        return if (!uri.isAbsolute) {
-            FmiSlaveProvider(File(uri))
-        } else {
-            FmiSlaveProvider(uri.toURL())
+        try {
+            return if (!uri.isAbsolute) {
+                FmiSlaveProvider(File(uri))
+            } else {
+                FmiSlaveProvider(uri.toURL())
+            }
+        } catch (ex: Exception) {
+            throw RuntimeException("Failed to resolve FMU: $uri")
         }
 
     }
