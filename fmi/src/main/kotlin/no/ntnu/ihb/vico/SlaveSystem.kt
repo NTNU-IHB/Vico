@@ -75,10 +75,10 @@ class SlaveSystem @JvmOverloads constructor(
     }
 
     override fun close() {
-        slaves.forEach { slave ->
+        slaves.parallelStream().forEach { slave ->
             slave.terminate()
         }
-        slaves.forEach { slave ->
+        slaves.parallelStream().forEach { slave ->
             slave.close()
         }
     }
@@ -103,7 +103,10 @@ class FmiSlave(
     private val booleanVariablesToFetch = mutableSetOf<ValueReference>()
     private val stringVariablesToFetch = mutableSetOf<ValueReference>()
 
+    private val integerBuffer by lazy { mutableMapOf<Int, IntArray>() }
     private val realBuffer by lazy { mutableMapOf<Int, DoubleArray>() }
+    private val booleanBuffer by lazy { mutableMapOf<Int, BooleanArray>() }
+    private val stringBuffer by lazy { mutableMapOf<Int, StringArray>() }
 
     init {
         component.variablesMarkedForReading.apply {
@@ -147,7 +150,9 @@ class FmiSlave(
     fun retrieveCachedGets() {
         if (integerVariablesToFetch.isNotEmpty()) {
             with(component.integerGetCache) {
-                val values = IntArray(integerVariablesToFetch.size)
+                val values = integerBuffer.computeIfAbsent(integerVariablesToFetch.size) {
+                    IntArray(integerVariablesToFetch.size)
+                }
                 val refs = integerVariablesToFetch.toLongArray()
                 slave.readInteger(refs, values)
                 for (i in refs.indices) {
@@ -169,7 +174,9 @@ class FmiSlave(
         }
         if (booleanVariablesToFetch.isNotEmpty()) {
             with(component.booleanGetCache) {
-                val values = BooleanArray(booleanVariablesToFetch.size)
+                val values = booleanBuffer.computeIfAbsent(booleanVariablesToFetch.size) {
+                    BooleanArray(booleanVariablesToFetch.size)
+                }
                 val refs = booleanVariablesToFetch.toLongArray()
                 slave.readBoolean(refs, values)
                 for (i in refs.indices) {
@@ -179,7 +186,9 @@ class FmiSlave(
         }
         if (stringVariablesToFetch.isNotEmpty()) {
             with(component.stringGetCache) {
-                val values = StringArray(stringVariablesToFetch.size)
+                val values = stringBuffer.computeIfAbsent(stringVariablesToFetch.size) {
+                    StringArray(stringVariablesToFetch.size)
+                }
                 val refs = stringVariablesToFetch.toLongArray()
                 slave.readString(refs, values)
                 for (i in refs.indices) {
