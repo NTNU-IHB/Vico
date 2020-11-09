@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 import java.io.BufferedWriter
 import java.io.Closeable
 import java.io.File
-import java.io.FileOutputStream
+import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.bind.JAXB
@@ -22,6 +22,7 @@ class SlaveLoggerSystem(
 
     var separator: String = ", "
     var decimalPoints: Int = 8
+    var bufferSize: Int = 8 * 1024 * 4
     val targetDir: File = targetDir ?: File(".")
     private val loggers: MutableMap<String, SlaveLogger> = mutableMapOf()
 
@@ -56,7 +57,7 @@ class SlaveLoggerSystem(
                 val decimationFactor = component.decimationFactor
                 require(decimationFactor >= 1)
                 val variables = component.variable.map { v ->
-                    slave.getPropertyOrNull(v.name)!!
+                    slave.getProperty(v.name)
                 }
                 loggers[slave.instanceName] =
                     SlaveLogger(slave, variables, decimationFactor, logConfig.isStaticFileNames)
@@ -111,7 +112,7 @@ class SlaveLoggerSystem(
         init {
             val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
             val fileName = if (staticFileNames) slave.instanceName else "${slave.instanceName}_$dateFormat"
-            this.writer = FileOutputStream(File(targetDir, "${fileName}.csv")).bufferedWriter()
+            this.writer = FileWriter(File(targetDir, "${fileName}.csv")).buffered(bufferSize)
             this.variables = if (variables.isEmpty()) slave.properties.getAllProperties() else variables
         }
 
@@ -127,10 +128,10 @@ class SlaveLoggerSystem(
         @Suppress("IMPLICIT_CAST_TO_ANY")
         fun writeLine(currentTime: Double) {
             if (slave.stepCount % decimationFactor == 0L) {
-                variables.map {
+                variables.asSequence().map {
                     when (it) {
                         is IntProperty -> it.read()
-                        is RealProperty -> it.read().formatForOutput(decimalPoints)
+                        is RealProperty -> it.read()
                         is StrProperty -> it.read()
                         is BoolProperty -> it.read()
                     }
