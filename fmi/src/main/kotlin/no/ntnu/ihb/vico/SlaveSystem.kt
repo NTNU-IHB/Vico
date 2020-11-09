@@ -1,8 +1,7 @@
 package no.ntnu.ihb.vico
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import no.ntnu.ihb.fmi4j.*
+import no.ntnu.ihb.fmi4j.importer.DirectAccessor
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
@@ -16,6 +15,8 @@ import no.ntnu.ihb.vico.util.ElementObserver
 import no.ntnu.ihb.vico.util.StringArray
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 
 fun interface SlaveInitCallback {
@@ -28,8 +29,8 @@ fun interface SlaveStepCallback {
 
 
 class SlaveSystem @JvmOverloads constructor(
-        algorithm: MasterAlgorithm? = null,
-        private var parameterSet: String? = null
+    algorithm: MasterAlgorithm? = null,
+    private var parameterSet: String? = null
 ) : SimulationSystem(Family.all(SlaveComponent::class.java).build()) {
 
     private val algorithm: MasterAlgorithm = algorithm ?: FixedStepMaster()
@@ -90,8 +91,8 @@ class SlaveSystem @JvmOverloads constructor(
 }
 
 class FmiSlave(
-        private val slave: SlaveInstance,
-        internal val component: SlaveComponent
+    private val slave: SlaveInstance,
+    internal val component: SlaveComponent
 ) : SlaveInstance by slave {
 
     private var initialized = false
@@ -112,6 +113,8 @@ class FmiSlave(
     private var realBuffer: DoubleArray? = null
     private var booleanBuffer: BooleanArray? = null
     private var stringBuffer: StringArray? = null
+
+    private var realDirectBuffer: ByteBuffer? = null
 
     init {
         component.variablesMarkedForReading.apply {
@@ -195,11 +198,10 @@ class FmiSlave(
         }
     }
 
-    suspend fun asyncRetrieveCachedGets() {
-        withContext(Dispatchers.Default) {
-            retrieveCachedGets()
-        }
-    }
+    private var cachedSetVrBuf: ByteBuffer? = null
+    private var cachedSetValueBuf: ByteBuffer? = null
+    private var cachedGetVrBuf: ByteBuffer? = null
+    private var cachedGetValueBuf: ByteBuffer? = null
 
     fun transferCachedSets(clear: Boolean = true) {
         with(component.integerSetCache) {
@@ -210,7 +212,43 @@ class FmiSlave(
         }
         with(component.realSetCache) {
             if (!isEmpty()) {
-                slave.writeReal(keys.toLongArray(), values.toDoubleArray())
+                val keyArray = keys.toLongArray()
+                val valueArray = values.toDoubleArray()
+                if (slave is DirectAccessor) {
+
+                    val vrBuf = if (cachedSetVrBuf?.capacity() == Long.SIZE_BYTES * keyArray.size) {
+                        cachedSetVrBuf!!
+                    } else {
+                        ByteBuffer.allocateDirect(Long.SIZE_BYTES * keyArray.size).apply {
+                            order(ByteOrder.nativeOrder())
+                        }.also {
+                            cachedSetVrBuf = it
+                        }
+                    }
+                    vrBuf!!.asLongBuffer().apply {
+                        clear()
+                        put(keyArray)
+                    }
+
+                    val valueBuf = if (cachedSetValueBuf?.capacity() == Double.SIZE_BYTES * keyArray.size) {
+                        cachedSetValueBuf!!
+                    } else {
+                        ByteBuffer.allocateDirect(Double.SIZE_BYTES * valueArray.size).apply {
+                            order(ByteOrder.nativeOrder())
+                        }.also {
+                            cachedSetValueBuf = it
+                        }
+                    }
+                    cachedSetValueBuf!!.asDoubleBuffer().apply {
+                        clear()
+                        put(valueArray)
+                    }
+
+                    slave.writeRealDirect(vrBuf, valueBuf)
+                } else {
+                    slave.writeReal(keyArray, valueArray)
+                }
+
                 if (clear) clear()
             }
         }
@@ -225,12 +263,6 @@ class FmiSlave(
                 slave.writeString(keys.toLongArray(), values.toTypedArray())
                 if (clear) clear()
             }
-        }
-    }
-
-    suspend fun asyncTransferCachedSets() {
-        withContext(Dispatchers.Default) {
-            transferCachedSets()
         }
     }
 
