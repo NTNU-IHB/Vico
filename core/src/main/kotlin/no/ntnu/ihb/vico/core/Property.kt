@@ -12,14 +12,22 @@ fun interface ReferenceProvider<E> {
     fun invoke(values: E)
 }
 
+fun interface Getter<E> {
+    fun get(): E
+}
+
+fun interface Setter<E> {
+    fun set(value: E)
+}
+
 enum class PropertyType {
     INT, REAL, STRING, BOOLEAN
 }
 
 open class UnboundProperty(
-    val entityName: String,
-    val componentName: String,
-    val propertyName: String
+        val entityName: String,
+        val componentName: String,
+        val propertyName: String
 ) {
 
     fun bounded(engine: Engine) = BoundProperty(engine, entityName, componentName, propertyName)
@@ -33,7 +41,7 @@ open class UnboundProperty(
             val componentName = split[1]
             val propertyName = split.drop(2).joinToString(".")
             return UnboundProperty(
-                entityName, componentName, propertyName
+                    entityName, componentName, propertyName
             )
         }
 
@@ -42,10 +50,10 @@ open class UnboundProperty(
 }
 
 class BoundProperty(
-    val engine: Engine,
-    entityName: String,
-    componentName: String,
-    propertyName: String
+        val engine: Engine,
+        entityName: String,
+        componentName: String,
+        propertyName: String
 ) : UnboundProperty(entityName, componentName, propertyName) {
 
     val entity by lazy { engine.getEntityByName(entityName) }
@@ -55,11 +63,12 @@ class BoundProperty(
 }
 
 sealed class Property(
-    val name: String,
-    val size: Int
+        val name: String,
+        val size: Int,
+        causality: Causality? = null
 ) {
 
-    abstract val causality: Causality
+    val causality: Causality = causality ?: Causality.LOCAL
 
     val type: PropertyType
         get() = when (this) {
@@ -75,41 +84,68 @@ sealed class Property(
 
 }
 
-abstract class IntProperty(name: String, size: Int) : Property(name, size) {
-    fun read(): IntArray = read(IntArray(size))
-    fun write(value: Int) = write(intArrayOf(value))
+abstract class IntProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+    open fun read(): Int = read(IntArray(size)).first()
+    open fun write(value: Int) = write(intArrayOf(value))
     abstract fun read(values: IntArray): IntArray
     abstract fun write(values: IntArray)
 }
 
-abstract class RealProperty(name: String, size: Int) : Property(name, size) {
-    fun read(): DoubleArray = read(DoubleArray(size))
-    fun write(value: Double) = write(doubleArrayOf(value))
+abstract class RealProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+    open fun read(): Double = read(DoubleArray(size)).first()
+    open fun write(value: Double) = write(doubleArrayOf(value))
     abstract fun read(values: DoubleArray): DoubleArray
     abstract fun write(values: DoubleArray)
 }
 
-abstract class StrProperty(name: String, size: Int) : Property(name, size) {
-    fun read(): StringArray = read(StringArray(size))
-    fun write(value: String) = write(stringArrayOf(value))
+abstract class StrProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+    open fun read(): String = read(StringArray(size)).first()
+    open fun write(value: String) = write(stringArrayOf(value))
     abstract fun read(values: StringArray): StringArray
     abstract fun write(values: StringArray)
 }
 
-abstract class BoolProperty(name: String, size: Int) : Property(name, size) {
-    fun read(): BooleanArray = read(BooleanArray(size))
-    fun write(value: Boolean) = write(booleanArrayOf(value))
+abstract class BoolProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+    open fun read(): Boolean = read(BooleanArray(size)).first()
+    open fun write(value: Boolean) = write(booleanArrayOf(value))
     abstract fun read(values: BooleanArray): BooleanArray
     abstract fun write(values: BooleanArray)
 }
 
+class IntScalarProperty(
+        name: String,
+        private val getter: Getter<Int>,
+        private val setter: Setter<Int>? = null,
+        causality: Causality? = null
+) : IntProperty(name, 1, causality) {
+
+    override fun read(): Int {
+        return getter.get()
+    }
+
+    override fun read(values: IntArray): IntArray {
+        require(size == values.size)
+        return values.also { it[0] = read() }
+    }
+
+    override fun write(value: Int) {
+        setter?.set(value) ?: throw IllegalStateException("No setter defined")
+    }
+
+    override fun write(values: IntArray) {
+        require(size == values.size)
+        write(values.first())
+    }
+
+}
+
 class IntLambdaProperty(
-    name: String,
-    size: Int,
-    private val getter: ReferenceProvider<IntArray>,
-    private val setter: ReferenceProvider<IntArray>? = null,
-    override val causality: Causality = Causality.LOCAL
-) : IntProperty(name, size) {
+        name: String,
+        size: Int,
+        private val getter: ReferenceProvider<IntArray>,
+        private val setter: ReferenceProvider<IntArray>? = null,
+        causality: Causality? = null
+) : IntProperty(name, size, causality) {
 
     override fun read(values: IntArray): IntArray {
         require(size == values.size)
@@ -124,13 +160,40 @@ class IntLambdaProperty(
     }
 }
 
+class RealScalarProperty(
+        name: String,
+        private val getter: Getter<Double>,
+        private val setter: Setter<Double>? = null,
+        causality: Causality? = null
+) : RealProperty(name, 1, causality) {
+
+    override fun read(): Double {
+        return getter.get()
+    }
+
+    override fun read(values: DoubleArray): DoubleArray {
+        require(size == values.size)
+        return values.also { it[0] = read() }
+    }
+
+    override fun write(value: Double) {
+        setter?.set(value) ?: throw IllegalStateException("No setter defined")
+    }
+
+    override fun write(values: DoubleArray) {
+        require(size == values.size)
+        write(values.first())
+    }
+
+}
+
 class RealLambdaProperty(
-    name: String,
-    size: Int,
-    private val getter: ReferenceProvider<DoubleArray>,
-    private val setter: ReferenceProvider<DoubleArray>? = null,
-    override val causality: Causality = Causality.LOCAL
-) : RealProperty(name, size) {
+        name: String,
+        size: Int,
+        private val getter: ReferenceProvider<DoubleArray>,
+        private val setter: ReferenceProvider<DoubleArray>? = null,
+        causality: Causality? = null
+) : RealProperty(name, size, causality) {
 
     override fun read(values: DoubleArray): DoubleArray {
         require(size == values.size)
@@ -147,12 +210,12 @@ class RealLambdaProperty(
 }
 
 class StrLambdaProperty(
-    name: String,
-    size: Int,
-    private val getter: ReferenceProvider<StringArray>,
-    private val setter: ReferenceProvider<StringArray>? = null,
-    override val causality: Causality = Causality.LOCAL
-) : StrProperty(name, size) {
+        name: String,
+        size: Int,
+        private val getter: ReferenceProvider<StringArray>,
+        private val setter: ReferenceProvider<StringArray>? = null,
+        causality: Causality? = null
+) : StrProperty(name, size, causality) {
 
     override fun read(values: StringArray): StringArray {
         require(size == values.size)
@@ -168,13 +231,40 @@ class StrLambdaProperty(
 
 }
 
+class StrScalarProperty(
+        name: String,
+        private val getter: Getter<String>,
+        private val setter: Setter<String>? = null,
+        causality: Causality? = null
+) : StrProperty(name, 1, causality) {
+
+    override fun read(): String {
+        return getter.get()
+    }
+
+    override fun read(values: StringArray): StringArray {
+        require(size == values.size)
+        return values.also { it[0] = read() }
+    }
+
+    override fun write(value: String) {
+        setter?.set(value) ?: throw IllegalStateException("No setter defined")
+    }
+
+    override fun write(values: StringArray) {
+        require(size == values.size)
+        write(values.first())
+    }
+
+}
+
 class BoolLambdaProperty(
-    name: String,
-    size: Int,
-    private val getter: ReferenceProvider<BooleanArray>,
-    private val setter: ReferenceProvider<BooleanArray>? = null,
-    override val causality: Causality = Causality.LOCAL
-) : BoolProperty(name, size) {
+        name: String,
+        size: Int,
+        private val getter: ReferenceProvider<BooleanArray>,
+        private val setter: ReferenceProvider<BooleanArray>? = null,
+        causality: Causality? = null
+) : BoolProperty(name, size, causality) {
 
     override fun read(values: BooleanArray): BooleanArray {
         require(size == values.size)
@@ -186,6 +276,33 @@ class BoolLambdaProperty(
         require(size == values.size)
         if (setter == null) throw IllegalStateException("No setter defined")
         setter.invoke(values)
+    }
+
+}
+
+class BoolScalarProperty(
+        name: String,
+        private val getter: Getter<Boolean>,
+        private val setter: Setter<Boolean>? = null,
+        causality: Causality? = null
+) : BoolProperty(name, 1, causality) {
+
+    override fun read(): Boolean {
+        return getter.get()
+    }
+
+    override fun read(values: BooleanArray): BooleanArray {
+        require(size == values.size)
+        return values.also { it[0] = read() }
+    }
+
+    override fun write(value: Boolean) {
+        setter?.set(value) ?: throw IllegalStateException("No setter defined")
+    }
+
+    override fun write(values: BooleanArray) {
+        require(size == values.size)
+        write(values.first())
     }
 
 }

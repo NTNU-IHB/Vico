@@ -12,9 +12,9 @@ internal class ConnectionTest {
 
         init {
             properties.registerProperties(
-                    RealLambdaProperty("value", 1,
-                            getter = { it[0] = value },
-                            setter = { value = it[0] }
+                    RealScalarProperty("value",
+                            getter = { value },
+                            setter = { value = it }
                     )
             )
         }

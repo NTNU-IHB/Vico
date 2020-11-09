@@ -11,8 +11,8 @@ internal class EntityTest {
 
         init {
             properties.registerProperties(
-                    StrLambdaProperty(VALUE_PROP_NAME, 1,
-                            getter = { it[0] = value })
+                    StrScalarProperty(VALUE_PROP_NAME,
+                            getter = { value })
             )
         }
 
@@ -55,7 +55,7 @@ internal class EntityTest {
         Assertions.assertNotNull(e.getPropertyOrNull(ComponentA.VALUE_PROP_NAME))
 
         val valueProp = e.getStringProperty(ComponentA.VALUE_PROP_NAME)
-        Assertions.assertEquals("Hello", valueProp.read().first())
+        Assertions.assertEquals("Hello", valueProp.read())
 
         Assertions.assertThrows(NoSuchElementException::class.java) {
             e.getIntegerProperty(ComponentA.VALUE_PROP_NAME)

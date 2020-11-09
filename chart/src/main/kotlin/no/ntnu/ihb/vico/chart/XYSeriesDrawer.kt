@@ -71,10 +71,10 @@ class XYSeriesDrawer internal constructor(
                 ?: throw IllegalStateException("No variable named '${h2.variableName}' in entity ${h2.componentName}")
 
             val xProvider = ValueProvider {
-                variable1.read()[0]
+                variable1.read()
             }
             val yProvider = ValueProvider {
-                variable2.read()[0]
+                variable2.read()
             }
             handles[key] = xProvider to yProvider
         }

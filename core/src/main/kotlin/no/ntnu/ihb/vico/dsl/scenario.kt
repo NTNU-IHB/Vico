@@ -119,13 +119,13 @@ open class ActionContext(
         fun inc() {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getIntegerProperty(propertyName)
-            property.write(property.read().first() + 1)
+            property.write(property.read() + 1)
         }
 
         fun dec() {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getIntegerProperty(propertyName)
-            property.write(property.read().first() - 1)
+            property.write(property.read() - 1)
         }
 
         fun set(value: Int) {
@@ -139,13 +139,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getIntegerProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p2.read().first())
+            p1.write(p2.read())
         }
 
         operator fun plusAssign(value: Int) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getIntegerProperty(propertyName)
-            property.write(property.read().first() + value)
+            property.write(property.read() + value)
         }
 
         operator fun plusAssign(value: IntContext) {
@@ -153,13 +153,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write(p1.read().first() + p2.read().first())
+            p1.write(p1.read() + p2.read())
         }
 
         operator fun minusAssign(value: Int) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getIntegerProperty(propertyName)
-            property.write(property.read().first() - value)
+            property.write(property.read() - value)
         }
 
         operator fun minusAssign(value: IntContext) {
@@ -167,13 +167,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getIntegerProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p1.read().first() - p2.read().first())
+            p1.write(p1.read() - p2.read())
         }
 
         operator fun timesAssign(value: Int) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getIntegerProperty(propertyName)
-            property.write(property.read().first() * value)
+            property.write(property.read() * value)
         }
 
         operator fun timesAssign(value: IntContext) {
@@ -181,7 +181,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getIntegerProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p1.read().first() * p2.read().first())
+            p1.write(p1.read() * p2.read())
         }
 
         operator fun timesAssign(value: RealContext) {
@@ -189,13 +189,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getIntegerProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write((p1.read().first() * p2.read().first()).toInt())
+            p1.write((p1.read() * p2.read()).toInt())
         }
 
         operator fun divAssign(value: Int) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getIntegerProperty(propertyName)
-            property.write(property.read().first() / value)
+            property.write(property.read() / value)
         }
 
         operator fun divAssign(value: IntContext) {
@@ -203,7 +203,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getIntegerProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p1.read().first() / p2.read().first())
+            p1.write(p1.read() / p2.read())
         }
 
         operator fun divAssign(value: RealContext) {
@@ -211,7 +211,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getIntegerProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write((p1.read().first() / p2.read().first()).toInt())
+            p1.write((p1.read() / p2.read()).toInt())
         }
 
     }
@@ -231,13 +231,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write(p2.read().first())
+            p1.write(p2.read())
         }
 
         operator fun plusAssign(value: Number) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getRealProperty(propertyName)
-            val originalValue = property.read().first()
+            val originalValue = property.read()
             property.write(originalValue + value.toDouble())
         }
 
@@ -246,7 +246,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p1.read().first() + p2.read().first())
+            p1.write(p1.read() + p2.read())
         }
 
         operator fun plusAssign(value: RealContext) {
@@ -254,13 +254,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write(p1.read().first() + p2.read().first())
+            p1.write(p1.read() + p2.read())
         }
 
         operator fun minusAssign(value: Number) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getRealProperty(propertyName)
-            property.write(property.read().first() - value.toDouble())
+            property.write(property.read() - value.toDouble())
         }
 
         operator fun minusAssign(value: IntContext) {
@@ -268,7 +268,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p1.read().first() - p2.read().first())
+            p1.write(p1.read() - p2.read())
         }
 
         operator fun minusAssign(value: RealContext) {
@@ -276,13 +276,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write(p1.read().first() - p2.read().first())
+            p1.write(p1.read() - p2.read())
         }
 
         operator fun timesAssign(value: Number) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getRealProperty(propertyName)
-            property.write(property.read().first() * value.toDouble())
+            property.write(property.read() * value.toDouble())
         }
 
         operator fun timesAssign(value: IntContext) {
@@ -290,7 +290,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p1.read().first() * p2.read().first())
+            p1.write(p1.read() * p2.read())
         }
 
         operator fun timesAssign(value: RealContext) {
@@ -298,13 +298,13 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write(p1.read().first() * p2.read().first())
+            p1.write(p1.read() * p2.read())
         }
 
         operator fun divAssign(value: Number) {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getRealProperty(propertyName)
-            property.write(property.read().first() / value.toDouble())
+            property.write(property.read() / value.toDouble())
         }
 
         operator fun divAssign(value: IntContext) {
@@ -312,7 +312,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getIntegerProperty(value.propertyName)
-            p1.write(p1.read().first() / p2.read().first())
+            p1.write(p1.read() / p2.read())
         }
 
         operator fun divAssign(value: RealContext) {
@@ -320,7 +320,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getRealProperty(propertyName)
             val p2 = e2.getRealProperty(value.propertyName)
-            p1.write(p1.read().first() / p2.read().first())
+            p1.write(p1.read() / p2.read())
         }
 
     }
@@ -340,7 +340,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getStringProperty(propertyName)
             val p2 = e2.getStringProperty(value.propertyName)
-            p1.write(p2.read().first())
+            p1.write(p2.read())
         }
 
     }
@@ -352,7 +352,7 @@ open class ActionContext(
         operator fun not() {
             val entity = engine.getEntityByName(entityName)
             val property = entity.getBooleanProperty(propertyName)
-            property.write(!property.read().first())
+            property.write(!property.read())
         }
 
         fun set(value: Boolean) {
@@ -366,7 +366,7 @@ open class ActionContext(
             val e2 = engine.getEntityByName(value.entityName)
             val p1 = e1.getBooleanProperty(propertyName)
             val p2 = e2.getBooleanProperty(value.propertyName)
-            p1.write(p2.read().first())
+            p1.write(p2.read())
         }
 
     }
@@ -386,12 +386,12 @@ class WhenContext(
 
     fun int(name: String): Int {
         val p = UnboundProperty.parse(name).bounded(engine)
-        return (p.property as IntProperty).read().first()
+        return (p.property as IntProperty).read()
     }
 
     fun real(name: String): Double {
         val p = UnboundProperty.parse(name).bounded(engine)
-        return (p.property as RealProperty).read().first()
+        return (p.property as RealProperty).read()
     }
 
     infix fun Unit.`do`(action: ActionContext.() -> Unit) {

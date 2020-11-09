@@ -65,46 +65,46 @@ open class SlaveComponent @JvmOverloads constructor(
         val modelVariables = modelDescription.modelVariables
 
         val ints = (modelVariables.integers + modelVariables.enumerations).map { v ->
-            IntLambdaProperty(
-                    v.name, 1,
+            IntScalarProperty(
+                    v.name,
                     getter = {
                         variablesMarkedForReading.add(v.name)
-                        it[0] = integerGetCache[v.valueReference] ?: 0
+                        integerGetCache[v.valueReference] ?: 0
                     },
-                    setter = { integerSetCache[v.valueReference] = it.first() },
+                    setter = { integerSetCache[v.valueReference] = it },
                     causality = v.causality.convert()
             )
         }
         val reals = modelVariables.reals.map { v ->
-            RealLambdaProperty(
-                    v.name, 1,
+            RealScalarProperty(
+                    v.name,
                     getter = {
                         variablesMarkedForReading.add(v.name)
-                        it[0] = realGetCache[v.valueReference] ?: 0.0
+                        realGetCache[v.valueReference] ?: 0.0
                     },
-                    setter = { realSetCache[v.valueReference] = it.first() },
+                    setter = { realSetCache[v.valueReference] = it },
                     causality = v.causality.convert()
             )
         }
         val strings = modelVariables.strings.map { v ->
-            StrLambdaProperty(
-                    v.name, 1,
+            StrScalarProperty(
+                    v.name,
                     getter = {
                         variablesMarkedForReading.add(v.name)
-                        it[0] = stringGetCache[v.valueReference] ?: ""
+                        stringGetCache[v.valueReference] ?: ""
                     },
-                    setter = { stringSetCache[v.valueReference] = it.first() },
+                    setter = { stringSetCache[v.valueReference] = it },
                     causality = v.causality.convert()
             )
         }
         val booleans = modelVariables.booleans.map { v ->
-            BoolLambdaProperty(
-                    v.name, 1,
+            BoolScalarProperty(
+                    v.name,
                     getter = {
                         variablesMarkedForReading.add(v.name)
-                        it[0] = booleanGetCache[v.valueReference] ?: false
+                        booleanGetCache[v.valueReference] ?: false
                     },
-                    setter = { booleanSetCache[v.valueReference] = it.first() },
+                    setter = { booleanSetCache[v.valueReference] = it },
                     causality = v.causality.convert()
             )
         }

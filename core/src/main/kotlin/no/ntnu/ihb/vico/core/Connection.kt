@@ -43,20 +43,40 @@ class ScalarConnection(
 
         when (val v = sourceConnector.property) {
             is IntProperty -> {
-                val read = v.read(intBuffer)
-                sinks.forEach { (it.property as IntProperty).write(read) }
+                if (size == 1) {
+                    val read = v.read()
+                    sinks.forEach { (it.property as IntProperty).write(read) }
+                } else {
+                    val read = v.read(intBuffer)
+                    sinks.forEach { (it.property as IntProperty).write(read) }
+                }
             }
             is RealProperty -> {
-                val read = v.read(realBuffer)
-                sinks.forEach { (it.property as RealProperty).write(read) }
+                if (size == 1) {
+                    val read = v.read()
+                    sinks.forEach { (it.property as RealProperty).write(read) }
+                } else {
+                    val read = v.read(realBuffer)
+                    sinks.forEach { (it.property as RealProperty).write(read) }
+                }
             }
             is StrProperty -> {
-                val read = v.read(stringBuffer)
-                sinks.forEach { (it.property as StrProperty).write(read) }
+                if (size == 1) {
+                    val read = v.read()
+                    sinks.forEach { (it.property as StrProperty).write(read) }
+                } else {
+                    val read = v.read(stringBuffer)
+                    sinks.forEach { (it.property as StrProperty).write(read) }
+                }
             }
             is BoolProperty -> {
-                val read = v.read(booleanBuffer)
-                sinks.forEach { (it.property as BoolProperty).write(read) }
+                if (size == 1) {
+                    val read = v.read()
+                    sinks.forEach { (it.property as BoolProperty).write(read) }
+                } else {
+                    val read = v.read(booleanBuffer)
+                    sinks.forEach { (it.property as BoolProperty).write(read) }
+                }
             }
         }
 
