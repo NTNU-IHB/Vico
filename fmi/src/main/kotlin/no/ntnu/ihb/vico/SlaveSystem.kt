@@ -28,8 +28,8 @@ fun interface SlaveStepCallback {
 
 
 class SlaveSystem @JvmOverloads constructor(
-    algorithm: MasterAlgorithm? = null,
-    private var parameterSet: String? = null
+        algorithm: MasterAlgorithm? = null,
+        private var parameterSet: String? = null
 ) : SimulationSystem(Family.all(SlaveComponent::class.java).build()) {
 
     private val algorithm: MasterAlgorithm = algorithm ?: FixedStepMaster()
@@ -75,7 +75,7 @@ class SlaveSystem @JvmOverloads constructor(
     }
 
     override fun close() {
-        slaves.parallelStream().forEach { slave ->
+        slaves.forEach { slave ->
             slave.terminate()
         }
         slaves.parallelStream().forEach { slave ->
@@ -90,8 +90,8 @@ class SlaveSystem @JvmOverloads constructor(
 }
 
 class FmiSlave(
-    private val slave: SlaveInstance,
-    internal val component: SlaveComponent
+        private val slave: SlaveInstance,
+        internal val component: SlaveComponent
 ) : SlaveInstance by slave {
 
     private var initialized = false
@@ -103,10 +103,15 @@ class FmiSlave(
     private val booleanVariablesToFetch = mutableSetOf<ValueReference>()
     private val stringVariablesToFetch = mutableSetOf<ValueReference>()
 
-    private val integerBuffer by lazy { mutableMapOf<Int, IntArray>() }
-    private val realBuffer by lazy { mutableMapOf<Int, DoubleArray>() }
-    private val booleanBuffer by lazy { mutableMapOf<Int, BooleanArray>() }
-    private val stringBuffer by lazy { mutableMapOf<Int, StringArray>() }
+    private lateinit var intVrs: LongArray
+    private lateinit var realVrs: LongArray
+    private lateinit var booleanVrs: LongArray
+    private lateinit var stringVrs: LongArray
+
+    private var intBuffer: IntArray? = null
+    private var realBuffer: DoubleArray? = null
+    private var booleanBuffer: BooleanArray? = null
+    private var stringBuffer: StringArray? = null
 
     init {
         component.variablesMarkedForReading.apply {
@@ -150,10 +155,8 @@ class FmiSlave(
     fun retrieveCachedGets() {
         if (integerVariablesToFetch.isNotEmpty()) {
             with(component.integerGetCache) {
-                val values = integerBuffer.computeIfAbsent(integerVariablesToFetch.size) {
-                    IntArray(integerVariablesToFetch.size)
-                }
-                val refs = integerVariablesToFetch.toLongArray()
+                val values = getIntBuffer(integerVariablesToFetch.size)
+                val refs = intVrs
                 slave.readInteger(refs, values)
                 for (i in refs.indices) {
                     set(refs[i], values[i])
@@ -162,10 +165,8 @@ class FmiSlave(
         }
         if (realVariablesToFetch.isNotEmpty()) {
             with(component.realGetCache) {
-                val values = realBuffer.computeIfAbsent(realVariablesToFetch.size) {
-                    DoubleArray(realVariablesToFetch.size)
-                }
-                val refs = realVariablesToFetch.toLongArray()
+                val values = getRealBuffer(realVariablesToFetch.size)
+                val refs = realVrs
                 slave.readReal(refs, values)
                 for (i in refs.indices) {
                     set(refs[i], values[i])
@@ -174,10 +175,8 @@ class FmiSlave(
         }
         if (booleanVariablesToFetch.isNotEmpty()) {
             with(component.booleanGetCache) {
-                val values = booleanBuffer.computeIfAbsent(booleanVariablesToFetch.size) {
-                    BooleanArray(booleanVariablesToFetch.size)
-                }
-                val refs = booleanVariablesToFetch.toLongArray()
+                val values = getBooleanBuffer(booleanVariablesToFetch.size)
+                val refs = booleanVrs
                 slave.readBoolean(refs, values)
                 for (i in refs.indices) {
                     set(refs[i], values[i])
@@ -186,10 +185,8 @@ class FmiSlave(
         }
         if (stringVariablesToFetch.isNotEmpty()) {
             with(component.stringGetCache) {
-                val values = stringBuffer.computeIfAbsent(stringVariablesToFetch.size) {
-                    StringArray(stringVariablesToFetch.size)
-                }
-                val refs = stringVariablesToFetch.toLongArray()
+                val values = getStringBuffer(stringVariablesToFetch.size)
+                val refs = stringVrs
                 slave.readString(refs, values)
                 for (i in refs.indices) {
                     set(refs[i], values[i])
@@ -243,10 +240,18 @@ class FmiSlave(
 
         val v: ScalarVariable = modelDescription.modelVariables.getByName(variableName)
         val added = when (v.type) {
-            VariableType.INTEGER, VariableType.ENUMERATION -> integerVariablesToFetch.add(v.valueReference)
-            VariableType.REAL -> realVariablesToFetch.add(v.valueReference)
-            VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference)
-            VariableType.STRING -> stringVariablesToFetch.add(v.valueReference)
+            VariableType.INTEGER, VariableType.ENUMERATION -> integerVariablesToFetch.add(v.valueReference).also {
+                if (it) intVrs = integerVariablesToFetch.toLongArray()
+            }
+            VariableType.REAL -> realVariablesToFetch.add(v.valueReference).also {
+                if (it) realVrs = realVariablesToFetch.toLongArray()
+            }
+            VariableType.BOOLEAN -> booleanVariablesToFetch.add(v.valueReference).also {
+                if (it) booleanVrs = booleanVariablesToFetch.toLongArray()
+            }
+            VariableType.STRING -> stringVariablesToFetch.add(v.valueReference).also {
+                if (it) stringVrs = stringVariablesToFetch.toLongArray()
+            }
         }
         if (added && initialized) {
             when (v.type) {
@@ -268,6 +273,35 @@ class FmiSlave(
         }
 
     }
+
+    private fun getIntBuffer(size: Int): IntArray {
+        if (intBuffer?.size != size) {
+            intBuffer = IntArray(size)
+        }
+        return intBuffer!!
+    }
+
+    private fun getRealBuffer(size: Int): DoubleArray {
+        if (realBuffer?.size != size) {
+            realBuffer = DoubleArray(size)
+        }
+        return realBuffer!!
+    }
+
+    private fun getBooleanBuffer(size: Int): BooleanArray {
+        if (booleanBuffer?.size != size) {
+            booleanBuffer = BooleanArray(size)
+        }
+        return booleanBuffer!!
+    }
+
+    private fun getStringBuffer(size: Int): StringArray {
+        if (stringBuffer?.size != size) {
+            stringBuffer = StringArray(size)
+        }
+        return stringBuffer!!
+    }
+
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(FmiSlave::class.java)

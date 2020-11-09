@@ -13,6 +13,7 @@ import org.w3c.dom.Element
 import java.io.File
 import java.net.URI
 import java.nio.file.Files
+import java.util.stream.Collectors
 import javax.xml.bind.JAXB
 
 private typealias Components = Map<String, Component>
@@ -57,7 +58,7 @@ class SSPLoader @JvmOverloads constructor(
 
         val ssd = JAXB.unmarshal(ssdFile, SystemStructureDescription::class.java)
         val components = parseComponents(ssd)
-        val structure = SystemStructure(ssd.name).apply {
+        return SystemStructure(ssd.name).apply {
             components.values.forEach { component ->
                 addComponent(component)
             }
@@ -65,26 +66,25 @@ class SSPLoader @JvmOverloads constructor(
                 addConnection(connection)
             }
             parseDefaultExperiment(ssd)?.also { defaultExperiment = it }
+        }.also {
+            LOG.info("Loaded SSP config '${ssd.name}'")
         }
-
-        LOG.info("Loaded SSP config '${ssd.name}'")
-        return structure
     }
 
     private fun parseComponents(ssd: SystemStructureDescription): Components {
-        return ssd.system.elements.components.map { c ->
+        return ssd.system.elements.components.parallelStream().map { c ->
             parseComponent(c).also { component ->
                 c.connectors?.connector?.also { sspConnectors ->
                     sspConnectors.forEach { sspConnector ->
                         val connector = when {
                             sspConnector.integer != null -> IntegerConnector(
-                                sspConnector.name,
-                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                                    sspConnector.name,
+                                    ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
                             )
                             sspConnector.real != null -> RealConnector(
-                                sspConnector.name,
-                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase()),
-                                sspConnector.real.unit
+                                    sspConnector.name,
+                                    ConnectorKind.valueOf(sspConnector.kind.toUpperCase()),
+                                    sspConnector.real.unit
                             )
                             sspConnector.boolean != null -> BooleanConnector(
                                 sspConnector.name,
@@ -107,7 +107,7 @@ class SSPLoader @JvmOverloads constructor(
                 }
                 parseParameterBindings(c, component)
             }
-        }.associateBy { it.instanceName }
+        }.collect(Collectors.toList()).associateBy { it.instanceName }
     }
 
     private fun parseParameterBindings(c: TComponent, component: Component) {
@@ -169,14 +169,14 @@ class SSPLoader @JvmOverloads constructor(
         ssd: SystemStructureDescription,
         components: Components
     ): List<Connection<*>> {
-        return ssd.system.connections?.connection?.map { c ->
+        return ssd.system.connections?.connection?.parallelStream()?.map { c ->
 
             val startComponent = components[c.startElement]
-                ?: throw RuntimeException("No component named '${c.endElement}'")
+                    ?: throw RuntimeException("No component named '${c.endElement}'")
             val startConnector = startComponent.getConnector(c.startConnector)
 
             val endComponent = components[c.endElement]
-                ?: throw RuntimeException("No component named '${c.endElement}'")
+                    ?: throw RuntimeException("No component named '${c.endElement}'")
             val endConnector = endComponent.getConnector(c.endConnector)
 
             val startVariable = startComponent.modelDescription.getVariableByName(startConnector.name)
@@ -190,24 +190,24 @@ class SSPLoader @JvmOverloads constructor(
                     endComponent, endVariable as IntegerVariable
                 )
                 VariableType.REAL -> RealConnection(
-                    startComponent, startVariable as RealVariable,
-                    endComponent, endVariable as RealVariable
+                        startComponent, startVariable as RealVariable,
+                        endComponent, endVariable as RealVariable
                 ).also { realConnection ->
                     c.linearTransformation?.also { t ->
                         realConnection.modifier = LinearTransform(t.factor, t.offset)
                     }
                 }
                 VariableType.STRING -> StringConnection(
-                    startComponent, startVariable as StringVariable,
-                    endComponent, endVariable as StringVariable
+                        startComponent, startVariable as StringVariable,
+                        endComponent, endVariable as StringVariable
                 )
                 VariableType.BOOLEAN -> BooleanConnection(
-                    startComponent, startVariable as BooleanVariable,
-                    endComponent, endVariable as BooleanVariable
+                        startComponent, startVariable as BooleanVariable,
+                        endComponent, endVariable as BooleanVariable
                 )
             }
 
-        } ?: emptyList()
+        }?.collect(Collectors.toList()) ?: emptyList()
     }
 
     private fun parseDefaultExperiment(ssd: SystemStructureDescription): DefaultExperiment? {
