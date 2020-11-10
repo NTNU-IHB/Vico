@@ -220,7 +220,7 @@ class ThreektRenderer : AbstractRenderEngine() {
                 }
 
                 val renderer = GLRenderer(window.size)
-                camera = PerspectiveCamera(75, window.aspect, 0.1, 1000).apply {
+                camera = PerspectiveCamera(75, window.aspect, 0.1, 10000).apply {
                     position.set(0f, 0f, 5f)
                 }
                 controls = OrbitControls(camera, window)
