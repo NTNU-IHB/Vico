@@ -114,6 +114,7 @@ class SlaveLoggerSystem(
             val fileName = if (staticFileNames) slave.instanceName else "${slave.instanceName}_$dateFormat"
             this.writer = FileWriter(File(targetDir, "${fileName}.csv")).buffered(bufferSize)
             this.variables = if (variables.isEmpty()) slave.properties.getAllProperties() else variables
+            LOG.info("Logging ${this.variables.size} variables from '${slave.instanceName}'")
         }
 
         fun writeHeader() {
