@@ -5,17 +5,17 @@
 import no.ntnu.ihb.sspgen.dsl.ssp
 import kotlin.math.PI
 
-ssp("gunnerus-trajectory") {
+ssp("gunnerus-trajectory-proxy") {
 
     println("Building SSP '$archiveName'..")
 
-    ssd("KPN Twinship Gunnerus case") {
+    ssd("GunnerusTrajectory") {
 
-        system("gunnerus-trajectory") {
+        system("GunnerusTrajectory") {
 
             elements {
 
-                component("vesselModel", "resources/VesselFmu.fmu") {
+                component("vesselModel", "resources/VesselFmu_fixed-proxy.fmu") {
                     connectors {
                         real("additionalBodyForce[0].force.heave", input)
                         real("additionalBodyForce[0].force.surge", input)
@@ -40,11 +40,6 @@ ssp("gunnerus-trajectory") {
                         real("cgShipMotion.linearVelocity.sway", output)
                         real("cgShipMotion.angularVelocity.yaw", output)
                         real("cgShipMotion.angularDisplacement.yaw", output)
-                    }
-                    parameterBindings {
-                        parameterSet("initialValues") {
-                            string("vesselZipFile", "%fmu%/resources/ShipModel-gunnerus-elongated.zip")
-                        }
                     }
                 }
 
@@ -111,7 +106,7 @@ ssp("gunnerus-trajectory") {
                     }
                 }
 
-                component("powerPlant", "resources/PowerPlant.fmu") {
+                component("powerPlant", "resources/PowerPlant-proxy.fmu") {
                     connectors {
                         real("p1.f[1]", input)
                         real("p1.f[2]", input)
@@ -245,10 +240,25 @@ ssp("gunnerus-trajectory") {
                 "vesselModel.additionalBodyForce[1].pointOfAttackRel2APAndBL.zpos" to "azimuth1.output_z_rel_bl"
             }
 
+            annotations {
+                annotation("org.openmodelica") {
+                    """
+                        <oms:SimulationInformation>
+                            <oms:FixedStepMaster description="oms-ma" stepSize="0.05" absoluteTolerance="0.05" relativeTolerance="0.05" />
+                        </oms:SimulationInformation>
+                    """
+                }
+            }
+
         }
 
         defaultExperiment {
             annotations {
+                annotation("org.openmodelica") {
+                    """
+                        <oms:SimulationInformation resultFile="../results/omsimulator/results.csv" loggingInterval="0.0" bufferSize="8192" signalFilter="" />
+                    """
+                }
                 annotation("com.opensimulationplatform") {
                     """
                         <osp:Algorithm>
@@ -260,15 +270,16 @@ ssp("gunnerus-trajectory") {
         }
 
         namespaces {
+            namespace("oms", "http://openmodelica.org/oms")
             namespace("osp", "http://opensimulationplatform.com/SSP/OSPAnnotations")
         }
 
     }
 
     resources {
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu_fixed-proxy.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant-proxy.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/TrajectoryController.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/WaypointProvider2DOF.fmu")
