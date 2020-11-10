@@ -254,11 +254,11 @@ ssp("gunnerus-trajectory-proxy") {
 
         defaultExperiment {
             annotations {
-                annotation("org.openmodelica") {
+                /*annotation("org.openmodelica") {
                     """
-                        <oms:SimulationInformation resultFile="../results/omsimulator/results.csv" loggingInterval="0.0" bufferSize="8192" signalFilter="" />
+                        <oms:SimulationInformation resultFile="results.csv" loggingInterval="0.0" bufferSize="8192" signalFilter="" />
                     """
-                }
+                }*/
                 annotation("com.opensimulationplatform") {
                     """
                         <osp:Algorithm>
