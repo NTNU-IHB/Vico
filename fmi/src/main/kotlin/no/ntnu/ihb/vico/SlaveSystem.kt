@@ -3,6 +3,7 @@ package no.ntnu.ihb.vico
 import no.ntnu.ihb.fmi4j.*
 import no.ntnu.ihb.fmi4j.importer.DirectAccessor
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import no.ntnu.ihb.vico.core.Entity
@@ -114,7 +115,12 @@ class FmiSlave(
     private var booleanBuffer: BooleanArray? = null
     private var stringBuffer: StringArray? = null
 
-    private var realDirectBuffer: ByteBuffer? = null
+
+    private var cachedSetVrBuf: ByteBuffer? = null
+    private var cachedSetValueBuf: ByteBuffer? = null
+    private var cachedGetVrBuf: ByteBuffer? = null
+    private var cachedGetValueBuf: ByteBuffer? = null
+
 
     init {
         component.variablesMarkedForReading.apply {
@@ -168,12 +174,22 @@ class FmiSlave(
         }
         if (realVariablesToFetch.isNotEmpty()) {
             with(component.realGetCache) {
-                val values = getRealBuffer(realVariablesToFetch.size)
-                val refs = realVrs
-                slave.readReal(refs, values)
-                for (i in refs.indices) {
-                    set(refs[i], values[i])
+                if (slave is DirectAccessor) {
+                    val (refs, values) = getRealDirectBuffer(realVrs)
+                    slave.readRealDirect(refs, values)
+                    val bd = values.asDoubleBuffer()
+                    for (i in realVrs.indices) {
+                        set(realVrs[i], bd.get(i))
+                    }
+                } else {
+                    val values = getRealBuffer(realVariablesToFetch.size)
+                    val refs = realVrs
+                    slave.readReal(refs, values)
+                    for (i in refs.indices) {
+                        set(refs[i], values[i])
+                    }
                 }
+
             }
         }
         if (booleanVariablesToFetch.isNotEmpty()) {
@@ -197,11 +213,6 @@ class FmiSlave(
             }
         }
     }
-
-    private var cachedSetVrBuf: ByteBuffer? = null
-    private var cachedSetValueBuf: ByteBuffer? = null
-    private var cachedGetVrBuf: ByteBuffer? = null
-    private var cachedGetValueBuf: ByteBuffer? = null
 
     fun transferCachedSets(clear: Boolean = true) {
         with(component.integerSetCache) {
@@ -318,6 +329,26 @@ class FmiSlave(
             realBuffer = DoubleArray(size)
         }
         return realBuffer!!
+    }
+
+    private fun getRealDirectBuffer(vrs: ValueReferences): Pair<ByteBuffer, ByteBuffer> {
+        val size = vrs.size
+
+        if (cachedGetValueBuf?.capacity() != size * Double.SIZE_BYTES) {
+            cachedGetValueBuf = ByteBuffer.allocateDirect(size * Double.SIZE_BYTES).apply {
+                order(ByteOrder.nativeOrder())
+            }
+        }
+        if (cachedGetVrBuf?.capacity() != size * Long.SIZE_BYTES) {
+            cachedGetVrBuf = ByteBuffer.allocateDirect(size * Long.SIZE_BYTES).apply {
+                order(ByteOrder.nativeOrder())
+            }
+        }
+        cachedGetVrBuf!!.apply {
+            clear()
+            asLongBuffer().put(vrs)
+        }
+        return cachedGetVrBuf!! to cachedGetValueBuf!!
     }
 
     private fun getBooleanBuffer(size: Int): BooleanArray {
