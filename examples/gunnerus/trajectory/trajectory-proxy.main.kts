@@ -1,6 +1,6 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
 
-@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.3.3")
+@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.3.4")
 
 import no.ntnu.ihb.sspgen.dsl.ssp
 import kotlin.math.PI
@@ -244,7 +244,7 @@ ssp("gunnerus-trajectory-proxy") {
                 annotation("org.openmodelica") {
                     """
                         <oms:SimulationInformation>
-                            <oms:FixedStepMaster description="oms-ma" stepSize="0.05" absoluteTolerance="0.05" relativeTolerance="0.05" />
+                            <oms:FixedStepMaster description="oms-ma" stepSize="0.05" absoluteTolerance="0.000100" relativeTolerance="0.000100" />
                         </oms:SimulationInformation>
                     """
                 }
@@ -254,11 +254,11 @@ ssp("gunnerus-trajectory-proxy") {
 
         defaultExperiment {
             annotations {
-                /*annotation("org.openmodelica") {
+                annotation("org.openmodelica") {
                     """
-                        <oms:SimulationInformation resultFile="results.csv" loggingInterval="0.0" bufferSize="8192" signalFilter="" />
+                        <oms:SimulationInformation resultFile="results.csv" loggingInterval="0.0" bufferSize="32768" signalFilter="" />
                     """
-                }*/
+                }
                 annotation("com.opensimulationplatform") {
                     """
                         <osp:Algorithm>
