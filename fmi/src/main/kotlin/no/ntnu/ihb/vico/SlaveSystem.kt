@@ -30,11 +30,9 @@ fun interface SlaveStepCallback {
 
 
 class SlaveSystem @JvmOverloads constructor(
-    algorithm: MasterAlgorithm? = null,
-    private var parameterSet: String? = null
+        private val algorithm: MasterAlgorithm = FixedStepMaster(),
+        private var parameterSet: String? = null
 ) : SimulationSystem(Family.all(SlaveComponent::class.java).build()) {
-
-    private val algorithm: MasterAlgorithm = algorithm ?: FixedStepMaster()
 
     private val _slaves: MutableMap<Entity, FmiSlave> = mutableMapOf()
     val slaves: Collection<FmiSlave> = _slaves.values

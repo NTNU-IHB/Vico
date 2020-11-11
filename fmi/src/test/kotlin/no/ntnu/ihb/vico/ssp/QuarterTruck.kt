@@ -4,6 +4,7 @@ import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
+import no.ntnu.ihb.vico.master.FixedStepMaster
 import java.io.File
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
@@ -20,7 +21,7 @@ fun main() {
 
     Engine(1e-2).use { engine ->
 
-        structure.apply(engine)
+        structure.apply(engine, FixedStepMaster())
 
         ChartLoader.load(File(sspDir, "ChartConfig.xml")).forEach {
             engine.addSystem(it)

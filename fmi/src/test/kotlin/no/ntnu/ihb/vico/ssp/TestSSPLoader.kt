@@ -5,6 +5,7 @@ import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
+import no.ntnu.ihb.vico.master.FixedStepMaster
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -27,7 +28,7 @@ internal class TestSSPLoader {
         Engine(1e-3).use { engine ->
 
             engine.addSystem(SlaveLoggerSystem(null, resultDir))
-            structure.apply(engine)
+            structure.apply(engine, FixedStepMaster())
 
             engine.runner.apply {
                 runForAndWait(stopTime)
@@ -46,7 +47,7 @@ internal class TestSSPLoader {
         Assertions.assertEquals(10.0, stopTime, 1e-6)
         Engine(1e-3).use { engine ->
 
-            structure.apply(engine, "default")
+            structure.apply(engine, FixedStepMaster(), "default")
 
             engine.init()
 

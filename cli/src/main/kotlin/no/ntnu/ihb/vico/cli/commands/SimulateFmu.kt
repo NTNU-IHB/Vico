@@ -4,6 +4,7 @@ import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
+import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
@@ -133,7 +134,7 @@ class SimulateFmu : Runnable {
                         scenario.applyScenario(engine)
                     }
 
-                    structure.apply(engine)
+                    structure.apply(engine, FixedStepMaster(false))
 
                     relativeVisualConfigPath?.also { configPath ->
                         var config = getConfigPath(fmu, configPath)

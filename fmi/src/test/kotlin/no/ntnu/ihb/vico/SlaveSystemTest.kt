@@ -51,7 +51,7 @@ internal class SlaveSystemTest {
 
         Engine(1e-3).use { engine ->
 
-            SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load().apply(engine)
+            SSPLoader(TestSsp.get("ControlledDriveTrain.ssp")).load().apply(engine, FixedStepMaster(false))
             val resultDir = File("build/results").also {
                 it.deleteRecursively()
                 engine.addSystem(SlaveLoggerSystem(null, it))

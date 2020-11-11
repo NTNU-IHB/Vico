@@ -5,9 +5,9 @@ import no.ntnu.ihb.vico.SlaveStepCallback
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class FixedStepMaster : MasterAlgorithm() {
-
-    var parallel: Boolean = true
+class FixedStepMaster @JvmOverloads constructor(
+        private val parallel: Boolean = true
+) : MasterAlgorithm() {
 
     override fun initialize(currentTime: Double, slaveInitCallback: SlaveInitCallback) {
         slaves.forEach { slave ->

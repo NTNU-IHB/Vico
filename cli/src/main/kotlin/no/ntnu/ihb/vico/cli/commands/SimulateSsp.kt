@@ -4,6 +4,7 @@ import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
+import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.ssp.SSPLoader
@@ -53,6 +54,9 @@ class SimulateSsp : Runnable {
 
     @CommandLine.Option(names = ["--no-log"], description = ["Don't enable variable logging."])
     private var disableLogging = false
+
+    @CommandLine.Option(names = ["--no-parallel"], description = ["Don't enable variable parallel execution (if possible)."])
+    private var noParallel = false
 
     @CommandLine.Option(
             names = ["-chart", "--chartConfig"],
@@ -145,7 +149,8 @@ class SimulateSsp : Runnable {
                         scenario.applyScenario(engine)
                     }
 
-                    structure.apply(engine, parameterSet)
+                    val algorithm = FixedStepMaster(!noParallel)
+                    structure.apply(engine, algorithm, parameterSet)
 
                     relativeVisualConfigPath?.also { configPath ->
                         var config = getConfigPath(loader.ssdFile.parentFile, configPath)

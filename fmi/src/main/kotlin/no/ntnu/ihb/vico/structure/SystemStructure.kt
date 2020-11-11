@@ -4,6 +4,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.core.RealConnector
+import no.ntnu.ihb.vico.master.MasterAlgorithm
 import no.ntnu.ihb.vico.model.SlaveProvider
 
 class SystemStructure @JvmOverloads constructor(
@@ -68,13 +69,13 @@ class SystemStructure @JvmOverloads constructor(
     }
 
     @JvmOverloads
-    fun apply(engine: Engine, parameterSet: String? = null) {
+    fun apply(engine: Engine, algorithm: MasterAlgorithm, parameterSet: String? = null) {
 
         components.forEach { c ->
             engine.createEntity(c.instanceName, c)
         }
 
-        engine.addSystem(SlaveSystem(parameterSet = parameterSet))
+        engine.addSystem(SlaveSystem(algorithm = algorithm, parameterSet = parameterSet))
 
         connections.forEach { c ->
 

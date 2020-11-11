@@ -1,15 +1,15 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.3.1")
+@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.3.4")
 
 import no.ntnu.ihb.sspgen.dsl.ssp
 
-ssp("QuarterTruck2") {
+val stepSize = 1.0 / 1000
+
+ssp("QuarterTruck") {
 
     ssd("QuarterTruck") {
 
-        description = "Quarter-truck co-simulation"
-
-        system("QuarterTruck system") {
+        system("QuarterTruckSystem") {
 
             elements {
                 component("chassis", "resources/chassis.fmu") {
@@ -52,13 +52,45 @@ ssp("QuarterTruck2") {
 
             connections {
 
-                "chassis.p.e" to "wheel.p1.f"
+                "chassis.p.e" to "wheel.p1.e"
                 "wheel.p1.f" to "chassis.p.f"
                 "wheel.p.e" to "ground.p.e"
                 "ground.p.f" to "wheel.p.f"
 
             }
 
+            annotations {
+                annotation("org.openmodelica") {
+                    """
+                        <oms:SimulationInformation>
+                            <oms:FixedStepMaster description="oms-ma" stepSize="$stepSize" absoluteTolerance="0.000100" relativeTolerance="0.000100" />
+                        </oms:SimulationInformation>
+                    """
+                }
+            }
+
+        }
+
+        defaultExperiment {
+            annotations {
+                annotation("org.openmodelica") {
+                    """
+                        <oms:SimulationInformation resultFile="../results/omsimulator/results.mat" loggingInterval="0.0" bufferSize="8192" signalFilter="" />
+                    """
+                }
+                annotation("com.opensimulationplatform") {
+                    """
+                        <osp:Algorithm>
+                            <osp:FixedStepAlgorithm baseStepSize="$stepSize" />
+                        </osp:Algorithm>
+                    """
+                }
+            }
+        }
+
+        namespaces {
+            namespace("oms", "http://openmodelica.org/oms")
+            namespace("osp", "http://opensimulationplatform.com/SSP/OSPAnnotations")
         }
 
     }

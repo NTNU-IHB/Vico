@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico.chart
 
 import no.ntnu.ihb.vico.TestSsp
 import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import java.io.File
 
@@ -18,7 +19,7 @@ internal object TestTimeSeriesChart2 {
 
         Engine(1.0 / 1000).use { engine ->
 
-            SSPLoader(sspFile).load().apply(engine)
+            SSPLoader(sspFile).load().apply(engine, FixedStepMaster(false))
 
             val config = getTestResource("chartconfig/ChartConfig2.xml")
             ChartLoader.load(config).forEach {
