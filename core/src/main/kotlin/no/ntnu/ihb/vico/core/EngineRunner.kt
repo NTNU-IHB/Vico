@@ -73,7 +73,7 @@ class EngineRunner internal constructor(
     fun runUntil(timePoint: Number): Future<Unit> {
         val doubleTimePoint = timePoint.toDouble()
         return runWhile(
-            predicate = { it.currentTime <= doubleTimePoint }
+            predicate = { it.currentTime + engine.baseStepSize < doubleTimePoint }
         )
     }
 
@@ -84,7 +84,7 @@ class EngineRunner internal constructor(
     fun runFor(time: Number): Future<Unit> {
         val doubleTime = time.toDouble()
         return runWhile(
-            predicate = { (it.currentTime + it.startTime) <= doubleTime }
+            predicate = { (it.currentTime + engine.baseStepSize + it.startTime) <= doubleTime }
         )
     }
 
