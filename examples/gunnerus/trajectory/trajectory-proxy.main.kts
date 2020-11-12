@@ -5,6 +5,8 @@
 import no.ntnu.ihb.sspgen.dsl.ssp
 import kotlin.math.PI
 
+val stepSize = 0.05
+
 ssp("gunnerus-trajectory-proxy") {
 
     println("Building SSP '$archiveName'..")
@@ -244,7 +246,7 @@ ssp("gunnerus-trajectory-proxy") {
                 annotation("org.openmodelica") {
                     """
                         <oms:SimulationInformation>
-                            <oms:FixedStepMaster description="oms-ma" stepSize="0.05" absoluteTolerance="0.000100" relativeTolerance="0.000100" />
+                            <oms:FixedStepMaster description="oms-ma" stepSize="$stepSize" absoluteTolerance="0.000100" relativeTolerance="0.000100" />
                         </oms:SimulationInformation>
                     """
                 }
@@ -256,13 +258,13 @@ ssp("gunnerus-trajectory-proxy") {
             annotations {
                 annotation("org.openmodelica") {
                     """
-                        <oms:SimulationInformation resultFile="results.csv" loggingInterval="0.0" bufferSize="32768" signalFilter="" />
+                        <oms:SimulationInformation resultFile="" loggingInterval="0.0" bufferSize="1" signalFilter="" />
                     """
                 }
                 annotation("com.opensimulationplatform") {
                     """
                         <osp:Algorithm>
-                            <osp:FixedStepAlgorithm baseStepSize="0.05" />
+                            <osp:FixedStepAlgorithm baseStepSize="$stepSize" />
                         </osp:Algorithm>
                     """
                 }
