@@ -1,77 +1,79 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
+@file:Repository("https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine")
 
-@file:DependsOn("no.ntnu.ihb.vico:core:0.1.0")
-@file:DependsOn("no.ntnu.ihb.vico:dsl:0.1.0")
-@file:DependsOn("no.ntnu.ihb.vico:fmi:0.1.0")
-@file:DependsOn("no.ntnu.ihb.vico:chart:0.1.0")
-@file:DependsOn("no.ntnu.ihb.vico:jme-render:0.1.0")
+@file:DependsOn("no.ntnu.ihb.vico:core:0.2.0")
+@file:DependsOn("no.ntnu.ihb.vico:fmi:0.2.0")
+@file:DependsOn("no.ntnu.ihb.vico:chart:0.2.0")
+@file:DependsOn("no.ntnu.ihb.vico:jme-render:0.2.0", options = arrayOf("scope=compile,runtime"))
 
+import info.laht.krender.jme.JmeRenderEngine
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.chart.TimeSeriesDrawer
-import no.ntnu.ihb.vico.components.PositionRefComponent
-import no.ntnu.ihb.vico.components.TransformComponent
+import no.ntnu.ihb.vico.components.PositionRef
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.dsl.execution
 import no.ntnu.ihb.vico.log.LogConfigBuilder
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
-import no.ntnu.ihb.vico.math.Vector3d_X
-import no.ntnu.ihb.vico.render.GeometryComponent
-import no.ntnu.ihb.vico.render.jme.JmeRenderSystem
-import no.ntnu.ihb.vico.shapes.BoxShape
-import no.ntnu.ihb.vico.shapes.PlaneShape
+import no.ntnu.ihb.vico.render.Geometry
+import no.ntnu.ihb.vico.render.mesh.BoxMesh
+import no.ntnu.ihb.vico.render.mesh.PlaneMesh
 import no.ntnu.ihb.vico.structure.RealParameter
 import no.ntnu.ihb.vico.systems.PositionRefSystem
-import org.joml.Vector3f
+import org.joml.Matrix4f
 
 execution {
 
     baseStepSize = 1.0 / 100
+    renderer(JmeRenderEngine())
 
     entities {
 
         entity("ground") {
             component(SlaveComponent("ground.fmu", "ground"))
-            component(TransformComponent())
-            component(GeometryComponent(PlaneShape(5f, 2f)).apply {
-                offsetTransform.rotate(-Math.PI / 2, Vector3d_X, offsetTransform)
-            })
+            component(Transform())
+            component(Geometry(PlaneMesh(5f, 2f), Matrix4f().rotateX(-Math.PI.toFloat() / 2f)))
             component {
-                PositionRefComponent(yRef = "zGround")
+                PositionRef(yRef = "zGround")
             }
         }
 
         entity("chassis") {
             component(SlaveComponent("chassis.fmu", "chassis").apply {
                 addParameterSet(
-                    "initialValues",
-                    RealParameter("C.mChassis", 400.0),
-                    RealParameter("C.kChassis", 15000.0),
-                    RealParameter("R.dChassis", 1000.0),
+                        "initialValues",
+                        RealParameter("C.mChassis", 400.0),
+                        RealParameter("C.kChassis", 15000.0),
+                        RealParameter("R.dChassis", 1000.0),
                 )
             })
-            component(TransformComponent())
-            component(GeometryComponent(BoxShape(Vector3f(0.75f, 0.35f, 0.5f))).setColor(0x0000ff))
+            component(Transform())
+            component(Geometry(BoxMesh(0.75f, 0.35f, 0.5f)).apply {
+                color = 0x0000ff
+            })
 
             component {
-                PositionRefComponent(yRef = "zChassis")
+                PositionRef(yRef = "zChassis")
             }
         }
 
         entity("wheel") {
             component(SlaveComponent("wheel.fmu", "wheel").apply {
                 addParameterSet(
-                    "initialValues",
-                    RealParameter("C.mWheel", 40.0),
-                    RealParameter("C.kWheel", 150000.0),
-                    RealParameter("R.dWheel", 0.0),
+                        "initialValues",
+                        RealParameter("C.mWheel", 40.0),
+                        RealParameter("C.kWheel", 150000.0),
+                        RealParameter("R.dWheel", 0.0),
                 )
             })
-            component(TransformComponent())
-            component(GeometryComponent(BoxShape(Vector3f(1f, 0.35f, 0.75f))).setColor(0x0000ff))
+            component(Transform())
+            component(Geometry(BoxMesh(1f, 0.35f, 0.75f)).apply {
+                color = 0x00ff00
+            })
 
             component {
-                PositionRefComponent(yRef = "zWheel")
+                PositionRef(yRef = "zWheel")
             }
         }
 
@@ -97,9 +99,6 @@ execution {
         }
         system {
             PositionRefSystem()
-        }
-        system {
-            JmeRenderSystem()
         }
 
     }
