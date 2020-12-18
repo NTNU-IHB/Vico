@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico.chart
 
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.RealModifier
+import no.ntnu.ihb.vico.util.formatForOutput
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -146,7 +147,7 @@ class TimeSeriesDrawer internal constructor(
         synchronized(mutex) {
             handles.forEach { handle ->
                 val (timeData, yData) = data.getValue(handle.key)
-                timeData.add(currentTime)
+                timeData.add(currentTime.formatForOutput(2).toDouble())
                 yData.add(handle.value.get())
 
                 if (maxDuration != null && timeData.size >= 2) {
