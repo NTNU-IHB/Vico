@@ -15,8 +15,8 @@ class ScenarioContext {
     private val timedActions: MutableList<Pair<Double, (Engine) -> Unit>> = mutableListOf()
     private val predicateActions: MutableList<(Engine) -> PredicateTask> = mutableListOf()
 
-    fun invokeAt(timePoint: Double, action: ActionContext.() -> Unit) {
-        timedActions.add(timePoint to {
+    fun invokeAt(timePoint: Number, action: ActionContext.() -> Unit) {
+        timedActions.add(timePoint.toDouble() to {
             action.invoke(ActionContext(it))
         })
     }
@@ -51,7 +51,7 @@ class ScenarioContext {
 }
 
 open class ActionContext(
-        private val engine: Engine
+    private val engine: Engine
 ) {
 
     fun int(name: String) = IntContext(name)
@@ -103,7 +103,7 @@ open class ActionContext(
     inline fun <reified E : BaseSystem> removeSystem() = removeSystem(E::class.java)
 
     abstract class PropertyContext(
-            name: String
+        name: String
     ) {
 
         private val propertyIdentifier = UnboundProperty.parse(name)
@@ -113,7 +113,7 @@ open class ActionContext(
     }
 
     inner class IntContext internal constructor(
-            name: String
+        name: String
     ) : PropertyContext(name) {
 
         fun inc() {
@@ -217,7 +217,7 @@ open class ActionContext(
     }
 
     inner class RealContext internal constructor(
-            name: String
+        name: String
     ) : PropertyContext(name) {
 
         fun set(value: Number) {
@@ -326,7 +326,7 @@ open class ActionContext(
     }
 
     inner class StringContext internal constructor(
-            name: String
+        name: String
     ) : PropertyContext(name) {
 
         fun set(value: String) {
@@ -346,7 +346,7 @@ open class ActionContext(
     }
 
     inner class BooleanContext internal constructor(
-            name: String
+        name: String
     ) : PropertyContext(name) {
 
         operator fun not() {
@@ -374,7 +374,7 @@ open class ActionContext(
 }
 
 class WhenContext(
-        private val engine: Engine,
+    private val engine: Engine,
 ) {
 
     lateinit var predicate: Predicate<Engine>
