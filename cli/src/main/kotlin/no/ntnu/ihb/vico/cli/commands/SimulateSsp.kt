@@ -17,81 +17,84 @@ import java.io.File
 import kotlin.time.ExperimentalTime
 
 @CommandLine.Command(
-        name = "simulate-ssp",
-        description = ["Simulate a co-simulation system described using SSP"]
+    name = "simulate-ssp",
+    description = ["Simulate a co-simulation system described using SSP"]
 )
 class SimulateSsp : Runnable {
 
     @CommandLine.Option(
-            names = ["-start", "--startTime"],
-            description = ["Time-point at which the simulation should start. Overrides any value specified in the SSP. Defaults to 0.0"]
+        names = ["-start", "--startTime"],
+        description = ["Time-point at which the simulation should start. Overrides any value specified in the SSP. Defaults to 0.0"]
     )
     private var startTime: Double? = null
 
     @CommandLine.Option(
-            names = ["-stop", "--stopTime"],
-            description = ["Time-point at which the simulation should stop. Required if not specified in the SSP. Overrides any value specified in the SSP."]
+        names = ["-stop", "--stopTime"],
+        description = ["Time-point at which the simulation should stop. Required if not specified in the SSP. Overrides any value specified in the SSP."]
     )
     private var stopTime: Double? = null
 
     @CommandLine.Option(
-            names = ["-dt", "--stepSize"],
-            description = ["BaseStepSize for the FixedStepAlgorithm. Required if an algorithm is not specified in the SSP. Overrides any algorithm specified in the SSP."]
+        names = ["-dt", "--stepSize"],
+        description = ["BaseStepSize for the FixedStepAlgorithm. Required if an algorithm is not specified in the SSP. Overrides any algorithm specified in the SSP."]
     )
     private var baseStepSize: Double = -1.0
 
     @CommandLine.Option(
-            names = ["-rtf", "--realTimeFactor"],
-            description = ["Target real time factor of the simulation. Defaults to unbounded."]
+        names = ["-rtf", "--realTimeFactor"],
+        description = ["Target real time factor of the simulation. Defaults to unbounded."]
     )
     private var targetRealtimeFactor: Double? = null
 
     @CommandLine.Option(
-            names = ["-log", "--logConfig"],
-            description = ["Path to a log configuration XML file. Path relative to the .ssd"]
+        names = ["-log", "--logConfig"],
+        description = ["Path to a log configuration XML file. Path relative to the .ssd"]
     )
     private var relativeLogConfigPath: String? = null
 
     @CommandLine.Option(names = ["--no-log"], description = ["Don't enable variable logging."])
     private var disableLogging = false
 
-    @CommandLine.Option(names = ["--no-parallel"], description = ["Don't enable variable parallel execution (if possible)."])
+    @CommandLine.Option(
+        names = ["--no-parallel"],
+        description = ["Don't enable variable parallel execution (if possible)."]
+    )
     private var noParallel = false
 
     @CommandLine.Option(
-            names = ["-chart", "--chartConfig"],
-            description = ["Path to a chart configuration XML file. Path relative to the .ssd"]
+        names = ["-chart", "--chartConfig"],
+        description = ["Path to a chart configuration XML file. Path relative to the .ssd"]
     )
     private var relativeChartConfigPath: String? = null
 
     @CommandLine.Option(
-            names = ["-visual", "--visualConfig"],
-            description = ["Path to a visual configuration XML file. Path relative to the .ssd"]
+        names = ["-visual", "--visualConfig"],
+        description = ["Path to a visual configuration XML file. Path relative to the .ssd"]
     )
     private var relativeVisualConfigPath: String? = null
 
     @CommandLine.Option(
-            names = ["-s", "--scenario"],
-            description = ["Path to a scenario script. Path relative to the .ssd"]
+        names = ["-s", "--scenario"],
+        description = ["Path to a scenario script. Path relative to the .ssd"]
     )
     private var relativeScenarioConfig: String? = null
 
     @CommandLine.Option(
-            names = ["-p", "--parameterSet"],
-            description = ["Name of parameterSet to load"]
+        names = ["-p", "--parameterSet"],
+        description = ["Name of parameterSet to load"]
     )
     private var parameterSet: String? = null
 
     @CommandLine.Option(
-            names = ["-res", "--resultDir"],
-            description = ["Directory to save the generated .csv file(s)"]
+        names = ["-res", "--resultDir"],
+        description = ["Directory to save the generated .csv file(s)"]
     )
     private var resultDir: File = File("results")
 
     @CommandLine.Parameters(
-            arity = "1",
-            paramLabel = "SSP_CONFIG",
-            description = ["Path to a either a .ssp file, a .ssd file or a directory containing a file named SystemStructure.ssd"]
+        arity = "1",
+        paramLabel = "SSP_CONFIG",
+        description = ["Path to a either a .ssp file, a .ssd file or a directory containing a file named SystemStructure.ssd"]
     )
     private lateinit var sspFile: File
 
@@ -115,53 +118,53 @@ class SimulateSsp : Runnable {
         }
 
         Engine.Builder()
-                .startTime(start)
-                .stepSize(baseStepSize)
-                .renderer(renderer)
-                .build().use { engine ->
+            .startTime(start)
+            .stepSize(baseStepSize)
+            .renderer(renderer)
+            .build().use { engine ->
 
-                    if (!disableLogging) {
-                        relativeLogConfigPath?.also { configPath ->
-                            var config = getConfigPath(loader.ssdFile.parentFile, configPath)
-                            if (!config.exists()) config = File(configPath).absoluteFile
-                            if (!config.exists()) throw NoSuchFileException(config)
-                            engine.addSystem(SlaveLoggerSystem(config, resultDir))
-                        } ?: run {
-                            //log all variables
-                            engine.addSystem(SlaveLoggerSystem(null, resultDir))
-                        }
-                    }
-
-                    relativeChartConfigPath?.also { configPath ->
+                if (!disableLogging) {
+                    relativeLogConfigPath?.also { configPath ->
                         var config = getConfigPath(loader.ssdFile.parentFile, configPath)
                         if (!config.exists()) config = File(configPath).absoluteFile
                         if (!config.exists()) throw NoSuchFileException(config)
-                        ChartLoader.load(config).forEach { chart ->
-                            engine.addSystem(chart)
-                        }
+                        engine.addSystem(SlaveLoggerSystem(config, resultDir))
+                    } ?: run {
+                        //log all variables
+                        engine.addSystem(SlaveLoggerSystem(null, resultDir))
                     }
-
-                    relativeScenarioConfig?.also { configPath ->
-                        var config = getConfigPath(loader.ssdFile.parentFile, configPath)
-                        if (!config.exists()) config = File(configPath).absoluteFile
-                        if (!config.exists()) throw NoSuchFileException(config)
-                        val scenario = parseScenario(config) ?: throw RuntimeException("Failed to load scenario!")
-                        scenario.applyScenario(engine)
-                    }
-
-                    val algorithm = FixedStepMaster(!noParallel)
-                    structure.apply(engine, algorithm, parameterSet)
-
-                    relativeVisualConfigPath?.also { configPath ->
-                        var config = getConfigPath(loader.ssdFile.parentFile, configPath)
-                        if (!config.exists()) config = File(configPath).absoluteFile
-                        if (!config.exists()) throw NoSuchFileException(config)
-                        VisualLoader.load(config, engine)
-                    }
-
-                    runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
-
                 }
+
+                relativeChartConfigPath?.also { configPath ->
+                    var config = getConfigPath(loader.ssdFile.parentFile, configPath)
+                    if (!config.exists()) config = File(configPath).absoluteFile
+                    if (!config.exists()) throw NoSuchFileException(config)
+                    ChartLoader.load(config).forEach { chart ->
+                        engine.addSystem(chart)
+                    }
+                }
+
+                val algorithm = FixedStepMaster(!noParallel)
+                structure.apply(engine, algorithm, parameterSet)
+
+                relativeScenarioConfig?.also { configPath ->
+                    var config = getConfigPath(loader.ssdFile.parentFile, configPath)
+                    if (!config.exists()) config = File(configPath).absoluteFile
+                    if (!config.exists()) throw NoSuchFileException(config)
+                    val scenario = parseScenario(config) ?: throw RuntimeException("Failed to load scenario!")
+                    scenario.applyScenario(engine)
+                }
+
+                relativeVisualConfigPath?.also { configPath ->
+                    var config = getConfigPath(loader.ssdFile.parentFile, configPath)
+                    if (!config.exists()) config = File(configPath).absoluteFile
+                    if (!config.exists()) throw NoSuchFileException(config)
+                    VisualLoader.load(config, engine)
+                }
+
+                runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
+
+            }
 
     }
 
