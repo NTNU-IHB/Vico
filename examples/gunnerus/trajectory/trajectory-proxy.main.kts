@@ -1,6 +1,6 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
 
-@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.3.4")
+@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.4.1")
 
 import no.ntnu.ihb.sspgen.dsl.ssp
 import kotlin.math.PI
@@ -8,6 +8,15 @@ import kotlin.math.PI
 ssp("gunnerus-trajectory-proxy") {
 
     println("Building SSP '$archiveName'..")
+
+    resources {
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu_fixed-proxy.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant-proxy.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/TrajectoryController.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/WaypointProvider2DOF.fmu")
+    }
 
     ssd("GunnerusTrajectory") {
 
@@ -274,15 +283,6 @@ ssp("gunnerus-trajectory-proxy") {
             namespace("osp", "http://opensimulationplatform.com/SSP/OSPAnnotations")
         }
 
-    }
-
-    resources {
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu_fixed-proxy.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant-proxy.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/TrajectoryController.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/WaypointProvider2DOF.fmu")
     }
 
 }.build().also { println("Done") }
