@@ -22,9 +22,11 @@ what an entity represents and which entities a system acts on is highly dynamic.
 
 Support for FMI 1.0 & 2.0 for co-simulation and SSP 1.0 is provided by the __fmi__ module. 
 
-More specifically this module adds a _SlaveSystem_ that represents a collection of fmus to be simulated together. The SlaveSystem requires an instance of a class implementing the interface _MasterAlgorithm_, which represents an FMI master algorithm. A ready to use _FixedStepMaster_ is provided by the module.
+More specifically this module adds a _SlaveSystem_ that represents a collection of fmus to be simulated together. The
+SlaveSystem requires an instance of a class implementing the interface _MasterAlgorithm_, which represents an FMI master
+algorithm. A ready to use _FixedStepMaster_ is provided by the module.
 
-Optional distributed execution of fmus is possible by means of [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy).
+Distributed execution of FMUs is possible by means of [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy).
 
 #### Time-series and XY charts
 
@@ -42,7 +44,6 @@ An implementation of a physics engine, relying on Bullet, is provided by the __b
 
 ### Command line interface
 ````bash
-
 Usage: vico [-h] [COMMAND]
   -h, --help   display a help message
 Commands:
@@ -53,16 +54,19 @@ To see the input arguments for the sub-commands, run the respective command prov
 
 ### Scripting
 
-[kts](https://github.com/markaren/kts) can be used to run arbitrary Kotlin code with maven dependencies, 
-which means that you may use Vico as a dependency in your script. 
+[kts](https://github.com/markaren/kts) can be used to run arbitrary Kotlin code with maven dependencies, which means
+that you may use Vico as a dependency in your script.
 
 ### How to build
+
 Simple execute `./gradlew build` in a shell. The CLI will be located under `cli/build/install`. <br>
 To publish the library to your local maven installation, execute `./gradlew pulishToMavenLocal`.
 
 ### Development
-As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is the recommended IDE for development. 
-JDK8 is required.
+
+As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is the recommended IDE for development.
+
+Currently, JDK8 is required.
 
 
 > Want to simplify the creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
