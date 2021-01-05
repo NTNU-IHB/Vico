@@ -1,11 +1,17 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.3.4")
+@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.4.1")
 
 import no.ntnu.ihb.sspgen.dsl.ssp
 
 val stepSize = 1.0 / 1000
 
 ssp("QuarterTruck") {
+
+    resources {
+        file("fmus/chassis.fmu")
+        file("fmus/wheel.fmu")
+        file("fmus/ground.fmu")
+    }
 
     ssd("QuarterTruck") {
 
@@ -93,12 +99,6 @@ ssp("QuarterTruck") {
             namespace("osp", "http://opensimulationplatform.com/SSP/OSPAnnotations")
         }
 
-    }
-
-    resources {
-        file("fmus/chassis.fmu")
-        file("fmus/wheel.fmu")
-        file("fmus/ground.fmu")
     }
 
 }.build()
