@@ -102,270 +102,210 @@ open class ActionContext(
 
     inline fun <reified E : BaseSystem> removeSystem() = removeSystem(E::class.java)
 
-    abstract class PropertyContext(
-        name: String
-    ) {
-
-        private val propertyIdentifier = UnboundProperty.parse(name)
-        val entityName = propertyIdentifier.entityName
-        val propertyName = propertyIdentifier.propertyName
-
-    }
 
     inner class IntContext internal constructor(
-        name: String
-    ) : PropertyContext(name) {
+        val name: String
+    ) {
 
         fun inc() {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getIntegerProperty(propertyName)
+            val property = PropertyLocator(engine).getIntegerProperty(name)
             property.write(property.read() + 1)
         }
 
         fun dec() {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getIntegerProperty(propertyName)
+            val property = PropertyLocator(engine).getIntegerProperty(name)
             property.write(property.read() - 1)
         }
 
         fun set(value: Int) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getIntegerProperty(propertyName)
+            val property = PropertyLocator(engine).getIntegerProperty(name)
             property.write(value)
         }
 
         fun set(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getIntegerProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getIntegerProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p2.read())
         }
 
         operator fun plusAssign(value: Int) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getIntegerProperty(propertyName)
+            val property = PropertyLocator(engine).getIntegerProperty(name)
             property.write(property.read() + value)
         }
 
         operator fun plusAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getIntegerProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() + p2.read())
         }
 
         operator fun minusAssign(value: Int) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getIntegerProperty(propertyName)
+            val property = PropertyLocator(engine).getIntegerProperty(name)
             property.write(property.read() - value)
         }
 
         operator fun minusAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getIntegerProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getIntegerProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() - p2.read())
         }
 
         operator fun timesAssign(value: Int) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getIntegerProperty(propertyName)
+            val property = PropertyLocator(engine).getIntegerProperty(name)
             property.write(property.read() * value)
         }
 
         operator fun timesAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getIntegerProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getIntegerProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() * p2.read())
         }
 
         operator fun timesAssign(value: RealContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getIntegerProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getIntegerProperty(name)
+            val p2 = PropertyLocator(engine).getRealProperty(value.name)
             p1.write((p1.read() * p2.read()).toInt())
         }
 
         operator fun divAssign(value: Int) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getIntegerProperty(propertyName)
+            val property = PropertyLocator(engine).getIntegerProperty(name)
             property.write(property.read() / value)
         }
 
         operator fun divAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getIntegerProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getIntegerProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() / p2.read())
         }
 
         operator fun divAssign(value: RealContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getIntegerProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getIntegerProperty(name)
+            val p2 = PropertyLocator(engine).getRealProperty(value.name)
             p1.write((p1.read() / p2.read()).toInt())
         }
 
     }
 
     inner class RealContext internal constructor(
-        name: String
-    ) : PropertyContext(name) {
+        val name: String
+    ) {
 
         fun set(value: Number) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getRealProperty(propertyName)
+            val property = PropertyLocator(engine).getRealProperty(name)
             property.write(value.toDouble())
         }
 
         fun set(value: RealContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getRealProperty(value.name)
             p1.write(p2.read())
         }
 
         operator fun plusAssign(value: Number) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getRealProperty(propertyName)
+            val property = PropertyLocator(engine).getRealProperty(name)
             val originalValue = property.read()
             property.write(originalValue + value.toDouble())
         }
 
         operator fun plusAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() + p2.read())
         }
 
         operator fun plusAssign(value: RealContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getRealProperty(value.name)
             p1.write(p1.read() + p2.read())
         }
 
         operator fun minusAssign(value: Number) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getRealProperty(propertyName)
+            val property = PropertyLocator(engine).getRealProperty(name)
             property.write(property.read() - value.toDouble())
         }
 
         operator fun minusAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() - p2.read())
         }
 
         operator fun minusAssign(value: RealContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getRealProperty(value.name)
             p1.write(p1.read() - p2.read())
         }
 
         operator fun timesAssign(value: Number) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getRealProperty(propertyName)
+            val property = PropertyLocator(engine).getRealProperty(name)
             property.write(property.read() * value.toDouble())
         }
 
         operator fun timesAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() * p2.read())
         }
 
         operator fun timesAssign(value: RealContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getRealProperty(value.name)
             p1.write(p1.read() * p2.read())
         }
 
         operator fun divAssign(value: Number) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getRealProperty(propertyName)
+            val property = PropertyLocator(engine).getRealProperty(name)
             property.write(property.read() / value.toDouble())
         }
 
         operator fun divAssign(value: IntContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getIntegerProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getIntegerProperty(value.name)
             p1.write(p1.read() / p2.read())
         }
 
         operator fun divAssign(value: RealContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getRealProperty(propertyName)
-            val p2 = e2.getRealProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getRealProperty(name)
+            val p2 = PropertyLocator(engine).getRealProperty(value.name)
             p1.write(p1.read() / p2.read())
         }
 
     }
 
     inner class StringContext internal constructor(
-        name: String
-    ) : PropertyContext(name) {
+        val name: String
+    ) {
 
         fun set(value: String) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getStringProperty(propertyName)
+            val property = PropertyLocator(engine).getStringProperty(name)
             property.write(value)
         }
 
         fun set(value: StringContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getStringProperty(propertyName)
-            val p2 = e2.getStringProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getStringProperty(name)
+            val p2 = PropertyLocator(engine).getStringProperty(value.name)
             p1.write(p2.read())
         }
 
     }
 
     inner class BooleanContext internal constructor(
-        name: String
-    ) : PropertyContext(name) {
+        val name: String
+    ) {
 
         operator fun not() {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getBooleanProperty(propertyName)
+            val property = PropertyLocator(engine).getBooleanProperty(name)
             property.write(!property.read())
         }
 
         fun set(value: Boolean) {
-            val entity = engine.getEntityByName(entityName)
-            val property = entity.getBooleanProperty(propertyName)
+            val property = PropertyLocator(engine).getBooleanProperty(name)
             property.write(value)
         }
 
         fun set(value: BooleanContext) {
-            val e1 = engine.getEntityByName(entityName)
-            val e2 = engine.getEntityByName(value.entityName)
-            val p1 = e1.getBooleanProperty(propertyName)
-            val p2 = e2.getBooleanProperty(value.propertyName)
+            val p1 = PropertyLocator(engine).getBooleanProperty(name)
+            val p2 = PropertyLocator(engine).getBooleanProperty(value.name)
             p1.write(p2.read())
         }
 
@@ -385,13 +325,18 @@ class WhenContext(
     }
 
     fun int(name: String): Int {
-        val p = UnboundProperty.parse(name).bounded(engine)
-        return (p.property as IntProperty).read()
+        val p = PropertyLocator(engine).getIntegerProperty(name)
+        return p.read()
     }
 
     fun real(name: String): Double {
-        val p = UnboundProperty.parse(name).bounded(engine)
-        return (p.property as RealProperty).read()
+        val p = PropertyLocator(engine).getRealProperty(name)
+        return p.read()
+    }
+
+    fun bool(name: String): Boolean {
+        val p = PropertyLocator(engine).getBooleanProperty(name)
+        return p.read()
     }
 
     infix fun Unit.`do`(action: ActionContext.() -> Unit) {

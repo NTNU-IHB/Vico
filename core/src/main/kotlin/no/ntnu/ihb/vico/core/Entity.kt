@@ -126,7 +126,11 @@ open class Entity private constructor(
             properties.map { it.name }
         }
         return getPropertyOrNull(name)
-                ?: throw NoSuchElementException("Could not find property named '$name'. Registered properties are $properties")
+            ?: throw NoSuchElementException("Could not find property named '$name'. Registered properties are $properties")
+    }
+
+    internal fun getAllPropertiesNamed(name: String): List<Property> {
+        return properties.filter { it.name == name }
     }
 
     fun getPropertyOrNull(name: String): Property? {

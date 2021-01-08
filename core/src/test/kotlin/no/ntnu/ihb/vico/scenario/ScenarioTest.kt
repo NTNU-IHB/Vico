@@ -38,7 +38,7 @@ internal class ScenarioTest {
     private val scenario = scenario {
 
         invokeAt(1.0) {
-            real("e1.testComponent1.value") *= real("e2.testComponent2.value")
+            real("e1.testComponent1.value") *= real("e2.value")
         }
 
         invokeAt(2.0) {
@@ -47,7 +47,7 @@ internal class ScenarioTest {
 
         invokeWhen {
             predicate {
-                real("e1.testComponent1.value") == 3.0
+                real("e1.value") == 3.0
             }.`do` {
                 real("e1.testComponent1.value").set(99)
             }
