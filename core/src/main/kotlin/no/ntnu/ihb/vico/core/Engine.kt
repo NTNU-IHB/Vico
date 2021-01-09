@@ -3,6 +3,7 @@ package no.ntnu.ihb.vico.core
 import no.ntnu.ihb.vico.input.InputAccess
 import no.ntnu.ihb.vico.input.InputManager
 import no.ntnu.ihb.vico.input.KeyStroke
+import no.ntnu.ihb.vico.math.doublesAreEqual
 import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.util.PredicateTask
 import org.slf4j.Logger
@@ -115,7 +116,12 @@ class Engine private constructor(
                 )
             }
         }
-        while (doubleTimePoint > currentTime && !closed.get()) {
+        while (doubleTimePoint > currentTime && !doublesAreEqual(
+                doubleTimePoint,
+                currentTime,
+                baseStepSize / 2
+            ) && !closed.get()
+        ) {
             step()
         }
     }
@@ -186,7 +192,13 @@ class Engine private constructor(
         invokeWhen(object : PredicateTask {
 
             override fun test(it: Engine): Boolean {
-                return it.currentTime >= timePoint
+
+                return doublesAreEqual(it.currentTime, timePoint, baseStepSize / 5).also { predicateIsTrue ->
+                    if (predicateIsTrue) {
+                        println("Task invoked at ${it.currentTime}")
+                    }
+                }
+
             }
 
             override fun run() {
@@ -196,17 +208,7 @@ class Engine private constructor(
     }
 
     fun invokeIn(t: Double, task: Runnable) {
-        val timeStamp = currentTime
-        invokeWhen(object : PredicateTask {
-
-            override fun test(it: Engine): Boolean {
-                return it.currentTime >= timeStamp + t
-            }
-
-            override fun run() {
-                task.run()
-            }
-        })
+        return invokeAt(currentTime + t, task)
     }
 
     fun invokeWhen(predicateTask: PredicateTask) {

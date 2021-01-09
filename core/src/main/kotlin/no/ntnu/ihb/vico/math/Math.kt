@@ -77,3 +77,12 @@ fun transposeMatrix4Array(te: DoubleArray): DoubleArray {
 
     return te
 }
+
+fun doublesAreEqual(value1: Double, value2: Double): Boolean {
+    return java.lang.Double.doubleToLongBits(value1) == java.lang.Double.doubleToLongBits(value2)
+}
+
+fun doublesAreEqual(value1: Double, value2: Double, delta: Double): Boolean {
+    require((!delta.isNaN() || delta < 0.0)) { "Illegal delta value: $delta" }
+    return doublesAreEqual(value1, value2) || abs(value1 - value2) <= delta
+}

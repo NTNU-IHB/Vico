@@ -41,7 +41,7 @@ internal class ScenarioTest {
             real("e1.testComponent1.value") *= real("e2.value")
         }
 
-        invokeAt(2.0) {
+        invokeAt(50.0) {
             real("e1.testComponent1.value").set(3.0)
         }
 
@@ -58,7 +58,7 @@ internal class ScenarioTest {
     @Test
     fun testScenarioDsl() {
 
-        val engine = Engine()
+        val engine = Engine(baseStepSize = 0.05)
         val e1 = engine.createEntity("e1", TestComponent1())
         engine.createEntity("e2", TestComponent2())
 
@@ -67,7 +67,7 @@ internal class ScenarioTest {
         engine.stepUntil(1.0)
         Assertions.assertEquals(2.0 * 3.0, e1.get<TestComponent1>().value, 1e-6)
 
-        engine.stepUntil(2.0)
+        engine.stepUntil(55.0)
         Assertions.assertEquals(99.0, e1.get<TestComponent1>().value, 1e-6)
 
     }
