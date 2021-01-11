@@ -93,7 +93,9 @@ open class Entity private constructor(
     }
 
     fun getOrNull(componentName: String): Component? {
-        return componentMap.values.firstOrNull { it.name == componentName }
+        return componentMap.values.firstOrNull {
+            it.componentName == componentName
+        }
     }
 
     fun get(componentName: String): Component {
