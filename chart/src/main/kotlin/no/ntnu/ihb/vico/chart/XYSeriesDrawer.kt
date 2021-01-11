@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.chart
 
+import no.ntnu.ihb.vico.core.Engine
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -59,7 +60,7 @@ class XYSeriesDrawer internal constructor(
 
     }
 
-    override fun init(currentTime: Double) {
+    override fun init(engine: Engine) {
 
         seriesInfos.forEach { (key, value) ->
 
@@ -82,7 +83,7 @@ class XYSeriesDrawer internal constructor(
         handles.forEach { handle ->
             data[handle.key] = mutableListOf<Double>() to mutableListOf()
         }
-        super.init(currentTime)
+        super.init(engine)
     }
 
     override fun updateData(currentTime: Double) {

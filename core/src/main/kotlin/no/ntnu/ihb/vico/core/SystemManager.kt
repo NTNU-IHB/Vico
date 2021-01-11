@@ -31,10 +31,10 @@ class SystemManager internal constructor() : Closeable {
             )
     }
 
-    fun initialize(currentTime: Double) {
+    fun initialize(engine: Engine) {
         systems.forEach { system ->
             LOG.debug("Initializing system ${system::class.java}")
-            system.initialize(currentTime)
+            system.initialize(engine)
         }
         systems.forEach { system ->
             system.postInit()

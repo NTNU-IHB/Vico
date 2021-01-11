@@ -78,13 +78,13 @@ class SSPLoader @JvmOverloads constructor(
                     sspConnectors.forEach { sspConnector ->
                         val connector = when {
                             sspConnector.integer != null -> IntegerConnector(
-                                    sspConnector.name,
-                                    ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                                sspConnector.name,
+                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
                             )
                             sspConnector.real != null -> RealConnector(
-                                    sspConnector.name,
-                                    ConnectorKind.valueOf(sspConnector.kind.toUpperCase()),
-                                    sspConnector.real.unit
+                                sspConnector.name,
+                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase()),
+                                sspConnector.real.unit
                             )
                             sspConnector.boolean != null -> BooleanConnector(
                                 sspConnector.name,
@@ -154,7 +154,7 @@ class SSPLoader @JvmOverloads constructor(
                 VICO_NAMESPACE, OSP_NAMESPACE -> {
                     val elem = annotation.any as Element
                     when (elem.nodeName) {
-                        "vico:StepSizeHint, osp:StepSizeHint" -> {
+                        "vico:StepSizeHint", "osp:StepSizeHint" -> {
                             stepSizeHint = elem.getAttribute("value").toDoubleOrNull()
                         }
                     }
@@ -172,11 +172,11 @@ class SSPLoader @JvmOverloads constructor(
         return ssd.system.connections?.connection?.parallelStream()?.map { c ->
 
             val startComponent = components[c.startElement]
-                    ?: throw RuntimeException("No component named '${c.endElement}'")
+                ?: throw RuntimeException("No component named '${c.endElement}'")
             val startConnector = startComponent.getConnector(c.startConnector)
 
             val endComponent = components[c.endElement]
-                    ?: throw RuntimeException("No component named '${c.endElement}'")
+                ?: throw RuntimeException("No component named '${c.endElement}'")
             val endConnector = endComponent.getConnector(c.endConnector)
 
             val startVariable = startComponent.modelDescription.getVariableByName(startConnector.name)
@@ -190,20 +190,20 @@ class SSPLoader @JvmOverloads constructor(
                     endComponent, endVariable as IntegerVariable
                 )
                 VariableType.REAL -> RealConnection(
-                        startComponent, startVariable as RealVariable,
-                        endComponent, endVariable as RealVariable
+                    startComponent, startVariable as RealVariable,
+                    endComponent, endVariable as RealVariable
                 ).also { realConnection ->
                     c.linearTransformation?.also { t ->
                         realConnection.modifier = LinearTransform(t.factor, t.offset)
                     }
                 }
                 VariableType.STRING -> StringConnection(
-                        startComponent, startVariable as StringVariable,
-                        endComponent, endVariable as StringVariable
+                    startComponent, startVariable as StringVariable,
+                    endComponent, endVariable as StringVariable
                 )
                 VariableType.BOOLEAN -> BooleanConnection(
-                        startComponent, startVariable as BooleanVariable,
-                        endComponent, endVariable as BooleanVariable
+                    startComponent, startVariable as BooleanVariable,
+                    endComponent, endVariable as BooleanVariable
                 )
             }
 

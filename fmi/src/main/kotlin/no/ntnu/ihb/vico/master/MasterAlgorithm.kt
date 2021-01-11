@@ -3,6 +3,7 @@ package no.ntnu.ihb.vico.master
 import no.ntnu.ihb.vico.FmiSlave
 import no.ntnu.ihb.vico.SlaveInitCallback
 import no.ntnu.ihb.vico.SlaveStepCallback
+import no.ntnu.ihb.vico.core.Engine
 
 abstract class MasterAlgorithm {
 
@@ -13,12 +14,12 @@ abstract class MasterAlgorithm {
 
     internal open fun slaveRemoved(slave: FmiSlave) {}
 
-    fun init(currentTime: Double, slaves: Collection<FmiSlave>, slaveInitCallback: SlaveInitCallback) {
+    fun init(engine: Engine, slaves: Collection<FmiSlave>, slaveInitCallback: SlaveInitCallback) {
         this.slaves = slaves
-        initialize(currentTime, slaveInitCallback)
+        initialize(engine, slaveInitCallback)
     }
 
-    abstract fun initialize(currentTime: Double, slaveInitCallback: SlaveInitCallback)
+    abstract fun initialize(engine: Engine, slaveInitCallback: SlaveInitCallback)
 
     abstract fun step(
         currentTime: Double,

@@ -71,7 +71,7 @@ class Engine private constructor(
 
     fun init() {
         if (!initialized.getAndSet(true)) {
-            systemManager.initialize(currentTime)
+            systemManager.initialize(this)
             connectionManager.update()
         }
         digestQueue()

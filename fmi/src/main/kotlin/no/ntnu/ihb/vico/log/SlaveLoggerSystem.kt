@@ -74,9 +74,9 @@ class SlaveLoggerSystem(
         }
     }
 
-    override fun init(currentTime: Double) {
+    override fun init(engine: Engine) {
         loggers.values.forEach { logger ->
-            logger.writeLine(currentTime)
+            logger.writeLine(engine.currentTime)
         }
     }
 

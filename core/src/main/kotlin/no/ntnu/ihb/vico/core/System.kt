@@ -31,12 +31,12 @@ sealed class BaseSystem(
         assignedToEngine(engine)
     }
 
-    internal fun initialize(currentTime: Double) {
+    internal fun initialize(engine: Engine) {
         check(!initialized) {
             "System already initialized!"
         }
 
-        init(currentTime)
+        init(engine)
         initialized = true
     }
 
@@ -48,7 +48,7 @@ sealed class BaseSystem(
 
     override fun entityRemoved(entity: Entity) {}
 
-    protected open fun init(currentTime: Double) {}
+    protected open fun init(engine: Engine) {}
 
     open fun postInit() {}
 

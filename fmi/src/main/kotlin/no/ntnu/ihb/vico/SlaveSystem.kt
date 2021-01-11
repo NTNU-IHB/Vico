@@ -6,10 +6,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
-import no.ntnu.ihb.vico.core.Entity
-import no.ntnu.ihb.vico.core.Family
-import no.ntnu.ihb.vico.core.Properties
-import no.ntnu.ihb.vico.core.SimulationSystem
+import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.master.MasterAlgorithm
 import no.ntnu.ihb.vico.util.ElementObserver
@@ -62,8 +59,8 @@ class SlaveSystem @JvmOverloads constructor(
         slave.close()
     }
 
-    override fun init(currentTime: Double) {
-        algorithm.init(currentTime, slaves) { slave ->
+    override fun init(engine: Engine) {
+        algorithm.init(engine, slaves) { slave ->
             engine.updateConnection(slave.component)
         }
     }
