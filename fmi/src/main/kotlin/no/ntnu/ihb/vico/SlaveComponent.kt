@@ -28,8 +28,8 @@ open class SlaveComponent @JvmOverloads constructor(
     val modelDescription: CoSimulationModelDescription
         get() = slaveProvider.modelDescription
 
-    override val name: String
-        get() = instanceName
+    override val componentName: String
+        get() = "slaveComponent"
 
     val variablesMarkedForReading: ObservableSet<String> = ObservableSet(mutableSetOf())
 

@@ -5,7 +5,7 @@ typealias ComponentClass = Class<out Component>
 
 interface Component {
 
-    val name: String
+    val componentName: String
         get() = javaClass.simpleName.decapitalize()
 
     val properties: PropertyAccessor
