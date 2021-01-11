@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.chart
 
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.RealModifier
 import no.ntnu.ihb.vico.util.formatForOutput
@@ -136,11 +137,11 @@ class TimeSeriesDrawer internal constructor(
 
     }
 
-    override fun init(currentTime: Double) {
+    override fun init(engine: Engine) {
         handles.forEach { handle ->
             data[handle.key] = mutableListOf<Double>() to mutableListOf()
         }
-        super.init(currentTime)
+        super.init(engine)
     }
 
     override fun updateData(currentTime: Double) {

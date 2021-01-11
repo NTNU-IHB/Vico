@@ -2,6 +2,7 @@
 <ssd:SystemStructureDescription xmlns:ssc="http://ssp-standard.org/SSP1/SystemStructureCommon"
                                 xmlns:ssd="http://ssp-standard.org/SSP1/SystemStructureDescription"
                                 xmlns:ssv="http://ssp-standard.org/SSP1/SystemStructureParameterValues"
+                                xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VicoAnnotations"
                                 name="QuarterTruck"
                                 version="1.0">
 
@@ -81,6 +82,11 @@
                         <ssc:Real/>
                     </ssd:Connector>
                 </ssd:Connectors>
+                <ssd:Annotations>
+                    <ssc:Annotation type="com.github.ntnu-ihb.vico">
+                        <vico:StepSizeHint value="0.001"/>
+                    </ssc:Annotation>
+                </ssd:Annotations>
             </ssd:Component>
         </ssd:Elements>
 

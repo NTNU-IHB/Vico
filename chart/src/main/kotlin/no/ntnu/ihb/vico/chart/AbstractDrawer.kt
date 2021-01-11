@@ -1,9 +1,6 @@
 package no.ntnu.ihb.vico.chart
 
-import no.ntnu.ihb.vico.core.Event
-import no.ntnu.ihb.vico.core.EventSystem
-import no.ntnu.ihb.vico.core.Family
-import no.ntnu.ihb.vico.core.Properties
+import no.ntnu.ihb.vico.core.*
 import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -61,8 +58,8 @@ abstract class AbstractDrawer(
         listen(Properties.PROPERTIES_CHANGED)
     }
 
-    override fun init(currentTime: Double) {
-        updateData(currentTime)
+    override fun init(engine: Engine) {
+        updateData(engine.currentTime)
         if (live) {
             display()
         }
