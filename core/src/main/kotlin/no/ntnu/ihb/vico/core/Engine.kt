@@ -38,6 +38,7 @@ class Engine private constructor(
     private val initialized = AtomicBoolean()
     private val closed = AtomicBoolean()
 
+    internal var initTask: ((Engine) -> Unit)? = null
     private val taskQueue: Queue<Runnable> = ArrayDeque()
     private val predicateTaskQueue: MutableList<PredicateTask> = mutableListOf()
 
@@ -71,10 +72,11 @@ class Engine private constructor(
 
     fun init() {
         if (!initialized.getAndSet(true)) {
+            initTask?.apply { invoke(this@Engine) }
             systemManager.initialize(this)
             connectionManager.update()
+            digestQueue()
         }
-        digestQueue()
     }
 
     @JvmOverloads
@@ -88,14 +90,14 @@ class Engine private constructor(
         }
 
         for (i in 0 until numSteps) {
+
             systemManager.step(iterations, currentTime, baseStepSize)
             currentTime += baseStepSize
             iterations++
 
-            connectionManager.update()
-
             digestQueue()
 
+            connectionManager.update()
             inputManager.clear()
         }
 
@@ -111,16 +113,14 @@ class Engine private constructor(
         val doubleTimePoint = timePoint.toDouble()
         stopTime?.also {
             if (doubleTimePoint > stopTime) {
-                LOG.warn("Specified timePoint=$doubleTimePoint exceeds configured stopTime=$it. " +
-                        "Simulation will end prematurely."
+                LOG.warn(
+                    "Specified timePoint=$doubleTimePoint exceeds configured stopTime=$it. " +
+                            "Simulation will end prematurely."
                 )
             }
         }
-        while (doubleTimePoint > currentTime && !doublesAreEqual(
-                doubleTimePoint,
-                currentTime,
-                baseStepSize / 2
-            ) && !closed.get()
+        while (doubleTimePoint > currentTime &&
+            !doublesAreEqual(doubleTimePoint, currentTime, baseStepSize / 2) && !closed.get()
         ) {
             step()
         }
@@ -193,7 +193,7 @@ class Engine private constructor(
 
             override fun test(it: Engine): Boolean {
 
-                return doublesAreEqual(it.currentTime, timePoint, baseStepSize / 5).also { predicateIsTrue ->
+                return doublesAreEqual(it.currentTime, timePoint, baseStepSize / 2).also { predicateIsTrue ->
                     if (predicateIsTrue) {
                         println("Task invoked at ${it.currentTime}")
                     }
@@ -212,7 +212,7 @@ class Engine private constructor(
     }
 
     fun invokeWhen(predicateTask: PredicateTask) {
-        if (predicateTask.test(this)) {
+        if (initialized.get() && predicateTask.test(this)) {
             invokeLater(predicateTask)
         } else {
             predicateTaskQueue.add(predicateTask)
@@ -255,10 +255,10 @@ class Engine private constructor(
     }
 
     class Builder(
-            private var startTime: Double? = null,
-            private var stopTime: Double? = null,
-            private var stepSize: Double? = null,
-            private var renderEngine: RenderEngine? = null
+        private var startTime: Double? = null,
+        private var stopTime: Double? = null,
+        private var stepSize: Double? = null,
+        private var renderEngine: RenderEngine? = null
     ) {
 
         constructor() : this(null, null, null, null)

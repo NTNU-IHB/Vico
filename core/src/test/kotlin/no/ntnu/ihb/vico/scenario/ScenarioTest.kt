@@ -58,7 +58,8 @@ internal class ScenarioTest {
     @Test
     fun testScenarioDsl() {
 
-        val engine = Engine(baseStepSize = 0.05)
+        val baseStepSize = 0.05
+        val engine = Engine(baseStepSize = baseStepSize)
         val e1 = engine.createEntity("e1", TestComponent1())
         engine.createEntity("e2", TestComponent2())
 

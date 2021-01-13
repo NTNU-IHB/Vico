@@ -11,9 +11,15 @@ fun scenario(init: ScenarioContext.() -> Unit): ScenarioContext {
 
 class ScenarioContext {
 
-    var endTime: Number? = null
+    private var initAction: ((Engine) -> Unit)? = null
     private val timedActions: MutableList<Pair<Double, (Engine) -> Unit>> = mutableListOf()
     private val predicateActions: MutableList<(Engine) -> PredicateTask> = mutableListOf()
+
+    fun init(action: ActionContext.() -> Unit) {
+        initAction = {
+            action.invoke(ActionContext(it))
+        }
+    }
 
     fun invokeAt(timePoint: Number, action: ActionContext.() -> Unit) {
         timedActions.add(timePoint.toDouble() to {
@@ -37,6 +43,7 @@ class ScenarioContext {
     }
 
     fun applyScenario(engine: Engine) {
+        initAction?.apply { engine.initTask = this }
         timedActions.forEach { (timePoint, action) ->
             engine.invokeAt(timePoint) {
                 action.invoke(engine)
@@ -46,7 +53,6 @@ class ScenarioContext {
             engine.invokeWhen(action.invoke(engine))
         }
     }
-
 
 }
 
