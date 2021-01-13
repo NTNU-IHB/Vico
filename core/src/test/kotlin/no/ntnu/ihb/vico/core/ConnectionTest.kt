@@ -39,7 +39,7 @@ internal class ConnectionTest {
                     sinkEntity.get<ValueComponent>(), "value"
             )
 
-            engine.addConnection(ScalarConnection(sourceConnector, sinkConnector))
+            engine.addConnection(RealConnection(sourceConnector, sinkConnector))
 
             engine.init()
 

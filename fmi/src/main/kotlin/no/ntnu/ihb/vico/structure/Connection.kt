@@ -21,12 +21,9 @@ class RealConnection(
     source: Component,
     sourceVariable: RealVariable,
     target: Component,
-    targetVariable: RealVariable
-) : Connection<RealVariable>(source, sourceVariable, target, targetVariable) {
-
-    var modifier: RealModifier? = null
-
-}
+    targetVariable: RealVariable,
+    val modifier: RealModifier? = null
+) : Connection<RealVariable>(source, sourceVariable, target, targetVariable)
 
 class StringConnection(
     source: Component,

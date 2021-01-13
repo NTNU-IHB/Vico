@@ -98,11 +98,20 @@ class ConnectionsContext(
         val p1 = UnboundProperty.parse(this).bounded(engine)
         val p2 = UnboundProperty.parse(other).bounded(engine)
 
+        val c1 = Connector.inferConnectorType(p1.component, p1.property)
+        val c2 = Connector.inferConnectorType(p2.component, p2.property)
+
+        require(c1.javaClass == c2.javaClass) { "Incompatiable connectors" }
+
         engine.addConnection(
-                ScalarConnection(
-                        Connector.inferConnectorType(p1.component, p1.property),
-                        Connector.inferConnectorType(p2.component, p2.property)
-                )
+
+            when (c1) {
+                is IntConnector -> IntConnection(c1, c2 as IntConnector)
+                is RealConnector -> RealConnection(c1, c2 as RealConnector)
+                is StrConnector -> StrConnection(c1, c2 as StrConnector)
+                is BoolConnector -> BoolConnection(c1, c2 as BoolConnector)
+            }
+
         )
 
     }

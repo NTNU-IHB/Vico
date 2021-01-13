@@ -85,25 +85,25 @@ class SystemStructure @JvmOverloads constructor(
 
             val connection = when (c) {
                 is IntegerConnection -> {
-                    ScalarConnection(
+                    IntConnection(
                         IntConnector(source, c.sourceVariable.name),
                         IntConnector(target, c.targetVariable.name)
                     )
                 }
                 is RealConnection -> {
-                    ScalarConnection(
-                        RealConnector(source, c.sourceVariable.name),
+                    no.ntnu.ihb.vico.core.RealConnection(
+                        RealConnector(source, c.sourceVariable.name, c.modifier),
                         RealConnector(target, c.targetVariable.name)
                     )
                 }
                 is BooleanConnection -> {
-                    ScalarConnection(
+                    BoolConnection(
                         BoolConnector(source, c.sourceVariable.name),
                         BoolConnector(target, c.targetVariable.name)
                     )
                 }
                 is StringConnection -> {
-                    ScalarConnection(
+                    StrConnection(
                         StrConnector(source, c.sourceVariable.name),
                         StrConnector(target, c.targetVariable.name)
                     )

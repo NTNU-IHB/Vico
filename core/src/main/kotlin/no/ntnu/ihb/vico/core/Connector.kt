@@ -31,10 +31,11 @@ class IntConnector(
 
 class RealConnector(
     override val component: Component,
-    override val property: RealProperty
+    override val property: RealProperty,
+    internal val modifier: RealModifier? = null
 ) : Connector() {
-    constructor(component: Component, name: String) : this(
-        component, component.getRealProperty(name)
+    constructor(component: Component, name: String, modifier: RealModifier? = null) : this(
+        component, component.getRealProperty(name), modifier
     )
 }
 

@@ -191,12 +191,9 @@ class SSPLoader @JvmOverloads constructor(
                 )
                 VariableType.REAL -> RealConnection(
                     startComponent, startVariable as RealVariable,
-                    endComponent, endVariable as RealVariable
-                ).also { realConnection ->
-                    c.linearTransformation?.also { t ->
-                        realConnection.modifier = LinearTransform(t.factor, t.offset)
-                    }
-                }
+                    endComponent, endVariable as RealVariable,
+                    c.linearTransformation?.let { t -> LinearTransform(t.factor, t.offset) }
+                )
                 VariableType.STRING -> StringConnection(
                     startComponent, startVariable as StringVariable,
                     endComponent, endVariable as StringVariable

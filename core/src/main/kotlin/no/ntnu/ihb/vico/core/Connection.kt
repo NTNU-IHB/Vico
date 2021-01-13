@@ -11,27 +11,17 @@ interface Connection {
 
 }
 
-class ScalarConnection(
-    private val sourceConnector: Connector,
-    private val sinks: List<Connector>
+abstract class ScalarConnection<E : Connector>(
+    protected val sourceConnector: E,
+    protected val sinks: List<E>
 ) : Connection {
+
+    protected val size: Int = sourceConnector.property.size
 
     override val source: Component
         get() = sourceConnector.component
     override val targets: List<Component>
         get() = sinks.map { it.component }
-
-    private val size: Int = sourceConnector.property.size
-
-    private val intBuffer by lazy { IntArray(size) }
-    private val realBuffer by lazy { DoubleArray(size) }
-    private val booleanBuffer by lazy { BooleanArray(size) }
-    private val stringBuffer by lazy { StringArray(size) }
-
-    constructor(
-        source: Connector,
-        sink: Connector
-    ) : this(source, listOf(sink))
 
     init {
         require(sinks.filter {
@@ -39,46 +29,103 @@ class ScalarConnection(
         }.size == sinks.size) { "Dimension mismatch between source and sink(s)" }
     }
 
-    override fun transferData() {
+}
 
-        when (val v = sourceConnector.property) {
-            is IntProperty -> {
-                if (size == 1) {
-                    val read = v.read()
-                    sinks.forEach { (it.property as IntProperty).write(read) }
-                } else {
-                    val read = v.read(intBuffer)
-                    sinks.forEach { (it.property as IntProperty).write(read) }
-                }
-            }
-            is RealProperty -> {
-                if (size == 1) {
-                    val read = v.read()
-                    sinks.forEach { (it.property as RealProperty).write(read) }
-                } else {
-                    val read = v.read(realBuffer)
-                    sinks.forEach { (it.property as RealProperty).write(read) }
-                }
-            }
-            is StrProperty -> {
-                if (size == 1) {
-                    val read = v.read()
-                    sinks.forEach { (it.property as StrProperty).write(read) }
-                } else {
-                    val read = v.read(stringBuffer)
-                    sinks.forEach { (it.property as StrProperty).write(read) }
-                }
-            }
-            is BoolProperty -> {
-                if (size == 1) {
-                    val read = v.read()
-                    sinks.forEach { (it.property as BoolProperty).write(read) }
-                } else {
-                    val read = v.read(booleanBuffer)
-                    sinks.forEach { (it.property as BoolProperty).write(read) }
-                }
+class IntConnection(
+    sourceConnector: IntConnector,
+    sinks: List<IntConnector>
+) : ScalarConnection<IntConnector>(sourceConnector, sinks) {
+
+    private val buffer = IntArray(size)
+
+    constructor(
+        source: IntConnector,
+        sink: IntConnector
+    ) : this(source, listOf(sink))
+
+    override fun transferData() {
+        if (size == 1) {
+            val read = sourceConnector.property.read()
+            sinks.forEach { it.property.write(read) }
+        } else {
+            val read = sourceConnector.property.read(buffer)
+            sinks.forEach { it.property.write(read) }
+        }
+    }
+}
+
+class RealConnection(
+    sourceConnector: RealConnector,
+    sinks: List<RealConnector>
+) : ScalarConnection<RealConnector>(sourceConnector, sinks) {
+
+    private val buffer = DoubleArray(size)
+
+    constructor(
+        source: RealConnector,
+        sink: RealConnector
+    ) : this(source, listOf(sink))
+
+    override fun transferData() {
+        if (size == 1) {
+            val read = sourceConnector.property.read()
+            val mod = sourceConnector.modifier
+            sinks.forEach { it.property.write(mod?.invoke(read) ?: read) }
+        } else {
+            val read = sourceConnector.property.read(buffer)
+            val mod = sourceConnector.modifier
+            sinks.forEach {
+                it.property.write(mod?.let { mod -> read.map { value -> mod.invoke(value) }.toDoubleArray() } ?: read)
             }
         }
-
     }
+
+}
+
+class BoolConnection(
+    sourceConnector: BoolConnector,
+    sinks: List<BoolConnector>
+) : ScalarConnection<BoolConnector>(sourceConnector, sinks) {
+
+    private val buffer = BooleanArray(size)
+
+    constructor(
+        source: BoolConnector,
+        sink: BoolConnector
+    ) : this(source, listOf(sink))
+
+    override fun transferData() {
+        if (size == 1) {
+            val read = sourceConnector.property.read()
+            sinks.forEach { it.property.write(read) }
+        } else {
+            val read = sourceConnector.property.read(buffer)
+            sinks.forEach { it.property.write(read) }
+        }
+    }
+
+}
+
+class StrConnection(
+    sourceConnector: StrConnector,
+    sinks: List<StrConnector>
+) : ScalarConnection<StrConnector>(sourceConnector, sinks) {
+
+    private val buffer = StringArray(size)
+
+    constructor(
+        source: StrConnector,
+        sink: StrConnector
+    ) : this(source, listOf(sink))
+
+    override fun transferData() {
+        if (size == 1) {
+            val read = sourceConnector.property.read()
+            sinks.forEach { it.property.write(read) }
+        } else {
+            val read = sourceConnector.property.read(buffer)
+            sinks.forEach { it.property.write(read) }
+        }
+    }
+
 }

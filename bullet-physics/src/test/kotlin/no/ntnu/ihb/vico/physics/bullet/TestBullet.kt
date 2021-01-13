@@ -3,8 +3,8 @@ package no.ntnu.ihb.vico.physics.bullet
 import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.EngineBuilder
+import no.ntnu.ihb.vico.core.RealConnection
 import no.ntnu.ihb.vico.core.RealConnector
-import no.ntnu.ihb.vico.core.ScalarConnection
 import no.ntnu.ihb.vico.physics.Collider
 import no.ntnu.ihb.vico.physics.MotionControl
 import no.ntnu.ihb.vico.physics.RigidBodyComponent
@@ -64,7 +64,7 @@ fun main() {
         val source = RealConnector(sphere0.get<Transform>(), "localPosition")
         val sink = RealConnector(test.get<Transform>(), "localPosition")
 
-        engine.addConnection(ScalarConnection(source, sink))
+        engine.addConnection(RealConnection(source, sink))
 
         engine.addSystem(BulletSystem())
         engine.addSystem(GeometryRenderer())
