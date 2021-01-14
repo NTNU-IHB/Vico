@@ -17,11 +17,11 @@ class ExecutionContext {
 
     internal val engine: Engine by lazy {
         EngineBuilder()
-                .startTime(startTime?.toDouble())
-                .stopTime(stopTime?.toDouble())
-                .stepSize(baseStepSize)
-                .renderer(renderEngine)
-                .build()
+            .startTime(startTime?.toDouble())
+            .stopTime(stopTime?.toDouble())
+            .stepSize(baseStepSize)
+            .renderer(renderEngine)
+            .build()
     }
 
     fun renderer(renderEngine: RenderEngine) {
@@ -47,7 +47,7 @@ class ExecutionContext {
 }
 
 class EntityContext(
-        private val entity: Entity
+    private val entity: Entity
 ) {
 
     fun component(component: Component) {
@@ -69,7 +69,7 @@ class EntityContext(
 }
 
 class EntitiesContext(
-        private val engine: Engine
+    private val engine: Engine
 ) {
 
     fun entity(name: String? = null, ctx: EntityContext.() -> Unit) {
@@ -80,7 +80,7 @@ class EntitiesContext(
 }
 
 class SystemsContext(
-        private val engine: Engine
+    private val engine: Engine
 ) {
 
     fun system(ctx: () -> BaseSystem) {
@@ -90,7 +90,7 @@ class SystemsContext(
 }
 
 class ConnectionsContext(
-        private val engine: Engine
+    private val engine: Engine
 ) {
 
     infix fun String.to(other: String) {
