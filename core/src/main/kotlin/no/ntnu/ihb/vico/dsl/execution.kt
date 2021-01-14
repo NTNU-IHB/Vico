@@ -101,7 +101,7 @@ class ConnectionsContext(
         val c1 = Connector.inferConnectorType(p1.component, p1.property)
         val c2 = Connector.inferConnectorType(p2.component, p2.property)
 
-        require(c1.javaClass == c2.javaClass) { "Incompatiable connectors" }
+        require(c1.javaClass == c2.javaClass) { "Incompatible connectors" }
 
         engine.addConnection(
 
