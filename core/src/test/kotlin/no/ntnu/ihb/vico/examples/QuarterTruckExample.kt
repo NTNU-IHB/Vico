@@ -63,10 +63,10 @@ fun main() {
 
         connections {
 
-            "chassis.chassis.p.e" to "wheel.wheel.p1.e"
-            "wheel.wheel.p1.f" to "chassis.chassis.p.f"
-            "wheel.wheel.p.e" to "ground.ground.p.e"
-            "ground.ground.p.f" to "wheel.wheel.p.f"
+            "chassis.slaveComponent.p.e" to "wheel.slaveComponent.p1.e"
+            "wheel.slaveComponent.p1.f" to "chassis.slaveComponent.p.f"
+            "wheel.slaveComponent.p.e" to "ground.slaveComponent.p.e"
+            "ground.slaveComponent.p.f" to "wheel.slaveComponent.p.f"
 
         }
 
