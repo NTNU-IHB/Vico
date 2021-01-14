@@ -94,7 +94,10 @@ abstract class AbstractDrawer(
         }
         queue?.also {
             LOG.info("Waiting for chart '$title' to close..")
-            it.take()
+            try {
+                it.take()
+            } catch (ex: InterruptedException) {
+            }
             LOG.info("Chart '$title' closed.")
         }
     }
