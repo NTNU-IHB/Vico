@@ -74,36 +74,34 @@ class SSPLoader @JvmOverloads constructor(
     private fun parseComponents(ssd: SystemStructureDescription): Components {
         return ssd.system.elements.components.parallelStream().map { c ->
             parseComponent(c).also { component ->
-                c.connectors?.connector?.also { sspConnectors ->
-                    sspConnectors.forEach { sspConnector ->
-                        val connector = when {
-                            sspConnector.integer != null -> IntegerConnector(
-                                sspConnector.name,
-                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
-                            )
-                            sspConnector.real != null -> RealConnector(
-                                sspConnector.name,
-                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase()),
-                                sspConnector.real.unit
-                            )
-                            sspConnector.boolean != null -> BooleanConnector(
-                                sspConnector.name,
-                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
-                            )
-                            sspConnector.string != null -> StringConnector(
-                                sspConnector.name,
-                                ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
-                            )
-                            sspConnector.binary != null -> {
-                                throw UnsupportedOperationException("Binary connector is currently unsupported!")
-                            }
-                            sspConnector.enumeration != null -> {
-                                throw UnsupportedOperationException("Enumeration connector is currently unsupported!")
-                            }
-                            else -> throw AssertionError()
+                c.connectors?.connector?.onEach { sspConnector ->
+                    val connector = when {
+                        sspConnector.integer != null -> IntegerConnectorInfo(
+                            sspConnector.name,
+                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                        )
+                        sspConnector.real != null -> RealConnectorInfo(
+                            sspConnector.name,
+                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase()),
+                            sspConnector.real.unit
+                        )
+                        sspConnector.boolean != null -> BooleanConnectorInfo(
+                            sspConnector.name,
+                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                        )
+                        sspConnector.string != null -> StringConnectorInfo(
+                            sspConnector.name,
+                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                        )
+                        sspConnector.binary != null -> {
+                            throw UnsupportedOperationException("Binary connector is currently unsupported!")
                         }
-                        component.addConnector(connector)
+                        sspConnector.enumeration != null -> {
+                            throw UnsupportedOperationException("Enumeration connector is currently unsupported!")
+                        }
+                        else -> throw AssertionError()
                     }
+                    component.addConnectorInfo(connector)
                 }
                 parseParameterBindings(c, component)
             }
@@ -168,16 +166,16 @@ class SSPLoader @JvmOverloads constructor(
     private fun parseConnections(
         ssd: SystemStructureDescription,
         components: Components
-    ): List<Connection<*>> {
+    ): List<ConnectionInfo<*>> {
         return ssd.system.connections?.connection?.parallelStream()?.map { c ->
 
             val startComponent = components[c.startElement]
                 ?: throw RuntimeException("No component named '${c.endElement}'")
-            val startConnector = startComponent.getConnector(c.startConnector)
+            val startConnector = startComponent.getConnectorInfo(c.startConnector)
 
             val endComponent = components[c.endElement]
                 ?: throw RuntimeException("No component named '${c.endElement}'")
-            val endConnector = endComponent.getConnector(c.endConnector)
+            val endConnector = endComponent.getConnectorInfo(c.endConnector)
 
             val startVariable = startComponent.modelDescription.getVariableByName(startConnector.name)
             val endVariable = endComponent.modelDescription.getVariableByName(endConnector.name)
@@ -185,20 +183,20 @@ class SSPLoader @JvmOverloads constructor(
             require(startVariable.type == endVariable.type)
 
             when (startVariable.type) {
-                VariableType.INTEGER, VariableType.ENUMERATION -> IntegerConnection(
+                VariableType.INTEGER, VariableType.ENUMERATION -> IntegerConnectionInfo(
                     startComponent, startVariable as IntegerVariable,
                     endComponent, endVariable as IntegerVariable
                 )
-                VariableType.REAL -> RealConnection(
+                VariableType.REAL -> RealConnectionInfo(
                     startComponent, startVariable as RealVariable,
                     endComponent, endVariable as RealVariable,
                     c.linearTransformation?.let { t -> LinearTransform(t.factor, t.offset) }
                 )
-                VariableType.STRING -> StringConnection(
+                VariableType.STRING -> StringConnectionInfo(
                     startComponent, startVariable as StringVariable,
                     endComponent, endVariable as StringVariable
                 )
-                VariableType.BOOLEAN -> BooleanConnection(
+                VariableType.BOOLEAN -> BooleanConnectionInfo(
                     startComponent, startVariable as BooleanVariable,
                     endComponent, endVariable as BooleanVariable
                 )

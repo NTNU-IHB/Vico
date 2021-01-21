@@ -9,14 +9,14 @@ class Component(
     stepSizeHint: Double? = null
 ) : SlaveComponent(slaveProvider, instanceName, stepSizeHint) {
 
-    private val connectors: MutableSet<Connector> = mutableSetOf()
+    private val connectors: MutableSet<ConnectorInfo> = mutableSetOf()
 
-    fun getConnector(name: String): Connector {
+    fun getConnectorInfo(name: String): ConnectorInfo {
         return connectors.find { it.name == name }
             ?: throw IllegalArgumentException("No connector named '$name' in component '$instanceName'!")
     }
 
-    fun addConnector(connector: Connector) {
+    fun addConnectorInfo(connector: ConnectorInfo) {
         connector.validate(modelDescription)
         check(connectors.add(connector)) {
             "Connector '${connector.name}' has already been added to component '${instanceName}'!"

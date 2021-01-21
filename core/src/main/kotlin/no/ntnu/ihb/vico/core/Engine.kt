@@ -195,7 +195,7 @@ class Engine private constructor(
 
                 return doublesAreEqual(it.currentTime, timePoint, baseStepSize / 2).also { predicateIsTrue ->
                     if (predicateIsTrue) {
-                        println("Task invoked at ${it.currentTime}")
+                        LOG.debug("Task invoked at ${it.currentTime}")
                     }
                 }
 
@@ -244,10 +244,6 @@ class Engine private constructor(
         }
     }
 
-    /* fun calculateStepFactor(stepSizeHint: Double): Long {
-         return max(1, ceil(stepSizeHint / baseStepSize).toLong())
-     }*/
-
     private companion object {
 
         private val LOG: Logger = LoggerFactory.getLogger(Engine::class.java)
@@ -282,6 +278,5 @@ class Engine private constructor(
         fun build() = Engine(startTime, stopTime, stepSize, renderEngine)
 
     }
-
 
 }

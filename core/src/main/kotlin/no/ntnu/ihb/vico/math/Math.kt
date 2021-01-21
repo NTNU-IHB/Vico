@@ -14,8 +14,12 @@ fun clamp(value: Int, min: Int, max: Int): Int {
     return max(min, min(max, value))
 }
 
+fun clamp(value: Double, min: Double, max: Double): Double {
+    return max(min, min(max, value))
+}
+
 fun clamp(value: Double, min: Number, max: Number): Double {
-    return max(min.toDouble(), min(max.toDouble(), value))
+    return clamp(value, min.toDouble(), max.toDouble())
 }
 
 fun mapLinear(x: Double, a1: Double, a2: Double, b1: Double, b2: Double): Double {

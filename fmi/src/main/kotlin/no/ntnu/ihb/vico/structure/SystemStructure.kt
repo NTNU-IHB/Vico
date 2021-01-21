@@ -3,7 +3,6 @@ package no.ntnu.ihb.vico.structure
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.core.*
-import no.ntnu.ihb.vico.core.RealConnector
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.master.MasterAlgorithm
 import no.ntnu.ihb.vico.model.SlaveProvider
@@ -13,7 +12,7 @@ class SystemStructure @JvmOverloads constructor(
 ) {
 
     private val components: MutableSet<Component> = mutableSetOf()
-    private val connections: MutableSet<Connection<*>> = mutableSetOf()
+    private val connections: MutableSet<ConnectionInfo<*>> = mutableSetOf()
     var defaultExperiment: DefaultExperiment? = null
 
     private fun getComponent(instanceName: String): Component {
@@ -34,20 +33,20 @@ class SystemStructure @JvmOverloads constructor(
 
         check(sourceVariable.type == targetVariable.type)
 
-        val connection: Connection<*> = when (sourceVariable.type) {
-            VariableType.INTEGER, VariableType.ENUMERATION -> IntegerConnection(
+        val connection: ConnectionInfo<*> = when (sourceVariable.type) {
+            VariableType.INTEGER, VariableType.ENUMERATION -> IntegerConnectionInfo(
                 sourceComponent, sourceVariable as IntegerVariable,
                 targetComponent, targetVariable as IntegerVariable
             )
-            VariableType.REAL -> RealConnection(
+            VariableType.REAL -> RealConnectionInfo(
                 sourceComponent, sourceVariable as RealVariable,
                 targetComponent, targetVariable as RealVariable
             )
-            VariableType.STRING -> StringConnection(
+            VariableType.STRING -> StringConnectionInfo(
                 sourceComponent, sourceVariable as StringVariable,
                 targetComponent, targetVariable as StringVariable
             )
-            VariableType.BOOLEAN -> BooleanConnection(
+            VariableType.BOOLEAN -> BooleanConnectionInfo(
                 sourceComponent, sourceVariable as BooleanVariable,
                 targetComponent, targetVariable as BooleanVariable
             )
@@ -56,7 +55,7 @@ class SystemStructure @JvmOverloads constructor(
         addConnection(connection)
     }
 
-    fun addConnection(connection: Connection<*>) = apply {
+    fun addConnection(connection: ConnectionInfo<*>) = apply {
         check(connections.add(connection)) { "Connection already exists!" }
     }
 
@@ -84,25 +83,25 @@ class SystemStructure @JvmOverloads constructor(
             val target = getComponent(c.target.instanceName)
 
             val connection = when (c) {
-                is IntegerConnection -> {
+                is IntegerConnectionInfo -> {
                     IntConnection(
                         IntConnector(source, c.sourceVariable.name),
                         IntConnector(target, c.targetVariable.name)
                     )
                 }
-                is RealConnection -> {
-                    no.ntnu.ihb.vico.core.RealConnection(
+                is RealConnectionInfo -> {
+                    RealConnection(
                         RealConnector(source, c.sourceVariable.name, c.modifier),
                         RealConnector(target, c.targetVariable.name)
                     )
                 }
-                is BooleanConnection -> {
+                is BooleanConnectionInfo -> {
                     BoolConnection(
                         BoolConnector(source, c.sourceVariable.name),
                         BoolConnector(target, c.targetVariable.name)
                     )
                 }
-                is StringConnection -> {
+                is StringConnectionInfo -> {
                     StrConnection(
                         StrConnector(source, c.sourceVariable.name),
                         StrConnector(target, c.targetVariable.name)

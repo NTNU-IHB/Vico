@@ -14,7 +14,7 @@ enum class ConnectorKind {
 
 }
 
-sealed class Connector(
+sealed class ConnectorInfo(
     val name: String,
     val kind: ConnectorKind
 ) {
@@ -42,23 +42,23 @@ sealed class Connector(
 
 }
 
-class IntegerConnector(
+class IntegerConnectorInfo(
     name: String,
     kind: ConnectorKind
-) : Connector(name, kind)
+) : ConnectorInfo(name, kind)
 
-class RealConnector(
+class RealConnectorInfo(
     name: String,
     kind: ConnectorKind,
     val unit: String? = null
-) : Connector(name, kind)
+) : ConnectorInfo(name, kind)
 
-class BooleanConnector(
+class BooleanConnectorInfo(
     name: String,
     kind: ConnectorKind
-) : Connector(name, kind)
+) : ConnectorInfo(name, kind)
 
-class StringConnector(
+class StringConnectorInfo(
     name: String,
     kind: ConnectorKind
-) : Connector(name, kind)
+) : ConnectorInfo(name, kind)

@@ -11,7 +11,7 @@ interface ModelResolver {
     companion object {
 
         private val resolvers: MutableSet<ModelResolver> = mutableSetOf(
-                FmuResolver()
+            FmuResolver()
         )
 
         @JvmStatic
