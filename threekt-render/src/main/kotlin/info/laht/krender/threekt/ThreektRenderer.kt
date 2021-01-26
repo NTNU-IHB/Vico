@@ -198,7 +198,11 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
 
         fun close() {
-            window?.close()
+            try {
+                window?.close()
+            } catch (ex: InterruptedException) {
+                // ignore
+            }
         }
 
         fun run() {
