@@ -79,6 +79,10 @@ abstract class EventSystem(
         }
     }
 
+    protected fun listen(vararg types: String) {
+        types.forEach(::listen)
+    }
+
     override fun assignedToEngine(engine: Engine) {
         while (!listenQueue.isEmpty()) {
             listen(listenQueue.pop())
