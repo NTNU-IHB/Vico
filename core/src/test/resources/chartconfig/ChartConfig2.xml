@@ -5,7 +5,9 @@
         <vico:timeseries title="ControlledDrivetrain" label="">
             <vico:series>
                 <vico:component name="controller">
-                    <vico:variable name="u_s"/>
+                    <vico:variable name="u_s">
+                        <vico:linearTransformation offset="-1"/>
+                    </vico:variable>
                 </vico:component>
             </vico:series>
         </vico:timeseries>
