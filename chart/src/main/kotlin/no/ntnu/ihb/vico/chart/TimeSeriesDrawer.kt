@@ -37,11 +37,11 @@ class TimeSeriesDrawer internal constructor(
 
         fun registerSeries(componentName: String, variableName: String, modifier: RealModifier) = apply {
             registerSeries(
-                    VariableHandle(
-                            componentName,
-                            variableName,
-                            modifier
-                    )
+                VariableHandle(
+                    componentName,
+                    variableName,
+                    modifier
+                )
             )
         }
 
