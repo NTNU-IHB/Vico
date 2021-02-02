@@ -9,5 +9,5 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 dependencies {
     implementation project(':core')
 
-    implementation group: 'org.knowm.xchart', name: 'xchart', version: '3.6.6'
+    implementation group: 'org.knowm.xchart', name: 'xchart', version: '3.8.0'
 }
