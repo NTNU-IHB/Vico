@@ -1,6 +1,8 @@
 package no.ntnu.ihb.vico.chart
 
-import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.core.Family
+import no.ntnu.ihb.vico.core.ObserverSystem
 import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -25,9 +27,8 @@ abstract class AbstractDrawer(
     yLabel: String,
     width: Int,
     height: Int,
-    live: Boolean,
-    private val decimationFactor: Long
-) : EventSystem(Family.all().build()) {
+    live: Boolean
+) : ObserverSystem(Family.all().build()) {
 
     protected val mutex = Unit
     private var queue: BlockingQueue<Unit>? = null
@@ -54,10 +55,6 @@ abstract class AbstractDrawer(
         SwingWrapper(chart)
     }
 
-    init {
-        listen(Properties.PROPERTIES_CHANGED)
-    }
-
     override fun init(engine: Engine) {
         updateData(engine.currentTime)
         if (live) {
@@ -65,25 +62,14 @@ abstract class AbstractDrawer(
         }
     }
 
-    override fun eventReceived(evt: Event) {
-        when (evt.type) {
-            Properties.PROPERTIES_CHANGED -> {
-                postSlaveStep()
-            }
+    override fun observe(currentTime: Double) {
+        updateData(engine.currentTime)
+
+        if (live && (System.currentTimeMillis() - lastUpdate) > 250L) {
+            updateChart()
+            lastUpdate = System.currentTimeMillis()
         }
-    }
 
-    private fun postSlaveStep() {
-        if (engine.iterations % decimationFactor == 0L) {
-
-            updateData(engine.currentTime)
-
-            if (live && (System.currentTimeMillis() - lastUpdate) > 250L) {
-                updateChart()
-                lastUpdate = System.currentTimeMillis()
-            }
-
-        }
     }
 
     override fun close() {
@@ -97,6 +83,7 @@ abstract class AbstractDrawer(
             try {
                 it.take()
             } catch (ex: InterruptedException) {
+                //ignore
             }
             LOG.info("Chart '$title' closed.")
         }

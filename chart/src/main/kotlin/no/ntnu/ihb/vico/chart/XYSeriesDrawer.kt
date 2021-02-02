@@ -15,7 +15,11 @@ class XYSeriesDrawer internal constructor(
     private val maxLength: Int?,
     private val handles: MutableMap<String, Pair<ValueProvider, ValueProvider>>,
     private val seriesInfos: MutableMap<String, Pair<VariableHandle, VariableHandle>>
-) : AbstractDrawer(title, xLabel, yLabel, width, height, live, decimationFactor) {
+) : AbstractDrawer(title, xLabel, yLabel, width, height, live) {
+
+    init {
+        this.decimationFactor = decimationFactor
+    }
 
     class Builder(
         title: String,

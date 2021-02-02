@@ -17,7 +17,11 @@ class TimeSeriesDrawer internal constructor(
     private val maxDuration: Double?,
     private val seriesInfos: MutableList<VariableHandle>,
     private val handles: MutableMap<String, ValueProvider>
-) : AbstractDrawer(title, "Time[s]", label, width, height, live, decimationFactor) {
+) : AbstractDrawer(title, "Time[s]", label, width, height, live) {
+
+    init {
+        this.decimationFactor = decimationFactor
+    }
 
     class Builder(
         title: String,
