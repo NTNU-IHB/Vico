@@ -89,7 +89,7 @@ class SimulateFmu : Runnable {
     @ExperimentalTime
     override fun run() {
 
-        require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
+        require(baseStepSize > 0) { "baseStepSize must be greater than 0, was $baseStepSize.." }
         require(startTime < stopTime) { "stopTime=$stopTime > startTime=$startTime!" }
 
         val model = ModelResolver.resolve(fmu)
@@ -112,6 +112,7 @@ class SimulateFmu : Runnable {
                         engine.addSystem(SlaveLoggerSystem(config, resultDir))
                     } ?: run {
                         //log all variables
+                        LOG.info("No log configuration provide, logging all variables..")
                         engine.addSystem(SlaveLoggerSystem(null, resultDir))
                     }
                 }
@@ -126,7 +127,6 @@ class SimulateFmu : Runnable {
                 }
 
                 structure.apply(engine, FixedStepMaster(false))
-
 
                 relativeScenarioConfig?.also { configPath ->
                     var config = getConfigPath(fmu, configPath)

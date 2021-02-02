@@ -101,7 +101,7 @@ class SimulateSsp : Runnable {
     @ExperimentalTime
     override fun run() {
 
-        require(baseStepSize > 0) { "baseStepSize must be greater than 0" }
+        require(baseStepSize > 0) { "baseStepSize must be greater than 0, was $baseStepSize.." }
 
         val loader = SSPLoader(sspFile)
         val structure: SystemStructure = loader.load()
@@ -131,6 +131,7 @@ class SimulateSsp : Runnable {
                         engine.addSystem(SlaveLoggerSystem(config, resultDir))
                     } ?: run {
                         //log all variables
+                        LOG.info("No log configuration provide, logging all variables..")
                         engine.addSystem(SlaveLoggerSystem(null, resultDir))
                     }
                 }
