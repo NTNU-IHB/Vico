@@ -9,7 +9,7 @@ ssp("gunnerus-trajectory") {
     println("Building SSP '$archiveName'..")
 
     resources {
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu2.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
@@ -23,7 +23,7 @@ ssp("gunnerus-trajectory") {
 
             elements {
 
-                component("vesselModel", "resources/VesselFmu.fmu") {
+                component("vesselModel", "resources/VesselFmu2.fmu") {
                     connectors {
                         real("additionalBodyForce[0].force.heave", input)
                         real("additionalBodyForce[0].force.surge", input)
@@ -42,8 +42,8 @@ ssp("gunnerus-trajectory") {
                         real("cg_x_rel_ap", output)
                         real("cg_y_rel_cl", output)
                         real("cg_z_rel_bl", output)
-                        real("cgShipMotion.ned.north", output)
-                        real("cgShipMotion.ned.east", output)
+                        real("cgShipMotion.nedDisplacement.north", output)
+                        real("cgShipMotion.nedDisplacement.east", output)
                         real("cgShipMotion.linearVelocity.surge", output)
                         real("cgShipMotion.linearVelocity.sway", output)
                         real("cgShipMotion.angularVelocity.yaw", output)
@@ -52,6 +52,8 @@ ssp("gunnerus-trajectory") {
                     parameterBindings {
                         parameterSet("initialValues") {
                             string("vesselZipFile", "%fmu%/resources/ShipModel-gunnerus-elongated.zip")
+                            boolean("additionalBodyForce[0].enabled", true)
+                            boolean("additionalBodyForce[1].enabled", true)
                         }
                     }
                 }
@@ -78,7 +80,7 @@ ssp("gunnerus-trajectory") {
                     parameterBindings {
                         parameterSet("initialValues") {
                             real("input_x_rel_ap", 1.5)
-                            real("input_y_rel_cl", -2)
+                            real("input_y_rel_cl", -2.7)
                             real("input_z_rel_bl", 0)
                             real("input_prop_diam", 1.9)
                             real("input_distancetohull", 1.5)
@@ -95,7 +97,7 @@ ssp("gunnerus-trajectory") {
                     }
                     parameterBindings {
                         copyFrom("azimuth0", "initialValues") {
-                            real("input_y_rel_cl", 2)
+                            real("input_y_rel_cl", 2.7)
                         }
                     }
                 }
@@ -189,8 +191,8 @@ ssp("gunnerus-trajectory") {
             }
 
             connections(inputsFirst = true) {
-                "trackController.northPosition" to "vesselModel.cgShipMotion.ned.north"
-                "trackController.eastPosition" to "vesselModel.cgShipMotion.ned.east"
+                "trackController.northPosition" to "vesselModel.cgShipMotion.nedDisplacement.north"
+                "trackController.eastPosition" to "vesselModel.cgShipMotion.nedDisplacement.east"
                 "trackController.surgeVelocity" to "vesselModel.cgShipMotion.linearVelocity.surge"
                 "trackController.swayVelocity" to "vesselModel.cgShipMotion.linearVelocity.sway"
                 "trackController.headingAngle" to "vesselModel.cgShipMotion.angularDisplacement.yaw"
@@ -201,8 +203,8 @@ ssp("gunnerus-trajectory") {
                 "trackController.prevWP.east" to "wpProvider.prevWP.east"
                 "trackController.prevWP.speed" to "wpProvider.prevWP.speed"
 
-                "wpProvider.northPosition" to "vesselModel.cgShipMotion.ned.north"
-                "wpProvider.eastPosition" to "vesselModel.cgShipMotion.ned.east"
+                "wpProvider.northPosition" to "vesselModel.cgShipMotion.nedDisplacement.north"
+                "wpProvider.eastPosition" to "vesselModel.cgShipMotion.nedDisplacement.east"
                 "wpProvider.headingAngle" to "vesselModel.cgShipMotion.angularDisplacement.yaw"
 
                 "powerPlant.p1.f[1]" to "azimuth0_rpmActuator.d_in.f"

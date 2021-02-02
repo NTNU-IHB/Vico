@@ -8,11 +8,11 @@
             </vico:Shape>
         </vico:Geometry>
         <vico:PositionRef>
-            <vico:xRef name="cgShipMotion.ned.east"/>
-            <vico:yRef name="cgShipMotion.ned.down">
+            <vico:xRef name="cgShipMotion.nedDisplacement.east"/>
+            <vico:yRef name="cgShipMotion.nedDisplacement.down">
                 <vico:LinearTransformation factor="-1"/>
             </vico:yRef>
-            <vico:zRef name="cgShipMotion.ned.north"/>
+            <vico:zRef name="cgShipMotion.nedDisplacement.north"/>
         </vico:PositionRef>
         <vico:RotationRef>
             <vico:xRef name="cgShipMotion.angularDisplacement.pitch"/>

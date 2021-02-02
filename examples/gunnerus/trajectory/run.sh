@@ -3,6 +3,7 @@ vico simulate-ssp \
 --stopTime "2000" \
 -log "LogConfig.xml" \
 -visual "VisualConfig.xml" \
+-chart "ChartConfig.xml" \
 -s "scenario.main.kts" \
 -p "initialValues" \
 -res "results" \
