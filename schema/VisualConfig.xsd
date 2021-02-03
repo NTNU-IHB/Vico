@@ -27,6 +27,7 @@
             <xs:element name="Trail" type="vico:TTrail" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="parent" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="TGeometry">

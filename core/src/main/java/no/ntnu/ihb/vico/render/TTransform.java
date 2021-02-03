@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.*;
  *         &lt;element name="Trail" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TTrail" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="parent" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -44,6 +45,8 @@ public class TTransform {
     protected TTrail trail;
     @XmlAttribute(name = "name")
     protected String name;
+    @XmlAttribute(name = "parent")
+    protected String parent;
 
     /**
      * Gets the value of the geometry property.
@@ -118,8 +121,10 @@ public class TTransform {
     /**
      * Gets the value of the trail property.
      *
-     * @return possible object is
-     * {@link TTrail }
+     * @return
+     *     possible object is
+     *     {@link TTrail }
+     *
      */
     public TTrail getTrail() {
         return trail;
@@ -128,8 +133,10 @@ public class TTransform {
     /**
      * Sets the value of the trail property.
      *
-     * @param value allowed object is
-     *              {@link TTrail }
+     * @param value
+     *     allowed object is
+     *     {@link TTrail }
+     *
      */
     public void setTrail(TTrail value) {
         this.trail = value;
@@ -138,8 +145,10 @@ public class TTransform {
     /**
      * Gets the value of the name property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -147,14 +156,34 @@ public class TTransform {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the parent property.
+     *
+     * @return possible object is
+     * {@link String }
+     */
+    public String getParent() {
+        return parent;
+    }
+
+    /**
+     * Sets the value of the parent property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setParent(String value) {
+        this.parent = value;
     }
 
 }

@@ -42,7 +42,7 @@ public class TTrail {
      */
     public float getLength() {
         if (length == null) {
-            return 10.0F;
+            return  10.0F;
         } else {
             return length;
         }
