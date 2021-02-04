@@ -25,6 +25,18 @@ object VisualLoader {
 
     fun load(config: TVisualConfig, engine: Engine) {
 
+        config.cameraConfig?.initialPosition?.also { p ->
+            engine.renderEngine?.also { renderer ->
+                renderer.setCameraTransform(
+                    Matrix4f().setTranslation(
+                        p.getPx(),
+                        p.getPy(),
+                        p.getPz()
+                    )
+                )
+            }
+        }
+
         config.water?.also { w ->
             engine.createEntity("waterVisual", Water(w.width, w.height))
             engine.addSystem(WaterRenderer())

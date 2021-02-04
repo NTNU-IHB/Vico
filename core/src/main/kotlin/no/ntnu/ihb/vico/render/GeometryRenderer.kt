@@ -29,20 +29,21 @@ class GeometryRenderer : SimulationSystem(
     override fun entityAdded(entity: Entity) {
         entity.getOrNull<Geometry>()?.also { g ->
             val proxy = when (val shape = g.shape) {
+                is SphereShape -> {
+                    renderer.createSphere(shape.radius, g.offset)
+                }
                 is PlaneShape -> {
                     renderer.createPlane(shape.width, shape.height, g.offset)
                 }
                 is BoxShape -> {
-                    renderer.createBox(shape.width, shape.width, shape.height)
-                }
-                is SphereShape -> {
-                    renderer.createSphere(shape.radius)
+                    renderer.createBox(shape.width, shape.width, shape.height, g.offset)
                 }
                 is CylinderShape -> {
-                    renderer.createCylinder(shape.radius, shape.height)
+                    renderer.createCylinder(shape.radius, shape.height, g.offset)
                 }
-                is CapsuleShape ->
-                    renderer.createCapsule(shape.radius, shape.height)
+                is CapsuleShape -> {
+                    renderer.createCapsule(shape.radius, shape.height, g.offset)
+                }
                 is TrimeshShape -> {
                     renderer.createMesh(shape)
                 }
@@ -96,4 +97,5 @@ class GeometryRenderer : SimulationSystem(
         }
         proxies.clear()
     }
+
 }

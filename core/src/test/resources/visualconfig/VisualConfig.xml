@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vico:VisualConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig" decimationFactor="2">
 
+    <vico:CameraConfig>
+        <vico:initialPosition pz="-5"/>
+    </vico:CameraConfig>
+
     <vico:Transform name="SineMover">
         <vico:Geometry color="red" opacity="0.5">
             <vico:Shape>

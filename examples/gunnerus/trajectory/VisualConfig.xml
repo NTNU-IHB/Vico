@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vico:VisualConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig" decimationFactor="10">
 
+    <vico:CameraConfig>
+        <vico:initialPosition px="-50" py="50" pz="-75"/>
+    </vico:CameraConfig>
+
     <vico:Transform name="vesselModel">
         <vico:Geometry>
             <vico:Shape>

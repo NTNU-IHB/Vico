@@ -15,15 +15,15 @@ class Transform : Frame(), Component {
     init {
         val tmp = Vector3d()
         properties.registerProperties(
-                RealLambdaProperty("localPosition", 3,
-                        getter = { ref -> getLocalTranslation(tmp).toArray(ref) },
-                        setter = { values -> setLocalTranslation(tmp.fromArray(values)) }
-                ),
-                RealLambdaProperty(
-                        "worldPosition", 3,
-                        getter = { ref -> getTranslation(tmp).toArray(ref) },
-                        setter = { values -> setTranslation(tmp.fromArray(values)) }
-                )
+            RealLambdaProperty("localPosition", 3,
+                getter = { ref -> getLocalTranslation(tmp).toArray(ref) },
+                setter = { values -> setLocalTranslation(tmp.fromArray(values)) }
+            ),
+            RealLambdaProperty(
+                "worldPosition", 3,
+                getter = { ref -> getTranslation(tmp).toArray(ref) },
+                setter = { values -> setTranslation(tmp.fromArray(values)) }
+            )
         )
     }
 

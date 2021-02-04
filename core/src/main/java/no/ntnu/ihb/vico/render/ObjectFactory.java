@@ -129,8 +129,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TCameraConfig }
+     */
+    public TCameraConfig createTCameraConfig() {
+        return new TCameraConfig();
+    }
+
+    /**
      * Create an instance of {@link TShape }
-     *
      */
     public TShape createTShape() {
         return new TShape();
@@ -138,7 +144,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TPositionRef }
-     *
      */
     public TPositionRef createTPositionRef() {
         return new TPositionRef();

@@ -51,8 +51,10 @@ public class TTransform {
     /**
      * Gets the value of the geometry property.
      *
-     * @return possible object is
-     * {@link TGeometry }
+     * @return
+     *     possible object is
+     *     {@link TGeometry }
+     *
      */
     public TGeometry getGeometry() {
         return geometry;
@@ -169,8 +171,10 @@ public class TTransform {
     /**
      * Gets the value of the parent property.
      *
-     * @return possible object is
-     * {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getParent() {
         return parent;
@@ -179,8 +183,10 @@ public class TTransform {
     /**
      * Sets the value of the parent property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setParent(String value) {
         this.parent = value;

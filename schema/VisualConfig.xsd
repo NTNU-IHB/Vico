@@ -8,10 +8,17 @@
 
     <xs:complexType name="TVisualConfig">
         <xs:sequence>
+            <xs:element name="CameraConfig" type="vico:TCameraConfig" minOccurs="0"/>
             <xs:element name="Transform" type="vico:TTransform" maxOccurs="unbounded"/>
             <xs:element name="Water" type="vico:TWater" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="decimationFactor" type="xs:unsignedInt" default="1"/>
+    </xs:complexType>
+
+    <xs:complexType name="TCameraConfig">
+        <xs:sequence>
+            <xs:element name="initialPosition" type="vico:TPosition"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="TWater">
