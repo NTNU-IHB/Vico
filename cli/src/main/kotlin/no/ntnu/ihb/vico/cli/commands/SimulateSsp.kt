@@ -5,6 +5,7 @@ import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
+import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.ssp.SSPLoader
@@ -14,6 +15,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
+import javax.xml.bind.JAXB
 import kotlin.time.ExperimentalTime
 
 @CommandLine.Command(
@@ -111,7 +113,14 @@ class SimulateSsp : Runnable {
 
         require(start < stop) { "stop=$stop > start=$start!" }
 
-        val renderer = relativeVisualConfigPath?.let {
+        val visualConfig = relativeVisualConfigPath?.let { configPath ->
+            var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
+            if (!configFile.exists()) configFile = File(configPath).absoluteFile
+            if (!configFile.exists()) throw NoSuchFileException(configFile)
+            JAXB.unmarshal(configFile, TVisualConfig::class.java)
+        }
+
+        val renderer = visualConfig?.let {
             ThreektRenderer().apply {
                 setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
             }
@@ -125,10 +134,10 @@ class SimulateSsp : Runnable {
 
                 if (!disableLogging) {
                     relativeLogConfigPath?.also { configPath ->
-                        var config = getConfigPath(loader.ssdFile.parentFile, configPath)
-                        if (!config.exists()) config = File(configPath).absoluteFile
-                        if (!config.exists()) throw NoSuchFileException(config)
-                        engine.addSystem(SlaveLoggerSystem(config, resultDir))
+                        var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
+                        if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                        if (!configFile.exists()) throw NoSuchFileException(configFile)
+                        engine.addSystem(SlaveLoggerSystem(configFile, resultDir))
                     } ?: run {
                         //log all variables
                         LOG.info("No log configuration provide, logging all variables..")
@@ -137,10 +146,10 @@ class SimulateSsp : Runnable {
                 }
 
                 relativeChartConfigPath?.also { configPath ->
-                    var config = getConfigPath(loader.ssdFile.parentFile, configPath)
-                    if (!config.exists()) config = File(configPath).absoluteFile
-                    if (!config.exists()) throw NoSuchFileException(config)
-                    ChartLoader.load(config).forEach { chart ->
+                    var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
+                    if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                    if (!configFile.exists()) throw NoSuchFileException(configFile)
+                    ChartLoader.load(configFile).forEach { chart ->
                         engine.addSystem(chart)
                     }
                 }
@@ -149,19 +158,14 @@ class SimulateSsp : Runnable {
                 structure.apply(engine, algorithm, parameterSet)
 
                 relativeScenarioConfig?.also { configPath ->
-                    var config = getConfigPath(loader.ssdFile.parentFile, configPath)
-                    if (!config.exists()) config = File(configPath).absoluteFile
-                    if (!config.exists()) throw NoSuchFileException(config)
-                    val scenario = parseScenario(config) ?: throw RuntimeException("Failed to load scenario!")
+                    var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
+                    if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                    if (!configFile.exists()) throw NoSuchFileException(configFile)
+                    val scenario = parseScenario(configFile) ?: throw RuntimeException("Failed to load scenario!")
                     scenario.applyScenario(engine)
                 }
 
-                relativeVisualConfigPath?.also { configPath ->
-                    var config = getConfigPath(loader.ssdFile.parentFile, configPath)
-                    if (!config.exists()) config = File(configPath).absoluteFile
-                    if (!config.exists()) throw NoSuchFileException(config)
-                    VisualLoader.load(config, engine)
-                }
+                visualConfig?.also { VisualLoader.load(it, engine) }
 
                 runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
 

@@ -1,10 +1,10 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
 @file:Repository("https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine")
 
-@file:DependsOn("no.ntnu.ihb.vico:core:0.2.0")
-@file:DependsOn("no.ntnu.ihb.vico:fmi:0.2.0")
-@file:DependsOn("no.ntnu.ihb.vico:chart:0.2.0")
-@file:DependsOn("no.ntnu.ihb.vico:jme-render:0.2.0", options = arrayOf("scope=compile,runtime"))
+@file:DependsOn("no.ntnu.ihb.vico:core:0.3.3")
+@file:DependsOn("no.ntnu.ihb.vico:fmi:0.3.3")
+@file:DependsOn("no.ntnu.ihb.vico:chart:0.3.3")
+@file:DependsOn("no.ntnu.ihb.vico:jme-render:0.3.3", options = arrayOf("scope=compile,runtime"))
 
 import info.laht.krender.jme.JmeRenderEngine
 import no.ntnu.ihb.vico.SlaveComponent
@@ -17,21 +17,25 @@ import no.ntnu.ihb.vico.log.LogConfigBuilder
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.render.Geometry
+import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
 import no.ntnu.ihb.vico.render.mesh.PlaneMesh
 import no.ntnu.ihb.vico.structure.RealParameter
 import no.ntnu.ihb.vico.systems.PositionRefSystem
 import org.joml.Matrix4f
+import java.io.File
 
 execution {
 
     baseStepSize = 1.0 / 100
-    renderer(JmeRenderEngine())
+    renderer(JmeRenderEngine().apply {
+        setCameraTransform(Matrix4f().setTranslation(0f, 2f, -10f))
+    })
 
     entities {
 
         entity("ground") {
-            component(SlaveComponent("ground.fmu", "ground"))
+            component(SlaveComponent("../fmus/ground.fmu", "ground"))
             component(Transform())
             component(Geometry(PlaneMesh(5f, 2f), Matrix4f().rotateX(-Math.PI.toFloat() / 2f)))
             component {
@@ -40,16 +44,16 @@ execution {
         }
 
         entity("chassis") {
-            component(SlaveComponent("chassis.fmu", "chassis").apply {
+            component(SlaveComponent("../fmus/chassis.fmu", "chassis").apply {
                 addParameterSet(
-                        "initialValues",
-                        RealParameter("C.mChassis", 400.0),
-                        RealParameter("C.kChassis", 15000.0),
-                        RealParameter("R.dChassis", 1000.0),
+                    "initialValues",
+                    RealParameter("C.mChassis", 400.0),
+                    RealParameter("C.kChassis", 15000.0),
+                    RealParameter("R.dChassis", 1000.0),
                 )
             })
             component(Transform())
-            component(Geometry(BoxMesh(0.75f, 0.35f, 0.5f)).apply {
+            component(Geometry(BoxMesh(0.75f, 0.3f, 0.5f)).apply {
                 color = 0x0000ff
             })
 
@@ -59,12 +63,12 @@ execution {
         }
 
         entity("wheel") {
-            component(SlaveComponent("wheel.fmu", "wheel").apply {
+            component(SlaveComponent("../fmus/wheel.fmu", "wheel").apply {
                 addParameterSet(
-                        "initialValues",
-                        RealParameter("C.mWheel", 40.0),
-                        RealParameter("C.kWheel", 150000.0),
-                        RealParameter("R.dWheel", 0.0),
+                    "initialValues",
+                    RealParameter("C.mWheel", 40.0),
+                    RealParameter("C.kWheel", 150000.0),
+                    RealParameter("R.dWheel", 0.0),
                 )
             })
             component(Transform())
@@ -84,18 +88,22 @@ execution {
         system {
             SlaveSystem(FixedStepMaster(), parameterSet = "initialValues")
         }
+
         system {
             SlaveLoggerSystem(LogConfigBuilder().apply {
                 staticFileNames = true
                 add("wheel", "zWheel")
                 add("chassis", "zChassis")
-            }.build())
+            }.build(), File("results"))
         }
         system {
             TimeSeriesDrawer.Builder("zWheel", "Displacement[m]")
                 .registerSeries("wheel", "zWheel")
                 .isLive(true)
                 .build()
+        }
+        system {
+            GeometryRenderer()
         }
         system {
             PositionRefSystem()
@@ -105,10 +113,10 @@ execution {
 
     connections {
 
-        "chassis.chassis.p.e" to "wheel.wheel.p1.e"
-        "wheel.wheel.p1.f" to "chassis.chassis.p.f"
-        "wheel.wheel.p.e" to "ground.ground.p.e"
-        "ground.ground.p.f" to "wheel.wheel.p.f"
+        "chassis.slaveComponent.p.e" to "wheel.slaveComponent.p1.e"
+        "wheel.slaveComponent.p1.f" to "chassis.slaveComponent.p.f"
+        "wheel.slaveComponent.p.e" to "ground.slaveComponent.p.e"
+        "ground.slaveComponent.p.f" to "wheel.slaveComponent.p.f"
 
     }
 

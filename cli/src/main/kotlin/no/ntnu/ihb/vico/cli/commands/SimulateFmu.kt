@@ -6,13 +6,16 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.model.ModelResolver
+import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.structure.SystemStructure
+import org.joml.Matrix4f
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
+import javax.xml.bind.JAXB
 import kotlin.time.ExperimentalTime
 
 
@@ -98,10 +101,23 @@ class SimulateFmu : Runnable {
             addComponent(model, modelName)
         }
 
+        val visualConfig = relativeVisualConfigPath?.let { configPath ->
+            var configFile = getConfigPath(fmu, configPath)
+            if (!configFile.exists()) configFile = File(configPath).absoluteFile
+            if (!configFile.exists()) throw NoSuchFileException(configFile)
+            JAXB.unmarshal(configFile, TVisualConfig::class.java)
+        }
+
+        val renderer = visualConfig?.let {
+            ThreektRenderer().apply {
+                setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
+            }
+        }
+
         Engine.Builder()
             .startTime(startTime)
             .stepSize(baseStepSize)
-            .renderer(relativeVisualConfigPath?.let { ThreektRenderer() })
+            .renderer(renderer)
             .build().use { engine ->
 
                 if (!disableVariableLogging) {
@@ -137,12 +153,7 @@ class SimulateFmu : Runnable {
                     scenario.applyScenario(engine)
                 }
 
-                relativeVisualConfigPath?.also { configPath ->
-                    var config = getConfigPath(fmu, configPath)
-                    if (!config.exists()) config = File(configPath).absoluteFile
-                    if (!config.exists()) throw NoSuchFileException(config)
-                    VisualLoader.load(config, engine)
-                }
+                visualConfig?.also { VisualLoader.load(it, engine) }
 
                 runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)
 
