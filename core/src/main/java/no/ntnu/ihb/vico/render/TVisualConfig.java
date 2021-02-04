@@ -16,6 +16,7 @@ import java.util.List;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="CameraConfig" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TCameraConfig" minOccurs="0"/>
  *         &lt;element name="Transform" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TTransform" maxOccurs="unbounded"/>
  *         &lt;element name="Water" type="{http://github.com/NTNU-IHB/Vico/schema/VisualConfig}TWater" minOccurs="0"/>
  *       &lt;/sequence>
@@ -27,11 +28,14 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TVisualConfig", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", propOrder = {
+        "cameraConfig",
         "transform",
         "water"
 })
 public class TVisualConfig {
 
+    @XmlElement(name = "CameraConfig", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
+    protected TCameraConfig cameraConfig;
     @XmlElement(name = "Transform", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig", required = true)
     protected List<TTransform> transform;
     @XmlElement(name = "Water", namespace = "http://github.com/NTNU-IHB/Vico/schema/VisualConfig")
@@ -39,6 +43,30 @@ public class TVisualConfig {
     @XmlAttribute(name = "decimationFactor")
     @XmlSchemaType(name = "unsignedInt")
     protected Long decimationFactor;
+
+    /**
+     * Gets the value of the cameraConfig property.
+     *
+     * @return
+     *     possible object is
+     *     {@link TCameraConfig }
+     *
+     */
+    public TCameraConfig getCameraConfig() {
+        return cameraConfig;
+    }
+
+    /**
+     * Sets the value of the cameraConfig property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TCameraConfig }
+     *
+     */
+    public void setCameraConfig(TCameraConfig value) {
+        this.cameraConfig = value;
+    }
 
     /**
      * Gets the value of the transform property.

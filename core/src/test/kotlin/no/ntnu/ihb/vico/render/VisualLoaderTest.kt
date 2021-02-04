@@ -5,7 +5,6 @@ import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.math.TWO_PI
 import no.ntnu.ihb.vico.systems.IteratingSystem
-import org.joml.Matrix4f
 import org.joml.Vector3d
 import java.io.File
 import kotlin.math.sin
@@ -48,13 +47,11 @@ private class SineMoverSystem : IteratingSystem(
 
 }
 
-
 fun main() {
 
-    val renderer = ThreektRenderer().apply {
-        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 5f))
-    }
-    val config = File(SineMover::class.java.classLoader.getResource("visualconfig/VisualConfig.xml")!!.file)
+    val renderer = ThreektRenderer()
+    val cl = SineMover::class.java.classLoader
+    val config = File(cl.getResource("visualconfig/VisualConfig.xml")!!.file)
 
     EngineBuilder(
         renderEngine = renderer
@@ -65,7 +62,6 @@ fun main() {
         }
 
         VisualLoader.load(config, engine)
-
         engine.addSystem(SineMoverSystem())
 
         engine.runner.startAndWait()

@@ -25,6 +25,18 @@ object VisualLoader {
 
     fun load(config: TVisualConfig, engine: Engine) {
 
+        config.cameraConfig?.initialPosition?.also { p ->
+            engine.renderEngine?.also { renderer ->
+                renderer.setCameraTransform(
+                    Matrix4f().setTranslation(
+                        p.getPx(),
+                        p.getPy(),
+                        p.getPz()
+                    )
+                )
+            }
+        }
+
         config.water?.also { w ->
             engine.createEntity("waterVisual", Water(w.width, w.height))
             engine.addSystem(WaterRenderer())
@@ -32,49 +44,54 @@ object VisualLoader {
 
         config.transform.forEach { t ->
 
-            engine.getEntityByName(t.name).apply {
+            val e = engine.getEntityByNameOrNull(t.name) ?: engine.createEntity(t.name)
 
-                add(createGeometry(t.geometry))
+            val tc = e.getOrCreate<Transform>()
+            e.add(createGeometry(t.geometry))
 
-                if (!has<Transform>()) {
-
-                    add<Transform>()
-
-                    t.positionRef?.also { ref ->
-                        add(PositionRef(
-                                xRef = ref.xRef.toRealRef(),
-                                yRef = ref.yRef.toRealRef(),
-                                zRef = ref.zRef.toRealRef()
-                        ))
-                        if (!engine.hasSystem<PositionRefSystem>()) {
-                            engine.addSystem(PositionRefSystem().apply { decimationFactor = config.decimationFactor * 2 })
-                        }
-                    }
-
-                    t.rotationRef?.also { ref ->
-                        add(RotationRef(
-                                xRef = ref.xRef.toRealRef(),
-                                yRef = ref.yRef.toRealRef(),
-                                zRef = ref.zRef.toRealRef(),
-                                repr = if (ref.getRepr() == TAngleRepr.DEG) Angle.Unit.DEG else Angle.Unit.RAD
-                        ))
-                        if (!engine.hasSystem<RotationRefSystem>()) {
-                            engine.addSystem(RotationRefSystem().apply { decimationFactor = config.decimationFactor * 2 })
-                        }
-                    }
-
+            t.positionRef?.also { ref ->
+                e.add(
+                    PositionRef(
+                        xRef = ref.xRef.toRealRef(),
+                        yRef = ref.yRef.toRealRef(),
+                        zRef = ref.zRef.toRealRef()
+                    )
+                )
+                if (!engine.hasSystem<PositionRefSystem>()) {
+                    engine.addSystem(PositionRefSystem().apply { decimationFactor = config.decimationFactor * 2 })
                 }
+            }
 
-                t.trail?.also { trail ->
-                    add(Trail(trail.length, trail.color?.toColor()))
-                    if (!engine.hasSystem<TrailRenderer>()) {
-                        engine.addSystem(TrailRenderer().apply { decimationFactor = config.decimationFactor * 5 })
-                    }
+            t.rotationRef?.also { ref ->
+                e.add(
+                    RotationRef(
+                        xRef = ref.xRef.toRealRef(),
+                        yRef = ref.yRef.toRealRef(),
+                        zRef = ref.zRef.toRealRef(),
+                        repr = if (ref.getRepr() == TAngleRepr.DEG) Angle.Unit.DEG else Angle.Unit.RAD
+                    )
+                )
+                if (!engine.hasSystem<RotationRefSystem>()) {
+                    engine.addSystem(RotationRefSystem().apply { decimationFactor = config.decimationFactor * 2 })
                 }
+            }
 
+            t.trail?.also { trail ->
+                e.add(Trail(trail.length, trail.color?.toColor()))
+                if (!engine.hasSystem<TrailRenderer>()) {
+                    engine.addSystem(TrailRenderer().apply { decimationFactor = config.decimationFactor * 5 })
+                }
+            }
+
+            t.parent?.also { parent ->
+                engine.getEntityByName(parent).apply {
+                    val parentTransform = getOrCreate<Transform>()
+                    tc.setParent(parentTransform)
+                }
             }
 
         }
+
         engine.addSystem(GeometryRenderer().apply {
             decimationFactor = config.getDecimationFactor()
         })
@@ -107,12 +124,12 @@ object VisualLoader {
         }
         val offset = Matrix4f()
         g.offsetPosition?.also { p ->
-            offset.setTranslation(p.px, p.py, p.pz)
+            offset.setTranslation(p.getPx(), p.getPy(), p.getPz())
         }
         g.offsetRotation?.also { r ->
-            var rx = r.x
-            var ry = r.y
-            var rz = r.z
+            var rx = r.getX()
+            var ry = r.getY()
+            var rz = r.getZ()
             if (g.offsetRotation.repr == TAngleRepr.DEG) {
                 rx = Math.toRadians(rx)
                 ry = Math.toRadians(ry)

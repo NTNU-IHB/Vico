@@ -88,6 +88,10 @@ open class Entity private constructor(
         return get(E::class.java)
     }
 
+    inline fun <reified E : Component> getOrCreate(): E {
+        return getOrNull<E>() ?: add()
+    }
+
     inline fun <reified E : Component> getOrNull(): E? {
         return getOrNull(E::class.java)
     }

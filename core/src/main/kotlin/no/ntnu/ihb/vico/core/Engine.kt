@@ -20,7 +20,7 @@ class Engine private constructor(
     startTime: Double? = null,
     val stopTime: Double? = null,
     baseStepSize: Double? = null,
-    private val renderEngine: RenderEngine? = null,
+    internal val renderEngine: RenderEngine? = null,
     private val inputManager: InputManager = InputManager(),
     private val connectionManager: ConnectionManager = ConnectionManager(),
     private val entityManager: EntityManager = EntityManager(connectionManager),

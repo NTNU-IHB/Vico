@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vico:VisualConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/VisualConfig" decimationFactor="2">
 
+    <vico:CameraConfig>
+        <vico:initialPosition pz="-5"/>
+    </vico:CameraConfig>
+
     <vico:Transform name="SineMover">
         <vico:Geometry color="red" opacity="0.5">
             <vico:Shape>
-                <vico:Sphere radius="0.5"/>
+                <vico:Sphere radius="0.05"/>
             </vico:Shape>
         </vico:Geometry>
         <vico:Trail color="red"/>
+    </vico:Transform>
+
+    <vico:Transform name="SineMoverChild" parent="SineMover">
+        <vico:Geometry color="blue" opacity="0.5">
+            <vico:OffsetPosition px="2"/>
+            <vico:Shape>
+                <vico:Sphere radius="0.25"/>
+            </vico:Shape>
+        </vico:Geometry>
     </vico:Transform>
 
 </vico:VisualConfig>
