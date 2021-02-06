@@ -1,7 +1,7 @@
 plugins {
     id 'base'
     id "com.jfrog.bintray" version "1.8.4" apply(false)
-    id 'org.jetbrains.kotlin.jvm' version '1.4.21' apply(false)
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30' apply(false)
 }
 
 wrapper {
@@ -55,6 +55,7 @@ subprojects { sub ->
         }
 
         compileKotlin {
+            kotlinOptions.useIR = true
             kotlinOptions.jvmTarget = "1.8"
             kotlinOptions.javaParameters = true
         }
