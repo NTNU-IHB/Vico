@@ -47,6 +47,7 @@ An implementation of a physics engine, relying on Bullet, is provided by the __b
 Usage: vico [-h] [COMMAND]
   -h, --help   display a help message
 Commands:
+  eval Interpret kotlin script using kts.
   simulate-fmu  Simulate a single FMU.
   simulate-ssp  Simulate a co-simulation system described using SSP.
 ````
@@ -55,12 +56,11 @@ To see the input arguments for the sub-commands, run the respective command prov
 ### Scripting
 
 [kts](https://github.com/markaren/kts) can be used to run arbitrary Kotlin code with maven dependencies, which means
-that you may use Vico as a dependency in your script.
+that you may use Vico as a dependency in your script. kts is bundled with the vico CLI for convenience (`vico eval`).
 
 ### How to build
 
 Simple execute `./gradlew build` in a shell. The CLI will be located under `cli/build/install`. <br>
-To publish the library to your local maven installation, execute `./gradlew pulishToMavenLocal`.
 
 ### Development
 
@@ -69,7 +69,8 @@ As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) i
 Currently, JDK8 is required.
 
 
-> Want to simplify the creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
+> Want to simplify creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
 > Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j) <br>
 > Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) <br>
+> Want to distrubute your FMUs? Check out [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy) <br>
 
