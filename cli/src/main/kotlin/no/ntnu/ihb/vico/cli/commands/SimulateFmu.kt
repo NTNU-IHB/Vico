@@ -1,11 +1,11 @@
 package no.ntnu.ihb.vico.cli.commands
 
-import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.model.ModelResolver
+import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
@@ -109,7 +109,8 @@ class SimulateFmu : Runnable {
         }
 
         val renderer = visualConfig?.let {
-            ThreektRenderer().apply {
+            val cls = ClassLoader.getSystemClassLoader().loadClass("info.laht.krender.threekt.ThreektRenderer")
+            (cls.newInstance() as RenderEngine).apply {
                 setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
             }
         }
@@ -122,10 +123,10 @@ class SimulateFmu : Runnable {
 
                 if (!disableVariableLogging) {
                     relativeLogConfigPath?.also { configPath ->
-                        var config = getConfigPath(fmu, configPath)
-                        if (!config.exists()) config = File(configPath).absoluteFile
-                        if (!config.exists()) throw NoSuchFileException(config)
-                        engine.addSystem(SlaveLoggerSystem(config, resultDir))
+                        var configFile = getConfigPath(fmu, configPath)
+                        if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                        if (!configFile.exists()) throw NoSuchFileException(configFile)
+                        engine.addSystem(SlaveLoggerSystem(configFile, resultDir))
                     } ?: run {
                         //log all variables
                         LOG.info("No log configuration provide, logging all variables..")
@@ -134,10 +135,10 @@ class SimulateFmu : Runnable {
                 }
 
                 relativeChartConfigPath?.also { configPath ->
-                    var config = getConfigPath(fmu, configPath)
-                    if (!config.exists()) config = File(configPath).absoluteFile
-                    if (!config.exists()) throw NoSuchFileException(config)
-                    ChartLoader.load(config).forEach { chart ->
+                    var configFile = getConfigPath(fmu, configPath)
+                    if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                    if (!configFile.exists()) throw NoSuchFileException(configFile)
+                    ChartLoader.load(configFile).forEach { chart ->
                         engine.addSystem(chart)
                     }
                 }
@@ -145,11 +146,12 @@ class SimulateFmu : Runnable {
                 structure.apply(engine, FixedStepMaster(false))
 
                 relativeScenarioConfig?.also { configPath ->
-                    var config = getConfigPath(fmu, configPath)
-                    if (!config.exists()) config = File(configPath).absoluteFile
-                    if (!config.exists()) throw NoSuchFileException(config)
-                    val scenario = parseScenario(config)
-                        ?: throw RuntimeException("Failed to load scenario")
+                    var configFile = getConfigPath(fmu, configPath)
+                    if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                    if (!configFile.exists()) throw NoSuchFileException(configFile)
+                    val cacheDir = File(".kts").apply { mkdirs() }
+                    val scenario = parseScenario(configFile, cacheDir)
+                        ?: throw RuntimeException("Failed to load scenario!")
                     scenario.applyScenario(engine)
                 }
 
