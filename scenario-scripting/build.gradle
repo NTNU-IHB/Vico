@@ -6,8 +6,7 @@ dependencies {
 
     implementation project(':core')
 
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-main-kts'
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-scripting-jsr223'
+    implementation 'info.laht.kts:host:0.4.0'
 
     testImplementation project(':test-data')
     

@@ -1,10 +1,10 @@
 package no.ntnu.ihb.vico.cli.commands
 
-import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
+import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
@@ -121,7 +121,8 @@ class SimulateSsp : Runnable {
         }
 
         val renderer = visualConfig?.let {
-            ThreektRenderer().apply {
+            val cls = ClassLoader.getSystemClassLoader().loadClass("info.laht.krender.threekt.ThreektRenderer")
+            (cls.newInstance() as RenderEngine).apply {
                 setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
             }
         }
@@ -161,7 +162,9 @@ class SimulateSsp : Runnable {
                     var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
                     if (!configFile.exists()) configFile = File(configPath).absoluteFile
                     if (!configFile.exists()) throw NoSuchFileException(configFile)
-                    val scenario = parseScenario(configFile) ?: throw RuntimeException("Failed to load scenario!")
+                    val cacheDir = File(".kts").apply { mkdirs() }
+                    val scenario = parseScenario(configFile, cacheDir)
+                        ?: throw RuntimeException("Failed to load scenario!")
                     scenario.applyScenario(engine)
                 }
 
