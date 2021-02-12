@@ -46,7 +46,7 @@ internal class ScenarioTest {
         }
 
         invokeWhen {
-            predicate {
+            `when` {
                 real("e1.value") == 3.0
             }.`do` {
                 real("e1.testComponent1.value").set(99)

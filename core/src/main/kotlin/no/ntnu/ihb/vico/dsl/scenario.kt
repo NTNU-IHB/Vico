@@ -323,10 +323,14 @@ class WhenContext(
     private val engine: Engine,
 ) {
 
-    lateinit var predicate: Predicate<Engine>
-    lateinit var task: () -> Unit
+    internal lateinit var predicate: Predicate<Engine>
 
-    fun predicate(p: Predicate<Engine>) {
+    private var _task: (() -> Unit)? = null
+    internal val task: () -> Unit
+        get() = _task
+            ?: throw IllegalStateException("Tasks not assigned! Did you forget to add `do` block after `when`?")
+
+    fun `when`(p: Predicate<Engine>) {
         this.predicate = p
     }
 
@@ -345,8 +349,13 @@ class WhenContext(
         return p.read()
     }
 
+    fun str(name: String): String {
+        val p = PropertyLocator(engine).getStringProperty(name)
+        return p.read()
+    }
+
     infix fun Unit.`do`(action: ActionContext.() -> Unit) {
-        task = {
+        _task = {
             action.invoke(ActionContext(engine))
         }
     }
