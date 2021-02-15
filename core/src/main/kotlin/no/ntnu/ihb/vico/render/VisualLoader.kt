@@ -44,7 +44,11 @@ object VisualLoader {
 
         config.transform.forEach { t ->
 
-            val e = engine.getEntityByNameOrNull(t.name) ?: engine.createEntity(t.name)
+            val e = if (t.name.isNullOrEmpty()) {
+                engine.createEntity(null)
+            } else {
+                engine.getEntityByNameOrNull(t.name) ?: engine.createEntity(t.name)
+            }
 
             val tc = e.getOrCreate<Transform>()
             e.add(createGeometry(t.geometry))
@@ -120,7 +124,7 @@ object VisualLoader {
             g.shape.sphere != null -> createShape(g.shape.sphere)
             g.shape.cylinder != null -> createShape(g.shape.cylinder)
             g.shape.mesh != null -> createShape(g.shape.mesh)
-            else -> TODO("Unsupported shape")
+            else -> TODO("Unsupported shape: ${g.shape}")
         }
         val offset = Matrix4f()
         g.offsetPosition?.also { p ->
