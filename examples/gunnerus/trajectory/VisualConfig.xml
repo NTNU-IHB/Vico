@@ -40,6 +40,14 @@
         </vico:PositionRef>
     </vico:Transform>
 
+    <vico:Transform parent="wpProvider">
+        <vico:Geometry color="green" opacity="0.2">
+            <vico:Shape>
+                <vico:Cylinder radius="25" height="0.1"/>
+            </vico:Shape>
+        </vico:Geometry>
+    </vico:Transform>
+
     <vico:Water width="2000" height="2000"/>
 
 </vico:VisualConfig>
