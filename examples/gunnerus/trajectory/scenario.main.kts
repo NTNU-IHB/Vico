@@ -9,11 +9,11 @@ val tReset = 49.95
 scenario {
 
     invokeAt(tReset) {
-        bool("vesselModel.slaveComponent.reset_position").set(true)
+        bool("vesselModel.reset_position").set(true)
     }
     invokeAt(tReset + dt) {
-        bool("vesselModel.slaveComponent.reset_position").set(false)
-        bool("trackController.slaveComponent.enable").set(true)
+        bool("vesselModel.reset_position").set(false)
+        bool("trackController.enable").set(true)
     }
 
 }
