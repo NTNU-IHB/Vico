@@ -36,7 +36,7 @@ class GeometryRenderer : SimulationSystem(
                     renderer.createPlane(shape.width, shape.height, g.offset)
                 }
                 is BoxShape -> {
-                    renderer.createBox(shape.width, shape.width, shape.height, g.offset)
+                    renderer.createBox(shape.width, shape.depth, shape.height, g.offset)
                 }
                 is CylinderShape -> {
                     renderer.createCylinder(shape.radius, shape.height, g.offset)
