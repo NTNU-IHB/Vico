@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.chart
 
-import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
 import org.knowm.xchart.SwingWrapper
@@ -55,7 +54,11 @@ abstract class AbstractDrawer(
         SwingWrapper(chart)
     }
 
-    override fun init(engine: Engine) {
+    init {
+        priority = Int.MAX_VALUE
+    }
+
+    override fun postInit() {
         updateData(engine.currentTime)
         if (live) {
             display()

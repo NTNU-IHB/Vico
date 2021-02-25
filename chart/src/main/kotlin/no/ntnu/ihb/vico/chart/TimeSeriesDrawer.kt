@@ -130,7 +130,6 @@ class TimeSeriesDrawer internal constructor(
     }
 
     override fun entityRemoved(entity: Entity) {
-
         seriesInfos.forEach {
             val (entityName, variableName) = it
             if (entityName == entity.name) {
@@ -138,7 +137,6 @@ class TimeSeriesDrawer internal constructor(
                 handles.remove(key)
             }
         }
-
     }
 
     override fun init(engine: Engine) {
