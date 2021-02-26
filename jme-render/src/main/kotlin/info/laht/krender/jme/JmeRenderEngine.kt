@@ -30,16 +30,14 @@ internal class JmeContext(
 
 class JmeRenderEngine : AbstractRenderEngine() {
 
-    private val renderer: JmeInternalRenderer
     private val parent: Node = Node("parent")
+    private val renderer = JmeInternalRenderer(parent)
 
     private val ctx: JmeContext
         get() = renderer.ctx
 
-    init {
-        renderer = JmeInternalRenderer(parent).apply {
-            start()
-        }
+    override fun show() {
+        renderer.start()
     }
 
     override fun setBackGroundColor(color: Int) {

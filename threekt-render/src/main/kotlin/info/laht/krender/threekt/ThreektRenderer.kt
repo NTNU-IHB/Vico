@@ -29,12 +29,11 @@ class ThreektRenderer : AbstractRenderEngine() {
     private val scene: Scene = Scene().apply {
         setBackground(Color.aliceblue)
     }
-    private val internalRenderer: InternalRenderer
 
-    init {
-        internalRenderer = InternalRenderer().apply {
-            start()
-        }
+    private val internalRenderer = InternalRenderer()
+
+    override fun show() {
+        internalRenderer.start()
     }
 
     override fun setCameraTransform(cameraTransform: Matrix4fc) {

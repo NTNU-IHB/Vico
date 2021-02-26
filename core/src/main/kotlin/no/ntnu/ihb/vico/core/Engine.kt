@@ -76,6 +76,7 @@ class Engine private constructor(
             systemManager.initialize(this)
             connectionManager.update()
             digestQueue()
+            renderEngine?.show()
         }
     }
 

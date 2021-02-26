@@ -12,6 +12,8 @@ import java.io.File
 
 interface RenderEngine : Closeable {
 
+    fun show()
+
     fun setBackGroundColor(color: Int)
     fun setCameraTransform(cameraTransform: Matrix4fc)
 
