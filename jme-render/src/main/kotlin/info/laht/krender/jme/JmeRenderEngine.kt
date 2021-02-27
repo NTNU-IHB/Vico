@@ -36,8 +36,11 @@ class JmeRenderEngine : AbstractRenderEngine() {
     private val ctx: JmeContext
         get() = renderer.ctx
 
-    override fun show() {
+    init {
         renderer.start()
+    }
+
+    override fun show() {
     }
 
     override fun setBackGroundColor(color: Int) {
