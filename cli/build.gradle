@@ -15,6 +15,7 @@ dependencies {
     implementation project(':core')
     implementation project(':fmi')
     implementation project(':chart')
+    implementation project(":web")
     runtimeOnly project(':threekt-render')
     implementation project(':scenario-scripting')
 
