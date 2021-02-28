@@ -1,11 +1,10 @@
-#!kts
+#!vico eval
 
-//@file:Repository("mavenLocal")
 @file:Repository("https://dl.bintray.com/laht/mvn")
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
 
-@file:DependsOn("no.ntnu.ihb.vico:core:0.3.3", options = arrayOf("scope=compile,runtime"))
-@file:DependsOn("no.ntnu.ihb.vico:threekt-render:0.3.3", options = arrayOf("scope=compile,runtime"))
+@file:DependsOn("no.ntnu.ihb.vico:core:0.3.3")
+@file:DependsOn("no.ntnu.ihb.vico:threekt-render:0.3.3")
 
 @file:CompilerOptions("-jvm-target", "1.8")
 
