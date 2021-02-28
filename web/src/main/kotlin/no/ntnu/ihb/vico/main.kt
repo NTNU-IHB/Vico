@@ -1,9 +1,8 @@
 package no.ntnu.ihb.vico
 
 import io.ktor.application.*
-import io.ktor.http.*
+import io.ktor.html.*
 import io.ktor.http.cio.websocket.*
-import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -20,14 +19,15 @@ fun main() {
         install(WebSockets)
 
         routing {
+
             get("/") {
-                call.respondText(ContentType.Text.Html) {
-                    KtorServer::class.java.classLoader.getResourceAsStream("index.html").reader().readText()
+                call.respondHtml {
+                    makeIndex()
                 }
             }
             get("/visual") {
-                call.respondText(ContentType.Text.Html) {
-                    KtorServer::class.java.classLoader.getResourceAsStream("visual.html").reader().readText()
+                call.respondHtml {
+                    makeVisual()
                 }
             }
 

@@ -25,6 +25,7 @@ subprojects { sub ->
     sub.version = rootProject.version
 
     repositories {
+        jcenter()
         mavenCentral()
         maven { url "https://dl.bintray.com/laht/mvn" }
         maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }

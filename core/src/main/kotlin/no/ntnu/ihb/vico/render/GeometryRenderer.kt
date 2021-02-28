@@ -14,7 +14,7 @@ class GeometryRenderer : SimulationSystem(
 ) {
 
     @InjectRenderer
-    private lateinit var renderer: RenderEngine
+    private var renderer: RenderEngine? = null
 
     private val proxies = mutableMapOf<Entity, RenderProxy>()
 
@@ -30,22 +30,22 @@ class GeometryRenderer : SimulationSystem(
         entity.getOrNull<Geometry>()?.also { g ->
             val proxy = when (val shape = g.shape) {
                 is SphereShape -> {
-                    renderer.createSphere(shape.radius, g.offset)
+                    renderer?.createSphere(shape.radius, g.offset)
                 }
                 is PlaneShape -> {
-                    renderer.createPlane(shape.width, shape.height, g.offset)
+                    renderer?.createPlane(shape.width, shape.height, g.offset)
                 }
                 is BoxShape -> {
-                    renderer.createBox(shape.width, shape.depth, shape.height, g.offset)
+                    renderer?.createBox(shape.width, shape.depth, shape.height, g.offset)
                 }
                 is CylinderShape -> {
-                    renderer.createCylinder(shape.radius, shape.height, g.offset)
+                    renderer?.createCylinder(shape.radius, shape.height, g.offset)
                 }
                 is CapsuleShape -> {
-                    renderer.createCapsule(shape.radius, shape.height, g.offset)
+                    renderer?.createCapsule(shape.radius, shape.height, g.offset)
                 }
                 is TrimeshShape -> {
-                    renderer.createMesh(shape)
+                    renderer?.createMesh(shape)
                 }
                 else -> null
             }

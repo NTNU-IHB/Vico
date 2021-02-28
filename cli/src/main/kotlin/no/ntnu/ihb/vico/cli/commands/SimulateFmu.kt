@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
@@ -81,6 +82,11 @@ class SimulateFmu : Runnable {
     )
     private var resultDir: File = File("results")
 
+    @CommandLine.Option(
+        names = ["-res", "--resultDir"],
+        description = ["Enable the web server the given port"]
+    )
+    val port: Int? = null
 
     @CommandLine.Parameters(
         arity = "1",
@@ -153,6 +159,10 @@ class SimulateFmu : Runnable {
                     val scenario = parseScenario(configFile, cacheDir)
                         ?: throw RuntimeException("Failed to load scenario!")
                     scenario.applyScenario(engine)
+                }
+
+                port?.also {
+                    engine.addSystem(KtorServer(it))
                 }
 
                 visualConfig?.also { VisualLoader.load(it, engine) }

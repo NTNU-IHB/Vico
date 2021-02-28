@@ -16,6 +16,7 @@ import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
 import no.ntnu.ihb.vico.render.Geometry
+import org.joml.Matrix4fc
 import org.joml.Quaterniond
 import org.joml.Vector3d
 import java.util.*
@@ -39,7 +40,6 @@ class KtorServer(
 
             routing {
 
-
                 get("/") {
                     call.respondText(ContentType.Text.Html) {
                         KtorServer::class.java.classLoader.getResourceAsStream("index.html")!!.reader().readText()
@@ -49,6 +49,7 @@ class KtorServer(
                     call.respondText(ContentType.Text.Html) {
                         KtorServer::class.java.classLoader.getResourceAsStream("visual.html")!!.reader().readText()
                     }
+
                 }
 
                 webSocket("/visual") {
@@ -74,7 +75,7 @@ class KtorServer(
                             }
                         }
                     } catch (ex: ClosedReceiveChannelException) {
-
+                        // do nothing
                     } catch (ex: Throwable) {
                         ex.printStackTrace()
                     } finally {
@@ -89,18 +90,21 @@ class KtorServer(
 
     private fun makeJson(includeGeometry: Boolean): String {
 
-        return entities.map { e ->
+        val data = entities.associate { e ->
             val t = e.get<Transform>()
             val g = e.get<Geometry>()
 
             val m = t.getWorldMatrix()
-            JsonTransform(
-                e.name,
+            e.name to JsonTransform(
                 m.getTranslation(Vector3d()),
-                m.getNormalizedRotation(Quaterniond())
+                m.getNormalizedRotation(Quaterniond()),
+                if (includeGeometry) toJson(g) else null
             )
 
-        }.let { gson.toJson(it) }
+        }
+
+        val type = if (includeGeometry) "setup" else "update"
+        return gson.toJson(JsonPayload(type, data))
 
     }
 
@@ -121,9 +125,32 @@ class KtorServer(
     }
 }
 
+fun toJson(g: Geometry): JsonGeometry {
+    return JsonGeometry(
+        g.offset,
+        g.color,
+        g.opacity,
+        g.visible,
+        g.wireframe
+    )
+}
+
+class JsonPayload(
+    val type: String,
+    val data: Any
+)
+
+class JsonGeometry(
+    val offsetTransform: Matrix4fc? = null,
+    val color: Int,
+    val opacity: Float,
+    val visible: Boolean,
+    val wireframe: Boolean
+)
+
 class JsonTransform(
-    val name: String,
     val position: Vector3d,
-    val rotation: Quaterniond
+    val rotation: Quaterniond,
+    val geometry: JsonGeometry? = null
 )
 

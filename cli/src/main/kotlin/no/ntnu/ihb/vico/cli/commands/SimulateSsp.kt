@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
@@ -93,12 +94,19 @@ class SimulateSsp : Runnable {
     )
     private var resultDir: File = File("results")
 
+    @CommandLine.Option(
+        names = ["-res", "--resultDir"],
+        description = ["Enable the web server the given port"]
+    )
+    val port: Int? = null
+
     @CommandLine.Parameters(
         arity = "1",
         paramLabel = "SSP_CONFIG",
         description = ["Path to a either a .ssp file, a .ssd file or a directory containing a file named SystemStructure.ssd"]
     )
     private lateinit var sspFile: File
+
 
     @ExperimentalTime
     override fun run() {
@@ -166,6 +174,10 @@ class SimulateSsp : Runnable {
                     val scenario = parseScenario(configFile, cacheDir)
                         ?: throw RuntimeException("Failed to load scenario!")
                     scenario.applyScenario(engine)
+                }
+
+                port?.also {
+                    engine.addSystem(KtorServer(it))
                 }
 
                 visualConfig?.also { VisualLoader.load(it, engine) }

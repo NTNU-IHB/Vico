@@ -39,6 +39,7 @@ abstract class AbstractComponent(
 
 internal fun <E : Component> instantiate(componentClass: Class<out E>): E {
     val ctor = componentClass.getDeclaredConstructor()
+    ctor.isAccessible = true
     return ctor.newInstance()
 }
 
