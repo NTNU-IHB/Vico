@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
+<script>
+
+    const socket = new WebSocket('ws://localhost:8000/visual');
+    let open = false
+    let closed = false
+
+
+    socket.addEventListener('open', function (event) {
+        console.log("open")
+        open = true
+    });
+
+    socket.addEventListener('close', function (event) {
+        console.log("close")
+        closed = true
+    });
+
+    socket.addEventListener('message', function (event) {
+        console.log('Message from server ', event.data);
+    });
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 5;
+
+    const animate = function () {
+        requestAnimationFrame(animate);
+
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        if (open && !closed) {
+            socket.send("close")
+        }
+
+        renderer.render(scene, camera);
+    };
+
+    animate();
+
+</script>
+</body>
+</html>
