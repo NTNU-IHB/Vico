@@ -1,10 +1,12 @@
+#!vico eval
+
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
 @file:Repository("https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine")
 
 @file:DependsOn("no.ntnu.ihb.vico:core:0.3.3")
 @file:DependsOn("no.ntnu.ihb.vico:fmi:0.3.3")
 @file:DependsOn("no.ntnu.ihb.vico:chart:0.3.3")
-@file:DependsOn("no.ntnu.ihb.vico:jme-render:0.3.3", options = arrayOf("scope=compile,runtime"))
+@file:DependsOn("no.ntnu.ihb.vico:jme-render:0.3.3")
 
 import info.laht.krender.jme.JmeRenderEngine
 import no.ntnu.ihb.vico.SlaveComponent

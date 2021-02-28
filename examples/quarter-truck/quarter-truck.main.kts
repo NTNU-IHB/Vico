@@ -1,5 +1,5 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.4.1")
+@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.5.0")
 
 import no.ntnu.ihb.sspgen.dsl.ssp
 
