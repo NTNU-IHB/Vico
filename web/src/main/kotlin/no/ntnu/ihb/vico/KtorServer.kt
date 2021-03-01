@@ -19,7 +19,11 @@ import no.ntnu.ihb.vico.render.Geometry
 import org.joml.Matrix4fc
 import org.joml.Quaterniond
 import org.joml.Vector3d
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.name
 
 class KtorServer(
     private val port: Int
@@ -33,12 +37,27 @@ class KtorServer(
         .setPrettyPrinting()
         .create()
 
+    @ExperimentalPathApi
     override fun postInit() {
         app = embeddedServer(Netty, port = port, watchPaths = listOf("classes", "resources")) {
 
             install(WebSockets)
 
             routing {
+
+                val cl = KtorServer::class.java.classLoader
+                val res = cl.getResource("js")!!
+                val path = Paths.get(res.toURI())
+                Files.walk(path, 1).forEach {
+                    val name = it.name
+                    if (name.endsWith(".js")) {
+                        get("js/${name}") {
+                            call.respondText(ContentType.Application.OctetStream) {
+                                cl.getResourceAsStream("js/${name}").bufferedReader().readText()
+                            }
+                        }
+                    }
+                }
 
                 get("/") {
                     call.respondText(ContentType.Text.Html) {
