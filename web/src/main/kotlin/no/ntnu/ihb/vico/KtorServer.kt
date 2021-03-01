@@ -53,7 +53,7 @@ class KtorServer(
                     if (name.endsWith(".js")) {
                         get("js/${name}") {
                             call.respondText(ContentType.Application.OctetStream) {
-                                cl.getResourceAsStream("js/${name}").bufferedReader().readText()
+                                cl.getResourceAsStream("js/${name}")!!.bufferedReader().readText()
                             }
                         }
                     }
@@ -78,9 +78,7 @@ class KtorServer(
 
                             when ((incoming.receive() as Frame.Text).readText()) {
                                 "subscribe" -> {
-
                                     outgoing.send(Frame.Text(makeJson(true)))
-
                                     synchronized(subscribers) {
                                         subscribers.add(outgoing)
                                     }
@@ -107,6 +105,22 @@ class KtorServer(
         }.start(wait = false)
     }
 
+    override fun observe(currentTime: Double) {
+
+        synchronized(subscribers) {
+            runBlocking {
+                subscribers.forEach { sub ->
+                    sub.send(Frame.Text(makeJson(false)))
+                }
+            }
+        }
+
+    }
+
+    override fun close() {
+        app?.stop(500, 500)
+    }
+
     private fun makeJson(includeGeometry: Boolean): String {
 
         val data = entities.associate { e ->
@@ -127,24 +141,9 @@ class KtorServer(
 
     }
 
-    override fun observe(currentTime: Double) {
-
-        synchronized(subscribers) {
-            runBlocking {
-                subscribers.forEach { sub ->
-                    sub.send(Frame.Text(makeJson(false)))
-                }
-            }
-        }
-
-    }
-
-    override fun close() {
-        app?.stop(500, 500)
-    }
 }
 
-fun toJson(g: Geometry): JsonGeometry {
+private fun toJson(g: Geometry): JsonGeometry {
     return JsonGeometry(
         g.offset,
         g.color,
@@ -154,12 +153,12 @@ fun toJson(g: Geometry): JsonGeometry {
     )
 }
 
-class JsonPayload(
+private class JsonPayload(
     val type: String,
     val data: Any
 )
 
-class JsonGeometry(
+private class JsonGeometry(
     val offsetTransform: Matrix4fc? = null,
     val color: Int,
     val opacity: Float,
@@ -167,7 +166,7 @@ class JsonGeometry(
     val wireframe: Boolean
 )
 
-class JsonTransform(
+private class JsonTransform(
     val position: Vector3d,
     val rotation: Quaterniond,
     val geometry: JsonGeometry? = null
