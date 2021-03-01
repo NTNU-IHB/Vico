@@ -95,7 +95,7 @@ class SimulateSsp : Runnable {
     private var resultDir: File = File("results")
 
     @CommandLine.Option(
-        names = ["-res", "--resultDir"],
+        names = ["-port"],
         description = ["Enable the web server the given port"]
     )
     val port: Int? = null
