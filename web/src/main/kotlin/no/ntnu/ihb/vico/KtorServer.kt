@@ -16,7 +16,8 @@ import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
 import no.ntnu.ihb.vico.render.Geometry
-import org.joml.Matrix4fc
+import no.ntnu.ihb.vico.render.mesh.BoxShape
+import no.ntnu.ihb.vico.render.mesh.SphereShape
 import org.joml.Quaterniond
 import org.joml.Vector3d
 import java.nio.file.Files
@@ -61,12 +62,12 @@ class KtorServer(
 
                 get("/") {
                     call.respondText(ContentType.Text.Html) {
-                        KtorServer::class.java.classLoader.getResourceAsStream("index.html")!!.reader().readText()
+                        cl.getResourceAsStream("index.html")!!.bufferedReader().readText()
                     }
                 }
                 get("/visual") {
                     call.respondText(ContentType.Text.Html) {
-                        KtorServer::class.java.classLoader.getResourceAsStream("visual.html")!!.reader().readText()
+                        cl.getResourceAsStream("visual.html")!!.bufferedReader().readText()
                     }
 
                 }
@@ -118,7 +119,11 @@ class KtorServer(
     }
 
     override fun close() {
-        app?.stop(500, 500)
+        try {
+            app?.stop(500, 500)
+        } catch (ex: Exception) {
+            // do nothing
+        }
     }
 
     private fun makeJson(includeGeometry: Boolean): String {
@@ -144,12 +149,19 @@ class KtorServer(
 }
 
 private fun toJson(g: Geometry): JsonGeometry {
+    val shape = when (val shape = g.shape) {
+        is BoxShape -> shape.toJsonShape()
+        is SphereShape -> shape.toJsonShape()
+        else -> throw UnsupportedOperationException()
+    }
+    val offset = g.offset?.get(FloatArray(16))
     return JsonGeometry(
-        g.offset,
+        offset,
         g.color,
         g.opacity,
         g.visible,
-        g.wireframe
+        g.wireframe,
+        shape
     )
 }
 
@@ -158,12 +170,38 @@ private class JsonPayload(
     val data: Any
 )
 
+private class JsonShape(
+    val type: String,
+    val shape: Map<String, Any>
+)
+
+private fun BoxShape.toJsonShape(): JsonShape {
+    return JsonShape(
+        "box",
+        mapOf(
+            "width" to width,
+            "height" to height,
+            "depth" to depth
+        )
+    )
+}
+
+private fun SphereShape.toJsonShape(): JsonShape {
+    return JsonShape(
+        "sphere",
+        mapOf(
+            "radius" to radius
+        )
+    )
+}
+
 private class JsonGeometry(
-    val offsetTransform: Matrix4fc? = null,
+    val offset: FloatArray? = null,
     val color: Int,
     val opacity: Float,
     val visible: Boolean,
-    val wireframe: Boolean
+    val wireframe: Boolean,
+    val shape: JsonShape
 )
 
 private class JsonTransform(

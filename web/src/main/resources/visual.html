@@ -32,6 +32,29 @@
         closed = true
     });
 
+    function createBox(shape) {
+        return new THREE.BoxGeometry(shape.width, shape.height, shape.depth)
+    }
+
+    function createSphere(shape) {
+        return new THREE.SphereGeometry(shape.radius, 16, 16)
+    }
+
+    function createCylinder(shape) {
+        return new THREE.CylinderGeometry(shape.radius, 16, 16)
+    }
+
+    function createGeometry(data) {
+        switch (data.type) {
+            case "box":
+                return createBox(data.shape)
+            case "sphere":
+                return createSphere(data.shape)
+            case "cylinder":
+                return createCylinder(data.shape)
+        }
+    }
+
     function setup(data) {
         for (const key in data) {
             let value = data[key]
@@ -39,13 +62,17 @@
             o.name = key
             o.visible = value.geometry.visible
 
-            let geom = new THREE.SphereGeometry(1, 32, 32)
+            let geom = createGeometry(value.geometry.shape)
             let mat = new THREE.MeshBasicMaterial({
                 color: value.geometry.color,
                 opacity: value.geometry.opacity,
                 wireframe: value.geometry.wireframe
             })
             let mesh = new THREE.Mesh(geom, mat)
+            mesh.matrixAutoUpdate = false
+            if (value.geometry.offset) {
+                mesh.matrix.elements = value.geometry.offset
+            }
             o.add(mesh)
             scene.add(o)
             entities[key] = o

@@ -9,10 +9,13 @@ import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
+import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import no.ntnu.ihb.vico.systems.IteratingSystem
+import org.joml.Matrix4f
 import org.joml.Vector3d
 import kotlin.math.PI
 import kotlin.math.sin
+import kotlin.system.exitProcess
 
 private data class SineMoverComponent(
     var A: Double = 1.0,
@@ -50,16 +53,30 @@ fun main() {
 
         val e1 = engine.createEntity("e1")
         e1.add<Transform>()
-        e1.add(Geometry(BoxMesh()).apply {
+        e1.add(Geometry(
+            BoxMesh(1f, 2f, 1f),
+            Matrix4f().setTranslation(10f, 0f, 0f)
+        ).apply {
             color = ColorConstants.blue
+            wireframe = true
         })
         e1.add<SineMoverComponent>()
+
+        val e2 = engine.createEntity("e2")
+        e2.add<Transform>()
+        e2.add(Geometry(SphereMesh(1f)).apply {
+            color = ColorConstants.yellow
+            opacity = 0.5f
+        })
+        e2.add<SineMoverComponent>()
 
         engine.addSystem(GeometryRenderer())
         engine.addSystem(SineMoverSystem())
         engine.addSystem(KtorServer(8000))
 
         engine.runner.startAndWait()
+
+        exitProcess(0)
 
     }
 
