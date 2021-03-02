@@ -5,6 +5,7 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.http.content.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
@@ -20,6 +21,7 @@ import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.mesh.*
 import org.joml.Quaterniond
 import org.joml.Vector3d
+import java.io.File
 import java.util.*
 import kotlin.io.path.ExperimentalPathApi
 
@@ -31,6 +33,7 @@ class KtorServer(
     private val subscribers = Collections.synchronizedList(mutableListOf<SendChannel<Frame>>())
 
     private var t0: Long = 0L
+    private lateinit var routing: Routing
 
     private val gson = GsonBuilder()
         .serializeNulls()
@@ -45,12 +48,21 @@ class KtorServer(
 
             routing {
 
+                this@KtorServer.routing = this
+
                 resources("/")
 
                 val cl = KtorServer::class.java.classLoader
                 get("/") {
                     call.respondText(ContentType.Text.Html) {
                         cl.getResourceAsStream("index.html")!!.bufferedReader().readText()
+                    }
+                }
+
+                get("/assets") {
+                    val file = File(call.request.queryString())
+                    if (file.exists()) {
+                        call.respondFile(file)
                     }
                 }
 
@@ -138,109 +150,133 @@ class KtorServer(
 
     }
 
+    private class JsonFrame(
+        val action: String,
+        val data: Any? = null
+    )
+
+    private fun toJson(g: Geometry): JsonGeometry {
+        val shape = when (val shape = g.shape) {
+            is PlaneShape -> shape.toJsonShape()
+            is BoxShape -> shape.toJsonShape()
+            is SphereShape -> shape.toJsonShape()
+            is CylinderShape -> shape.toJsonShape()
+            is CapsuleShape -> shape.toJsonShape()
+            is TrimeshShape -> shape.toJsonShape()
+            else -> throw UnsupportedOperationException("Unsupported shape: ${shape::class.java}")
+        }
+        val offset = g.offset?.get(FloatArray(16))
+        return JsonGeometry(
+            offset,
+            g.color,
+            g.opacity,
+            g.visible,
+            g.wireframe,
+            shape
+        )
+    }
+
+    private class JsonPayload(
+        val type: String,
+        val data: Any
+    )
+
+    private class JsonShape(
+        val type: String,
+        val shape: Map<String, Any>
+    )
+
+    private fun PlaneShape.toJsonShape(): JsonShape {
+        return JsonShape(
+            "plane",
+            mapOf(
+                "width" to width,
+                "height" to height
+            )
+        )
+    }
+
+    private fun BoxShape.toJsonShape(): JsonShape {
+        return JsonShape(
+            "box",
+            mapOf(
+                "width" to width,
+                "height" to height,
+                "depth" to depth
+            )
+        )
+    }
+
+    private fun SphereShape.toJsonShape(): JsonShape {
+        return JsonShape(
+            "sphere",
+            mapOf(
+                "radius" to radius
+            )
+        )
+    }
+
+    private fun CylinderShape.toJsonShape(): JsonShape {
+        return JsonShape(
+            "cylinder",
+            mapOf(
+                "radius" to radius,
+                "height" to height
+            )
+        )
+    }
+
+    private fun CapsuleShape.toJsonShape(): JsonShape {
+        return JsonShape(
+            "capsule",
+            mapOf(
+                "radius" to radius,
+                "height" to height
+            )
+        )
+    }
+
+    private fun TrimeshShape.toJsonShape(): JsonShape {
+        return if (this is TrimeshShapeWithSource && this.source != null) {
+            val sourcePath = source!!.relativeTo(File(".")).path
+            JsonShape(
+                "trimeshWithSource",
+                mapOf(
+                    "source" to sourcePath
+                )
+            )
+        } else {
+            JsonShape(
+                "trimesh",
+                mapOf(
+                    "indices" to indices,
+                    "vertices" to vertices,
+                    "normals" to normals,
+                    "uvs" to uvs
+                )
+            )
+        }
+    }
+
+    private class JsonGeometry(
+        val offset: FloatArray? = null,
+        val color: Int,
+        val opacity: Float,
+        val visible: Boolean,
+        val wireframe: Boolean,
+        val shape: JsonShape
+    )
+
+    private class JsonTransform(
+        val position: Vector3d,
+        val rotation: Quaterniond,
+        val geometry: JsonGeometry? = null
+    )
+
     private companion object {
-        private val MAX_SUBSCRIPTION_RATE = 1.0 / 60
+        private const val MAX_SUBSCRIPTION_RATE = 1.0 / 60
     }
 
 }
 
-private class JsonFrame(
-    val action: String,
-    val data: Any? = null
-)
-
-private fun toJson(g: Geometry): JsonGeometry {
-    val shape = when (val shape = g.shape) {
-        is PlaneShape -> shape.toJsonShape()
-        is BoxShape -> shape.toJsonShape()
-        is SphereShape -> shape.toJsonShape()
-        is CylinderShape -> shape.toJsonShape()
-        is CapsuleShape -> shape.toJsonShape()
-        else -> throw UnsupportedOperationException()
-    }
-    val offset = g.offset?.get(FloatArray(16))
-    return JsonGeometry(
-        offset,
-        g.color,
-        g.opacity,
-        g.visible,
-        g.wireframe,
-        shape
-    )
-}
-
-private class JsonPayload(
-    val type: String,
-    val data: Any
-)
-
-private class JsonShape(
-    val type: String,
-    val shape: Map<String, Any>
-)
-
-private fun PlaneShape.toJsonShape(): JsonShape {
-    return JsonShape(
-        "plane",
-        mapOf(
-            "width" to width,
-            "height" to height
-        )
-    )
-}
-
-private fun BoxShape.toJsonShape(): JsonShape {
-    return JsonShape(
-        "box",
-        mapOf(
-            "width" to width,
-            "height" to height,
-            "depth" to depth
-        )
-    )
-}
-
-private fun SphereShape.toJsonShape(): JsonShape {
-    return JsonShape(
-        "sphere",
-        mapOf(
-            "radius" to radius
-        )
-    )
-}
-
-private fun CylinderShape.toJsonShape(): JsonShape {
-    return JsonShape(
-        "cylinder",
-        mapOf(
-            "radius" to radius,
-            "height" to height
-        )
-    )
-}
-
-private fun CapsuleShape.toJsonShape(): JsonShape {
-    return JsonShape(
-        "capsule",
-        mapOf(
-            "radius" to radius,
-            "height" to height
-        )
-    )
-}
-
-private class JsonGeometry(
-    val offset: FloatArray? = null,
-    val color: Int,
-    val opacity: Float,
-    val visible: Boolean,
-    val wireframe: Boolean,
-    val shape: JsonShape
-)
-
-private class JsonTransform(
-    val position: Vector3d,
-    val rotation: Quaterniond,
-    val geometry: JsonGeometry? = null
-)
 

@@ -94,15 +94,13 @@ fun main() {
             axis.set(1.0, 1.0, 1.0).normalize()
         }
 
-
 //        val e4 = engine.createEntity("e4")
 //        e4.add<Transform>().apply {
 //            setLocalTranslation(-5.0, 0.0, 0.0)
 //        }
-//        val mesh = ObjLoader().load("../examples/gunnerus/obj/Gunnerus.obj")
+//        val mesh = ObjLoader().load(File("examples/gunnerus/obj/Gunnerus.obj"))
 //        e4.add(Geometry(mesh))
-//
-        // engine.addSystem(GeometryRenderer())
+
         engine.addSystem(SineMoverSystem())
         engine.addSystem(KtorServer(8000))
 

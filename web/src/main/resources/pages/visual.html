@@ -11,6 +11,7 @@
 </head>
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
+<script src="/js/OBJLoader.js"></script>
 <script src="/js/OrbitControls.js"></script>
 <script src="/js/Capsule.js"></script>
 <script src="/js/Stats.js"></script>
@@ -58,18 +59,52 @@
         return new Capsule(shape.radius, shape.height, mat, 16, 16)
     }
 
-    function createMesh(data, mat) {
+    function createTrimesh(shape, mat) {
+        const geom = new THREE.BufferGeometry()
+        const vertices = new Float32Array(shape.vertices)
+        const normals = new Float32Array(shape.normals)
+        geom.setIndex(shape.indices)
+        geom.setAttribute("position", new THREE.BufferAttribute(vertices, 3))
+        geom.setAttribute("normal", new THREE.BufferAttribute(normals, 3))
+        geom.computeBoundingSphere()
+        return new THREE.Mesh(geom, mat)
+    }
+
+    function createTrimeshFromSource(shape, callback) {
+        const source = shape.source
+        const ext = source.split(".").pop()
+        switch (ext) {
+            case "obj":
+                const loader = new THREE.OBJLoader()
+                loader.load("/assets?" + source, function (obj) {
+                    callback(obj)
+                })
+        }
+    }
+
+    function createMesh(data, mat, callback) {
         switch (data.type) {
             case "plane":
-                return createPlane(data.shape, mat)
+                callback(createPlane(data.shape, mat))
+                break
             case "box":
-                return createBox(data.shape, mat)
+                callback(createBox(data.shape, mat))
+                break
             case "sphere":
-                return createSphere(data.shape, mat)
+                callback(createSphere(data.shape, mat))
+                break
             case "cylinder":
-                return createCylinder(data.shape, mat)
+                callback(createCylinder(data.shape, mat))
+                break
             case "capsule":
-                return createCapsule(data.shape, mat)
+                callback(createCapsule(data.shape, mat))
+                break
+            case "trimesh":
+                callback(createTrimesh(data.shape, mat))
+                break
+            case "trimeshWithSource":
+                createTrimeshFromSource(data.shape, callback)
+                break
         }
     }
 
@@ -88,12 +123,13 @@
                 mat.opacity = value.geometry.opacity
                 mat.transparent = true
             }
-            let mesh = createMesh(value.geometry.shape, mat)
-            mesh.matrixAutoUpdate = false
-            if (value.geometry.offset) {
-                mesh.matrix.elements = value.geometry.offset
-            }
-            o.add(mesh)
+            createMesh(value.geometry.shape, mat, function (mesh) {
+                mesh.matrixAutoUpdate = false
+                if (value.geometry.offset) {
+                    mesh.matrix.elements = value.geometry.offset
+                }
+                o.add(mesh)
+            })
             scene.add(o)
             entities[key] = o
         }
@@ -136,6 +172,8 @@
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.update();
+
+    scene.add(new THREE.AmbientLight())
 
     window.addEventListener('resize', onWindowResize, false);
 
