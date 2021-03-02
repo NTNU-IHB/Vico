@@ -5,42 +5,42 @@
         <vico:initialPosition px="-50" py="50" pz="-75"/>
     </vico:CameraConfig>
 
-    <vico:Transform name="vesselModel">
+    <vico:Transform>
         <vico:Geometry>
             <vico:Shape>
                 <vico:Mesh source="../obj/Gunnerus.obj"/>
             </vico:Shape>
         </vico:Geometry>
         <vico:PositionRef>
-            <vico:xRef name="cgShipMotion.nedDisplacement.east"/>
-            <vico:yRef name="cgShipMotion.nedDisplacement.down">
+            <vico:xRef name="vesselModel.cgShipMotion.nedDisplacement.east"/>
+            <vico:yRef name="vesselModel.cgShipMotion.nedDisplacement.down">
                 <vico:LinearTransformation factor="-1"/>
             </vico:yRef>
-            <vico:zRef name="cgShipMotion.nedDisplacement.north"/>
+            <vico:zRef name="vesselModel.cgShipMotion.nedDisplacement.north"/>
         </vico:PositionRef>
         <vico:RotationRef>
-            <vico:xRef name="cgShipMotion.angularDisplacement.pitch"/>
-            <vico:yRef name="cgShipMotion.angularDisplacement.yaw">
+            <vico:xRef name="vesselModel.cgShipMotion.angularDisplacement.pitch"/>
+            <vico:yRef name="vesselModel.cgShipMotion.angularDisplacement.yaw">
                 <vico:LinearTransformation offset="180"/>
             </vico:yRef>
-            <vico:zRef name="cgShipMotion.angularDisplacement.roll"/>
+            <vico:zRef name="vesselModel.cgShipMotion.angularDisplacement.roll"/>
         </vico:RotationRef>
         <vico:Trail length="100"/>
     </vico:Transform>
 
-    <vico:Transform name="wpProvider">
+    <vico:Transform name="cylinderTransform">
         <vico:Geometry color="green">
             <vico:Shape>
                 <vico:Cylinder radius="2" height="10"/>
             </vico:Shape>
         </vico:Geometry>
         <vico:PositionRef>
-            <vico:xRef name="targetWP.east"/>
-            <vico:zRef name="targetWP.north"/>
+            <vico:xRef name="wpProvider.targetWP.east"/>
+            <vico:zRef name="wpProvider.targetWP.north"/>
         </vico:PositionRef>
     </vico:Transform>
 
-    <vico:Transform parent="wpProvider">
+    <vico:Transform parent="cylinderTransform">
         <vico:Geometry color="green" opacity="0.2">
             <vico:Shape>
                 <vico:Cylinder radius="25" height="0.1"/>

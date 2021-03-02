@@ -44,13 +44,9 @@ object VisualLoader {
 
         config.transform.forEach { t ->
 
-            val e = if (t.name.isNullOrEmpty()) {
-                engine.createEntity(null)
-            } else {
-                engine.getEntityByNameOrNull(t.name) ?: engine.createEntity(t.name)
-            }
+            val e = engine.createEntity(t.name)
 
-            val tc = e.getOrCreate<Transform>()
+            val tc = e.add<Transform>()
             e.add(createGeometry(t.geometry))
 
             t.positionRef?.also { ref ->
