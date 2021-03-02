@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Vico 3D visualization</title>
@@ -11,7 +11,8 @@
 </head>
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
-<script src="js/OrbitControls.js"></script>
+<script src="/js/OrbitControls.js"></script>
+<script src="/js/Capsule.js"></script>
 <script>
 
     const socket = new WebSocket('ws://localhost:8000/visual');
@@ -32,26 +33,38 @@
         closed = true
     });
 
-    function createBox(shape) {
-        return new THREE.BoxGeometry(shape.width, shape.height, shape.depth)
+    function createPlane(shape, mat) {
+        return new THREE.Mesh(new THREE.BoxGeometry(shape.width, shape.height), mat)
     }
 
-    function createSphere(shape) {
-        return new THREE.SphereGeometry(shape.radius, 16, 16)
+    function createBox(shape, mat) {
+        return new THREE.Mesh(new THREE.BoxGeometry(shape.width, shape.height, shape.depth), mat)
     }
 
-    function createCylinder(shape) {
-        return new THREE.CylinderGeometry(shape.radius, 16, 16)
+    function createSphere(shape, mat) {
+        return new THREE.Mesh(new THREE.SphereGeometry(shape.radius, 16, 16), mat)
     }
 
-    function createGeometry(data) {
+    function createCylinder(shape, mat) {
+        return new THREE.Mesh(new THREE.CylinderGeometry(shape.radius, shape.radius, shape.height, 16, 16), mat)
+    }
+
+    function createCapsule(shape, mat) {
+        return new Capsule(shape.radius, shape.height, mat, 16, 16)
+    }
+
+    function createMesh(data, mat) {
         switch (data.type) {
+            case "plane":
+                return createPlane(data.shape, mat)
             case "box":
-                return createBox(data.shape)
+                return createBox(data.shape, mat)
             case "sphere":
-                return createSphere(data.shape)
+                return createSphere(data.shape, mat)
             case "cylinder":
-                return createCylinder(data.shape)
+                return createCylinder(data.shape, mat)
+            case "capsule":
+                return createCapsule(data.shape, mat)
         }
     }
 
@@ -62,13 +75,15 @@
             o.name = key
             o.visible = value.geometry.visible
 
-            let geom = createGeometry(value.geometry.shape)
             let mat = new THREE.MeshBasicMaterial({
                 color: value.geometry.color,
-                opacity: value.geometry.opacity,
                 wireframe: value.geometry.wireframe
             })
-            let mesh = new THREE.Mesh(geom, mat)
+            if (value.geometry.opacity < 1) {
+                mat.opacity = value.geometry.opacity
+                mat.transparent = true
+            }
+            let mesh = createMesh(value.geometry.shape, mat)
             mesh.matrixAutoUpdate = false
             if (value.geometry.offset) {
                 mesh.matrix.elements = value.geometry.offset

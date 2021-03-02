@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
+import io.ktor.http.content.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
@@ -16,15 +17,11 @@ import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
 import no.ntnu.ihb.vico.render.Geometry
-import no.ntnu.ihb.vico.render.mesh.BoxShape
-import no.ntnu.ihb.vico.render.mesh.SphereShape
+import no.ntnu.ihb.vico.render.mesh.*
 import org.joml.Quaterniond
 import org.joml.Vector3d
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.*
 import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.name
 
 class KtorServer(
     private val port: Int
@@ -40,36 +37,19 @@ class KtorServer(
 
     @ExperimentalPathApi
     override fun postInit() {
-        app = embeddedServer(Netty, port = port, watchPaths = listOf("classes", "resources")) {
+        app = embeddedServer(Netty, port = port) {
 
             install(WebSockets)
 
             routing {
 
-                val cl = KtorServer::class.java.classLoader
-                val res = cl.getResource("js")!!
-                val path = Paths.get(res.toURI())
-                Files.walk(path, 1).forEach {
-                    val name = it.name
-                    if (name.endsWith(".js")) {
-                        get("js/${name}") {
-                            call.respondText(ContentType.Application.OctetStream) {
-                                cl.getResourceAsStream("js/${name}")!!.bufferedReader().readText()
-                            }
-                        }
-                    }
-                }
+                resources("/")
 
+                val cl = KtorServer::class.java.classLoader
                 get("/") {
                     call.respondText(ContentType.Text.Html) {
                         cl.getResourceAsStream("index.html")!!.bufferedReader().readText()
                     }
-                }
-                get("/visual") {
-                    call.respondText(ContentType.Text.Html) {
-                        cl.getResourceAsStream("visual.html")!!.bufferedReader().readText()
-                    }
-
                 }
 
                 webSocket("/visual") {
@@ -150,8 +130,11 @@ class KtorServer(
 
 private fun toJson(g: Geometry): JsonGeometry {
     val shape = when (val shape = g.shape) {
+        is PlaneShape -> shape.toJsonShape()
         is BoxShape -> shape.toJsonShape()
         is SphereShape -> shape.toJsonShape()
+        is CylinderShape -> shape.toJsonShape()
+        is CapsuleShape -> shape.toJsonShape()
         else -> throw UnsupportedOperationException()
     }
     val offset = g.offset?.get(FloatArray(16))
@@ -175,6 +158,16 @@ private class JsonShape(
     val shape: Map<String, Any>
 )
 
+private fun PlaneShape.toJsonShape(): JsonShape {
+    return JsonShape(
+        "plane",
+        mapOf(
+            "width" to width,
+            "height" to height
+        )
+    )
+}
+
 private fun BoxShape.toJsonShape(): JsonShape {
     return JsonShape(
         "box",
@@ -191,6 +184,26 @@ private fun SphereShape.toJsonShape(): JsonShape {
         "sphere",
         mapOf(
             "radius" to radius
+        )
+    )
+}
+
+private fun CylinderShape.toJsonShape(): JsonShape {
+    return JsonShape(
+        "cylinder",
+        mapOf(
+            "radius" to radius,
+            "height" to height
+        )
+    )
+}
+
+private fun CapsuleShape.toJsonShape(): JsonShape {
+    return JsonShape(
+        "capsule",
+        mapOf(
+            "radius" to radius,
+            "height" to height
         )
     )
 }
