@@ -30,6 +30,8 @@ class KtorServer(
     private var app: NettyApplicationEngine? = null
     private val subscribers = Collections.synchronizedList(mutableListOf<SendChannel<Frame>>())
 
+    private var t0: Long = 0L
+
     private val gson = GsonBuilder()
         .serializeNulls()
         .setPrettyPrinting()
@@ -57,12 +59,19 @@ class KtorServer(
                     try {
                         while (true) {
 
-                            when ((incoming.receive() as Frame.Text).readText()) {
+                            val recv = (incoming.receive() as Frame.Text).readText()
+                            val frame = gson.fromJson(recv, JsonFrame::class.java)
+
+                            when (frame.action) {
                                 "subscribe" -> {
                                     outgoing.send(Frame.Text(makeJson(true)))
                                     synchronized(subscribers) {
                                         subscribers.add(outgoing)
                                     }
+                                }
+                                "keyPressed" -> {
+                                    val key = frame.data as String
+                                    engine.registerKeyPress(key)
                                 }
                                 "close" -> {
                                     synchronized(subscribers) {
@@ -88,14 +97,17 @@ class KtorServer(
 
     override fun observe(currentTime: Double) {
 
-        synchronized(subscribers) {
-            runBlocking {
-                subscribers.forEach { sub ->
-                    sub.send(Frame.Text(makeJson(false)))
+        val timeSinceUpdate = (System.currentTimeMillis() - t0).toDouble() / 1000
+        if (timeSinceUpdate > MAX_SUBSCRIPTION_RATE) {
+            synchronized(subscribers) {
+                runBlocking {
+                    subscribers.forEach { sub ->
+                        sub.send(Frame.Text(makeJson(false)))
+                    }
                 }
             }
+            t0 = System.currentTimeMillis()
         }
-
     }
 
     override fun close() {
@@ -126,7 +138,16 @@ class KtorServer(
 
     }
 
+    private companion object {
+        private val MAX_SUBSCRIPTION_RATE = 1.0 / 60
+    }
+
 }
+
+private class JsonFrame(
+    val action: String,
+    val data: Any? = null
+)
 
 private fun toJson(g: Geometry): JsonGeometry {
     val shape = when (val shape = g.shape) {

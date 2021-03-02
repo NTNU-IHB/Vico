@@ -39,7 +39,7 @@ fun main() {
 //                try {
 //                    while (true) {
 //
-//                        when ((incoming.receive() as Frame.Text).readText()) {
+//                        when ((incoming.receive() as Frame.js.Text).readText()) {
 //                            "subscribe" -> {
 //
 //                            }

@@ -1,12 +1,12 @@
 package no.ntnu.ihb.vico.core
 
-import no.ntnu.ihb.vico.input.KeyStroke
 import no.ntnu.ihb.vico.util.Clock
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Predicate
+import kotlin.system.exitProcess
 
 
 class EngineRunner internal constructor(
@@ -113,7 +113,11 @@ class EngineRunner internal constructor(
                 engine.step()
                 stepOccurred = true
             } else {
-                Thread.sleep(1)
+                try {
+                    Thread.sleep(1)
+                } catch (ex: InterruptedException) {
+
+                }
             }
             wallClock += deltaTime
         } else {
@@ -131,8 +135,17 @@ class EngineRunner internal constructor(
     fun stop() {
         thread?.also {
             stop.set(true)
-            it.join()
+            try {
+                it.join()
+            } catch (ex: InterruptedException) {
+
+            }
         }
+
+        println("Manually aborted execution at t=${engine.currentTime}..")
+        engine.close()
+        exitProcess(0)
+
     }
 
     private inner class Runner : Runnable {
@@ -182,27 +195,18 @@ class EngineRunner internal constructor(
                 }
 
                 input?.toCharArray()?.forEach { c ->
-                    when (c) {
-                        'e' -> engine.registerKeyPress(KeyStroke.KEY_E)
-                        'r' -> engine.registerKeyPress(KeyStroke.KEY_R)
-                        'w' -> engine.registerKeyPress(KeyStroke.KEY_W)
-                        'a' -> engine.registerKeyPress(KeyStroke.KEY_A)
-                        's' -> engine.registerKeyPress(KeyStroke.KEY_S)
-                        'd' -> engine.registerKeyPress(KeyStroke.KEY_D)
-                        'q' -> quit = true
-                    }
+                    engine.registerKeyPress(c.toString())
                 } ?: kotlin.run {
                     quit = true
                 }
 
-                sleep(10)
+                try {
+                    sleep(10)
+                } catch (ex: InterruptedException) {
+                    quit = true
+                }
 
             } while (!quit)
-
-            if (!stop.getAndSet(true)) {
-                println("Manually aborted execution at t=${engine.currentTime}..")
-                engine.close()
-            }
 
         }
 

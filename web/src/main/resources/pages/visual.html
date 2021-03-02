@@ -13,25 +13,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
 <script src="/js/OrbitControls.js"></script>
 <script src="/js/Capsule.js"></script>
+<script src="/js/Stats.js"></script>
+<script src="/js/Frame.js"></script>
 <script>
-
-    const socket = new WebSocket('ws://localhost:8000/visual');
-    let open = false
-    let closed = false
 
     const entities = {}
 
+    const stats = new Stats()
+    document.body.appendChild(stats.dom)
+
+    const socket = new WebSocket('ws://localhost:8000/visual');
 
     socket.addEventListener('open', function (event) {
         console.log("open")
-        socket.send("subscribe")
-        open = true
+        send(socket, "subscribe")
     });
 
     socket.addEventListener('close', function (event) {
         console.log("close")
-        closed = true
     });
+
+    document.addEventListener('keydown', function (event) {
+        let key = event.key
+        send(socket, "keyPressed", key)
+    })
 
     function createPlane(shape, mat) {
         return new THREE.Mesh(new THREE.BoxGeometry(shape.width, shape.height), mat)
@@ -115,6 +120,7 @@
                 break
             case "update":
                 update(payload.data)
+                stats.update()
                 break
         }
 

@@ -2,7 +2,6 @@ package no.ntnu.ihb.vico.core
 
 import no.ntnu.ihb.vico.input.InputAccess
 import no.ntnu.ihb.vico.input.InputManager
-import no.ntnu.ihb.vico.input.KeyStroke
 import no.ntnu.ihb.vico.math.doublesAreEqual
 import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.util.PredicateTask
@@ -127,12 +126,12 @@ class Engine private constructor(
         }
     }
 
-    override fun registerKeyPress(keyStroke: KeyStroke) {
-        when (keyStroke) {
-            KeyStroke.KEY_E -> runner.togglePause()
-            KeyStroke.KEY_R -> runner.toggleEnableRealTime()
-            KeyStroke.KEY_Q -> runner.stop()
-            else -> inputManager.registerKeyPress(keyStroke)
+    override fun registerKeyPress(key: String) {
+        when (key) {
+            "e" -> runner.togglePause()
+            "r" -> runner.toggleEnableRealTime()
+            "q" -> runner.stop()
+            else -> inputManager.registerKeyPress(key)
         }
     }
 
