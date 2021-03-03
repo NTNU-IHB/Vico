@@ -37,6 +37,18 @@ object VisualLoader {
             }
         }
 
+        engine.createEntity("camera").apply {
+            tag = "camera"
+            val t = add<Transform>()
+            config.cameraConfig?.initialPosition?.also { p ->
+                t.setLocalTranslation(
+                    p.getPx().toDouble(),
+                    p.getPy().toDouble(),
+                    p.getPz().toDouble()
+                )
+            } ?: t.setLocalTranslation(15.0, 15.0, 15.0)
+        }
+
         config.water?.also { w ->
             engine.createEntity("waterVisual", Water(w.width, w.height))
             engine.addSystem(WaterRenderer())

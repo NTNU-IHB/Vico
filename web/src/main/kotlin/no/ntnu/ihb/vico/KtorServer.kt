@@ -31,7 +31,7 @@ import kotlin.io.path.ExperimentalPathApi
 
 class KtorServer(
     private val port: Int
-) : ObserverSystem(Family.all(Transform::class.java, Geometry::class.java).build()) {
+) : ObserverSystem(Family.all(Transform::class.java).build()) {
 
     private var app: NettyApplicationEngine? = null
     private val subscribers = Collections.synchronizedList(mutableListOf<SendChannel<Frame>>())
@@ -115,7 +115,7 @@ class KtorServer(
             """.trimIndent()
             )
 
-            java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port"))
+            java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/pages/visual.html"))
 
         }.start(wait = false)
     }
@@ -143,22 +143,23 @@ class KtorServer(
         }
     }
 
-    private fun makeJson(includeGeometry: Boolean): String {
+    private fun makeJson(setup: Boolean): String {
 
         val data = entities.associate { e ->
-            val t = e.get<Transform>()
-            val g = e.get<Geometry>()
 
+            val t = e.get<Transform>()
             val m = t.getWorldMatrix()
+
             e.name to JsonTransform(
                 m.getTranslation(Vector3d()),
                 m.getNormalizedRotation(Quaterniond()),
-                if (includeGeometry) toJson(g) else null
+                if (setup) e.getOrNull<Geometry>()?.let { toJson(it) } else null,
+                if (setup) e.tag else null
             )
 
         }
 
-        val type = if (includeGeometry) "setup" else "update"
+        val type = if (setup) "setup" else "update"
         return gson.toJson(JsonPayload(type, data))
 
     }
@@ -189,102 +190,6 @@ class KtorServer(
         )
     }
 
-    private class JsonPayload(
-        val type: String,
-        val data: Any
-    )
-
-    private class JsonShape(
-        val type: String,
-        val shape: Map<String, Any>
-    )
-
-    private fun PlaneShape.toJsonShape(): JsonShape {
-        return JsonShape(
-            "plane",
-            mapOf(
-                "width" to width,
-                "height" to height
-            )
-        )
-    }
-
-    private fun BoxShape.toJsonShape(): JsonShape {
-        return JsonShape(
-            "box",
-            mapOf(
-                "width" to width,
-                "height" to height,
-                "depth" to depth
-            )
-        )
-    }
-
-    private fun SphereShape.toJsonShape(): JsonShape {
-        return JsonShape(
-            "sphere",
-            mapOf(
-                "radius" to radius
-            )
-        )
-    }
-
-    private fun CylinderShape.toJsonShape(): JsonShape {
-        return JsonShape(
-            "cylinder",
-            mapOf(
-                "radius" to radius,
-                "height" to height
-            )
-        )
-    }
-
-    private fun CapsuleShape.toJsonShape(): JsonShape {
-        return JsonShape(
-            "capsule",
-            mapOf(
-                "radius" to radius,
-                "height" to height
-            )
-        )
-    }
-
-    private fun TrimeshShape.toJsonShape(): JsonShape {
-        return if (this is TrimeshShapeWithSource && this.source != null) {
-            val sourcePath = source!!.relativeTo(File(".")).path
-            JsonShape(
-                "trimeshWithSource",
-                mapOf(
-                    "source" to sourcePath
-                )
-            )
-        } else {
-            JsonShape(
-                "trimesh",
-                mapOf(
-                    "indices" to indices,
-                    "vertices" to vertices,
-                    "normals" to normals,
-                    "uvs" to uvs
-                )
-            )
-        }
-    }
-
-    private class JsonGeometry(
-        val offset: FloatArray? = null,
-        val color: Int,
-        val opacity: Float,
-        val visible: Boolean,
-        val wireframe: Boolean,
-        val shape: JsonShape
-    )
-
-    private class JsonTransform(
-        val position: Vector3d,
-        val rotation: Quaterniond,
-        val geometry: JsonGeometry? = null
-    )
 
     private companion object {
         private const val MAX_SUBSCRIPTION_RATE = 1.0 / 60
@@ -308,4 +213,35 @@ class KtorServer(
 
 }
 
+class JsonPayload(
+    val type: String,
+    val data: Any
+)
+
+class JsonShape(
+    val type: String,
+    val shape: Map<String, Any>
+)
+
+class JsonGeometry(
+    val offset: FloatArray? = null,
+    val color: Int,
+    val opacity: Float,
+    val visible: Boolean,
+    val wireframe: Boolean,
+    val shape: JsonShape
+)
+
+open class JsonTransform(
+    val position: Vector3d,
+    val rotation: Quaterniond,
+    val geometry: JsonGeometry? = null,
+    val tag: String? = null
+)
+
+open class JsonTransformSetup(
+    val position: Vector3d,
+    val rotation: Quaterniond,
+    val geometry: JsonGeometry? = null
+)
 

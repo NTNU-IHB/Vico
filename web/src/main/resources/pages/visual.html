@@ -20,113 +20,129 @@
 <script src="/js/GeometryParser.js"></script>
 <script>
 
-    const entities = {}
+    (function () {
 
-    const stats = new Stats()
-    document.body.appendChild(stats.dom)
+        const entities = {}
 
-    const socket = new WebSocket('ws://localhost:8000/visual');
+        const stats = new Stats()
+        document.body.appendChild(stats.dom)
 
-    socket.addEventListener('open', function (event) {
-        console.log("open")
-        send(socket, "subscribe")
-    });
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color("aliceblue")
+        scene.add(new THREE.AmbientLight())
 
-    socket.addEventListener('close', function (event) {
-        console.log("close")
-    });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        //camera.position.z = 10;
 
-    document.addEventListener('keydown', function (event) {
-        let key = event.key
-        send(socket, "keyPressed", key)
-    })
-
-    function setup(data) {
-        for (const key in data) {
-            let value = data[key]
-            let o = new THREE.Object3D()
-            o.name = key
-            o.visible = value.geometry.visible
-
-            let mat = new THREE.MeshBasicMaterial({
-                color: value.geometry.color,
-                wireframe: value.geometry.wireframe
-            })
-            if (value.geometry.opacity < 1) {
-                mat.opacity = value.geometry.opacity
-                mat.transparent = true
-            }
-            createMesh(value.geometry.shape, mat, function (mesh) {
-                mesh.matrixAutoUpdate = false
-                if (value.geometry.offset) {
-                    mesh.matrix.elements = value.geometry.offset
-                }
-                o.add(mesh)
-            })
-            scene.add(o)
-            entities[key] = o
-        }
-        update(data)
-    }
-
-    function update(data) {
-        for (const key in data) {
-            let value = data[key]
-            let o = entities[key]
-            o.position.x = value.position.x
-            o.position.y = value.position.y
-            o.position.z = value.position.z
-        }
-    }
-
-    socket.addEventListener('message', function (event) {
-        let payload = JSON.parse(event.data)
-        const type = payload.type
-
-        switch (type) {
-            case "setup":
-                setup(payload.data)
-                break
-            case "update":
-                update(payload.data)
-                stats.update()
-                break
-        }
-
-    });
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color("aliceblue")
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 10;
-
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.update();
-
-    scene.add(new THREE.AmbientLight())
-
-    window.addEventListener('resize', onWindowResize, false);
-
-    function onWindowResize() {
-
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
+        const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-    }
+        const controls = new OrbitControls(camera, renderer.domElement);
 
-    const animate = function () {
-        requestAnimationFrame(animate);
+        const socket = new WebSocket('ws://localhost:8000/visual');
 
-        renderer.render(scene, camera);
-    };
+        socket.addEventListener('open', function (event) {
+            console.log("open")
+            send(socket, "subscribe")
+        });
 
-    animate();
+        socket.addEventListener('close', function (event) {
+            console.log("close")
+        });
+
+        document.addEventListener('keydown', function (event) {
+            let key = event.key
+            send(socket, "keyPressed", key)
+        })
+
+        function setup(data) {
+            for (const key in data) {
+                let value = data[key]
+
+                if (value.tag === "camera") {
+                    camera.position.x = value.position.x
+                    camera.position.y = value.position.y
+                    camera.position.z = value.position.z
+                    controls.update()
+                    continue
+                }
+
+                let obj = new THREE.Object3D()
+                obj.name = key
+                if (value.geometry) {
+                    obj.visible = value.geometry.visible
+
+                    let mat = new THREE.MeshBasicMaterial({
+                        color: value.geometry.color,
+                        wireframe: value.geometry.wireframe
+                    })
+                    if (value.geometry.opacity < 1) {
+                        mat.opacity = value.geometry.opacity
+                        mat.transparent = true
+                    }
+                    createMesh(value.geometry.shape, mat, function (mesh) {
+                        mesh.matrixAutoUpdate = false
+                        if (value.geometry.offset) {
+                            mesh.matrix.elements = value.geometry.offset
+                        }
+                        obj.add(mesh)
+                    })
+                }
+                scene.add(obj)
+                entities[key] = obj
+            }
+            update(data)
+        }
+
+        function update(data) {
+            for (const key in data) {
+                let o = entities[key]
+                if (o) {
+                    let value = data[key]
+                    o.position.x = value.position.x
+                    o.position.y = value.position.y
+                    o.position.z = value.position.z
+                }
+            }
+        }
+
+        socket.addEventListener('message', function (event) {
+            let payload = JSON.parse(event.data)
+            const type = payload.type
+
+            switch (type) {
+                case "setup":
+                    setup(payload.data)
+                    break
+                case "update":
+                    update(payload.data)
+                    stats.update()
+                    break
+            }
+
+        });
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+        }
+
+        const animate = function () {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        };
+
+        animate();
+
+
+    })()
 
 </script>
 </body>

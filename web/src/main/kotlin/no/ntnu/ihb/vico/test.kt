@@ -49,6 +49,11 @@ fun main() {
             axis.set(1.0, 1.0, 1.0).normalize()
         }
 
+        engine.createEntity().apply {
+            tag = "camera"
+            add<Transform>().setLocalTranslation(15.0, 15.0, 15.0)
+        }
+
         engine.addSystem(SineMoverSystem())
         engine.addSystem(KtorServer(8000))
 
