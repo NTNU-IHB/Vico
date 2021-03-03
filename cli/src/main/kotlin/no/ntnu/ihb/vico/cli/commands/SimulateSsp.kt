@@ -5,13 +5,11 @@ import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
-import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.SystemStructure
-import org.joml.Matrix4f
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
@@ -128,17 +126,17 @@ class SimulateSsp : Runnable {
             JAXB.unmarshal(configFile, TVisualConfig::class.java)
         }
 
-        val renderer = visualConfig?.let {
-            val cls = ClassLoader.getSystemClassLoader().loadClass("info.laht.krender.threekt.ThreektRenderer")
-            (cls.newInstance() as RenderEngine).apply {
-                setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
-            }
-        }
+//        val renderer = visualConfig?.let {
+//            val cls = ClassLoader.getSystemClassLoader().loadClass("info.laht.krender.threekt.ThreektRenderer")
+//            (cls.newInstance() as RenderEngine).apply {
+//                setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
+//            }
+//        }
 
         Engine.Builder()
             .startTime(start)
             .stepSize(baseStepSize)
-            .renderer(renderer)
+//            .renderer(renderer)
             .build().use { engine ->
 
                 if (!disableLogging) {

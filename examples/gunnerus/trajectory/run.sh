@@ -7,5 +7,6 @@ vico simulate-ssp \
 -s "scenario.main.kts" \
 -p "initialValues" \
 -res "results" \
+-port 8000 \
 "gunnerus-trajectory.ssp"
 read -p "Press enter to continue"

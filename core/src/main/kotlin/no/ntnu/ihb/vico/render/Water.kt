@@ -14,13 +14,13 @@ class WaterRenderer : SimulationSystem(
 ) {
 
     @InjectRenderer
-    private lateinit var renderer: RenderEngine
+    private var renderer: RenderEngine? = null
     private var waterProxy: WaterProxy? = null
 
     override fun entityAdded(entity: Entity) {
         if (waterProxy == null) {
             val water = entity.get<Water>()
-            waterProxy = renderer.createWater(water.width, water.height)
+            waterProxy = renderer?.createWater(water.width, water.height)
         }
     }
 

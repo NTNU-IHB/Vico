@@ -21,7 +21,7 @@ class TrailRenderer : SimulationSystem(
 ) {
 
     @InjectRenderer
-    private lateinit var renderer: RenderEngine
+    private var renderer: RenderEngine? = null
 
     private val proxies: MutableMap<Entity, Pair<LineProxy, MutableList<Vector3f>>> = mutableMapOf()
 
@@ -31,10 +31,10 @@ class TrailRenderer : SimulationSystem(
 
     override fun entityAdded(entity: Entity) {
         entity.getOrNull<Trail>()?.also { t ->
-            val proxy = renderer.createLine(emptyList()).apply {
+            renderer?.createLine(emptyList())?.apply {
                 setColor(t.color)
+                proxies[entity] = this to mutableListOf()
             }
-            proxies[entity] = proxy to mutableListOf()
         }
     }
 

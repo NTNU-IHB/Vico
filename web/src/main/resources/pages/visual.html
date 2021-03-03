@@ -12,10 +12,12 @@
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
 <script src="/js/OBJLoader.js"></script>
+<script src="/js/MTLLoader.js"></script>
 <script src="/js/OrbitControls.js"></script>
 <script src="/js/Capsule.js"></script>
 <script src="/js/Stats.js"></script>
 <script src="/js/Frame.js"></script>
+<script src="/js/GeometryParser.js"></script>
 <script>
 
     const entities = {}
@@ -38,75 +40,6 @@
         let key = event.key
         send(socket, "keyPressed", key)
     })
-
-    function createPlane(shape, mat) {
-        return new THREE.Mesh(new THREE.BoxGeometry(shape.width, shape.height), mat)
-    }
-
-    function createBox(shape, mat) {
-        return new THREE.Mesh(new THREE.BoxGeometry(shape.width, shape.height, shape.depth), mat)
-    }
-
-    function createSphere(shape, mat) {
-        return new THREE.Mesh(new THREE.SphereGeometry(shape.radius, 16, 16), mat)
-    }
-
-    function createCylinder(shape, mat) {
-        return new THREE.Mesh(new THREE.CylinderGeometry(shape.radius, shape.radius, shape.height, 16, 16), mat)
-    }
-
-    function createCapsule(shape, mat) {
-        return new Capsule(shape.radius, shape.height, mat, 16, 16)
-    }
-
-    function createTrimesh(shape, mat) {
-        const geom = new THREE.BufferGeometry()
-        const vertices = new Float32Array(shape.vertices)
-        const normals = new Float32Array(shape.normals)
-        geom.setIndex(shape.indices)
-        geom.setAttribute("position", new THREE.BufferAttribute(vertices, 3))
-        geom.setAttribute("normal", new THREE.BufferAttribute(normals, 3))
-        geom.computeBoundingSphere()
-        return new THREE.Mesh(geom, mat)
-    }
-
-    function createTrimeshFromSource(shape, callback) {
-        const source = shape.source
-        const ext = source.split(".").pop()
-        switch (ext) {
-            case "obj":
-                const loader = new THREE.OBJLoader()
-                loader.load("/assets?" + source, function (obj) {
-                    callback(obj)
-                })
-        }
-    }
-
-    function createMesh(data, mat, callback) {
-        switch (data.type) {
-            case "plane":
-                callback(createPlane(data.shape, mat))
-                break
-            case "box":
-                callback(createBox(data.shape, mat))
-                break
-            case "sphere":
-                callback(createSphere(data.shape, mat))
-                break
-            case "cylinder":
-                callback(createCylinder(data.shape, mat))
-                break
-            case "capsule":
-                callback(createCapsule(data.shape, mat))
-                break
-            case "trimesh":
-                callback(createTrimesh(data.shape, mat))
-                break
-            case "trimeshWithSource":
-                createTrimeshFromSource(data.shape, callback)
-                break
-        }
-    }
 
     function setup(data) {
         for (const key in data) {
@@ -163,6 +96,7 @@
     });
 
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color("aliceblue")
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 10;
 

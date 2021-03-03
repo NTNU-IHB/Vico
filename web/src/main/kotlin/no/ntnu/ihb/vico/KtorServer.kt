@@ -22,8 +22,12 @@ import no.ntnu.ihb.vico.render.mesh.*
 import org.joml.Quaterniond
 import org.joml.Vector3d
 import java.io.File
+import java.io.IOException
+import java.net.URI
+import java.net.URL
 import java.util.*
 import kotlin.io.path.ExperimentalPathApi
+
 
 class KtorServer(
     private val port: Int
@@ -103,6 +107,15 @@ class KtorServer(
 
                 }
             }
+
+            println(
+                """
+                Serving on http://$hostName:$port (public)
+                Serving on http://127.0.0.1:$port (local)
+            """.trimIndent()
+            )
+
+            java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port"))
 
         }.start(wait = false)
     }
@@ -275,6 +288,22 @@ class KtorServer(
 
     private companion object {
         private const val MAX_SUBSCRIPTION_RATE = 1.0 / 60
+
+        private val hostName by lazy {
+            var hostAddress: String? = "127.0.0.1"
+            try {
+                val url = URL("http://checkip.amazonaws.com/")
+                val `in` = url.openStream().bufferedReader()
+                val read = `in`.readLine().trim { it <= ' ' }
+                if (read.isNotEmpty()) {
+                    hostAddress = read
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            hostAddress
+        }
+
     }
 
 }
