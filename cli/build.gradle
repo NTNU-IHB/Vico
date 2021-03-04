@@ -16,11 +16,9 @@ dependencies {
     implementation project(':fmi')
     implementation project(':chart')
     implementation project(":web")
-    runtimeOnly project(':threekt-render')
     implementation project(':scenario-scripting')
 
     implementation 'info.laht.kts:host:0.4.0'
-
     implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
 
     testImplementation project(':test-data')

@@ -12,7 +12,7 @@ dependencies {
     testImplementation project(':fmi')
     testImplementation project(':chart')
     testImplementation project(':test-data')
-    testImplementation project(':threekt-render')
+    testImplementation project(":web")
 }
 
 

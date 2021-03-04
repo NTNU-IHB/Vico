@@ -1,13 +1,11 @@
 package no.ntnu.ihb.vico
 
-import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.PositionRef
 import no.ntnu.ihb.vico.components.Transform
-import no.ntnu.ihb.vico.core.EngineBuilder
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
-import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.render.mesh.PlaneMesh
 import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import no.ntnu.ihb.vico.systems.PositionRefSystem
@@ -16,15 +14,11 @@ import kotlin.math.PI
 
 fun main() {
 
-    val renderer = ThreektRenderer().apply {
-        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 10f))
-    }
-
-    EngineBuilder().stepSize(1.0 / 100).renderer(renderer).build().also { engine ->
+    Engine(1.0 / 100).use { engine ->
 
         engine.addSystem(SlaveSystem())
         engine.addSystem(PositionRefSystem())
-        engine.addSystem(GeometryRenderer())
+        engine.addSystem(KtorServer(8000))
 
         engine.createEntity("BouncingBall").also { slaveEntity ->
 

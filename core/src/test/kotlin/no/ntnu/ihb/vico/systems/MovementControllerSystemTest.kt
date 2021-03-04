@@ -1,15 +1,13 @@
 package no.ntnu.ihb.vico.systems
 
-import info.laht.krender.threekt.ThreektRenderer
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.components.Controllable
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.dsl.execution
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
-import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
 import no.ntnu.ihb.vico.render.mesh.SphereMesh
-import org.joml.Matrix4f
 
 
 object MovementControllerSystemTest {
@@ -18,10 +16,6 @@ object MovementControllerSystemTest {
     fun main(args: Array<String>) {
 
         execution {
-
-            renderer(ThreektRenderer().apply {
-                setCameraTransform(Matrix4f().setTranslation(0f, 0f, 5f))
-            })
 
             entities {
 
@@ -59,7 +53,7 @@ object MovementControllerSystemTest {
 
             systems {
                 system { MovementController() }
-                system { GeometryRenderer() }
+                system { KtorServer(8000) }
             }
 
             scenario {

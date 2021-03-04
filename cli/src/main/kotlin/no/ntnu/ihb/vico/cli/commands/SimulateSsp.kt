@@ -126,17 +126,9 @@ class SimulateSsp : Runnable {
             JAXB.unmarshal(configFile, TVisualConfig::class.java)
         }
 
-//        val renderer = visualConfig?.let {
-//            val cls = ClassLoader.getSystemClassLoader().loadClass("info.laht.krender.threekt.ThreektRenderer")
-//            (cls.newInstance() as RenderEngine).apply {
-//                setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
-//            }
-//        }
-
         Engine.Builder()
             .startTime(start)
             .stepSize(baseStepSize)
-//            .renderer(renderer)
             .build().use { engine ->
 
                 if (!disableLogging) {

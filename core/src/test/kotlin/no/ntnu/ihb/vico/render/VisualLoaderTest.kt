@@ -1,6 +1,6 @@
 package no.ntnu.ihb.vico.render
 
-import info.laht.krender.threekt.ThreektRenderer
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.math.TWO_PI
@@ -49,13 +49,10 @@ private class SineMoverSystem : IteratingSystem(
 
 fun main() {
 
-    val renderer = ThreektRenderer()
     val cl = SineMover::class.java.classLoader
     val config = File(cl.getResource("visualconfig/VisualConfig.xml")!!.file)
 
-    EngineBuilder(
-        renderEngine = renderer
-    ).build().use { engine ->
+    Engine().use { engine ->
 
         engine.createEntity("SineMover").apply {
             add(SineMover())
@@ -63,6 +60,7 @@ fun main() {
 
         VisualLoader.load(config, engine)
         engine.addSystem(SineMoverSystem())
+        engine.addSystem(KtorServer(8000))
 
         engine.runner.startAndWait()
 

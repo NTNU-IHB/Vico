@@ -1,16 +1,16 @@
 package no.ntnu.ihb.vico.examples
 
-import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Transform
-import no.ntnu.ihb.vico.core.*
+import no.ntnu.ihb.vico.core.Component
+import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.core.Entity
+import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
-import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
 import no.ntnu.ihb.vico.render.mesh.CylinderMesh
 import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import no.ntnu.ihb.vico.systems.IteratingSystem
-import org.joml.Matrix4f
 import org.joml.Vector3d
 import kotlin.math.PI
 import kotlin.math.sin
@@ -61,9 +61,7 @@ private fun e1(engine: Engine): Entity {
 
 fun main() {
 
-    EngineBuilder().renderer(ThreektRenderer().apply {
-        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 5f))
-    }).build().also { engine ->
+    Engine().use { engine ->
 
         val e1 = e1(engine)
         engine.createEntity("e2").also { e ->
@@ -81,7 +79,6 @@ fun main() {
         }
 
         engine.addSystem(SineMoverSystem())
-        engine.addSystem(GeometryRenderer())
 
         engine.invokeAt(2.0) {
             engine.getEntityByName("e1").get<Geometry>().visible = false

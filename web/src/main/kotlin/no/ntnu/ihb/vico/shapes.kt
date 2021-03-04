@@ -3,7 +3,7 @@ package no.ntnu.ihb.vico
 import no.ntnu.ihb.vico.render.mesh.*
 import java.io.File
 
-fun PlaneShape.toJsonShape(): JsonShape {
+internal fun PlaneShape.toJsonShape(): JsonShape {
     return JsonShape(
         "plane",
         mapOf(
@@ -13,7 +13,7 @@ fun PlaneShape.toJsonShape(): JsonShape {
     )
 }
 
-fun BoxShape.toJsonShape(): JsonShape {
+internal fun BoxShape.toJsonShape(): JsonShape {
     return JsonShape(
         "box",
         mapOf(
@@ -24,7 +24,7 @@ fun BoxShape.toJsonShape(): JsonShape {
     )
 }
 
-fun SphereShape.toJsonShape(): JsonShape {
+internal fun SphereShape.toJsonShape(): JsonShape {
     return JsonShape(
         "sphere",
         mapOf(
@@ -33,7 +33,7 @@ fun SphereShape.toJsonShape(): JsonShape {
     )
 }
 
-fun CylinderShape.toJsonShape(): JsonShape {
+internal fun CylinderShape.toJsonShape(): JsonShape {
     return JsonShape(
         "cylinder",
         mapOf(
@@ -43,7 +43,7 @@ fun CylinderShape.toJsonShape(): JsonShape {
     )
 }
 
-fun CapsuleShape.toJsonShape(): JsonShape {
+internal fun CapsuleShape.toJsonShape(): JsonShape {
     return JsonShape(
         "capsule",
         mapOf(
@@ -53,7 +53,7 @@ fun CapsuleShape.toJsonShape(): JsonShape {
     )
 }
 
-fun TrimeshShape.toJsonShape(): JsonShape {
+internal fun TrimeshShape.toJsonShape(): JsonShape {
     return if (this is TrimeshShapeWithSource && this.source != null) {
         val sourcePath = source!!.relativeTo(File(".")).path
         JsonShape(

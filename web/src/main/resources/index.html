@@ -1,10 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <title>Vico</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            max-height: 100%;
+            font-family: sans-serif;
+            line-height: 1.5em;
+        }
+
+        main {
+            position: fixed;
+            top: 50px; /* Set this to the height of the header */
+            bottom: 50px; /* Set this to the height of the footer */
+            left: 230px;
+            right: 0;
+            overflow: auto;
+            background: #fff;
+        }
+
+        #header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            overflow: hidden; /* Disables scrollbars on the header frame. To enable scrollbars, change "hidden" to "scroll" */
+            background: #BCCE98;
+        }
+
+        #footer {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            overflow: hidden; /* Disables scrollbars on the footer frame. To enable scrollbars, change "hidden" to "scroll" */
+            background: #BCCE98;
+        }
+
+        #nav {
+            position: absolute;
+            top: 50px; /* Set this to the height of the header */
+            bottom: 50px; /* Set this to the height of the footer */
+            left: 0;
+            width: 230px;
+            overflow: auto; /* Scrollbars will appear on this frame only when there's enough content to require scrolling. To disable scrollbars, change to "hidden", or use "scroll" to enable permanent scrollbars */
+            background: #DAE9BC;
+        }
+
+        .innertube {
+            margin: 15px; /* Provides padding for the content */
+        }
+
+        p {
+            color: #555;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul a {
+            color: darkgreen;
+            text-decoration: none;
+        }
+
+        * html main {
+            height: 100%;
+            width: 100%;
+        }
+
+    </style>
+</head>
 <body>
 
-<h1>Vico</h1>
+<header id="header">
+    <div class="innertube">
+        <p>Vico 3D visualization</p>
+    </div>
+</header>
 
-<a href="/pages/visual.html">Visual</a>
+<main>
+    <div class="innertube">
+        <h1>Site navigation</h1>
+        <ul>
+            <li><a href="pages/visual.html">3D renderer</a></li>
+        </ul>
+    </div>
+</main>
+
+<nav id="nav">
+    <div class="innertube">
+        <h1>Links</h1>
+        <ul>
+            <li><a href="https://github.com/NTNU-IHB/Vico">Vico GitHub</a></li>
+        </ul>
+    </div>
+</nav>
+
+<footer id="footer">
+    <div class="innertube">
+        <p>&copy; 2021 NTNU Ålesund</p>
+    </div>
+</footer>
 
 </body>
 </html>

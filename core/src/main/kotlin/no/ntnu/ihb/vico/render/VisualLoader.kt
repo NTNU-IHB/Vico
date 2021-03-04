@@ -25,18 +25,6 @@ object VisualLoader {
 
     fun load(config: TVisualConfig, engine: Engine) {
 
-        config.cameraConfig?.initialPosition?.also { p ->
-            engine.renderEngine?.also { renderer ->
-                renderer.setCameraTransform(
-                    Matrix4f().setTranslation(
-                        p.getPx(),
-                        p.getPy(),
-                        p.getPz()
-                    )
-                )
-            }
-        }
-
         engine.createEntity("camera").apply {
             tag = "camera"
             val t = add<Transform>()
@@ -51,7 +39,6 @@ object VisualLoader {
 
         config.water?.also { w ->
             engine.createEntity("waterVisual", Water(w.width, w.height))
-            engine.addSystem(WaterRenderer())
         }
 
         config.transform.forEach { t ->
@@ -94,9 +81,6 @@ object VisualLoader {
 
             t.trail?.also { trail ->
                 e.add(Trail(trail.length, trail.color?.toColor()))
-                if (!engine.hasSystem<TrailRenderer>()) {
-                    engine.addSystem(TrailRenderer().apply { decimationFactor = config.decimationFactor * 5 })
-                }
             }
 
             t.parent?.also { parent ->
@@ -108,9 +92,6 @@ object VisualLoader {
 
         }
 
-        engine.addSystem(GeometryRenderer().apply {
-            decimationFactor = config.getDecimationFactor()
-        })
     }
 
     private fun TRealRef?.toRealRef(): RealRef? {
