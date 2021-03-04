@@ -68,10 +68,10 @@ open class Properties : PropertyAccessor, Iterable<Property> {
 
     override fun getProperty(name: String): Property {
         return getPropertyOrNull(name)
-                ?: throw NoSuchElementException(
-                        "No property named '$name' could be located! " +
-                                "Currently registered properties are ${getAllProperties()}."
-                )
+            ?: throw NoSuchElementException(
+                "No property named '$name' could be located! " +
+                        "Currently registered properties are ${getAllProperties()}."
+            )
     }
 
     override fun getIntegerPropertyOrNull(name: String): IntProperty? {
@@ -81,8 +81,8 @@ open class Properties : PropertyAccessor, Iterable<Property> {
     override fun getIntegerProperty(name: String): IntProperty {
         return getIntegerPropertyOrNull(name)
             ?: throw NoSuchElementException(
-                    "No property named '$name' could be located! " +
-                            "Currently registered Integer properties are ${getAllProperties()}."
+                "No property named '$name' could be located! " +
+                        "Currently registered Integer properties are ${getAllProperties()}."
             )
     }
 
@@ -93,8 +93,8 @@ open class Properties : PropertyAccessor, Iterable<Property> {
     override fun getRealProperty(name: String): RealProperty {
         return getRealPropertyOrNull(name)
             ?: throw NoSuchElementException(
-                    "No property named '$name' could be located! " +
-                            "Currently registered Real properties are ${getAllProperties()}."
+                "No property named '$name' could be located! " +
+                        "Currently registered Real properties are ${getAllProperties()}."
             )
     }
 
@@ -105,8 +105,8 @@ open class Properties : PropertyAccessor, Iterable<Property> {
     override fun getStringProperty(name: String): StrProperty {
         return getStringPropertyOrNull(name)
             ?: throw NoSuchElementException(
-                    "No property named '$name' could be located! " +
-                            "Currently registered String properties are ${getAllProperties()}."
+                "No property named '$name' could be located! " +
+                        "Currently registered String properties are ${getAllProperties()}."
             )
     }
 
@@ -116,10 +116,10 @@ open class Properties : PropertyAccessor, Iterable<Property> {
 
     override fun getBooleanProperty(name: String): BoolProperty {
         return getBooleanPropertyOrNull(name)
-                ?: throw NoSuchElementException(
-                        "No property named '$name' could be located! " +
-                                "Currently registered Boolean properties are ${getAllProperties()}."
-                )
+            ?: throw NoSuchElementException(
+                "No property named '$name' could be located! " +
+                        "Currently registered Boolean properties are ${getAllProperties()}."
+            )
     }
 
     override fun iterator(): Iterator<Property> {
