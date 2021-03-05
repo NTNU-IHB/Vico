@@ -1,5 +1,15 @@
 package no.ntnu.ihb.vico.core
 
+class ComponentExport(
+    val type: String,
+    val data: Any? = null
+)
+
+interface Mappable {
+
+    fun getData(setup: Boolean): Map<String, Any?>?
+
+}
 
 typealias ComponentClass = Class<out Component>
 
@@ -34,7 +44,7 @@ interface Component {
 }
 
 abstract class AbstractComponent(
-        final override val properties: Properties = Properties()
+    final override val properties: Properties = Properties()
 ) : Component
 
 internal fun <E : Component> instantiate(componentClass: Class<out E>): E {
@@ -44,7 +54,7 @@ internal fun <E : Component> instantiate(componentClass: Class<out E>): E {
 }
 
 internal class ComponentClazz(
-        private val cls: ComponentClass
+    private val cls: ComponentClass
 ) {
 
     override fun equals(other: Any?): Boolean {

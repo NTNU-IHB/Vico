@@ -223,9 +223,22 @@ open class Entity private constructor(
         return flatMap { it.properties.bools }
     }
 
+    fun toMap(setup: Boolean): Map<String, Any> {
+
+        val components = componentMap.values.filter { it is Mappable }.associate {
+            it.componentName to (it as Mappable).getData(setup)
+        }
+
+        return mapOf(
+            "name" to name,
+            "components" to components
+        )
+
+    }
+
     override fun toString(): String {
-        val componentClasses = map { it.javaClass.simpleName }
-        return "Entity(name='$name', tag=$tag, components=$componentClasses)"
+        val componentNames = map { it.componentName }
+        return "Entity(name='$name', tag=$tag, components=$componentNames)"
     }
 
 }

@@ -116,6 +116,15 @@ class Engine private constructor(
         }
     }
 
+    fun toMap(setup: Boolean): Map<String, Any> {
+        return mapOf(
+            "simInfo" to mapOf(
+                "currentTime" to currentTime
+            ),
+            "entities" to entityManager.entities.map { it.toMap(setup) }
+        )
+    }
+
     fun <E : SimulationSystem> hasSystem(systemClazz: Class<E>) = systemManager.hasSystem(systemClazz)
     inline fun <reified E : SimulationSystem> hasSystem() = hasSystem(E::class.java)
 

@@ -29,6 +29,11 @@ internal class TransformComponentTest {
             e.getRealProperty("fail")
         }
 
+        val map = e.toMap(true)
+        println(map)
+
+//        println(((map["components"] as Map<String, Any>)["transform"] as Map<String, Any>)["position"])
+
     }
 
 }

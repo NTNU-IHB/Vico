@@ -25,6 +25,10 @@ class BoxMesh(
         }
     }
 
+    override fun toMap(): Map<String, Any> {
+        return super<BoxShape>.toMap()
+    }
+
     private inner class Helper {
 
         // offset variables

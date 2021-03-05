@@ -9,7 +9,7 @@ import org.joml.Vector3d
 import kotlin.math.PI
 import kotlin.math.sin
 
-data class SineMoverComponent(
+data class SineMover(
     var A: Double = 1.0,
     var f: Double = 0.1,
     var phi: Double = 0.0
@@ -27,21 +27,21 @@ data class SineMoverComponent(
 }
 
 class SineMoverSystem : IteratingSystem(
-    Family.all(Transform::class.java, SineMoverComponent::class.java).build()
+    Family.all(Transform::class.java, SineMover::class.java).build()
 ) {
 
     private val tmp = Vector3d()
 
     override fun entityAdded(entity: Entity) {
         val transform = entity.get<Transform>()
-        val sc = entity.get<SineMoverComponent>()
+        val sc = entity.get<SineMover>()
         sc.initialPosition = transform.getLocalTranslation(Vector3d())
     }
 
     override fun processEntity(entity: Entity, currentTime: Double, stepSize: Double) {
 
         val transform = entity.get<Transform>()
-        val sc = entity.get<SineMoverComponent>()
+        val sc = entity.get<SineMover>()
         val value = sc.axis.mul(sc.compute(currentTime), tmp)
         transform.setLocalTranslation(sc.initialPosition.add(value, tmp))
 

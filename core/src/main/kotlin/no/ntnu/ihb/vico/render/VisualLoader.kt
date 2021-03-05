@@ -26,7 +26,7 @@ object VisualLoader {
     fun load(config: TVisualConfig, engine: Engine) {
 
         engine.createEntity("camera").apply {
-            tag = "camera"
+            add<Camera>()
             val t = add<Transform>()
             config.cameraConfig?.initialPosition?.also { p ->
                 t.setLocalTranslation(

@@ -25,6 +25,10 @@ open class PlaneMesh(
         }
     }
 
+    override fun toMap(): Map<String, Any> {
+        return super<PlaneShape>.toMap()
+    }
+
     private inner class Helper {
 
         val indices: IntArray
@@ -131,6 +135,10 @@ class TerrainMesh(
              }*/
         }
 
+    }
+
+    override fun toMap(): Map<String, Any> {
+        return super<HeightmapShape>.toMap()
     }
 
 }

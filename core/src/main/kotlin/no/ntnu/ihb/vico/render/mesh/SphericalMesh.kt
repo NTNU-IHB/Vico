@@ -9,7 +9,13 @@ import kotlin.math.sin
 
 class SphereMesh(
     radius: Float = 0.5f
-) : SphericalMesh(radius), SphereShape
+) : SphericalMesh(radius), SphereShape {
+
+    override fun toMap(): Map<String, Any> {
+        return super<SphereShape>.toMap()
+    }
+
+}
 
 open class SphericalMesh(
     val radius: Float = 0.5f,

@@ -1,3 +1,4 @@
+
 function createPlane(shape, mat) {
     return new THREE.Mesh(new THREE.BoxGeometry(shape.width, shape.height), mat)
 }
@@ -29,9 +30,9 @@ function createTrimesh(shape, mat) {
     return new THREE.Mesh(geom, mat)
 }
 
-function loadObj(data, callback) {
+function loadObj(shape, callback) {
 
-    const source = data.shape.source.replace(/\\/g, "/")
+    const source = shape.source.replace(/\\/g, "/")
     const objLoader = new THREE.OBJLoader()
 
     let httpGet = function (url, callback) {
@@ -74,37 +75,37 @@ function loadObj(data, callback) {
     })
 }
 
-function createTrimeshFromSource(data, callback) {
-    const ext = data.shape.source.split(".").pop()
+function createTrimeshFromSource(shape, callback) {
+    const ext = shape.source.split(".").pop()
     switch (ext) {
         case "obj":
-            loadObj(data, callback)
+            loadObj(shape, callback)
             break
     }
 }
 
-function createMesh(data, mat, callback) {
-    switch (data.type) {
+function createMesh(shape, mat, callback) {
+    switch (shape.type) {
         case "plane":
-            callback(createPlane(data.shape, mat))
+            callback(createPlane(shape.data, mat))
             break
         case "box":
-            callback(createBox(data.shape, mat))
+            callback(createBox(shape.data, mat))
             break
         case "sphere":
-            callback(createSphere(data.shape, mat))
+            callback(createSphere(shape.data, mat))
             break
         case "cylinder":
-            callback(createCylinder(data.shape, mat))
+            callback(createCylinder(shape.data, mat))
             break
         case "capsule":
-            callback(createCapsule(data.shape, mat))
+            callback(createCapsule(shape.data, mat))
             break
         case "trimesh":
-            callback(createTrimesh(data.shape, mat))
+            callback(createTrimesh(shape.data, mat))
             break
         case "trimeshWithSource":
-            createTrimeshFromSource(data, callback)
+            createTrimeshFromSource(shape.data, callback)
             break
     }
 }
