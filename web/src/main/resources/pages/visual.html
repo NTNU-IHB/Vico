@@ -135,12 +135,13 @@
 <script src="/js/Stats.js"></script>
 <script src="/js/Frame.js"></script>
 <script src="/js/GeometryParser.js"></script>
+<script src="/js/Water.js"></script>
 <script>
 
     document.addEventListener("DOMContentLoaded", function (event) {
 
+        let water;
         const objects = {}
-
         const container = document.getElementById('canvas');
 
         const stats = new Stats()
@@ -189,6 +190,8 @@
 
         function setup(entities) {
 
+            console.log(entities)
+
             for (let key in entities) {
 
                 const entity = entities[key]
@@ -222,6 +225,28 @@
                                 }
                                 obj.add(mesh)
                             })
+                            break
+                        case "water":
+                            const waterGeometry = new THREE.PlaneGeometry(data.width, data.height);
+                            water = new THREE.Water(
+                                waterGeometry,
+                                {
+                                    textureWidth: 512,
+                                    textureHeight: 512,
+                                    waterNormals: new THREE.TextureLoader().load('/textures/waternormals.jpg', function (texture) {
+                                        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                                    }),
+                                    alpha: 1.0,
+                                    sunDirection: new THREE.Vector3(),
+                                    sunColor: 0xffffff,
+                                    waterColor: 0x001e0f,
+                                    distortionScale: 3.7,
+                                    fog: scene.fog !== undefined
+                                }
+                            );
+
+                            water.rotation.x = -Math.PI / 2;
+                            obj.add(water)
                             break
                         case "camera":
                             camera.position.x = components["transform"].position.x
@@ -279,6 +304,9 @@
 
         const animate = function () {
             requestAnimationFrame(animate);
+            if (water) {
+                water.material.uniforms['time'].value += 1.0 / 60.0;
+            }
             renderer.render(scene, camera);
         };
 
