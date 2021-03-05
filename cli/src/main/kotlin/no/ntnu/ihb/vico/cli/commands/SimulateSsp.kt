@@ -63,6 +63,12 @@ class SimulateSsp : Runnable {
     private var noParallel = false
 
     @CommandLine.Option(
+        names = ["--paused"],
+        description = ["Start simulation paused."]
+    )
+    private var paused = false
+
+    @CommandLine.Option(
         names = ["-chart", "--chartConfig"],
         description = ["Path to a chart configuration XML file. Path relative to the .ssd"]
     )
@@ -172,7 +178,7 @@ class SimulateSsp : Runnable {
 
                 visualConfig?.also { VisualLoader.load(it, engine) }
 
-                runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
+                runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, paused, LOG)
 
             }
 

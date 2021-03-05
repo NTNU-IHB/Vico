@@ -23,6 +23,7 @@ internal fun runSimulation(
     stopTime: Double,
     baseStepSize: Double,
     targetRealtimeFactor: Double?,
+    paused: Boolean,
     LOG: Logger
 ) {
 
@@ -31,6 +32,7 @@ internal fun runSimulation(
     val aTenth = numSteps / 10
 
     val runner = engine.runner
+    runner.paused.set(paused)
 
     targetRealtimeFactor?.also {
         runner.targetRealTimeFactor = it

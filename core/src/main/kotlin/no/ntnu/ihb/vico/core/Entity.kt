@@ -225,9 +225,13 @@ open class Entity private constructor(
 
     fun toMap(setup: Boolean): Map<String, Any> {
 
-        val components = componentMap.values.filter { it is Mappable }.associate {
-            it.componentName to (it as Mappable).getData(setup)
-        }
+        val components = componentMap.values.mapNotNull { c ->
+            if (c is Mappable) {
+                c.getData(setup)?.let { c.componentName to it }
+            } else {
+                null
+            }
+        }.associate { it.first to it.second }
 
         return mapOf(
             "name" to name,

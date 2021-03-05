@@ -13,11 +13,13 @@ import io.ktor.server.netty.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.runBlocking
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
-import no.ntnu.ihb.vico.render.mesh.*
 import java.io.File
 import java.io.IOException
 import java.net.URI
@@ -34,7 +36,6 @@ class KtorServer(
     private val subscribers = Collections.synchronizedList(mutableListOf<SendChannel<Frame>>())
 
     private var t0: Long = 0L
-    private lateinit var routing: Routing
 
     private val gson = Gson()
 
@@ -45,8 +46,6 @@ class KtorServer(
             install(WebSockets)
 
             routing {
-
-                this@KtorServer.routing = this
 
                 resources("/")
 
@@ -67,43 +66,50 @@ class KtorServer(
                 webSocket("/visual") {
 
                     try {
-                        while (true) {
 
-                            val recv = (incoming.receive() as Frame.Text).readText()
-                            val frame = gson.fromJson(recv, JsonFrame::class.java)
-
-                            when (frame.action) {
-                                "subscribe" -> {
-                                    outgoing.send(
-                                        Frame.Text(
-                                            JsonFrame(
-                                                action = "setup",
-                                                data = engine.toMap(true)
-                                            ).toJson()
-                                        )
-                                    )
-                                    synchronized(subscribers) {
-                                        subscribers.add(outgoing)
-                                    }
-                                }
-                                "keyPressed" -> {
-                                    val key = frame.data as String
-                                    engine.registerKeyPress(key)
-                                }
-                                "close" -> {
-                                    synchronized(subscribers) {
-                                        subscribers.remove(outgoing)
-                                    }
-                                    close(CloseReason(CloseReason.Codes.NORMAL, "Closing connection.."))
-                                }
+                        incoming.consumeAsFlow()
+                            .mapNotNull {
+                                val read = (it as Frame.Text).readText()
+                                gson.fromJson(read, JsonFrame::class.java)
                             }
-                        }
+                            .collect { frame ->
+
+                                when (frame.action) {
+                                    "subscribe" -> {
+                                        outgoing.send(
+                                            Frame.Text(
+                                                JsonFrame(
+                                                    action = "setup",
+                                                    data = engine.toMap(true)
+                                                ).toJson()
+                                            )
+                                        )
+                                        synchronized(subscribers) {
+                                            subscribers.add(outgoing)
+                                        }
+                                    }
+                                    "keyPressed" -> {
+                                        val key = frame.data as String
+                                        engine.registerKeyPress(key)
+                                    }
+                                    "close" -> {
+                                        synchronized(subscribers) {
+                                            subscribers.remove(outgoing)
+                                        }
+                                        close(CloseReason(CloseReason.Codes.NORMAL, "Closing connection.."))
+                                    }
+                                }
+
+                            }
+
                     } catch (ex: ClosedReceiveChannelException) {
-                        // do nothing
+                        ex.printStackTrace()
                     } catch (ex: Throwable) {
                         ex.printStackTrace()
                     } finally {
-                        subscribers.remove(outgoing)
+                        synchronized(subscribers) {
+                            subscribers.remove(outgoing)
+                        }
                     }
 
                 }
@@ -125,17 +131,16 @@ class KtorServer(
 
         val timeSinceUpdate = (System.currentTimeMillis() - t0).toDouble() / 1000
         if (timeSinceUpdate > MAX_SUBSCRIPTION_RATE) {
+
+            val data = JsonFrame(
+                action = "update",
+                data = engine.toMap(false)
+            ).toJson()
+
             synchronized(subscribers) {
                 runBlocking {
                     subscribers.forEach { sub ->
-                        sub.send(
-                            Frame.Text(
-                                JsonFrame(
-                                    action = "update",
-                                    data = engine.toMap(false)
-                                ).toJson()
-                            )
-                        )
+                        sub.send(Frame.Text(data))
                     }
                 }
             }

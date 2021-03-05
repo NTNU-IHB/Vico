@@ -86,6 +86,13 @@ class SimulateFmu : Runnable {
     )
     val port: Int? = null
 
+    @CommandLine.Option(
+        names = ["--paused"],
+        description = ["Start simulation paused."]
+    )
+    private var paused = false
+
+
     @CommandLine.Parameters(
         arity = "1",
         paramLabel = "FMU_FILE",
@@ -157,7 +164,7 @@ class SimulateFmu : Runnable {
 
                 visualConfig?.also { VisualLoader.load(it, engine) }
 
-                runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, LOG)
+                runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, paused, LOG)
 
             }
 

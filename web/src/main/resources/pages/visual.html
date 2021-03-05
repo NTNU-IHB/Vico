@@ -160,7 +160,7 @@
 
         const controls = new OrbitControls(camera, renderer.domElement);
 
-        const socket = new WebSocket('ws://localhost:8000/visual');
+        const socket = new WebSocket('ws://' + window.location.hostname + ':8000/visual');
 
         socket.addEventListener('open', function (event) {
             console.log("open")
@@ -250,6 +250,10 @@
                             obj.position.x = data.position.x
                             obj.position.y = data.position.y
                             obj.position.z = data.position.z
+                            obj.quaternion.x = data.quaternion.x
+                            obj.quaternion.y = data.quaternion.y
+                            obj.quaternion.z = data.quaternion.z
+                            obj.quaternion.w = data.quaternion.w
                             break
                     }
                 }
