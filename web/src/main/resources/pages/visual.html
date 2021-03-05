@@ -135,12 +135,13 @@
 <script src="/js/Stats.js"></script>
 <script src="/js/Frame.js"></script>
 <script src="/js/GeometryParser.js"></script>
+<script src="/js/Water.js"></script>
 <script>
 
     document.addEventListener("DOMContentLoaded", function (event) {
 
+        let water;
         const objects = {}
-
         const container = document.getElementById('canvas');
 
         const stats = new Stats()
@@ -152,7 +153,7 @@
         scene.add(new THREE.AmbientLight())
 
         const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.z = 10;
+        camera.position.set(50, 50, 50)
 
         const renderer = new THREE.WebGLRenderer({antialiasing: true});
         renderer.setSize(container.clientWidth, container.clientHeight);
@@ -176,6 +177,13 @@
             const action = payload.action
 
             switch (action) {
+                case "add":
+                    setup([payload.data])
+                    break
+                case "remove":
+                    const obj = objects[payload.data]
+                    scene.remove(obj)
+                    break
                 case "setup":
                     setup(payload.data.entities)
                     break
@@ -188,6 +196,8 @@
         });
 
         function setup(entities) {
+
+            console.log(entities)
 
             for (let key in entities) {
 
@@ -223,6 +233,28 @@
                                 obj.add(mesh)
                             })
                             break
+                        case "water":
+                            const waterGeometry = new THREE.PlaneGeometry(data.width, data.height);
+                            water = new THREE.Water(
+                                waterGeometry,
+                                {
+                                    textureWidth: 512,
+                                    textureHeight: 512,
+                                    waterNormals: new THREE.TextureLoader().load('/textures/waternormals.jpg', function (texture) {
+                                        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                                    }),
+                                    alpha: 1.0,
+                                    sunDirection: new THREE.Vector3(),
+                                    sunColor: 0xffffff,
+                                    waterColor: 0x001e0f,
+                                    distortionScale: 3.7,
+                                    fog: scene.fog !== undefined
+                                }
+                            );
+
+                            water.rotation.x = -Math.PI / 2;
+                            obj.add(water)
+                            break
                         case "camera":
                             camera.position.x = components["transform"].position.x
                             camera.position.y = components["transform"].position.y
@@ -242,19 +274,21 @@
             for (let key in entities) {
                 const entity = entities[key]
                 let obj = objects[entity.name]
-                const components = entity.components
-                for (let type in components) {
-                    const data = components[type]
-                    switch (type) {
-                        case "transform":
-                            obj.position.x = data.position.x
-                            obj.position.y = data.position.y
-                            obj.position.z = data.position.z
-                            obj.quaternion.x = data.quaternion.x
-                            obj.quaternion.y = data.quaternion.y
-                            obj.quaternion.z = data.quaternion.z
-                            obj.quaternion.w = data.quaternion.w
-                            break
+                if (obj) {
+                    const components = entity.components
+                    for (let type in components) {
+                        const data = components[type]
+                        switch (type) {
+                            case "transform":
+                                obj.position.x = data.position.x
+                                obj.position.y = data.position.y
+                                obj.position.z = data.position.z
+                                obj.quaternion.x = data.quaternion.x
+                                obj.quaternion.y = data.quaternion.y
+                                obj.quaternion.z = data.quaternion.z
+                                obj.quaternion.w = data.quaternion.w
+                                break
+                        }
                     }
                 }
             }
@@ -279,6 +313,9 @@
 
         const animate = function () {
             requestAnimationFrame(animate);
+            if (water) {
+                water.material.uniforms['time'].value += 1.0 / 60.0;
+            }
             renderer.render(scene, camera);
         };
 

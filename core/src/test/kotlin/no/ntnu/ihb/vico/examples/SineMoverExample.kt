@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.examples
 
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Component
 import no.ntnu.ihb.vico.core.Engine
@@ -109,8 +110,11 @@ fun main() {
 
         }
 
+        engine.addSystem(KtorServer(8000))
+
         engine.runner.apply {
             enableRealTimeTarget = true
+            paused.set(true)
             startAndWait()
         }
 

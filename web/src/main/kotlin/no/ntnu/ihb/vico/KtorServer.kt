@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico
 
-import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.runBlocking
-import no.ntnu.ihb.vico.components.Transform
+import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
 import java.io.File
@@ -25,19 +24,61 @@ import java.io.IOException
 import java.net.URI
 import java.net.URL
 import java.util.*
+import kotlin.concurrent.thread
 import kotlin.io.path.ExperimentalPathApi
 
 
 class KtorServer(
     private val port: Int
-) : ObserverSystem(Family.all(Transform::class.java).build()) {
+) : ObserverSystem(Family.all().build()) {
 
+    private var t0: Long = 0L
     private var app: NettyApplicationEngine? = null
     private val subscribers = Collections.synchronizedList(mutableListOf<SendChannel<Frame>>())
 
-    private var t0: Long = 0L
+    override fun entityAdded(entity: Entity) {
 
-    private val gson = Gson()
+        thread(true) {
+            Thread.sleep(100)
+            synchronized(subscribers) {
+                runBlocking {
+
+                    subscribers.forEach { sub ->
+                        sub.send(
+                            Frame.Text(
+                                JsonFrame(
+                                    action = "add",
+                                    data = entity.toMap(true)
+                                ).toJson()
+                            )
+                        )
+                    }
+
+                }
+            }
+
+        }
+
+    }
+
+    override fun entityRemoved(entity: Entity) {
+        synchronized(subscribers) {
+            runBlocking {
+
+                subscribers.forEach { sub ->
+                    sub.send(
+                        Frame.Text(
+                            JsonFrame(
+                                action = "remove",
+                                data = entity.name
+                            ).toJson()
+                        )
+                    )
+                }
+
+            }
+        }
+    }
 
     @ExperimentalPathApi
     override fun postInit() {
@@ -70,7 +111,7 @@ class KtorServer(
                         incoming.consumeAsFlow()
                             .mapNotNull {
                                 val read = (it as Frame.Text).readText()
-                                gson.fromJson(read, JsonFrame::class.java)
+                                JsonFrame.fromJson(read)
                             }
                             .collect { frame ->
 
