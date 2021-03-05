@@ -142,6 +142,8 @@
 
         let water;
         const objects = {}
+        const trailObjects = []
+        const MAX_LINE_POINTS = 5000
         const container = document.getElementById('canvas');
 
         const stats = new Stats()
@@ -197,6 +199,7 @@
 
         function setup(entities) {
 
+            let mat;
             console.log(entities)
 
             for (let key in entities) {
@@ -217,7 +220,7 @@
                             break
                         case "geometry":
                             obj.visible = data.visible
-                            let mat = new THREE.MeshBasicMaterial({
+                            mat = new THREE.MeshBasicMaterial({
                                 color: data.color,
                                 wireframe: data.wireframe
                             })
@@ -256,10 +259,23 @@
                             obj.add(water)
                             break
                         case "camera":
+                            camera.fov = data.fov
                             camera.position.x = components["transform"].position.x
                             camera.position.y = components["transform"].position.y
                             camera.position.z = components["transform"].position.z
                             controls.update()
+                            updateProjectionMatrix()
+                            break
+                        case "trail":
+                            mat = new THREE.LineBasicMaterial({
+                                color: data.color
+                            })
+                            obj.userData.trail = {
+                                "points": [],
+                                "mat": mat,
+                                "line": undefined
+                            }
+                            trailObjects.push(obj)
                             break
                     }
                 }
@@ -294,7 +310,6 @@
             }
         }
 
-
         document.addEventListener('keydown', function (event) {
             let key = event.key
             send(socket, "keyPressed", key)
@@ -302,24 +317,52 @@
 
         window.addEventListener('resize', onWindowResize, false);
 
-        function onWindowResize() {
-
-            camera.aspect = container.offsetWidth / container.offsetHeight;
-            camera.updateProjectionMatrix();
-
-            renderer.setSize(container.offsetWidth, container.offsetHeight);
-
+        function updateProjectionMatrix() {
+            camera.aspect = container.offsetWidth / container.offsetHeight
+            camera.updateProjectionMatrix()
         }
 
+        function onWindowResize() {
+            updateProjectionMatrix()
+            renderer.setSize(container.offsetWidth, container.offsetHeight)
+        }
+
+        const clock = new THREE.Clock()
         const animate = function () {
             requestAnimationFrame(animate);
             if (water) {
                 water.material.uniforms['time'].value += 1.0 / 60.0;
             }
-            renderer.render(scene, camera);
+            const elapsed = clock.getElapsedTime()
+            if (elapsed > 1.0 / 20) {
+                for (let i = 0; i < trailObjects.length; i++) {
+                    const trailObject = trailObjects[i]
+                    const trail = trailObject.userData.trail
+                    const points = trail.points
+                    points.push(trailObject.position.clone())
+
+                    if (points.length < 2) continue
+                    if (points.length > MAX_LINE_POINTS) {
+                        points.shift()
+                    }
+
+                    const geometry = new THREE.BufferGeometry().setFromPoints(points)
+                    if (trail.line !== undefined) {
+                        trail.line.geometry.dispose()
+                        trail.line.geometry = geometry
+                        geometry.attributes.position.needsUpdate = true
+                    } else {
+                        console.log(points)
+                        trail.line = new THREE.Line(geometry, trail.mat)
+                        scene.add(trail.line)
+                    }
+                }
+                clock.start()
+            }
+            renderer.render(scene, camera)
         };
 
-        animate();
+        animate()
 
     })
 
