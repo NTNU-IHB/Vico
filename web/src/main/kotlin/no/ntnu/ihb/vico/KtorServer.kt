@@ -36,6 +36,8 @@ class KtorServer(
     private var app: NettyApplicationEngine? = null
     private val subscribers = Collections.synchronizedList(mutableListOf<SendChannel<Frame>>())
 
+    private lateinit var updateFrame: String
+
     override fun entityAdded(entity: Entity) {
 
         thread(true) {
@@ -129,6 +131,9 @@ class KtorServer(
                                             subscribers.add(outgoing)
                                         }
                                     }
+                                    "update" -> {
+                                        outgoing.send(Frame.Text(updateFrame))
+                                    }
                                     "keyPressed" -> {
                                         val key = frame.data as String
                                         engine.registerKeyPress(key)
@@ -166,6 +171,12 @@ class KtorServer(
             java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/pages/visual.html"))
 
         }.start(wait = false)
+
+        updateFrame = JsonFrame(
+            action = "update",
+            data = engine.toMap(false)
+        ).toJson()
+
     }
 
     override fun observe(currentTime: Double) {
@@ -173,18 +184,11 @@ class KtorServer(
         val timeSinceUpdate = (System.currentTimeMillis() - t0).toDouble() / 1000
         if (timeSinceUpdate > MAX_SUBSCRIPTION_RATE) {
 
-            val data = JsonFrame(
+            updateFrame = JsonFrame(
                 action = "update",
                 data = engine.toMap(false)
             ).toJson()
 
-            synchronized(subscribers) {
-                runBlocking {
-                    subscribers.forEach { sub ->
-                        sub.send(Frame.Text(data))
-                    }
-                }
-            }
             t0 = System.currentTimeMillis()
         }
     }

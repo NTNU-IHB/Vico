@@ -144,10 +144,11 @@
         const objects = {}
         const trailObjects = []
         const MAX_LINE_POINTS = 5000
-        const container = document.getElementById('canvas');
+        const container = document.getElementById('canvas')
 
         const stats = new Stats()
-        stats.domElement.style.position = 'absolute';
+        stats.showPanel(1)
+        stats.domElement.style.position = 'absolute'
         document.getElementById('stats').appendChild(stats.domElement)
 
         const scene = new THREE.Scene();
@@ -188,6 +189,11 @@
                     break
                 case "setup":
                     setup(payload.data.entities)
+                    const id = setInterval(function () {
+                        if (!send(socket, "update")) {
+                            clearInterval(id)
+                        }
+                    }, 50)
                     break
                 case "update":
                     update(payload.data.entities)
