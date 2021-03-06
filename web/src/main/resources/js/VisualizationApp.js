@@ -45,6 +45,7 @@ class VisualizationApp {
         });
 
         socket.addEventListener('message', function (event) {
+            let obj;
             let payload = JSON.parse(event.data)
             const action = payload.action
 
@@ -53,8 +54,8 @@ class VisualizationApp {
                     that.setup([payload.data])
                     break
                 case "remove":
-                    const obj = that.objects[payload.data]
-                    this.scene.remove(obj)
+                    obj = that.objects[payload.data]
+                    that.scene.remove(obj)
                     break
                 case "setup":
                     that.setup(payload.data.entities)
@@ -67,6 +68,18 @@ class VisualizationApp {
                 case "update":
                     that.update(payload.data.entities)
                     that.updateStats.update()
+                    break
+                case "visibilityChanged":
+                    obj = that.objects[payload.data.name]
+                    obj.visible = payload.data.visible
+                    break
+                case "colorChanged":
+                    obj = that.objects[payload.data.name]
+                    obj.traverse(function (o) {
+                        if (o instanceof THREE.Mesh) {
+                            o.material.color.setHex(payload.data.color)
+                        }
+                    })
                     break
             }
 

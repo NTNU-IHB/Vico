@@ -19,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
+import no.ntnu.ihb.vico.render.Geometry
 import java.io.File
 import java.io.IOException
 import java.net.URI
@@ -38,52 +39,74 @@ class KtorServer(
 
     private lateinit var updateFrame: String
 
-    override fun entityAdded(entity: Entity) {
-
-        thread(true) {
-            Thread.sleep(100)
-            synchronized(subscribers) {
-                runBlocking {
-
-                    subscribers.forEach { sub ->
-                        sub.send(
-                            Frame.Text(
-                                JsonFrame(
-                                    action = "add",
-                                    data = entity.toMap(true)
-                                ).toJson()
-                            )
-                        )
-                    }
-
+    private fun sendSubs(frame: JsonFrame) {
+        val json = frame.toJson()
+        synchronized(subscribers) {
+            runBlocking {
+                subscribers.forEach { sub ->
+                    sub.send(Frame.Text(json))
                 }
             }
+        }
+    }
 
+    override fun entityAdded(entity: Entity) {
+
+        if (initialized) {
+            thread(true) {
+                Thread.sleep(100)
+                sendSubs(
+                    JsonFrame(
+                        action = "add",
+                        data = entity.toMap(true)
+                    )
+                )
+            }
+        }
+
+        entity.getOrNull<Geometry>()?.also { g ->
+            g.addEventListener("onColorChanged") { evt ->
+
+                sendSubs(
+                    JsonFrame(
+                        action = "colorChanged",
+                        data = mapOf(
+                            "name" to entity.name,
+                            "color" to evt.value
+                        )
+                    )
+                )
+
+            }
+            g.addEventListener("onVisibilityChanged") { evt ->
+                sendSubs(
+                    JsonFrame(
+                        action = "visibilityChanged",
+                        data = mapOf(
+                            "name" to entity.name,
+                            "visible" to evt.value
+                        )
+                    )
+                )
+            }
         }
 
     }
 
     override fun entityRemoved(entity: Entity) {
-        synchronized(subscribers) {
-            runBlocking {
 
-                subscribers.forEach { sub ->
-                    sub.send(
-                        Frame.Text(
-                            JsonFrame(
-                                action = "remove",
-                                data = entity.name
-                            ).toJson()
-                        )
-                    )
-                }
+        sendSubs(
+            JsonFrame(
+                action = "remove",
+                data = entity.name
+            )
+        )
 
-            }
-        }
     }
 
     @ExperimentalPathApi
     override fun postInit() {
+
         app = embeddedServer(Netty, port = port) {
 
             install(WebSockets)
