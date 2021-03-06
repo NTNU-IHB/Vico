@@ -63,10 +63,16 @@
             background: #DAE9BC;
         }
 
-        #stats {
-            position: absolute;
+        #fpsStats {
+            position: relative;
             top: 0;
             left: 0;
+        }
+
+        #updateStats {
+            position: relative;
+            top: 0;
+            left: 80px;
         }
 
         .innertube {
@@ -106,7 +112,8 @@
 <main>
     <div class="innertube">
         <div id="canvas">
-            <div id="stats"></div>
+            <div id="fpsStats"></div>
+            <div id="updateStats"></div>
         </div>
     </div>
 </main>
@@ -146,10 +153,14 @@
         const MAX_LINE_POINTS = 5000
         const container = document.getElementById('canvas')
 
-        const stats = new Stats()
-        stats.showPanel(1)
-        stats.domElement.style.position = 'absolute'
-        document.getElementById('stats').appendChild(stats.domElement)
+        const updateStats = new Stats()
+        updateStats.showPanel(1)
+        updateStats.domElement.style.position = 'absolute'
+        document.getElementById('updateStats').appendChild(updateStats.dom)
+
+        const fpsStats = new Stats()
+        fpsStats.domElement.style.position = 'absolute'
+        document.getElementById('fpsStats').appendChild(fpsStats.dom)
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("aliceblue")
@@ -167,12 +178,12 @@
         const socket = new WebSocket('ws://' + window.location.hostname + ':8000/visual');
 
         socket.addEventListener('open', function (event) {
-            console.log("open")
+            console.log("Websocket connection opened..")
             send(socket, "subscribe")
         });
 
         socket.addEventListener('close', function (event) {
-            console.log("close")
+            console.log("Websocket connection closed..")
         });
 
         socket.addEventListener('message', function (event) {
@@ -197,7 +208,7 @@
                     break
                 case "update":
                     update(payload.data.entities)
-                    stats.update()
+                    updateStats.update()
                     break
             }
 
@@ -366,6 +377,7 @@
                 clock.start()
             }
             renderer.render(scene, camera)
+            fpsStats.update()
         };
 
         animate()
