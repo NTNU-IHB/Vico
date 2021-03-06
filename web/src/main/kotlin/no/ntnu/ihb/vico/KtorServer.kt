@@ -168,7 +168,7 @@ class KtorServer(
             """.trimIndent()
             )
 
-            java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/pages/visual.html"))
+            java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/index.html"))
 
         }.start(wait = false)
 

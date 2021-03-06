@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
     <title>Vico</title>
     <style>
         body {
@@ -15,7 +16,7 @@
 
         main {
             position: fixed;
-            top: 50px; /* Set this to the height of the header */
+            top: 0; /* Set this to the height of the header */
             bottom: 50px; /* Set this to the height of the footer */
             left: 230px;
             right: 0;
@@ -27,7 +28,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 230px;
             height: 50px;
             overflow: hidden; /* Disables scrollbars on the header frame. To enable scrollbars, change "hidden" to "scroll" */
             background: #BCCE98;
@@ -41,6 +42,27 @@
             height: 50px;
             overflow: hidden; /* Disables scrollbars on the footer frame. To enable scrollbars, change "hidden" to "scroll" */
             background: #BCCE98;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 50px);
+            overflow: hidden;
+        }
+
+        #fpsStats {
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+
+        #updateStats {
+            position: relative;
+            top: 0;
+            left: 80px;
         }
 
         #nav {
@@ -77,29 +99,78 @@
             width: 100%;
         }
 
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            border-left: 0;
+            height: 48px;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            height: 100%;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.2s;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
 
 <header id="header">
     <div class="innertube">
-        <p>Vico 3D visualization</p>
+        <p>Vico</p>
     </div>
 </header>
 
 <main>
-    <div class="innertube">
-        <h1>Site navigation</h1>
-        <ul>
-            <li><a href="pages/visual.html">3D renderer</a></li>
-        </ul>
+    <!-- Tab links -->
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Visualization')">Visualization</button>
+        <button class="tablinks" onclick="openTab(event, 'Plots')">Plotting</button>
     </div>
+
+    <!-- Tab content -->
+    <div class="tabcontent" id="Visualization">
+        <div id="canvas">
+            <div id="fpsStats"></div>
+            <div id="updateStats"></div>
+        </div>
+    </div>
+
+    <div class="tabcontent" id="Plots">
+        <h3>Plots will arrive here</h3>
+    </div>
+
 </main>
 
 <nav id="nav">
     <div class="innertube">
         <h1>Links</h1>
         <ul>
+            <li><a href="/index.html">Index</a></li>
             <li><a href="https://github.com/NTNU-IHB/Vico">Vico GitHub</a></li>
         </ul>
     </div>
@@ -111,5 +182,47 @@
     </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
+<script src="/js/OBJLoader.js"></script>
+<script src="/js/MTLLoader.js"></script>
+<script src="/js/OrbitControls.js"></script>
+<script src="/js/Capsule.js"></script>
+<script src="/js/Stats.js"></script>
+<script src="/js/Frame.js"></script>
+<script src="/js/GeometryParser.js"></script>
+<script src="/js/Water.js"></script>
+<script src="/js/VisualizationApp.js"></script>
+<script>
+
+    let viz = undefined
+
+    function openTab(evt, name) {
+        // Declare all variables
+        let i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(name).style.display = "block";
+        evt.currentTarget.className += " active";
+
+        if (name === "Visualization" && viz === undefined) {
+            viz = new VisualizationApp()
+            viz.animate()
+        }
+
+    }
+
+</script>
 </body>
 </html>
