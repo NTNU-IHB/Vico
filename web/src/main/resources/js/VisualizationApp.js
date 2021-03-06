@@ -77,17 +77,17 @@ class VisualizationApp {
             send(socket, "keyPressed", key)
         })
 
-        window.addEventListener('resize', this.onWindowResize, false);
-
         this.updateProjectionMatrix = function () {
-            this.camera.aspect = this.container.offsetWidth / this.container.offsetHeight
-            this.camera.updateProjectionMatrix()
+            that.camera.aspect = that.container.offsetWidth / that.container.offsetHeight
+            that.camera.updateProjectionMatrix()
         }
 
-        this.onWindowResize = function () {
-            this.updateProjectionMatrix()
-            this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight)
+        let onWindowResize = function () {
+            that.updateProjectionMatrix()
+            that.renderer.setSize(that.container.offsetWidth, that.container.offsetHeight)
         }
+
+        window.addEventListener('resize', onWindowResize, false);
 
     }
 
