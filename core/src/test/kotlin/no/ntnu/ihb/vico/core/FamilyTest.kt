@@ -44,16 +44,16 @@ internal class FamilyTest {
             add(ComponentB())
             assertTrue(Family.exclude(ComponentC::class.java, ComponentD::class.java).build().test(this))
             assertTrue(
-                    Family.exclude(ComponentC::class.java, ComponentD::class.java)
-                            .all(ComponentA::class.java, ComponentB::class.java).build().test(this)
+                Family.exclude(ComponentC::class.java, ComponentD::class.java)
+                    .all(ComponentA::class.java, ComponentB::class.java).build().test(this)
             )
             assertTrue(
-                    Family.exclude(ComponentC::class.java, ComponentD::class.java)
-                            .one(ComponentE::class.java, ComponentB::class.java).build().test(this)
+                Family.exclude(ComponentC::class.java, ComponentD::class.java)
+                    .one(ComponentE::class.java, ComponentB::class.java).build().test(this)
             )
             assertFalse(
-                    Family.exclude(ComponentC::class.java, ComponentD::class.java).one(ComponentE::class.java).build()
-                            .test(this)
+                Family.exclude(ComponentC::class.java, ComponentD::class.java).one(ComponentE::class.java).build()
+                    .test(this)
             )
         }
 

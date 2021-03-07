@@ -18,9 +18,9 @@ import kotlin.math.PI
 import kotlin.math.sin
 
 private data class SineMoverComponent(
-        var A: Double = 1.0,
-        var f: Double = 0.1,
-        var phi: Double = 0.0
+    var A: Double = 1.0,
+    var f: Double = 0.1,
+    var phi: Double = 0.0
 ) : Component {
 
     fun compute(t: Double) = A * sin(TWO_PHI * f * t + phi)
@@ -32,7 +32,7 @@ private data class SineMoverComponent(
 }
 
 private class SineMoverSystem : IteratingSystem(
-        Family.all(Transform::class.java, SineMoverComponent::class.java).build()
+    Family.all(Transform::class.java, SineMoverComponent::class.java).build()
 ) {
 
     private val tmp = Vector3d()
