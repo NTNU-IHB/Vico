@@ -74,7 +74,7 @@ class SlaveLoggerSystem(
         }
     }
 
-    override fun init(engine: Engine) {
+    override fun postInit() {
         loggers.values.forEach { logger ->
             logger.writeLine(engine.currentTime)
         }

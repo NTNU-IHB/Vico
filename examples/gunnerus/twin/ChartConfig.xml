@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vico:ChartConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/ChartConfig">
+
+    <vico:chart>
+        <vico:xyseries title="NE-plot" xLabel="East[m]" yLabel="North[m]" live="true" decimationFactor="10">
+            <vico:series name="Twin">
+                <vico:x component="vesselModel" variable="cgShipMotion.nedDisplacement.east"/>
+                <vico:y component="vesselModel" variable="cgShipMotion.nedDisplacement.north"/>
+            </vico:series>
+            <vico:series name="Real">
+                <vico:x component="gunnerus" variable="position.east"/>
+                <vico:y component="gunnerus" variable="position.north"/>
+            </vico:series>
+        </vico:xyseries>
+    </vico:chart>
+
+    <vico:chart>
+        <vico:timeseries title="Surge speed" label="Velocity[m/s]">
+            <vico:series>
+                <vico:component name="gunnerus">
+                    <vico:variable name="velocity.surge"/>
+                </vico:component>
+                <vico:component name="vesselModel">
+                    <vico:variable name="cgShipMotion.linearVelocity.surge"/>
+                </vico:component>
+            </vico:series>
+        </vico:timeseries>
+    </vico:chart>
+
+    <vico:chart>
+        <vico:timeseries title="Heading" label="Heading[degree]">
+            <vico:series>
+                <vico:component name="gunnerus">
+                    <vico:variable name="trueCourse"/>
+                </vico:component>
+                <vico:component name="vesselModelObserver">
+                    <vico:variable name="trueHeading"/>
+                </vico:component>
+            </vico:series>
+        </vico:timeseries>
+    </vico:chart>
+
+</vico:ChartConfig>

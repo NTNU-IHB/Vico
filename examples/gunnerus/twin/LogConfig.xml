@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vico:LogConfig xmlns:vico="http://github.com/NTNU-IHB/Vico/schema/LogConfig" staticFileNames="true">
+
+    <vico:components>
+        <vico:component name="vesselModel">
+            <vico:variable name="cgShipMotion.nedDisplacement.north"/>
+            <vico:variable name="cgShipMotion.nedDisplacement.east"/>
+            <vico:variable name="cgShipMotion.nedDisplacement.down"/>
+
+            <vico:variable name="cgShipMotion.angularDisplacement.yaw"/>
+            <vico:variable name="cgShipMotion.angularDisplacement.pitch"/>
+            <vico:variable name="cgShipMotion.angularDisplacement.roll"/>
+
+            <vico:variable name="cgShipMotion.linearVelocity.surge"/>
+            <vico:variable name="cgShipMotion.linearVelocity.sway"/>
+        </vico:component>
+
+        <vico:component name="vesselModelObserver">
+            <vico:variable name="trueHeading"/>
+        </vico:component>
+
+        <vico:component name="gunnerus">
+            <vico:variable name="position.north"/>
+            <vico:variable name="position.east"/>
+            <vico:variable name="position.down"/>
+
+            <vico:variable name="rotation.yaw"/>
+            <vico:variable name="rotation.pitch"/>
+            <vico:variable name="rotation.roll"/>
+
+            <vico:variable name="trueCourse"/>
+            <vico:variable name="velocity.surge"/>
+            <vico:variable name="speedOverGround"/>
+
+            <vico:variable name="portAzimuth.rpm"/>
+            <vico:variable name="portAzimuth.angle"/>
+            <vico:variable name="portAzimuth.loadFeedback"/>
+
+            <vico:variable name="starboardAzimuth.rpm"/>
+            <vico:variable name="starboardAzimuth.angle"/>
+            <vico:variable name="starboardAzimuth.loadFeedback"/>
+
+            <vico:variable name="wind.speed"/>
+            <vico:variable name="wind.direction"/>
+        </vico:component>
+
+        <vico:component name="speedController">
+            <vico:variable name="setPoint"/>
+            <vico:variable name="processOutput"/>
+            <vico:variable name="output"/>
+            <vico:variable name="error"/>
+            <vico:variable name="enabled"/>
+        </vico:component>
+
+        <vico:component name="headingController">
+            <vico:variable name="setPoint"/>
+            <vico:variable name="processOutput"/>
+            <vico:variable name="output"/>
+            <vico:variable name="error"/>
+            <vico:variable name="enabled"/>
+        </vico:component>
+
+    </vico:components>
+
+</vico:LogConfig>
