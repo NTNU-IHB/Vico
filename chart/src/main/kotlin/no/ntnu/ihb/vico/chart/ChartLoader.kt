@@ -1,9 +1,5 @@
 package no.ntnu.ihb.vico.chart
 
-import no.ntnu.ihb.vico.chart.jaxb.TChartConfig
-import no.ntnu.ihb.vico.chart.jaxb.TLinearTransformation
-import no.ntnu.ihb.vico.chart.jaxb.TTimeSeriesChart
-import no.ntnu.ihb.vico.chart.jaxb.TXYSeriesChart
 import no.ntnu.ihb.vico.core.LinearTransform
 import java.io.File
 import javax.xml.bind.JAXB

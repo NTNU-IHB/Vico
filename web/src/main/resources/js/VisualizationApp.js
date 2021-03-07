@@ -36,12 +36,12 @@ class VisualizationApp {
         const socket = new WebSocket('ws://' + window.location.hostname + ':8000/visual');
 
         socket.addEventListener('open', function (event) {
-            console.log("Websocket connection opened..")
+            console.log("Websocket connection for visuals opened..")
             send(socket, "subscribe")
         });
 
         socket.addEventListener('close', function (event) {
-            console.log("Websocket connection closed..")
+            console.log("Websocket connection for visuals closed..")
         });
 
         socket.addEventListener('message', function (event) {

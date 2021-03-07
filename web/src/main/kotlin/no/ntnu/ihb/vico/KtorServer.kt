@@ -83,8 +83,7 @@ class KtorServer(
                             .mapNotNull {
                                 val read = (it as Frame.Text).readText()
                                 JsonFrame.fromJson(read)
-                            }
-                            .collect { frame ->
+                            }.collect { frame ->
 
                                 when (frame.action) {
                                     "subscribe" -> {
@@ -118,7 +117,6 @@ class KtorServer(
                             }
 
                     } catch (ex: ClosedReceiveChannelException) {
-                        ex.printStackTrace()
                     } catch (ex: Throwable) {
                         ex.printStackTrace()
                     } finally {
@@ -128,6 +126,30 @@ class KtorServer(
                     }
 
                 }
+
+                webSocket("chart") {
+
+                    try {
+
+                        incoming.consumeAsFlow()
+                            .mapNotNull {
+                                val read = (it as Frame.Text).readText()
+                                JsonFrame.fromJson(read)
+                            }.collect { frame ->
+
+                                when (frame.action) {
+
+                                }
+
+                            }
+
+                    } catch (ex: ClosedReceiveChannelException) {
+                    } catch (ex: Throwable) {
+                        ex.printStackTrace()
+                    }
+
+                }
+
             }
 
             println(
@@ -139,7 +161,11 @@ class KtorServer(
             """.trimIndent()
             )
 
-            java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/index.html"))
+            try {
+                java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/index.html"))
+            } catch (ex: UnsupportedOperationException) {
+                // Do nothing
+            }
 
         }.start(wait = false)
 
@@ -153,7 +179,7 @@ class KtorServer(
     override fun observe(currentTime: Double) {
 
         val timeSinceUpdate = (System.currentTimeMillis() - t0).toDouble() / 1000
-        if (timeSinceUpdate > MAX_SUBSCRIPTION_RATE) {
+        if (timeSinceUpdate > MAX_UPDATE_RATE) {
 
             updateFrame = JsonFrame(
                 action = "update",
@@ -238,7 +264,7 @@ class KtorServer(
     }
 
     private companion object {
-        private const val MAX_SUBSCRIPTION_RATE = 1.0 / 60
+        private const val MAX_UPDATE_RATE = 1.0 / 60
 
         private val hostName by lazy {
             var hostAddress: String? = "127.0.0.1"

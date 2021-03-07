@@ -1,5 +1,5 @@
 
-package no.ntnu.ihb.vico.chart.jaxb;
+package no.ntnu.ihb.vico.chart;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
