@@ -77,7 +77,8 @@ tasks.create('cleanTemp') {
                         name.startsWith("cosim4j_") ||
                         name.startsWith("libcosim") ||
                         name.startsWith("vesselFmu") ||
-                        name.startsWith("vico")
+                        name.startsWith("vico") ||
+                        name.startsWith("fmu_proxy")
             }
         }).each {
             it.deleteDir()

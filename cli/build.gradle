@@ -18,8 +18,8 @@ dependencies {
     implementation project(":web")
     implementation project(':scenario-scripting')
 
-    implementation 'info.laht.kts:host:0.4.0'
-    implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
+    implementation 'info.laht.kts:host:0.4.1'
+    implementation group: 'info.picocli', name: 'picocli', version: '4.6.1'
 
     testImplementation project(':test-data')
     
