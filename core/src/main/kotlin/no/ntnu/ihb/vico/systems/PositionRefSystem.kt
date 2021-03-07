@@ -2,10 +2,7 @@ package no.ntnu.ihb.vico.systems
 
 import no.ntnu.ihb.vico.components.PositionRef
 import no.ntnu.ihb.vico.components.Transform
-import no.ntnu.ihb.vico.core.Entity
-import no.ntnu.ihb.vico.core.Family
-import no.ntnu.ihb.vico.core.RealProperty
-import no.ntnu.ihb.vico.core.SimulationSystem
+import no.ntnu.ihb.vico.core.*
 import org.joml.Vector3d
 
 class PositionRefSystem : SimulationSystem(
@@ -19,10 +16,11 @@ class PositionRefSystem : SimulationSystem(
     override fun entityAdded(entity: Entity) {
 
         val p: PositionRef = entity.get()
+        val pLocator = PropertyLocator(engine)
 
-        p.xRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
-        p.yRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
-        p.zRef?.also { ref -> entity.getRealPropertyOrNull(ref.name)?.also { v -> map[ref.name] = v } }
+        p.xRef?.also { ref -> pLocator.getRealProperty(ref.name).also { v -> map[ref.name] = v } }
+        p.yRef?.also { ref -> pLocator.getRealProperty(ref.name).also { v -> map[ref.name] = v } }
+        p.zRef?.also { ref -> pLocator.getRealProperty(ref.name).also { v -> map[ref.name] = v } }
 
     }
 

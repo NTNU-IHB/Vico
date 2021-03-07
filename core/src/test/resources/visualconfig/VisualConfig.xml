@@ -5,7 +5,7 @@
         <vico:initialPosition pz="-5"/>
     </vico:CameraConfig>
 
-    <vico:Transform name="SineMover">
+    <vico:Transform name="transform" parent="SineMover">
         <vico:Geometry color="red" opacity="0.5">
             <vico:Shape>
                 <vico:Sphere radius="0.05"/>
@@ -14,7 +14,7 @@
         <vico:Trail color="red"/>
     </vico:Transform>
 
-    <vico:Transform name="SineMoverChild" parent="SineMover">
+    <vico:Transform name="SineMoverChild" parent="transform">
         <vico:Geometry color="blue" opacity="0.5">
             <vico:OffsetPosition px="2"/>
             <vico:Shape>
