@@ -8,24 +8,26 @@ function createBox(shape, mat) {
 }
 
 function createSphere(shape, mat) {
-    return new THREE.Mesh(new THREE.SphereGeometry(shape.radius, 16, 16), mat)
+    return new THREE.Mesh(new THREE.SphereGeometry(shape.radius, 32, 32), mat)
 }
 
 function createCylinder(shape, mat) {
-    return new THREE.Mesh(new THREE.CylinderGeometry(shape.radius, shape.radius, shape.height, 16, 16), mat)
+    return new THREE.Mesh(new THREE.CylinderGeometry(shape.radius, shape.radius, shape.height, 32, 32), mat)
 }
 
 function createCapsule(shape, mat) {
-    return new Capsule(shape.radius, shape.height, mat, 16, 16)
+    return new Capsule(shape.radius, shape.height, mat, 32, 32)
 }
 
 function createTrimesh(shape, mat) {
     const geom = new THREE.BufferGeometry()
     const vertices = new Float32Array(shape.vertices)
     const normals = new Float32Array(shape.normals)
+    const uvs = new Float32Array(shape.uvs)
     geom.setIndex(shape.indices)
     geom.setAttribute("position", new THREE.BufferAttribute(vertices, 3))
     geom.setAttribute("normal", new THREE.BufferAttribute(normals, 3))
+    geom.setAttribute("uvs", new THREE.BufferAttribute(uvs, 2))
     geom.computeBoundingSphere()
     return new THREE.Mesh(geom, mat)
 }

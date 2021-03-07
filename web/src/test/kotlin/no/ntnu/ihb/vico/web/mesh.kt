@@ -2,7 +2,7 @@ package no.ntnu.ihb.vico.web
 
 import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.components.Transform
-import no.ntnu.ihb.vico.core.EngineBuilder
+import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.render.Camera
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.Water
@@ -13,7 +13,7 @@ import kotlin.system.exitProcess
 
 fun main() {
 
-    EngineBuilder().build().use { engine ->
+    Engine().use { engine ->
 
         engine.createEntity("e1").apply {
             val mesh = ObjLoader().load(File("examples/gunnerus/obj/Gunnerus.obj"))

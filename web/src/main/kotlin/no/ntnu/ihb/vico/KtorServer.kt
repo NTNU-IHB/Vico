@@ -50,60 +50,6 @@ class KtorServer(
         }
     }
 
-    override fun entityAdded(entity: Entity) {
-
-        if (initialized) {
-            thread(true) {
-                Thread.sleep(100)
-                sendSubs(
-                    JsonFrame(
-                        action = "add",
-                        data = entity.toMap(true)
-                    )
-                )
-            }
-        }
-
-        entity.getOrNull<Geometry>()?.also { g ->
-            g.addEventListener("onColorChanged") { evt ->
-
-                sendSubs(
-                    JsonFrame(
-                        action = "colorChanged",
-                        data = mapOf(
-                            "name" to entity.name,
-                            "color" to evt.value
-                        )
-                    )
-                )
-
-            }
-            g.addEventListener("onVisibilityChanged") { evt ->
-                sendSubs(
-                    JsonFrame(
-                        action = "visibilityChanged",
-                        data = mapOf(
-                            "name" to entity.name,
-                            "visible" to evt.value
-                        )
-                    )
-                )
-            }
-        }
-
-    }
-
-    override fun entityRemoved(entity: Entity) {
-
-        sendSubs(
-            JsonFrame(
-                action = "remove",
-                data = entity.name
-            )
-        )
-
-    }
-
     @ExperimentalPathApi
     override fun postInit() {
 
@@ -186,8 +132,10 @@ class KtorServer(
 
             println(
                 """
+                    
                 Serving on http://$hostName:$port (public)
                 Serving on http://127.0.0.1:$port (local)
+                
             """.trimIndent()
             )
 
@@ -214,6 +162,71 @@ class KtorServer(
 
             t0 = System.currentTimeMillis()
         }
+    }
+
+    override fun entityAdded(entity: Entity) {
+
+        if (initialized) {
+            thread(true) {
+                Thread.sleep(100)
+                sendSubs(
+                    JsonFrame(
+                        action = "add",
+                        data = entity.toMap(true)
+                    )
+                )
+            }
+        }
+
+        entity.getOrNull<Geometry>()?.also { g ->
+            g.addEventListener("onColorChanged") { evt ->
+
+                sendSubs(
+                    JsonFrame(
+                        action = "colorChanged",
+                        data = mapOf(
+                            "name" to entity.name,
+                            "color" to evt.value
+                        )
+                    )
+                )
+
+            }
+            g.addEventListener("onVisibilityChanged") { evt ->
+                sendSubs(
+                    JsonFrame(
+                        action = "visibilityChanged",
+                        data = mapOf(
+                            "name" to entity.name,
+                            "visible" to evt.value
+                        )
+                    )
+                )
+            }
+            g.addEventListener("onWireframeChanged") { evt ->
+                sendSubs(
+                    JsonFrame(
+                        action = "wireframeChanged",
+                        data = mapOf(
+                            "name" to entity.name,
+                            "wireframe" to evt.value
+                        )
+                    )
+                )
+            }
+        }
+
+    }
+
+    override fun entityRemoved(entity: Entity) {
+
+        sendSubs(
+            JsonFrame(
+                action = "remove",
+                data = entity.name
+            )
+        )
+
     }
 
     override fun close() {

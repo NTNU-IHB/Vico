@@ -6,6 +6,7 @@ import no.ntnu.ihb.vico.core.Component
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
+import no.ntnu.ihb.vico.render.Camera
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
@@ -63,6 +64,12 @@ private fun e1(engine: Engine): Entity {
 fun main() {
 
     Engine().use { engine ->
+
+        engine.createEntity("camera", Camera()).apply {
+            add<Transform>().apply {
+                setLocalTranslation(0.0, 0.0, 10.0)
+            }
+        }
 
         val e1 = e1(engine)
         engine.createEntity("e2").also { e ->

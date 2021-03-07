@@ -73,6 +73,14 @@ class VisualizationApp {
                     obj = that.objects[payload.data.name]
                     obj.visible = payload.data.visible
                     break
+                case "wireframeChanged":
+                    obj = that.objects[payload.data.name]
+                    obj.traverse(function (o) {
+                        if (o instanceof THREE.Mesh) {
+                            o.material.wireframe = payload.data.wireframe
+                        }
+                    })
+                    break
                 case "colorChanged":
                     obj = that.objects[payload.data.name]
                     obj.traverse(function (o) {
