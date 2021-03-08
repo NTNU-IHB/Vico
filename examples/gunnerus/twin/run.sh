@@ -5,6 +5,6 @@ vico simulate-ssp \
 -chart "ChartConfig.xml" \
 -s "scenario.main.kts" \
 -p "initialValues" \
--res "results" \
+-res "results/data" \
 "gunnerus-twin.ssp"
 read -p "Press enter to continue"
