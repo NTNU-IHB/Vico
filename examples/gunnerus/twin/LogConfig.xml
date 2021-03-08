@@ -44,6 +44,38 @@
             <vico:variable name="wind.direction"/>
         </vico:component>
 
+        <vico:component name="portAzimuth">
+
+            <vico:variable name="input_act_revs"/>
+            <vico:variable name="input_act_angle"/>
+
+            <vico:variable name="output_revs"/>
+            <vico:variable name="output_angle"/>
+            <vico:variable name="output_torque"/>
+            <vico:variable name="output_revs"/>
+
+            <vico:variable name="output_force_surge"/>
+            <vico:variable name="output_force_sway"/>
+            <vico:variable name="output_force_heave"/>
+
+        </vico:component>
+
+        <vico:component name="starboardAzimuth">
+
+            <vico:variable name="input_act_revs"/>
+            <vico:variable name="input_act_angle"/>
+
+            <vico:variable name="output_revs"/>
+            <vico:variable name="output_angle"/>
+            <vico:variable name="output_torque"/>
+            <vico:variable name="output_revs"/>
+
+            <vico:variable name="output_force_surge"/>
+            <vico:variable name="output_force_sway"/>
+            <vico:variable name="output_force_heave"/>
+
+        </vico:component>
+
         <vico:component name="speedController">
             <vico:variable name="setPoint"/>
             <vico:variable name="processOutput"/>

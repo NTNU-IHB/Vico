@@ -73,6 +73,20 @@ ssp("gunnerus-twin") {
 
                 component("vesselModel", "resources/VesselFmu2.fmu") {
                     connectors {
+                        real("cg_x_rel_ap", output)
+                        real("cg_y_rel_cl", output)
+                        real("cg_z_rel_bl", output)
+
+                        real("input_global_wind_dir", input)
+                        real("input_global_wind_vel", input)
+
+                        real("cgShipMotion.nedDisplacement.north", output)
+                        real("cgShipMotion.nedDisplacement.east", output)
+                        real("cgShipMotion.linearVelocity.surge", output)
+                        real("cgShipMotion.linearVelocity.sway", output)
+                        real("cgShipMotion.angularVelocity.yaw", output)
+                        real("cgShipMotion.angularDisplacement.yaw", output)
+
                         real("additionalBodyForce[0].force.heave", input)
                         real("additionalBodyForce[0].force.surge", input)
                         real("additionalBodyForce[0].force.sway", input)
@@ -86,16 +100,6 @@ ssp("gunnerus-twin") {
                         real("additionalBodyForce[1].pointOfAttackRel2APAndBL.xpos", input)
                         real("additionalBodyForce[1].pointOfAttackRel2APAndBL.ypos", input)
                         real("additionalBodyForce[1].pointOfAttackRel2APAndBL.zpos", input)
-
-                        real("cg_x_rel_ap", output)
-                        real("cg_y_rel_cl", output)
-                        real("cg_z_rel_bl", output)
-                        real("cgShipMotion.nedDisplacement.north", output)
-                        real("cgShipMotion.nedDisplacement.east", output)
-                        real("cgShipMotion.linearVelocity.surge", output)
-                        real("cgShipMotion.linearVelocity.sway", output)
-                        real("cgShipMotion.angularVelocity.yaw", output)
-                        real("cgShipMotion.angularDisplacement.yaw", output)
                     }
                     parameterBindings {
                         parameterSet("initialValues") {
@@ -118,7 +122,7 @@ ssp("gunnerus-twin") {
                     }
                 }
 
-                component("azimuth0", "resources/PMAzimuth-proxy.fmu") {
+                component("portAzimuth", "resources/PMAzimuth-proxy.fmu") {
                     connectors {
                         real("input_act_revs", input)
                         real("input_act_angle", input)
@@ -139,9 +143,9 @@ ssp("gunnerus-twin") {
                     }
                     parameterBindings {
                         parameterSet("initialValues") {
-                            real("input_x_rel_ap", 1.5)
+                            real("input_x_rel_ap", 0)
                             real("input_y_rel_cl", -2.7)
-                            real("input_z_rel_bl", 0)
+                            real("input_z_rel_bl", 0.55)
                             real("input_prop_diam", 1.9)
                             real("input_distancetohull", 1.5)
                             real("input_bilgeradius", 3)
@@ -151,18 +155,18 @@ ssp("gunnerus-twin") {
                     }
                 }
 
-                component("azimuth1", "resources/PMAzimuth-proxy.fmu") {
+                component("starboardAzimuth", "resources/PMAzimuth-proxy.fmu") {
                     connectors {
-                        copyFrom("azimuth0")
+                        copyFrom("portAzimuth")
                     }
                     parameterBindings {
-                        copyFrom("azimuth0", "initialValues") {
+                        copyFrom("portAzimuth", "initialValues") {
                             real("input_y_rel_cl", 2.7)
                         }
                     }
                 }
 
-                component("azimuth0_rpmActuator", "resources/ThrusterDrive2.fmu") {
+                component("portAzimuth_rpmActuator", "resources/ThrusterDrive2.fmu") {
                     connectors {
                         real("d_in.e", input)
                         real("q_in.e", input)
@@ -175,9 +179,9 @@ ssp("gunnerus-twin") {
                     }
                 }
 
-                component("azimuth1_rpmActuator", "resources/ThrusterDrive2.fmu") {
+                component("starboardAzimuth_rpmActuator", "resources/ThrusterDrive2.fmu") {
                     connectors {
-                        copyFrom("azimuth0_rpmActuator")
+                        copyFrom("portAzimuth_rpmActuator")
                     }
                 }
 
@@ -233,7 +237,7 @@ ssp("gunnerus-twin") {
                     }
                     parameterBindings {
                         parameterSet("initialValues") {
-                            real("kp", 0.4)
+                            real("kp", 1)
                             real("ti", 0.02)
                             real("td", 0.001)
                             real("minOutput", -60)
@@ -275,52 +279,52 @@ ssp("gunnerus-twin") {
 
             connections(inputsFirst = true) {
 
-                "powerPlant.p1.f[1]" to "azimuth0_rpmActuator.d_in.f"
-                "powerPlant.p1.f[2]" to "azimuth0_rpmActuator.q_in.f"
-                "powerPlant.p2.f[1]" to "azimuth1_rpmActuator.d_in.f"
-                "powerPlant.p2.f[2]" to "azimuth1_rpmActuator.q_in.f"
+                "powerPlant.p1.f[1]" to "portAzimuth_rpmActuator.d_in.f"
+                "powerPlant.p1.f[2]" to "portAzimuth_rpmActuator.q_in.f"
+                "powerPlant.p2.f[1]" to "starboardAzimuth_rpmActuator.d_in.f"
+                "powerPlant.p2.f[2]" to "starboardAzimuth_rpmActuator.q_in.f"
 
-                "azimuth0_rpmActuator.d_in.e" to "powerPlant.p1.e[1]"
-                "azimuth0_rpmActuator.q_in.e" to "powerPlant.p1.e[2]"
-                "azimuth0_rpmActuator.ThrustCom" to "speedController.output"
-                "azimuth0_rpmActuator.Shaft.e" to "azimuth0.output_torque"
+                "portAzimuth_rpmActuator.d_in.e" to "powerPlant.p1.e[1]"
+                "portAzimuth_rpmActuator.q_in.e" to "powerPlant.p1.e[2]"
+                "portAzimuth_rpmActuator.ThrustCom" to "speedController.output"
+                "portAzimuth_rpmActuator.Shaft.e" to "portAzimuth.output_torque"
 
-                "azimuth1_rpmActuator.d_in.e" to "powerPlant.p2.e[1]"
-                "azimuth1_rpmActuator.q_in.e" to "powerPlant.p2.e[2]"
-                "azimuth1_rpmActuator.ThrustCom" to "speedController.output"
-                "azimuth1_rpmActuator.Shaft.e" to "azimuth1.output_torque"
+                "starboardAzimuth_rpmActuator.d_in.e" to "powerPlant.p2.e[1]"
+                "starboardAzimuth_rpmActuator.q_in.e" to "powerPlant.p2.e[2]"
+                "starboardAzimuth_rpmActuator.ThrustCom" to "speedController.output"
+                "starboardAzimuth_rpmActuator.Shaft.e" to "starboardAzimuth.output_torque"
 
-                ("azimuth0.input_act_revs" to "azimuth0_rpmActuator.Shaft.f").linearTransformation(factor = 60.0 / (2 * PI))
-                "azimuth0.input_act_angle" to "headingController.output"
-                "azimuth0.input_cg_x_rel_ap" to "vesselModel.cg_x_rel_ap"
-                "azimuth0.input_cg_y_rel_cl" to "vesselModel.cg_y_rel_cl"
-                "azimuth0.input_cg_z_rel_bl" to "vesselModel.cg_z_rel_bl"
-                "azimuth0.input_cg_surge_vel" to "vesselModel.cgShipMotion.linearVelocity.surge"
-                "azimuth0.input_cg_sway_vel" to "vesselModel.cgShipMotion.linearVelocity.sway"
-                "azimuth0.input_yaw_vel" to "vesselModel.cgShipMotion.angularVelocity.yaw"
+                ("portAzimuth.input_act_revs" to "portAzimuth_rpmActuator.Shaft.f").linearTransformation(factor = 60.0 / (2 * PI))
+                "portAzimuth.input_act_angle" to "headingController.output"
+                "portAzimuth.input_cg_x_rel_ap" to "vesselModel.cg_x_rel_ap"
+                "portAzimuth.input_cg_y_rel_cl" to "vesselModel.cg_y_rel_cl"
+                "portAzimuth.input_cg_z_rel_bl" to "vesselModel.cg_z_rel_bl"
+                "portAzimuth.input_cg_surge_vel" to "vesselModel.cgShipMotion.linearVelocity.surge"
+                "portAzimuth.input_cg_sway_vel" to "vesselModel.cgShipMotion.linearVelocity.sway"
+                "portAzimuth.input_yaw_vel" to "vesselModel.cgShipMotion.angularVelocity.yaw"
 
-                ("azimuth1.input_act_revs" to "azimuth1_rpmActuator.Shaft.f").linearTransformation(factor = 60.0 / (2 * PI))
-                "azimuth1.input_act_angle" to "headingController.output"
-                "azimuth1.input_cg_x_rel_ap" to "vesselModel.cg_x_rel_ap"
-                "azimuth1.input_cg_y_rel_cl" to "vesselModel.cg_y_rel_cl"
-                "azimuth1.input_cg_z_rel_bl" to "vesselModel.cg_z_rel_bl"
-                "azimuth1.input_cg_surge_vel" to "vesselModel.cgShipMotion.linearVelocity.surge"
-                "azimuth1.input_cg_sway_vel" to "vesselModel.cgShipMotion.linearVelocity.sway"
-                "azimuth1.input_yaw_vel" to "vesselModel.cgShipMotion.angularVelocity.yaw"
+                ("starboardAzimuth.input_act_revs" to "starboardAzimuth_rpmActuator.Shaft.f").linearTransformation(factor = 60.0 / (2 * PI))
+                "starboardAzimuth.input_act_angle" to "headingController.output"
+                "starboardAzimuth.input_cg_x_rel_ap" to "vesselModel.cg_x_rel_ap"
+                "starboardAzimuth.input_cg_y_rel_cl" to "vesselModel.cg_y_rel_cl"
+                "starboardAzimuth.input_cg_z_rel_bl" to "vesselModel.cg_z_rel_bl"
+                "starboardAzimuth.input_cg_surge_vel" to "vesselModel.cgShipMotion.linearVelocity.surge"
+                "starboardAzimuth.input_cg_sway_vel" to "vesselModel.cgShipMotion.linearVelocity.sway"
+                "starboardAzimuth.input_yaw_vel" to "vesselModel.cgShipMotion.angularVelocity.yaw"
 
-                "vesselModel.additionalBodyForce[0].force.heave" to "azimuth0.output_force_heave"
-                "vesselModel.additionalBodyForce[0].force.surge" to "azimuth0.output_force_surge"
-                "vesselModel.additionalBodyForce[0].force.sway" to "azimuth0.output_force_sway"
-                "vesselModel.additionalBodyForce[0].pointOfAttackRel2APAndBL.xpos" to "azimuth0.output_x_rel_ap"
-                "vesselModel.additionalBodyForce[0].pointOfAttackRel2APAndBL.ypos" to "azimuth0.output_y_rel_cl"
-                "vesselModel.additionalBodyForce[0].pointOfAttackRel2APAndBL.zpos" to "azimuth0.output_z_rel_bl"
+                "vesselModel.additionalBodyForce[0].force.heave" to "portAzimuth.output_force_heave"
+                "vesselModel.additionalBodyForce[0].force.surge" to "portAzimuth.output_force_surge"
+                "vesselModel.additionalBodyForce[0].force.sway" to "portAzimuth.output_force_sway"
+                "vesselModel.additionalBodyForce[0].pointOfAttackRel2APAndBL.xpos" to "portAzimuth.output_x_rel_ap"
+                "vesselModel.additionalBodyForce[0].pointOfAttackRel2APAndBL.ypos" to "portAzimuth.output_y_rel_cl"
+                "vesselModel.additionalBodyForce[0].pointOfAttackRel2APAndBL.zpos" to "portAzimuth.output_z_rel_bl"
 
-                "vesselModel.additionalBodyForce[1].force.heave" to "azimuth1.output_force_heave"
-                "vesselModel.additionalBodyForce[1].force.surge" to "azimuth1.output_force_surge"
-                "vesselModel.additionalBodyForce[1].force.sway" to "azimuth1.output_force_sway"
-                "vesselModel.additionalBodyForce[1].pointOfAttackRel2APAndBL.xpos" to "azimuth1.output_x_rel_ap"
-                "vesselModel.additionalBodyForce[1].pointOfAttackRel2APAndBL.ypos" to "azimuth1.output_y_rel_cl"
-                "vesselModel.additionalBodyForce[1].pointOfAttackRel2APAndBL.zpos" to "azimuth1.output_z_rel_bl"
+                "vesselModel.additionalBodyForce[1].force.heave" to "starboardAzimuth.output_force_heave"
+                "vesselModel.additionalBodyForce[1].force.surge" to "starboardAzimuth.output_force_surge"
+                "vesselModel.additionalBodyForce[1].force.sway" to "starboardAzimuth.output_force_sway"
+                "vesselModel.additionalBodyForce[1].pointOfAttackRel2APAndBL.xpos" to "starboardAzimuth.output_x_rel_ap"
+                "vesselModel.additionalBodyForce[1].pointOfAttackRel2APAndBL.ypos" to "starboardAzimuth.output_y_rel_cl"
+                "vesselModel.additionalBodyForce[1].pointOfAttackRel2APAndBL.zpos" to "starboardAzimuth.output_z_rel_bl"
 
                 "headingController.setPoint" to "vesselModelObserver.trueHeading"
                 "headingController.processOutput" to "gunnerus.trueCourse"
@@ -330,6 +334,9 @@ ssp("gunnerus-twin") {
 
                 "vesselModelObserver.position.north" to "vesselModel.cgShipMotion.nedDisplacement.north"
                 "vesselModelObserver.position.east" to "vesselModel.cgShipMotion.nedDisplacement.east"
+
+                "vesselModel.input_global_wind_dir" to "gunnerus.wind.direction"
+                "vesselModel.input_global_wind_vel" to "gunnerus.wind.speed"
             }
 
         }
