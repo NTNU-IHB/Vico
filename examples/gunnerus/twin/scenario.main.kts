@@ -10,7 +10,7 @@ scenario {
         real("headingController.ti").set(0.01)
         real("headingController.td").set(0.001)
 
-        real("speedController.kp").set(6500)
+        real("speedController.kp").set(8500)
         real("speedController.ti").set(875)
         real("speedController.td").set(0.5)
     }

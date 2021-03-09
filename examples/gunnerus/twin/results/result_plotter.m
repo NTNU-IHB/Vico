@@ -1,7 +1,7 @@
 clc, clear, close all;
 
 saveimg = true;
-dirPath = "data";
+dirPath = "data2";
 plotDir = strcat(dirPath, '/plots');
 if saveimg
    if isfolder(plotDir) == false
@@ -139,31 +139,31 @@ end
 
 %% Wind
 
-h = figure('name', 'Wind');
-
-hold on
-p = plot(t, wind_speed);
-%legend('wind');
-ylabel('Speed [m/s]')
-xlabel('Time [s]')
-title('Wind')
-grid on
-q = quiver(-10,-10,1,0,'b'); %plot the arrow at (-10,-10)
-xlim([0,2000])
-ylim([3,9])
-for i=1000:750:length(t)-1000
-    [base_x, base_y] = normalize_coordinate(t(i), wind_speed(i), get(gca, 'Position'), get(gca, 'xlim'), get(gca, 'ylim'));
-    [end_x, end_y] = pol2cart(deg2rad(wind_dir(i)), 0.05);
-    arrow = annotation('arrow', [base_x, base_x + end_x], [base_y, base_y + end_y] );
-    configureArrow(arrow, 'blue');
-end
-
-legend([p q],{'Wind speed', 'Wind direction'});
-
-if saveimg
-    print(strcat(plotDir, '/Wind_plot.eps'), '-depsc')
-    saveas(h, strcat(plotDir, '/Wind_plot.png'));
-end
+% h = figure('name', 'Wind');
+% 
+% hold on
+% p = plot(t, wind_speed);
+% %legend('wind');
+% ylabel('Speed [m/s]')
+% xlabel('Time [s]')
+% title('Wind')
+% grid on
+% q = quiver(-10,-10,1,0,'b'); %plot the arrow at (-10,-10)
+% xlim([0,2000])
+% ylim([3,9])
+% for i=1000:750:length(t)-1000
+%     [base_x, base_y] = normalize_coordinate(t(i), wind_speed(i), get(gca, 'Position'), get(gca, 'xlim'), get(gca, 'ylim'));
+%     [end_x, end_y] = pol2cart(deg2rad(wind_dir(i)), 0.05);
+%     arrow = annotation('arrow', [base_x, base_x + end_x], [base_y, base_y + end_y] );
+%     configureArrow(arrow, 'blue');
+% end
+% 
+% legend([p q],{'Wind speed', 'Wind direction'});
+% 
+% if saveimg
+%     print(strcat(plotDir, '/Wind_plot.eps'), '-depsc')
+%     saveas(h, strcat(plotDir, '/Wind_plot.png'));
+% end
 
 %% Power
 
