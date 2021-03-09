@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.render
 
+import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.*
@@ -61,6 +62,7 @@ fun main() {
         VisualLoader.load(config, engine)
         engine.addSystem(SineMoverSystem())
         engine.addSystem(KtorServer(8000))
+        engine.addSystem(ThreektRenderer())
 
         engine.runner.startAndWait()
 
