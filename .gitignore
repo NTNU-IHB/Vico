@@ -51,5 +51,6 @@ local.properties
 /data
 
 /examples/**/*.ssp
+/examples/**/plots
 
 log.out

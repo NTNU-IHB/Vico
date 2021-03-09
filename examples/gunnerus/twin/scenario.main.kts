@@ -5,6 +5,16 @@ import no.ntnu.ihb.vico.dsl.scenario
 
 scenario {
 
+    init {
+        real("headingController.kp").set(2)
+        real("headingController.ti").set(0.01)
+        real("headingController.td").set(0.001)
+
+        real("speedController.kp").set(8500)
+        real("speedController.ti").set(875)
+        real("speedController.td").set(0.5)
+    }
+
     invokeAt(49.5) {
         bool("vesselModel.reset_position").set(true)
         bool("vesselModel.reset_velocity").set(true)

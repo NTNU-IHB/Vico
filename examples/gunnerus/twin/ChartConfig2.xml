@@ -4,8 +4,8 @@
     <vico:chart>
         <vico:xyseries title="NE-plot" xLabel="East[m]" yLabel="North[m]" live="false" decimationFactor="10">
             <vico:series name="Twin">
-                <vico:x component="vesselModel" variable="cgShipMotion.ned.east"/>
-                <vico:y component="vesselModel" variable="cgShipMotion.ned.north"/>
+                <vico:x component="vesselModel" variable="cgShipMotion.nedDisplacement.east"/>
+                <vico:y component="vesselModel" variable="cgShipMotion.nedDisplacement.north"/>
             </vico:series>
             <vico:series name="Real">
                 <vico:x component="gunnerus" variable="position.east"/>

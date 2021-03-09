@@ -50,12 +50,12 @@ class GunnerusState {
 
 val state = GunnerusState()
 
-ssp("gunnerus-twin") {
+ssp("gunnerus-twin2") {
 
     println("Building SSP '$archiveName'..")
 
     resources {
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu2.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
@@ -71,7 +71,7 @@ ssp("gunnerus-twin") {
 
             elements {
 
-                component("vesselModel", "resources/VesselFmu.fmu") {
+                component("vesselModel", "resources/VesselFmu2.fmu") {
                     connectors {
                         real("cg_x_rel_ap", output)
                         real("cg_y_rel_cl", output)
@@ -80,8 +80,8 @@ ssp("gunnerus-twin") {
                         real("input_global_wind_dir", input)
                         real("input_global_wind_vel", input)
 
-                        real("cgShipMotion.ned.north", output)
-                        real("cgShipMotion.ned.east", output)
+                        real("cgShipMotion.nedDisplacement.north", output)
+                        real("cgShipMotion.nedDisplacement.east", output)
                         real("cgShipMotion.linearVelocity.surge", output)
                         real("cgShipMotion.linearVelocity.sway", output)
                         real("cgShipMotion.angularVelocity.yaw", output)
@@ -104,6 +104,8 @@ ssp("gunnerus-twin") {
                     parameterBindings {
                         parameterSet("initialValues") {
                             string("vesselZipFile", "%fmu%/resources/ShipModel-gunnerus-elongated.zip")
+                            boolean("additionalBodyForce[0].enabled", true)
+                            boolean("additionalBodyForce[1].enabled", true)
                             boolean("initialize_using_hydrostatics", false)
                             real("initial_north_position", state.initial_north)
                             real("initial_east_position", state.initial_east)
@@ -330,8 +332,8 @@ ssp("gunnerus-twin") {
                 "speedController.setPoint" to "gunnerus.speedOverGround"
                 "speedController.processOutput" to "vesselModel.cgShipMotion.linearVelocity.surge"
 
-                "vesselModelObserver.position.north" to "vesselModel.cgShipMotion.ned.north"
-                "vesselModelObserver.position.east" to "vesselModel.cgShipMotion.ned.east"
+                "vesselModelObserver.position.north" to "vesselModel.cgShipMotion.nedDisplacement.north"
+                "vesselModelObserver.position.east" to "vesselModel.cgShipMotion.nedDisplacement.east"
 
                 ("vesselModel.input_global_wind_vel" to "gunnerus.wind.speed")
                 ("vesselModel.input_global_wind_dir" to "gunnerus.wind.direction").linearTransformation(offset = -180)
