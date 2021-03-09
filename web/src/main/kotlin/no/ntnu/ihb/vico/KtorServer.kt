@@ -29,8 +29,9 @@ import kotlin.concurrent.thread
 import kotlin.io.path.ExperimentalPathApi
 
 
-class KtorServer(
-    private val port: Int
+class KtorServer @JvmOverloads constructor(
+    private val port: Int,
+    private val openBrowser: Boolean = true
 ) : ObserverSystem(Family.all().build()) {
 
     private var t0: Long = 0L
@@ -161,10 +162,12 @@ class KtorServer(
             """.trimIndent()
             )
 
-            try {
-                java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/index.html"))
-            } catch (ex: UnsupportedOperationException) {
-                // Do nothing
+            if (openBrowser) {
+                try {
+                    java.awt.Desktop.getDesktop().browse(URI("http://127.0.0.1:$port/index.html"))
+                } catch (ex: UnsupportedOperationException) {
+                    // Do nothing
+                }
             }
 
         }.start(wait = false)

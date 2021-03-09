@@ -15,6 +15,7 @@ import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.ObserverSystem
+import no.ntnu.ihb.vico.render.Camera
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.Trail
 import no.ntnu.ihb.vico.render.Water
@@ -83,6 +84,9 @@ class ThreektRenderer : ObserverSystem(Family.all) {
     }
 
     override fun entityAdded(entity: Entity) {
+
+        val t = entity.getOrNull<Transform>()
+
         entity.getOrNull<Geometry>()?.also { g ->
             val proxy = when (val shape = g.shape) {
                 is SphereShape -> {
@@ -132,6 +136,17 @@ class ThreektRenderer : ObserverSystem(Family.all) {
                 setColor(t.color)
             }
             trailProxies[entity] = proxy to mutableListOf()
+        }
+        entity.getOrNull<Camera>()?.also { c ->
+            if (t != null) {
+                val p = t.getTranslation()
+                ctx.invokeLater {
+                    internalRenderer.camera.fov = c.fov.toFloat()
+                    internalRenderer.camera.position.set(
+                        p.x.toFloat(), p.y.toFloat(), p.z.toFloat()
+                    )
+                }
+            }
         }
     }
 
@@ -318,7 +333,7 @@ class ThreektRenderer : ObserverSystem(Family.all) {
                 }
 
                 window.onCloseCallback = WindowClosingCallback {
-
+                    engine.close()
                 }
 
                 val renderer = GLRenderer(window.size)
