@@ -2,9 +2,32 @@ package no.ntnu.ihb.vico.dsl
 
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.PropertyLocator
+import no.ntnu.ihb.vico.util.formatForOutput
 
 fun charts(ctx: ChartsContext.() -> Unit): List<ChartConfig> {
     return ChartsContext().apply(ctx)
+}
+
+interface ValueProvider {
+    fun get(engine: Engine): Double
+}
+
+class TimeProvider : ValueProvider {
+
+    override fun get(engine: Engine): Double {
+        return engine.currentTime.formatForOutput(2).toDouble()
+    }
+
+}
+
+class ConstantProvider(
+    val value: Double
+) : ValueProvider {
+
+    override fun get(engine: Engine): Double {
+        return value.formatForOutput(2).toDouble()
+    }
+
 }
 
 
@@ -14,10 +37,13 @@ sealed class ChartConfig(
 
     var width: Int = 800
     var height: Int = 600
-    var xLabel: String? = null
-    var yLabel: String? = null
     var live: Boolean = false
     var decimationFactor: Int = 1
+
+    abstract val xLabel: String
+    abstract val yLabel: String
+
+    val series = mutableListOf<AbstractSeriesContext>()
 
 }
 
@@ -30,6 +56,12 @@ class ChartsContext : ArrayList<ChartConfig>() {
         }
     }
 
+    fun timeSeries(title: String = "Title", ctx: TimeSeriesChartContext.() -> Unit) {
+        TimeSeriesChartContext(title).apply(ctx).also {
+            add(it)
+        }
+    }
+
 }
 
 
@@ -37,71 +69,108 @@ class XYChartContext(
     title: String
 ) : ChartConfig(title) {
 
-    internal val series = mutableListOf<SeriesContext>()
+    override var xLabel: String = ""
+    override val yLabel: String = ""
 
-    fun series(ctx: SeriesContext.() -> Unit) {
-        SeriesContext().apply(ctx).also {
+    fun series(name: String = "Title", ctx: XYSeriesContext.() -> Unit) {
+        XYSeriesContext(name).apply(ctx).also {
             series.add(it)
         }
     }
 
 }
 
-class SeriesContext {
+class TimeSeriesChartContext(
+    title: String
+) : ChartConfig(title) {
 
-    lateinit var xGetter: RealContext
-    lateinit var yGetter: RealContext
+    override val xLabel: String = "Time[s]"
+    override var yLabel: String = ""
 
-    fun real(name: String) = RealContext(name)
+    fun series(name: String, ctx: TimeSeriesContext.() -> Unit) {
+        TimeSeriesContext(name).apply(ctx).also {
+            series.add(it)
+        }
+    }
 
-    fun x(ctx: () -> RealContext) {
+}
+
+sealed class AbstractSeriesContext(
+    val name: String
+) {
+
+    open lateinit var xGetter: ValueProvider
+    lateinit var yGetter: ValueProvider
+
+    fun realRef(name: String) = RealProvider(name)
+    fun constant(value: Number) = ConstantProvider(value.toDouble())
+
+}
+
+class XYSeriesContext(
+    name: String
+) : AbstractSeriesContext(name) {
+
+    fun x(ctx: () -> ValueProvider) {
         xGetter = ctx.invoke()
     }
 
-    fun y(ctx: () -> RealContext) {
+    fun y(ctx: () -> ValueProvider) {
         yGetter = ctx.invoke()
     }
 
 }
 
-class RealContext(
+class TimeSeriesContext(
+    name: String
+) : AbstractSeriesContext(name) {
+
+    override var xGetter: ValueProvider = TimeProvider()
+
+    fun data(ctx: () -> ValueProvider) {
+        yGetter = ctx.invoke()
+    }
+
+}
+
+class RealProvider(
     val name: String,
     private val mod: List<((Pair<Engine, Double>) -> Double)> = mutableListOf()
-) {
+) : ValueProvider {
 
-    operator fun times(value: Number): RealContext {
-        return RealContext(name, mod + listOf { it.second * value.toDouble() })
+    operator fun times(value: Number): RealProvider {
+        return RealProvider(name, mod + listOf { it.second * value.toDouble() })
     }
 
-    operator fun times(value: RealContext): RealContext {
-        return RealContext(name, mod + listOf { it.second * value.get(it.first) })
+    operator fun times(value: RealProvider): RealProvider {
+        return RealProvider(name, mod + listOf { it.second * value.get(it.first) })
     }
 
-    operator fun div(value: Number): RealContext {
-        return RealContext(name, mod + listOf { it.second / value.toDouble() })
+    operator fun div(value: Number): RealProvider {
+        return RealProvider(name, mod + listOf { it.second / value.toDouble() })
     }
 
-    operator fun div(value: RealContext): RealContext {
-        return RealContext(name, mod + listOf { it.second / value.get(it.first) })
+    operator fun div(value: RealProvider): RealProvider {
+        return RealProvider(name, mod + listOf { it.second / value.get(it.first) })
     }
 
-    operator fun plus(value: Number): RealContext {
-        return RealContext(name, mod + listOf { it.second + value.toDouble() })
+    operator fun plus(value: Number): RealProvider {
+        return RealProvider(name, mod + listOf { it.second + value.toDouble() })
     }
 
-    operator fun plus(value: RealContext): RealContext {
-        return RealContext(name, mod + listOf { it.second + value.get(it.first) })
+    operator fun plus(value: RealProvider): RealProvider {
+        return RealProvider(name, mod + listOf { it.second + value.get(it.first) })
     }
 
-    operator fun minus(value: Number): RealContext {
-        return RealContext(name, mod + listOf { it.second - value.toDouble() })
+    operator fun minus(value: Number): RealProvider {
+        return RealProvider(name, mod + listOf { it.second - value.toDouble() })
     }
 
-    operator fun minus(value: RealContext): RealContext {
-        return RealContext(name, mod + listOf { it.second - value.get(it.first) })
+    operator fun minus(value: RealProvider): RealProvider {
+        return RealProvider(name, mod + listOf { it.second - value.get(it.first) })
     }
 
-    fun get(engine: Engine): Double {
+    override fun get(engine: Engine): Double {
         val pl = PropertyLocator(engine)
         var value = pl.getRealProperty(name).read()
 
@@ -128,10 +197,10 @@ fun main() {
 
         xyChart("Title") {
 
-            series {
+            series("title") {
 
                 x {
-                    real("dsad.asd") * 10.0 * real("lol")
+                    realRef("dsad.asd") * 10.0 * realRef("lol")
                 }
 
             }

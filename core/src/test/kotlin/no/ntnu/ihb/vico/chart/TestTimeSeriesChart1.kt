@@ -4,6 +4,7 @@ import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.TestFmus
 import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.dsl.charts
 import no.ntnu.ihb.vico.model.ModelResolver
 import java.io.File
 
@@ -15,6 +16,30 @@ private object TestTimeSeriesChart1 {
 
     @JvmStatic
     fun main(args: Array<String>) {
+
+        val charts = charts {
+
+            timeSeries("BouncingBall") {
+
+                series("bouncingBall.h") {
+
+                    yLabel = "Height[m]"
+
+                    data {
+                        realRef("bouncingBall.h") * 2
+                    }
+
+                }
+
+                series("constant") {
+                    data {
+                        constant(2)
+                    }
+                }
+
+            }
+
+        }
 
         Engine.Builder()
             .stopTime(5.0)
@@ -31,6 +56,10 @@ private object TestTimeSeriesChart1 {
 
                 val config = getTestResource("chartconfig/ChartConfig1.xml")
                 ChartLoader.load(config).forEach {
+                    engine.addSystem(it)
+                }
+
+                ChartLoader2.load(charts).forEach {
                     engine.addSystem(it)
                 }
 

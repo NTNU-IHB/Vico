@@ -35,8 +35,8 @@ class ChartConfigTest {
             engine.createEntity("e1", d1)
             engine.createEntity("e2", d2)
 
-            val r1 = RealContext("e1.data")
-            val r2 = RealContext("e2.data")
+            val r1 = RealProvider("e1.data")
+            val r2 = RealProvider("e2.data")
 
             Assertions.assertEquals(d1.data, r1.get(engine))
             Assertions.assertEquals(d2.data, r2.get(engine))
@@ -66,13 +66,13 @@ class ChartConfigTest {
 
                 xyChart("title") {
 
-                    series {
+                    series("") {
 
                         x {
-                            real("e1.data") * real("e2.data") * 5
+                            realRef("e1.data") * realRef("e2.data") * 5
                         }
                         y {
-                            real("e1.data") * real("e2.data")
+                            realRef("e1.data") * realRef("e2.data")
                         }
 
                     }
@@ -80,6 +80,8 @@ class ChartConfigTest {
                 }
 
             }.also { charts ->
+
+                Assertions.assertEquals(1, charts.size)
 
                 val c = charts.first() as XYChartContext
                 Assertions.assertEquals(30.0, c.series[0].xGetter.get(engine))
