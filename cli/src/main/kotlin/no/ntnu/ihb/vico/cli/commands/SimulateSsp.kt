@@ -1,7 +1,10 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import info.laht.kts.KtsScriptRunner
 import no.ntnu.ihb.vico.chart.ChartLoader
+import no.ntnu.ihb.vico.chart.ChartLoader2
 import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.dsl.ChartConfig
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.render.RenderEngine
@@ -50,7 +53,7 @@ class SimulateSsp : Runnable {
 
     @CommandLine.Option(
         names = ["-log", "--logConfig"],
-        description = ["Path to a log configuration XML file. Path relative to the .ssd"]
+        description = ["Path to a log configuration file. Path relative to the .ssd"]
     )
     private var relativeLogConfigPath: String? = null
 
@@ -150,8 +153,20 @@ class SimulateSsp : Runnable {
                     var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
                     if (!configFile.exists()) configFile = File(configPath).absoluteFile
                     if (!configFile.exists()) throw NoSuchFileException(configFile)
-                    ChartLoader.load(configFile).forEach { chart ->
-                        engine.addSystem(chart)
+                    when (configFile.extension) {
+                        "xml" -> {
+                            ChartLoader.load(configFile).forEach { chart ->
+                                engine.addSystem(chart)
+                            }
+                        }
+                        "kts" -> {
+                            @Suppress("UNCHECKED_CAST")
+                            (KtsScriptRunner().eval(configFile) as List<ChartConfig>?)?.also {
+                                ChartLoader2.load(it).forEach { chart ->
+                                    engine.addSystem(chart)
+                                }
+                            }
+                        }
                     }
                 }
 
