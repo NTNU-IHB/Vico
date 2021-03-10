@@ -49,81 +49,75 @@ class XYChartContext(
 
 class SeriesContext {
 
-    lateinit var xGetter: VariableContext
-    lateinit var yGetter: VariableContext
+    lateinit var xGetter: RealContext
+    lateinit var yGetter: RealContext
 
-    fun x(ctx: VariableContext.() -> Unit) {
-        VariableContext().apply(ctx).also {
-            xGetter = it
-        }
+    fun real(name: String) = RealContext(name)
+
+    fun x(ctx: () -> RealContext) {
+        xGetter = ctx.invoke()
     }
 
-    fun y(ctx: VariableContext.() -> Unit) {
-        VariableContext().apply(ctx).also {
-            yGetter = it
-        }
+    fun y(ctx: () -> RealContext) {
+        yGetter = ctx.invoke()
     }
-
-}
-
-class VariableContext {
-
-    lateinit var variable: RealContext
-
-    fun real(name: String): RealContext {
-        return RealContext(name).also {
-            this.variable = it
-        }
-    }
-
-    internal fun get(engine: Engine): Double = variable.get(engine)
 
 }
 
 class RealContext(
     val name: String,
-    private val mod: ((Double) -> Double)? = null
+    private val mod: List<((Pair<Engine, Double>) -> Double)> = mutableListOf()
 ) {
 
-    lateinit var engine: Engine
-
     operator fun times(value: Number): RealContext {
-        return RealContext(name) {
-            it * value.toDouble()
-        }
+        return RealContext(name, mod + listOf { it.second * value.toDouble() })
     }
 
     operator fun times(value: RealContext): RealContext {
-        return RealContext(name) {
-            it * value.get(value.engine)
-        }
+        return RealContext(name, mod + listOf { it.second * value.get(it.first) })
     }
 
-    operator fun div(value: Double): RealContext {
-        return RealContext(name) {
-            it / value
-        }
+    operator fun div(value: Number): RealContext {
+        return RealContext(name, mod + listOf { it.second / value.toDouble() })
     }
 
-    operator fun plus(value: Double): RealContext {
-        return RealContext(name) {
-            it + value
-        }
+    operator fun div(value: RealContext): RealContext {
+        return RealContext(name, mod + listOf { it.second / value.get(it.first) })
     }
 
-    operator fun minus(value: Double): RealContext {
-        return RealContext(name) {
-            it - value
-        }
+    operator fun plus(value: Number): RealContext {
+        return RealContext(name, mod + listOf { it.second + value.toDouble() })
+    }
+
+    operator fun plus(value: RealContext): RealContext {
+        return RealContext(name, mod + listOf { it.second + value.get(it.first) })
+    }
+
+    operator fun minus(value: Number): RealContext {
+        return RealContext(name, mod + listOf { it.second - value.toDouble() })
+    }
+
+    operator fun minus(value: RealContext): RealContext {
+        return RealContext(name, mod + listOf { it.second - value.get(it.first) })
     }
 
     fun get(engine: Engine): Double {
-        this.engine = engine
         val pl = PropertyLocator(engine)
-        val value = pl.getRealProperty(name).read()
-        println(value)
-        return mod?.invoke(value) ?: value
+        var value = pl.getRealProperty(name).read()
+
+        mod.forEach {
+            value = it.invoke(engine to value)
+
+        }
+
+        return value
+
     }
+
+    override fun toString(): String {
+        return "RealContext(name='$name', mod=$mod)"
+    }
+
 
 }
 
@@ -138,10 +132,6 @@ fun main() {
 
                 x {
                     real("dsad.asd") * 10.0 * real("lol")
-                }
-
-                y {
-
                 }
 
             }

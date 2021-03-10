@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 private class DataComponent(
-    private val data: Double
+    val data: Double
 ) : Component {
 
     override val properties = Properties()
 
     init {
         properties.registerProperties(
-            RealLambdaProperty("data", 1, { data })
+            RealLambdaProperty("data", 1, { it[0] = data })
         )
     }
 
@@ -25,6 +25,36 @@ private class DataComponent(
 class ChartConfigTest {
 
     @Test
+    fun testRealContext() {
+
+        val d1 = DataComponent(3.0)
+        val d2 = DataComponent(2.0)
+
+        Engine().use { engine ->
+
+            engine.createEntity("e1", d1)
+            engine.createEntity("e2", d2)
+
+            val r1 = RealContext("e1.data")
+            val r2 = RealContext("e2.data")
+
+            Assertions.assertEquals(d1.data, r1.get(engine))
+            Assertions.assertEquals(d2.data, r2.get(engine))
+
+            val r1mul5 = r1 * 5
+            Assertions.assertEquals(d1.data * 5, r1mul5.get(engine))
+            val r12 = r1 * r2
+            Assertions.assertEquals(d1.data * d2.data, r12.get(engine))
+            val r1mulr2mulr1 = r1 * r2 * r1
+            Assertions.assertEquals(d1.data * d2.data * d1.data, r1mulr2mulr1.get(engine))
+            val r1mulr2mul5 = r1 * r2 * 5
+            Assertions.assertEquals(d1.data * d2.data * 5, r1mulr2mul5.get(engine))
+
+        }
+
+    }
+
+    @Test
     fun testChartDSL() {
 
         Engine().use { engine ->
@@ -32,9 +62,7 @@ class ChartConfigTest {
             engine.createEntity("e1", DataComponent(3.0))
             engine.createEntity("e2", DataComponent(2.0))
 
-            // println((engine.getEntityByName("e1").properties.first() as RealProperty).read(DoubleArray(1)).toList())
-
-            val charts = charts {
+            charts {
 
                 xyChart("title") {
 
@@ -43,19 +71,21 @@ class ChartConfigTest {
                         x {
                             real("e1.data") * real("e2.data") * 5
                         }
-
                         y {
-                            real("e1.data") * real("e2.data") * 5
+                            real("e1.data") * real("e2.data")
                         }
 
                     }
 
                 }
 
-            }
+            }.also { charts ->
 
-            val c = charts[0] as XYChartContext
-            Assertions.assertEquals(25.0, c.series[0].xGetter.get(engine))
+                val c = charts.first() as XYChartContext
+                Assertions.assertEquals(30.0, c.series[0].xGetter.get(engine))
+                Assertions.assertEquals(6.0, c.series[0].yGetter.get(engine))
+
+            }
 
         }
 
