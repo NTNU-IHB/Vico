@@ -30,9 +30,9 @@ class Engine private constructor(
     val startTime: Double = startTime ?: 0.0
     val baseStepSize: Double = baseStepSize ?: DEFAULT_TIME_STEP
 
-    var currentTime: Double = this.startTime
-        private set
     var iterations: Long = 0L
+        private set
+    var currentTime: Double = this.startTime
         private set
 
     private val initialized = AtomicBoolean()
