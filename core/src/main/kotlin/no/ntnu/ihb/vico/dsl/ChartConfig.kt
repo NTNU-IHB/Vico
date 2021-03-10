@@ -4,21 +4,11 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.PropertyLocator
 
 fun charts(ctx: ChartsContext.() -> Unit): List<ChartConfig> {
-    return ChartsContext().apply(ctx).charts
+    return ChartsContext().apply(ctx)
 }
 
-class ChartsContext {
-    val charts = mutableListOf<ChartConfig>()
 
-    fun xyChart(title: String, ctx: XYChartContext.() -> Unit) {
-        XYChartContext(title).apply(ctx).also {
-
-        }
-    }
-
-}
-
-class XYChartContext(
+sealed class ChartConfig(
     val title: String
 ) {
 
@@ -29,27 +19,64 @@ class XYChartContext(
     var live: Boolean = false
     var decimationFactor: Int = 1
 
+}
+
+
+class ChartsContext : ArrayList<ChartConfig>() {
+
+    fun xyChart(title: String, ctx: XYChartContext.() -> Unit) {
+        XYChartContext(title).apply(ctx).also {
+            add(it)
+        }
+    }
+
+}
+
+
+class XYChartContext(
+    title: String
+) : ChartConfig(title) {
+
+    internal val series = mutableListOf<SeriesContext>()
+
     fun series(ctx: SeriesContext.() -> Unit) {
-        SeriesContext().apply(ctx)
+        SeriesContext().apply(ctx).also {
+            series.add(it)
+        }
     }
 
 }
 
 class SeriesContext {
 
+    lateinit var xGetter: VariableContext
+    lateinit var yGetter: VariableContext
+
     fun x(ctx: VariableContext.() -> Unit) {
-        VariableContext().apply(ctx)
+        VariableContext().apply(ctx).also {
+            xGetter = it
+        }
     }
 
     fun y(ctx: VariableContext.() -> Unit) {
-        VariableContext().apply(ctx)
+        VariableContext().apply(ctx).also {
+            yGetter = it
+        }
     }
 
 }
 
 class VariableContext {
 
-    fun real(name: String) = RealContext(name)
+    lateinit var variable: RealContext
+
+    fun real(name: String): RealContext {
+        return RealContext(name).also {
+            this.variable = it
+        }
+    }
+
+    internal fun get(engine: Engine): Double = variable.get(engine)
 
 }
 
@@ -60,9 +87,9 @@ class RealContext(
 
     lateinit var engine: Engine
 
-    operator fun times(value: Double): RealContext {
+    operator fun times(value: Number): RealContext {
         return RealContext(name) {
-            it * value
+            it * value.toDouble()
         }
     }
 
@@ -94,28 +121,11 @@ class RealContext(
         this.engine = engine
         val pl = PropertyLocator(engine)
         val value = pl.getRealProperty(name).read()
+        println(value)
         return mod?.invoke(value) ?: value
     }
 
 }
-
-sealed class ChartConfig(
-    val title: String,
-    val xLabel: String,
-    val yLabel: String,
-) {
-
-    open var width = 800
-    open var height = 600
-
-
-}
-
-class XYChartConfig(
-    title: String,
-    xLabel: String,
-    yLabel: String,
-) : ChartConfig(title, xLabel, yLabel)
 
 
 fun main() {
