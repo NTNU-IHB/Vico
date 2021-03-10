@@ -1,7 +1,10 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import info.laht.kts.KtsScriptRunner
 import no.ntnu.ihb.vico.chart.ChartLoader
+import no.ntnu.ihb.vico.chart.ChartLoader2
 import no.ntnu.ihb.vico.core.Engine
+import no.ntnu.ihb.vico.dsl.ChartConfig
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.model.ModelResolver
@@ -59,7 +62,7 @@ class SimulateFmu : Runnable {
 
     @CommandLine.Option(
         names = ["-chart", "--chartConfig"],
-        description = ["Path to a chart configuration XML file. Path relative to the FMU"]
+        description = ["Path to a chart configuration file. Path relative to the FMU"]
     )
     private var relativeChartConfigPath: String? = null
 
@@ -138,8 +141,20 @@ class SimulateFmu : Runnable {
                     var configFile = getConfigPath(fmu, configPath)
                     if (!configFile.exists()) configFile = File(configPath).absoluteFile
                     if (!configFile.exists()) throw NoSuchFileException(configFile)
-                    ChartLoader.load(configFile).forEach { chart ->
-                        engine.addSystem(chart)
+                    when (configFile.extension) {
+                        "xml" -> {
+                            ChartLoader.load(configFile).forEach { chart ->
+                                engine.addSystem(chart)
+                            }
+                        }
+                        "kts" -> {
+                            @Suppress("UNCHECKED_CAST")
+                            (KtsScriptRunner().eval(configFile) as List<ChartConfig>?)?.also {
+                                ChartLoader2.load(it).forEach { chart ->
+                                    engine.addSystem(chart)
+                                }
+                            }
+                        }
                     }
                 }
 

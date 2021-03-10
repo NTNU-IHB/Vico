@@ -11,7 +11,7 @@ import javax.xml.bind.JAXB
 object ChartLoader {
 
     fun load(configFile: File): List<AbstractDrawer> {
-        require(configFile.exists()) { "No such file $configFile" }
+        require(configFile.exists()) { "No such file: ${configFile.absolutePath}" }
         return load(
             JAXB.unmarshal(
                 configFile,
