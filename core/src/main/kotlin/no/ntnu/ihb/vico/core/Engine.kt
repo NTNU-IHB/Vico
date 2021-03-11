@@ -125,8 +125,8 @@ class Engine private constructor(
         )
     }
 
-    fun <E : SimulationSystem> hasSystem(systemClazz: Class<E>) = systemManager.hasSystem(systemClazz)
-    inline fun <reified E : SimulationSystem> hasSystem() = hasSystem(E::class.java)
+    fun <E : BaseSystem> hasSystem(systemClazz: Class<E>) = systemManager.hasSystem(systemClazz)
+    inline fun <reified E : BaseSystem> hasSystem() = hasSystem(E::class.java)
 
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.getSystem(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)

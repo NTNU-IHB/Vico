@@ -6,15 +6,30 @@ class Angle private constructor(
 ) {
 
     enum class Unit {
-        DEG, RAD
+        DEG, RAD;
+
+        fun ensureRadians(value: Float): Float {
+            return when (this) {
+                RAD -> value
+                DEG -> Math.toRadians(value.toDouble()).toFloat()
+            }
+        }
+
+        fun ensureRadians(value: Double): Double {
+            return when (this) {
+                RAD -> value
+                DEG -> Math.toRadians(value)
+            }
+        }
+
     }
 
     constructor() : this(0.0)
-    constructor(phi: Double, repr: Unit) : this(ensureRadians(phi, repr))
+    constructor(phi: Double, repr: Unit) : this(repr.ensureRadians(phi))
 
 
     fun set(phi: Double, repr: Unit) = apply {
-        this.phi = ensureRadians(phi, repr)
+        this.phi = repr.ensureRadians(phi)
     }
 
     fun inDegrees(): Double {
@@ -47,7 +62,7 @@ class Angle private constructor(
     }
 
     fun multiply(phi: Double, repr: Unit) = apply {
-        this.phi *= ensureRadians(phi, repr)
+        this.phi *= repr.ensureRadians(phi)
     }
 
     fun multiply(angle: Angle) = apply {
@@ -55,7 +70,7 @@ class Angle private constructor(
     }
 
     fun divide(phi: Double, repr: Unit) = apply {
-        this.phi /= ensureRadians(phi, repr)
+        this.phi /= repr.ensureRadians(phi)
     }
 
     fun divide(angle: Angle) = apply {
@@ -63,7 +78,7 @@ class Angle private constructor(
     }
 
     fun add(phi: Double, repr: Unit) = apply {
-        this.phi += ensureRadians(phi, repr)
+        this.phi += repr.ensureRadians(phi)
     }
 
     fun add(angle: Angle) = apply {
@@ -76,7 +91,7 @@ class Angle private constructor(
     }
 
     fun sub(phi: Double, repr: Unit) = apply {
-        this.phi -= ensureRadians(phi, repr)
+        this.phi -= repr.ensureRadians(phi)
     }
 
     fun negate() = apply {
@@ -123,13 +138,6 @@ class Angle private constructor(
         @JvmStatic
         fun deg(phi: Double): Angle {
             return Angle(phi, Unit.DEG)
-        }
-
-        private fun ensureRadians(value: Double, repr: Unit): Double {
-            return when (repr) {
-                Unit.RAD -> value
-                Unit.DEG -> Math.toRadians(value)
-            }
         }
 
     }
