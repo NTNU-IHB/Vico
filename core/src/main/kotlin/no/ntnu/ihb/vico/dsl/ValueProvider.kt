@@ -28,10 +28,12 @@ class ConstantProvider(
 }
 
 
-class RealProvider(
+class RealProvider private constructor(
     val name: String,
-    private val mod: List<((Pair<Engine, Double>) -> Double)> = mutableListOf()
+    private val mod: List<((Pair<Engine, Double>) -> Double)>
 ) : ValueProvider {
+
+    constructor(name: String) : this(name, listOf())
 
     operator fun times(value: Number): RealProvider {
         return RealProvider(name, mod + listOf { it.second * value.toDouble() })

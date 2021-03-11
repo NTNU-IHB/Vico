@@ -1,11 +1,10 @@
 package no.ntnu.ihb.vico.render
 
 import no.ntnu.ihb.vico.components.PositionRef
-import no.ntnu.ihb.vico.components.RealRef
 import no.ntnu.ihb.vico.components.RotationRef
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
-import no.ntnu.ihb.vico.core.LinearTransform
+import no.ntnu.ihb.vico.dsl.RealProvider
 import no.ntnu.ihb.vico.math.Angle
 import no.ntnu.ihb.vico.render.loaders.ObjLoader
 import no.ntnu.ihb.vico.render.loaders.StlLoader
@@ -101,12 +100,13 @@ object VisualLoader {
         })
     }
 
-    private fun TRealRef?.toRealRef(): RealRef? {
+    private fun TRealRef?.toRealRef(): RealProvider? {
         if (this == null) return null
-        val linearTransformation = this.linearTransformation?.let {
-            LinearTransform(factor = it.getFactor(), offset = it.getOffset())
+        return if (this.linearTransformation != null) {
+            RealProvider(this.name) * this.linearTransformation.getFactor() + this.linearTransformation.getOffset()
+        } else {
+            RealProvider(this.name)
         }
-        return RealRef(this.name, linearTransformation)
     }
 
     private fun String.toColor(): Int {
