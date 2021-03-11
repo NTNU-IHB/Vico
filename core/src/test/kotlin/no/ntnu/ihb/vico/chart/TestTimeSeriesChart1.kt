@@ -19,11 +19,9 @@ private object TestTimeSeriesChart1 {
 
         val charts = charts {
 
-            timeSeries("BouncingBall") {
+            timeSeries("BouncingBall", "Height[m]") {
 
                 series("bouncingBall.h") {
-
-                    yLabel = "Height[m]"
 
                     data {
                         realRef("bouncingBall.h") * 2
