@@ -1,0 +1,44 @@
+{
+	"defaults": {
+	"action": "override"
+	},
+	"events": [
+		{
+		  "time": 49.5,
+		  "model": "vesselModel",
+		  "variable": "reset_position",
+		  "value": true
+		},
+		{
+		  "time": 49.5,
+		  "model": "vesselModel",
+		  "variable": "reset_velocity",
+		  "value": true
+		},
+		{
+		  "time": 50,
+		  "model": "vesselModel",
+		  "variable": "reset_position",
+		  "value": false
+		},
+		{
+		  "time": 50,
+		  "model": "vesselModel",
+		  "variable": "reset_velocity",
+		  "value": false
+		},
+		{
+		  "time": 50,
+		  "model": "headingController",
+		  "variable": "enabled",
+		  "value": true
+		},
+		{
+		  "time": 50,
+		  "model": "speedController",
+		  "variable": "enabled",
+		  "value": true
+		}
+	],
+	"end": 99999
+}
