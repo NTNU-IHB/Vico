@@ -1,14 +1,13 @@
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-@file:DependsOn("no.ntnu.ihb.vico:core:0.3.5")
+@file:DependsOn("no.ntnu.ihb.vico:core:0.4.0")
 
 import no.ntnu.ihb.vico.dsl.charts
 
 charts {
 
-    timeSeries("Power consumption") {
+    timeSeries("Power consumption", "Power[kW]") {
 
         live = true
-        yLabel = "Power[kW]"
 
         series("gunnerus") {
 
