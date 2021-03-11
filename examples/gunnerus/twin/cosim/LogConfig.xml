@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<simulators xmlns="http://opensimulationplatform.com/LogConfig" timeStampedFileNames="false">
+
+	<simulator name="gunnerus">
+		<variable name="position.north"/>
+		<variable name="position.east"/>
+		<variable name="position.down"/>
+
+		<variable name="rotation.yaw"/>
+		<variable name="rotation.pitch"/>
+		<variable name="rotation.roll"/>
+
+		<variable name="trueCourse"/>
+		<variable name="velocity.surge"/>
+		<variable name="speedOverGround"/>
+
+		<variable name="portAzimuth.rpm"/>
+		<variable name="portAzimuth.angle"/>
+		<variable name="portAzimuth.loadFeedback"/>
+
+		<variable name="starboardAzimuth.rpm"/>
+		<variable name="starboardAzimuth.angle"/>
+		<variable name="starboardAzimuth.loadFeedback"/>
+
+		<variable name="wind.speed"/>
+		<variable name="wind.direction"/>
+	</simulator>
+	
+	<simulator name="vesselModelObserver">
+		<variable name="trueHeading"/>
+	</simulator>
+	
+	<simulator name="vesselModel">
+		<variable name="cgShipMotion.nedDisplacement.north"/>
+		<variable name="cgShipMotion.nedDisplacement.east"/>
+		<variable name="cgShipMotion.nedDisplacement.down"/>
+		<variable name="cgShipMotion.angularDisplacement.yaw"/>
+		<variable name="cgShipMotion.angularDisplacement.pitch"/>
+		<variable name="cgShipMotion.angularDisplacement.roll"/>
+
+		<variable name="cgShipMotion.linearVelocity.surge"/>
+		<variable name="cgShipMotion.linearVelocity.sway"/>
+	</simulator>
+	
+	<simulator name="portAzimuth">
+
+		<variable name="input_act_revs"/>
+		<variable name="input_act_angle"/>
+
+		<variable name="output_revs"/>
+		<variable name="output_angle"/>
+		<variable name="output_torque"/>
+		<variable name="output_revs"/>
+
+		<variable name="output_force_surge"/>
+		<variable name="output_force_sway"/>
+		<variable name="output_force_heave"/>
+
+	</simulator>
+
+	<simulator name="starboardAzimuth">
+
+		<variable name="input_act_revs"/>
+		<variable name="input_act_angle"/>
+
+		<variable name="output_revs"/>
+		<variable name="output_angle"/>
+		<variable name="output_torque"/>
+		<variable name="output_revs"/>
+
+		<variable name="output_force_surge"/>
+		<variable name="output_force_sway"/>
+		<variable name="output_force_heave"/>
+
+	</simulator>
+
+	<simulator name="speedController">
+		<variable name="setPoint"/>
+		<variable name="processOutput"/>
+		<variable name="output"/>
+		<variable name="error"/>
+		<variable name="enabled"/>
+	</simulator>
+
+	<simulator name="headingController">
+		<variable name="setPoint"/>
+		<variable name="processOutput"/>
+		<variable name="output"/>
+		<variable name="error"/>
+		<variable name="enabled"/>
+	</simulator>
+	
+</simulators>

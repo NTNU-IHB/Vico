@@ -1,0 +1,1 @@
+cosim run -d 2000 --output-dir="results/data" --output-config="LogConfig.xml" --scenario "scenario.json" "../gunnerus-twin2.ssp"
