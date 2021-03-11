@@ -29,7 +29,7 @@ class VisualConfig {
         transforms.add(TransformContext(name, parent).apply(ctx))
     }
 
-    fun apply(engine: Engine) {
+    fun applyConfiguration(engine: Engine) {
         transforms.forEach { t ->
 
             val e = if (t.name.isNullOrEmpty()) {

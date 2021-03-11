@@ -14,6 +14,7 @@ dependencies {
     testImplementation project(':chart')
     testImplementation project(':test-data')
     testImplementation project(":threekt-render")
+    testImplementation('info.laht.kts:host:0.4.1')
 
 }
 

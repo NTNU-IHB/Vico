@@ -6,12 +6,12 @@ import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.chart.ChartLoader2
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.dsl.ChartConfig
+import no.ntnu.ihb.vico.dsl.ScenarioContext
 import no.ntnu.ihb.vico.dsl.VisualConfig
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
-import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.SystemStructure
 import org.slf4j.Logger
@@ -108,6 +108,12 @@ class SimulateSsp : Runnable {
     )
     val port: Int? = null
 
+    @CommandLine.Option(
+        names = ["--script-cache"],
+        description = ["Cache directory for Kotlin scripts."]
+    )
+    private var scriptCache: File? = null
+
     @CommandLine.Parameters(
         arity = "1",
         paramLabel = "SSP_CONFIG",
@@ -127,6 +133,10 @@ class SimulateSsp : Runnable {
         ?: throw Error("No stopTime provided as input, nor has one been specified in the SSP!")
 
         require(start < stop) { "stop=$stop > start=$start!" }
+
+        val scriptEngine by lazy {
+            KtsScriptRunner(scriptCache)
+        }
 
         Engine.Builder()
             .startTime(start)
@@ -174,8 +184,7 @@ class SimulateSsp : Runnable {
                     var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
                     if (!configFile.exists()) configFile = File(configPath).absoluteFile
                     if (!configFile.exists()) throw NoSuchFileException(configFile)
-                    val cacheDir = File(".kts").apply { mkdirs() }
-                    val scenario = parseScenario(configFile, cacheDir)
+                    val scenario = (scriptEngine.eval(configFile) as ScenarioContext?)
                         ?: throw RuntimeException("Failed to load scenario!")
                     scenario.applyScenario(engine)
                 }
@@ -195,8 +204,8 @@ class SimulateSsp : Runnable {
                         }
                         "kts" -> {
                             @Suppress("UNCHECKED_CAST")
-                            (KtsScriptRunner().eval(configFile) as VisualConfig?)?.also {
-                                it.apply(engine)
+                            (KtsScriptRunner().eval(configFile) as VisualConfig?)?.also { config ->
+                                config.applyConfiguration(engine)
                             }
                         }
                     }

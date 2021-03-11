@@ -6,13 +6,13 @@ import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.chart.ChartLoader2
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.dsl.ChartConfig
+import no.ntnu.ihb.vico.dsl.ScenarioContext
 import no.ntnu.ihb.vico.dsl.VisualConfig
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.model.ModelResolver
 import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
-import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.structure.SystemStructure
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -96,6 +96,11 @@ class SimulateFmu : Runnable {
     )
     private var paused = false
 
+    @CommandLine.Option(
+        names = ["--script-cache"],
+        description = ["Cache directory for Kotlin scripts."]
+    )
+    private var scriptCache: File? = null
 
     @CommandLine.Parameters(
         arity = "1",
@@ -114,6 +119,10 @@ class SimulateFmu : Runnable {
         val modelName = model.modelDescription.modelName
         val structure = SystemStructure().apply {
             addComponent(model, modelName)
+        }
+
+        val scriptEngine by lazy {
+            KtsScriptRunner(scriptCache)
         }
 
         Engine.Builder()
@@ -146,7 +155,7 @@ class SimulateFmu : Runnable {
                         }
                         "kts" -> {
                             @Suppress("UNCHECKED_CAST")
-                            (KtsScriptRunner().eval(configFile) as List<ChartConfig>?)?.also {
+                            (scriptEngine.eval(configFile) as List<ChartConfig>?)?.also {
                                 ChartLoader2.load(it).forEach { chart ->
                                     engine.addSystem(chart)
                                 }
@@ -161,8 +170,7 @@ class SimulateFmu : Runnable {
                     var configFile = getConfigPath(fmu, configPath)
                     if (!configFile.exists()) configFile = File(configPath).absoluteFile
                     if (!configFile.exists()) throw NoSuchFileException(configFile)
-                    val cacheDir = File(".kts").apply { mkdirs() }
-                    val scenario = parseScenario(configFile, cacheDir)
+                    val scenario = (scriptEngine.eval(configFile) as ScenarioContext?)
                         ?: throw RuntimeException("Failed to load scenario!")
                     scenario.applyScenario(engine)
                 }
@@ -182,8 +190,8 @@ class SimulateFmu : Runnable {
                         }
                         "kts" -> {
                             @Suppress("UNCHECKED_CAST")
-                            (KtsScriptRunner().eval(configFile) as VisualConfig?)?.also {
-                                it.apply(engine)
+                            (scriptEngine.eval(configFile) as VisualConfig?)?.also { config ->
+                                config.applyConfiguration(engine)
                             }
                         }
                     }
