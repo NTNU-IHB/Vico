@@ -1,6 +1,7 @@
 package no.ntnu.ihb.vico.dsl
 
 import no.ntnu.ihb.vico.components.PositionRef
+import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.math.Angle
 import no.ntnu.ihb.vico.render.ColorConstants
@@ -14,19 +15,19 @@ import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import org.joml.Matrix4f
 import java.io.File
 
-fun visual(ctx: VisualConfig.() -> Unit) {
-    VisualConfig.apply(ctx)
+fun visual(ctx: VisualConfig.() -> Unit): VisualConfig {
+    return VisualConfig().apply(ctx)
 }
 
-object VisualConfig {
+class VisualConfig {
 
     private val transforms = mutableListOf<TransformContext>()
 
-    fun transform(name: String? = null, ctx: TransformContext.() -> Unit) {
-        transforms.add(TransformContext(name).apply(ctx))
+    fun transform(name: String? = null, parent: String? = null, ctx: TransformContext.() -> Unit) {
+        transforms.add(TransformContext(name, parent).apply(ctx))
     }
 
-    internal fun apply(engine: Engine) {
+    fun apply(engine: Engine) {
         transforms.forEach { t ->
 
             val e = if (t.name.isNullOrEmpty()) {
@@ -35,16 +36,23 @@ object VisualConfig {
                 engine.getEntityByNameOrNull(t.name) ?: engine.createEntity(t.name)
             }
 
+            e.add<Transform>().apply {
+                t.parent?.also { parentName ->
+                    engine.getEntityByName(parentName).getOrNull<Transform>()?.also { parentTransform ->
+                        setParent(parentTransform)
+                    }
+                }
+            }
             e.add(t.geometry)
-
         }
     }
-
 }
+
 
 @Scoped
 class TransformContext(
-    val name: String? = null
+    val name: String? = null,
+    val parent: String? = null
 ) {
 
     internal lateinit var geometry: Geometry
@@ -61,11 +69,11 @@ class TransformContext(
 
     fun positionRef(ctx: PositionRefContext.() -> Unit) {
         PositionRefContext().apply(ctx).also { ref ->
-//            positionRef = PositionRef(
-//                ref.xGetter,
-//                ref.yGetter,
-//                ref.zGetter
-//            )
+            positionRef = PositionRef(
+                ref.xGetter,
+                ref.yGetter,
+                ref.zGetter
+            )
         }
     }
 
