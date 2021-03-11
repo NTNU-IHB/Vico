@@ -5,27 +5,27 @@ import org.slf4j.LoggerFactory
 
 interface InputAccess {
 
-    fun isKeyPressed(keyStroke: KeyStroke, vararg additionalKeyStrokes: KeyStroke): Boolean
-    fun registerKeyPress(keyStroke: KeyStroke)
+    fun isKeyPressed(key: String, vararg additionalKeys: String): Boolean
+    fun registerKeyPress(key: String)
 
 }
 
 class InputManager : InputAccess {
 
-    private val keyStrokes: MutableSet<KeyStroke> = mutableSetOf()
+    private val keyStrokes: MutableSet<String> = mutableSetOf()
 
-    override fun isKeyPressed(keyStroke: KeyStroke, vararg additionalKeyStrokes: KeyStroke): Boolean {
-        for (stroke in additionalKeyStrokes) {
+    override fun isKeyPressed(key: String, vararg additionalKeys: String): Boolean {
+        for (stroke in additionalKeys) {
             if (stroke !in keyStrokes) {
                 return false
             }
         }
-        return keyStroke in keyStrokes
+        return key in keyStrokes
     }
 
-    override fun registerKeyPress(keyStroke: KeyStroke) {
-        keyStrokes.add(keyStroke)
-        LOG.trace("Key $keyStroke registered")
+    override fun registerKeyPress(key: String) {
+        keyStrokes.add(key)
+        LOG.trace("Key $key registered")
     }
 
     internal fun clear() {

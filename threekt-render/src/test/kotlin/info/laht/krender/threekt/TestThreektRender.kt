@@ -48,7 +48,7 @@ fun main() {
 
         }.start()
 
-        registerCloseListener { stop = true }
+//        registerCloseListener { stop = true }
 
     }
 

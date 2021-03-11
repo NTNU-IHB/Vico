@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test
 internal class ConnectionTest {
 
     class ValueComponent(
-            var value: Double = 0.0
+        var value: Double = 0.0
     ) : AbstractComponent() {
 
         init {
             properties.registerProperties(
-                    RealScalarProperty("value",
-                            getter = { value },
-                            setter = { value = it }
-                    )
+                RealScalarProperty("value",
+                    getter = { value },
+                    setter = { value = it }
+                )
             )
         }
 
@@ -32,11 +32,11 @@ internal class ConnectionTest {
             val sinkEntity = engine.createEntity("sink", ValueComponent())
 
             val sourceConnector = RealConnector(
-                    sourceEntity.get<ValueComponent>(), "value"
+                sourceEntity.get<ValueComponent>(), "value"
             )
 
             val sinkConnector = RealConnector(
-                    sinkEntity.get<ValueComponent>(), "value"
+                sinkEntity.get<ValueComponent>(), "value"
             )
 
             engine.addConnection(RealConnection(sourceConnector, sinkConnector))

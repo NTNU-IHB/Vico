@@ -1,9 +1,5 @@
 package no.ntnu.ihb.vico.chart
 
-import no.ntnu.ihb.vico.chart.jaxb.TChartConfig
-import no.ntnu.ihb.vico.chart.jaxb.TLinearTransformation
-import no.ntnu.ihb.vico.chart.jaxb.TTimeSeriesChart
-import no.ntnu.ihb.vico.chart.jaxb.TXYSeriesChart
 import no.ntnu.ihb.vico.core.LinearTransform
 import java.io.File
 import javax.xml.bind.JAXB
@@ -35,9 +31,9 @@ object ChartLoader {
             title = chart.title,
             label = chart.label
         ).apply {
-            width(chart.width)
-            height(chart.height)
-            decimationFactor(chart.decimationFactor)
+            width(chart.getWidth())
+            height(chart.getHeight())
+            decimationFactor(chart.getDecimationFactor())
             isLive(chart.isLive)
             maxDuration(chart.maxDuration)
             chart.series.component.forEach { component ->
@@ -60,10 +56,9 @@ object ChartLoader {
             xLabel = chart.xLabel,
             yLabel = chart.yLabel
         ).apply {
-            maxLength(chart.maxLength)
-            width(chart.width)
-            height(chart.height)
-            decimationFactor(chart.decimationFactor)
+            width(chart.getWidth())
+            height(chart.getHeight())
+            decimationFactor(chart.getDecimationFactor())
             isLive(chart.isLive)
             maxLength(chart.maxLength)
             chart.series.forEach {

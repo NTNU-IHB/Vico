@@ -24,7 +24,6 @@ import info.laht.threekt.objects.Mesh
 import info.laht.threekt.objects.Points
 import no.ntnu.ihb.vico.render.mesh.TrimeshShape
 import no.ntnu.ihb.vico.render.mesh.TrimeshShapeWithSource
-import no.ntnu.ihb.vico.render.proxies.*
 import no.ntnu.ihb.vico.render.util.ExternalSource
 import no.ntnu.ihb.vico.render.util.FileSource
 import no.ntnu.ihb.vico.render.util.RenderContext
@@ -34,9 +33,9 @@ import org.joml.Vector3fc
 import java.io.File
 import kotlin.math.PI
 
-internal open class ThreektProxy(
-        val ctx: RenderContext
-) : RenderProxy, WireframeProxy, ColorProxy, SpatialProxy, TextureProxy {
+open class ThreektProxy(
+    val ctx: RenderContext
+) {
 
     val parentNode = Object3DImpl().apply { matrixAutoUpdate = false }
     private val childNode = Object3DImpl().apply { matrixAutoUpdate = false }
@@ -47,33 +46,33 @@ internal open class ThreektProxy(
         }
     }
 
-    override fun setTranslate(v: Vector3fc) {
+    fun setTranslate(v: Vector3fc) {
         ctx.invokeLater {
             parentNode.position.set(v)
             parentNode.updateMatrix()
         }
     }
 
-    override fun setRotate(q: Quaternionfc) {
+    fun setRotate(q: Quaternionfc) {
         ctx.invokeLater {
             parentNode.quaternion.set(q)
             parentNode.updateMatrix()
         }
     }
 
-    override fun setTransform(m: Matrix4fc) {
+    fun setTransform(m: Matrix4fc) {
         ctx.invokeLater {
             parentNode.matrix.set(m)
         }
     }
 
-    override fun setOffsetTransform(offset: Matrix4fc) {
+    fun setOffsetTransform(offset: Matrix4fc) {
         ctx.invokeLater {
             childNode.matrix.set(offset)
         }
     }
 
-    override fun setTexture(source: ExternalSource) {
+    fun setTexture(source: ExternalSource) {
         if (source is FileSource) {
             ctx.invokeLater {
                 for (o in childNode.children) {
@@ -88,7 +87,7 @@ internal open class ThreektProxy(
         }
     }
 
-    override fun setWireframe(flag: Boolean) {
+    fun setWireframe(flag: Boolean) {
         ctx.invokeLater {
             for (o in childNode.children) {
                 if (o is Mesh) {
@@ -101,7 +100,7 @@ internal open class ThreektProxy(
         }
     }
 
-    override fun setColor(color: Int) {
+    fun setColor(color: Int) {
         ctx.invokeLater {
             for (o in childNode.children) {
                 if (o is MaterialObject) {
@@ -114,7 +113,7 @@ internal open class ThreektProxy(
         }
     }
 
-    override fun setOpacity(value: Float) {
+    fun setOpacity(value: Float) {
         ctx.invokeLater {
             for (o in childNode.children) {
                 if (o is MaterialObject) {
@@ -126,13 +125,13 @@ internal open class ThreektProxy(
         }
     }
 
-    override fun setVisible(visible: Boolean) {
+    fun setVisible(visible: Boolean) {
         ctx.invokeLater {
             childNode.visible = visible
         }
     }
 
-    override fun dispose() {
+    fun dispose() {
         ctx.invokeLater {
             childNode.parent?.remove(childNode)
         }
@@ -144,11 +143,11 @@ internal open class ThreektProxy(
 
 }
 
-internal class ThreektPlaneProxy(
-        ctx: RenderContext,
-        width: Float,
-        height: Float
-) : ThreektProxy(ctx), PlaneProxy {
+class ThreektPlaneProxy(
+    ctx: RenderContext,
+    width: Float,
+    height: Float
+) : ThreektProxy(ctx) {
 
     private val geometry = PlaneBufferGeometry(width, height)
     private val mesh = Mesh(geometry)
@@ -165,12 +164,12 @@ internal class ThreektPlaneProxy(
 
 }
 
-internal class ThreektBoxProxy(
-        ctx: RenderContext,
-        width: Float,
-        height: Float,
-        depth: Float
-) : ThreektProxy(ctx), BoxProxy {
+class ThreektBoxProxy(
+    ctx: RenderContext,
+    width: Float,
+    height: Float,
+    depth: Float
+) : ThreektProxy(ctx) {
 
     private val geometry = BoxBufferGeometry(width, height, depth)
     private val mesh = Mesh(geometry)
@@ -185,10 +184,10 @@ internal class ThreektBoxProxy(
 
 }
 
-internal class ThreektSphereProxy(
-        ctx: RenderContext,
-        private var radius: Float
-) : ThreektProxy(ctx), SphereProxy {
+class ThreektSphereProxy(
+    ctx: RenderContext,
+    private var radius: Float
+) : ThreektProxy(ctx) {
 
     private val geometry = SphereBufferGeometry(radius)
     private val mesh = Mesh(geometry)
@@ -199,7 +198,7 @@ internal class ThreektSphereProxy(
         }
     }
 
-    override fun setRadius(radius: Float) {
+    fun setRadius(radius: Float) {
         val scale = radius / this.radius
         geometry.scale(scale)
         this.radius = radius
@@ -207,11 +206,11 @@ internal class ThreektSphereProxy(
 
 }
 
-internal class ThreektCylinderProxy(
-        ctx: RenderContext,
-        private var radius: Float,
-        private var height: Float
-) : ThreektProxy(ctx), CylinderProxy {
+class ThreektCylinderProxy(
+    ctx: RenderContext,
+    private var radius: Float,
+    private var height: Float
+) : ThreektProxy(ctx) {
 
     private val geometry = CylinderBufferGeometry(radius, height)
     private val mesh = Mesh(geometry)
@@ -222,13 +221,13 @@ internal class ThreektCylinderProxy(
         }
     }
 
-    override fun setRadius(radius: Float) {
+    fun setRadius(radius: Float) {
         val scale = radius / this.radius
         geometry.scale(scale)
         this.radius = radius
     }
 
-    override fun setHeight(height: Float) {
+    fun setHeight(height: Float) {
         val scale = (height / this.height)
         geometry.scale(1f, scale, 1f)
         this.height = height
@@ -236,9 +235,9 @@ internal class ThreektCylinderProxy(
 
 }
 
-internal class ThreektTrimeshProxy private constructor(
-        ctx: RenderContext
-) : ThreektProxy(ctx), MeshProxy {
+class ThreektTrimeshProxy private constructor(
+    ctx: RenderContext
+) : ThreektProxy(ctx) {
 
     constructor(ctx: RenderContext, trimesh: TrimeshShape) : this(ctx) {
         if (trimesh is TrimeshShapeWithSource && trimesh.source != null) {
@@ -279,11 +278,11 @@ internal class ThreektTrimeshProxy private constructor(
 
 }
 
-internal class ThreektPointCloudProxy(
-        ctx: RenderContext,
-        pointSize: Float,
-        points: List<Vector3fc>,
-) : ThreektProxy(ctx), PointCloudProxy {
+class ThreektPointCloudProxy(
+    ctx: RenderContext,
+    pointSize: Float,
+    points: List<Vector3fc>,
+) : ThreektProxy(ctx) {
 
     init {
 
@@ -311,17 +310,17 @@ internal class ThreektPointCloudProxy(
 
 }
 
-internal class ThreektCurveProxy(
-        ctx: RenderContext,
-        private val radius: Float,
-        points: List<Vector3fc>
-) : ThreektProxy(ctx), CurveProxy {
+class ThreektCurveProxy(
+    ctx: RenderContext,
+    private val radius: Float,
+    points: List<Vector3fc>
+) : ThreektProxy(ctx) {
 
     private val mesh = Mesh(
-            TubeBufferGeometry(
-                    CatmullRomCurve3(points.map { Vector3().set(it) }),
-                    radius = radius
-            )
+        TubeBufferGeometry(
+            CatmullRomCurve3(points.map { Vector3().set(it) }),
+            radius = radius
+        )
     ).apply {
         material.side = Side.Double
         (material as MaterialWithColor).color.set(Color.gray)
@@ -333,7 +332,7 @@ internal class ThreektCurveProxy(
         }
     }
 
-    override fun update(points: List<Vector3fc>) {
+    fun update(points: List<Vector3fc>) {
         val curve = CatmullRomCurve3(points.map { Vector3().set(it) })
         ctx.invokeLater {
             mesh.geometry.dispose()
@@ -342,10 +341,10 @@ internal class ThreektCurveProxy(
     }
 }
 
-internal class ThreektLineProxy(
-        ctx: RenderContext,
-        points: List<Vector3fc>
-) : ThreektProxy(ctx), LineProxy {
+class ThreektLineProxy(
+    ctx: RenderContext,
+    points: List<Vector3fc>
+) : ThreektProxy(ctx) {
 
     private val line = Line(createGeometry(points))
 
@@ -355,7 +354,7 @@ internal class ThreektLineProxy(
         }
     }
 
-    override fun update(points: List<Vector3fc>) {
+    fun update(points: List<Vector3fc>) {
         ctx.invokeLater {
             line.geometry.dispose()
             line.geometry = createGeometry(points)
@@ -374,14 +373,14 @@ internal class ThreektLineProxy(
 
 }
 
-internal class ThreektHeightmapProxy(
-        ctx: RenderContext,
-        width: Float,
-        height: Float,
-        widthSegments: Int,
-        heightSegments: Int,
-        heights: FloatArray
-) : ThreektProxy(ctx), HeightmapProxy {
+class ThreektHeightmapProxy(
+    ctx: RenderContext,
+    width: Float,
+    height: Float,
+    widthSegments: Int,
+    heightSegments: Int,
+    heights: FloatArray
+) : ThreektProxy(ctx) {
 
     init {
 
@@ -407,11 +406,11 @@ internal class ThreektHeightmapProxy(
 
 }
 
-internal class ThreektWaterProxy(
-        ctx: RenderContext,
-        width: Float,
-        height: Float
-) : ThreektProxy(ctx), WaterProxy {
+class ThreektWaterProxy(
+    ctx: RenderContext,
+    width: Float,
+    height: Float
+) : ThreektProxy(ctx) {
 
     val water: Water
 
@@ -426,7 +425,7 @@ internal class ThreektWaterProxy(
 
         val planeGeometry = PlaneBufferGeometry(width, height)
         water = Water(
-                planeGeometry, Water.Options(
+            planeGeometry, Water.Options(
                 alpha = 0.7f,
                 waterNormals = texture,
                 waterColor = Color(0x001e0f),
@@ -435,7 +434,7 @@ internal class ThreektWaterProxy(
                 textureHeight = 512,
                 sunDirection = Vector3(1, 1, 0).normalize(),
                 distortionScale = 1f
-        )
+            )
         )
         water.rotateX(-PI.toFloat() / 2)
         ctx.invokeLater {
@@ -446,13 +445,13 @@ internal class ThreektWaterProxy(
 
 }
 
-internal class ThreektAxisProxy(
-        ctx: RenderContext,
-        size: Float
-) : ThreektProxy(ctx), AxisProxy {
+class ThreektAxisProxy(
+    ctx: RenderContext,
+    size: Float
+) : ThreektProxy(ctx) {
 
     private val axis = AxesHelper(
-            size = size
+        size = size
     )
 
     init {
@@ -461,40 +460,14 @@ internal class ThreektAxisProxy(
         }
     }
 
-    override fun setTexture(source: ExternalSource) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun setWireframe(flag: Boolean) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun setColor(color: Int) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun setOpacity(value: Float) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun setVisible(visible: Boolean) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun setSize(size: Float) {
-        throw UnsupportedOperationException()
-    }
-
 }
 
-internal class ThreektArrowProxy(
-        ctx: RenderContext,
-        length: Float
-) : ThreektProxy(ctx), ArrowProxy {
+class ThreektArrowProxy(
+    ctx: RenderContext,
+    length: Float
+) : ThreektProxy(ctx) {
 
-    private val arrow = ArrowHelper(
-            length = length
-    )
+    private val arrow = ArrowHelper(length = length)
 
     init {
         ctx.invokeLater {
@@ -502,11 +475,8 @@ internal class ThreektArrowProxy(
         }
     }
 
-    override fun setColor(color: Int) {
-        arrow.setColor(color)
-    }
-
-    override fun setLength(length: Float) {
+    fun setLength(length: Float) {
         arrow.setLength(length)
     }
+
 }

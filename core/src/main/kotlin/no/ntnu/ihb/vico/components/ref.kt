@@ -1,25 +1,21 @@
 package no.ntnu.ihb.vico.components
 
 import no.ntnu.ihb.vico.core.Component
-import no.ntnu.ihb.vico.core.LinearTransform
+import no.ntnu.ihb.vico.dsl.RealProvider
+import no.ntnu.ihb.vico.dsl.ValueProvider
 import no.ntnu.ihb.vico.math.Angle
 
-data class RealRef(
-    val name: String,
-    val linearTransform: LinearTransform? = null
-)
-
 data class PositionRef(
-    val xRef: RealRef? = null,
-    val yRef: RealRef? = null,
-    val zRef: RealRef? = null
+    val xRef: ValueProvider? = null,
+    val yRef: ValueProvider? = null,
+    val zRef: ValueProvider? = null
 ) : Component {
 
     constructor(
         xRef: String? = null,
         yRef: String? = null,
         zRef: String? = null
-    ) : this(xRef?.let { RealRef(it) }, yRef?.let { RealRef(it) }, zRef?.let { RealRef(it) })
+    ) : this(xRef?.let { RealProvider(it) }, yRef?.let { RealProvider(it) }, zRef?.let { RealProvider(it) })
 
     init {
         require(listOfNotNull(xRef, yRef, zRef).isNotEmpty())
@@ -29,9 +25,9 @@ data class PositionRef(
 }
 
 data class RotationRef(
-    val xRef: RealRef? = null,
-    val yRef: RealRef? = null,
-    val zRef: RealRef? = null,
+    val xRef: ValueProvider? = null,
+    val yRef: ValueProvider? = null,
+    val zRef: ValueProvider? = null,
     var repr: Angle.Unit
 ) : Component {
 
@@ -40,7 +36,7 @@ data class RotationRef(
         yRef: String? = null,
         zRef: String? = null,
         repr: Angle.Unit
-    ) : this(xRef?.let { RealRef(it) }, yRef?.let { RealRef(it) }, zRef?.let { RealRef(it) }, repr)
+    ) : this(xRef?.let { RealProvider(it) }, yRef?.let { RealProvider(it) }, zRef?.let { RealProvider(it) }, repr)
 
     init {
         require(listOfNotNull(xRef, yRef, zRef).isNotEmpty())

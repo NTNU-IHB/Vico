@@ -1,14 +1,18 @@
 package no.ntnu.ihb.vico.components
 
 import no.ntnu.ihb.vico.core.Component
+import no.ntnu.ihb.vico.core.Mappable
 import no.ntnu.ihb.vico.core.Properties
 import no.ntnu.ihb.vico.core.RealLambdaProperty
 import no.ntnu.ihb.vico.math.Frame
 import no.ntnu.ihb.vico.math.fromArray
 import no.ntnu.ihb.vico.math.toArray
+import org.joml.Matrix4f
+import org.joml.Quaternionf
 import org.joml.Vector3d
+import org.joml.Vector3f
 
-class Transform : Frame(), Component {
+class Transform : Frame(), Component, Mappable {
 
     override val properties = Properties()
 
@@ -27,4 +31,11 @@ class Transform : Frame(), Component {
         )
     }
 
+    override fun getData(setup: Boolean): Map<String, Any> {
+        val w = getWorldMatrixf(Matrix4f())
+        return mapOf(
+            "position" to w.getTranslation(Vector3f()),
+            "quaternion" to w.getNormalizedRotation(Quaternionf())
+        )
+    }
 }

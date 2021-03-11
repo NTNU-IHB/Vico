@@ -1,34 +1,23 @@
 package no.ntnu.ihb.vico.render
 
-import no.ntnu.ihb.vico.core.*
-import no.ntnu.ihb.vico.render.proxies.WaterProxy
+import no.ntnu.ihb.vico.core.Component
+import no.ntnu.ihb.vico.core.Mappable
 
 class Water(
-        val width: Float,
-        val height: Float
-) : Component
+    width: Number,
+    height: Number
+) : Component, Mappable {
 
+    constructor(size: Number) : this(size, size)
 
-class WaterRenderer : SimulationSystem(
-    Family.all(Water::class.java).build()
-) {
+    val width: Float = width.toFloat()
+    val height: Float = height.toFloat()
 
-    @InjectRenderer
-    private lateinit var renderer: RenderEngine
-    private var waterProxy: WaterProxy? = null
-
-    override fun entityAdded(entity: Entity) {
-        if (waterProxy == null) {
-            val water = entity.get<Water>()
-            waterProxy = renderer.createWater(water.width, water.height)
-        }
-    }
-
-    override fun step(currentTime: Double, stepSize: Double) {
-    }
-
-    override fun close() {
-        waterProxy?.dispose()
+    override fun getData(setup: Boolean): Map<String, Any?> {
+        return mapOf(
+            "width" to width,
+            "height" to height
+        )
     }
 
 }

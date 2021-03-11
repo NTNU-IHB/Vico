@@ -11,20 +11,30 @@ import info.laht.threekt.math.Color
 import info.laht.threekt.math.Matrix4
 import info.laht.threekt.renderers.GLRenderer
 import info.laht.threekt.scenes.Scene
-import no.ntnu.ihb.vico.render.AbstractRenderEngine
-import no.ntnu.ihb.vico.render.mesh.TrimeshShape
-import no.ntnu.ihb.vico.render.proxies.*
+import no.ntnu.ihb.vico.components.Transform
+import no.ntnu.ihb.vico.core.Entity
+import no.ntnu.ihb.vico.core.Family
+import no.ntnu.ihb.vico.core.ObserverSystem
+import no.ntnu.ihb.vico.render.Camera
+import no.ntnu.ihb.vico.render.Geometry
+import no.ntnu.ihb.vico.render.Trail
+import no.ntnu.ihb.vico.render.Water
+import no.ntnu.ihb.vico.render.mesh.*
 import no.ntnu.ihb.vico.render.util.RenderContext
 import org.joml.Matrix4fc
+import org.joml.Vector3d
+import org.joml.Vector3f
 import org.joml.Vector3fc
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
 import kotlin.concurrent.withLock
 
-class ThreektRenderer : AbstractRenderEngine() {
+class ThreektRenderer : ObserverSystem(Family.all) {
 
     private val ctx: RenderContext = RenderContext()
+    private val proxies = mutableMapOf<Entity, ThreektProxy>()
+    private val trailProxies = mutableMapOf<Entity, Pair<ThreektLineProxy, MutableList<Vector3f>>>()
 
     private val scene: Scene = Scene().apply {
         setBackground(Color.aliceblue)
@@ -32,11 +42,120 @@ class ThreektRenderer : AbstractRenderEngine() {
 
     private val internalRenderer = InternalRenderer()
 
-    override fun show() {
+    init {
+        priority = Int.MAX_VALUE
         internalRenderer.start()
     }
 
-    override fun setCameraTransform(cameraTransform: Matrix4fc) {
+    override fun postInit() {
+        updateTransforms()
+        updateTrails()
+    }
+
+    override fun observe(currentTime: Double) {
+        postInit()
+    }
+
+    private fun updateTransforms() {
+        proxies.forEach { (e, p) ->
+            val t = e.get<Transform>()
+            val m = t.getWorldMatrixf()
+            p.setTransform(m)
+        }
+    }
+
+    private fun updateTrails() {
+        trailProxies.forEach { (e, p) ->
+
+            val t = e.get<Transform>()
+            val v = Vector3f().set(t.getTranslation(Vector3d()))
+
+            val points = p.second.apply {
+                add(v)
+            }
+            //TODO compute line length
+
+            if (points.size > 100) {
+                points.removeAt(0)
+            }
+
+            p.first.update(points)
+        }
+    }
+
+    override fun entityAdded(entity: Entity) {
+
+        val t = entity.getOrNull<Transform>()
+
+        entity.getOrNull<Geometry>()?.also { g ->
+            val proxy = when (val shape = g.shape) {
+                is SphereShape -> {
+                    createSphere(shape.radius, g.offset)
+                }
+                is PlaneShape -> {
+                    createPlane(shape.width, shape.height, g.offset)
+                }
+                is BoxShape -> {
+                    createBox(shape.width, shape.depth, shape.height, g.offset)
+                }
+                is CylinderShape -> {
+                    createCylinder(shape.radius, shape.height, g.offset)
+                }
+                is TrimeshShape -> {
+                    createMesh(shape)
+                }
+                else -> null
+            }
+            proxy?.also { p ->
+
+                p.setOpacity(g.opacity)
+                p.setColor(g.color)
+                p.setWireframe(g.wireframe)
+
+                g.addEventListener("onVisibilityChanged") {
+                    p.setVisible(it.value())
+                }
+                g.addEventListener("onWireframeChanged") {
+                    p.setWireframe(it.value())
+                }
+                g.addEventListener("onColorChanged") {
+                    p.setColor(it.value())
+                }
+                g.addEventListener("onOpacityChanged") {
+                    p.setOpacity(it.value())
+                }
+
+                proxies[entity] = p
+            }
+        }
+        entity.getOrNull<Water>()?.also { w ->
+            internalRenderer.water = createWater(w.width, w.height)
+        }
+        entity.getOrNull<Trail>()?.also { trail ->
+            val proxy = createLine(emptyList()).apply {
+                setColor(trail.color)
+            }
+            trailProxies[entity] = proxy to mutableListOf()
+        }
+        entity.getOrNull<Camera>()?.also { c ->
+            if (t != null) {
+                val p = t.getTranslation()
+                ctx.invokeLater {
+                    internalRenderer.camera.fov = c.fov.toFloat()
+                    internalRenderer.camera.position.set(
+                        p.x.toFloat(), p.y.toFloat(), p.z.toFloat()
+                    )
+                }
+            }
+        }
+    }
+
+    override fun entityRemoved(entity: Entity) {
+        proxies.remove(entity)?.dispose()
+    }
+
+
+    fun setCameraTransform(cameraTransform: Matrix4fc) {
         val m = Matrix4().set(cameraTransform)
         ctx.invokeLater {
             internalRenderer.apply {
@@ -47,11 +166,11 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun setBackGroundColor(color: Int) {
+    fun setBackGroundColor(color: Int) {
         scene.setBackground(color)
     }
 
-    override fun createAxis(size: Float): AxisProxy {
+    fun createAxis(size: Float): ThreektAxisProxy {
         return ThreektAxisProxy(ctx, size).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
@@ -59,7 +178,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createArrow(length: Float): ArrowProxy {
+    fun createArrow(length: Float): ThreektArrowProxy {
         return ThreektArrowProxy(ctx, length).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
@@ -67,7 +186,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createMesh(mesh: TrimeshShape): MeshProxy {
+    fun createMesh(mesh: TrimeshShape): ThreektTrimeshProxy {
         return ThreektTrimeshProxy(ctx, mesh).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
@@ -75,7 +194,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createMesh(source: File, scale: Float, offset: Matrix4fc?): MeshProxy {
+    fun createMesh(source: File, scale: Float): ThreektTrimeshProxy {
         return ThreektTrimeshProxy(ctx, source, scale).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
@@ -83,7 +202,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createSphere(radius: Float, offset: Matrix4fc?): SphereProxy {
+    fun createSphere(radius: Float, offset: Matrix4fc? = null): ThreektSphereProxy {
         return ThreektSphereProxy(ctx, radius).also {
             offset?.also { offset -> it.setOffsetTransform(offset) }
             ctx.invokeLater {
@@ -92,7 +211,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createPlane(width: Float, height: Float, offset: Matrix4fc?): PlaneProxy {
+    fun createPlane(width: Float, height: Float, offset: Matrix4fc? = null): ThreektPlaneProxy {
         return ThreektPlaneProxy(ctx, width, height).also {
             offset?.also { offset -> it.setOffsetTransform(offset) }
             ctx.invokeLater {
@@ -101,7 +220,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createBox(width: Float, height: Float, depth: Float, offset: Matrix4fc?): BoxProxy {
+    fun createBox(width: Float, height: Float, depth: Float, offset: Matrix4fc? = null): ThreektBoxProxy {
         return ThreektBoxProxy(ctx, width, height, depth).also {
             offset?.also { offset -> it.setOffsetTransform(offset) }
             ctx.invokeLater {
@@ -110,7 +229,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createCylinder(radius: Float, height: Float, offset: Matrix4fc?): CylinderProxy {
+    fun createCylinder(radius: Float, height: Float, offset: Matrix4fc? = null): ThreektCylinderProxy {
         return ThreektCylinderProxy(ctx, radius, height).also {
             offset?.also { offset -> it.setOffsetTransform(offset) }
             ctx.invokeLater {
@@ -119,11 +238,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createCapsule(radius: Float, height: Float, offset: Matrix4fc?): CapsuleProxy {
-        TODO("Not yet implemented")
-    }
-
-    override fun createCurve(radius: Float, points: List<Vector3fc>): CurveProxy {
+    fun createCurve(radius: Float, points: List<Vector3fc>): ThreektCurveProxy {
         return ThreektCurveProxy(ctx, radius, points).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
@@ -131,7 +246,7 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createLine(points: List<Vector3fc>): LineProxy {
+    fun createLine(points: List<Vector3fc>): ThreektLineProxy {
         return ThreektLineProxy(ctx, points).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
@@ -139,30 +254,29 @@ class ThreektRenderer : AbstractRenderEngine() {
         }
     }
 
-    override fun createHeightmap(
+    fun createHeightmap(
         width: Float,
         height: Float,
         widthSegments: Int,
         heightSegments: Int,
         heights: FloatArray
-    ): HeightmapProxy {
+    ): ThreektHeightmapProxy {
         return ThreektHeightmapProxy(ctx, width, height, widthSegments, heightSegments, heights).also {
-            ctx.invokeLater {
-                scene.attach(it.parentNode)
-            }
-        }
-    }
-
-    override fun createWater(width: Float, height: Float): WaterProxy {
-        return ThreektWaterProxy(ctx, width, height).also {
-            internalRenderer.water = it
             ctx.invokeLater {
                 scene.add(it.parentNode)
             }
         }
     }
 
-    override fun createPointCloud(pointSize: Float, points: List<Vector3fc>): PointCloudProxy {
+    fun createWater(width: Float, height: Float): ThreektWaterProxy {
+        return ThreektWaterProxy(ctx, width, height).also {
+            ctx.invokeLater {
+                scene.add(it.parentNode)
+            }
+        }
+    }
+
+    fun createPointCloud(pointSize: Float, points: List<Vector3fc>): ThreektPointCloudProxy {
         return ThreektPointCloudProxy(ctx, pointSize, points).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
@@ -219,12 +333,12 @@ class ThreektRenderer : AbstractRenderEngine() {
                 }
 
                 window.onCloseCallback = WindowClosingCallback {
-                    closeListener?.onClose()
+                    engine.close()
                 }
 
                 val renderer = GLRenderer(window.size)
                 camera = PerspectiveCamera(75, window.aspect, 0.1, 10000).apply {
-                    position.set(0f, 0f, 5f)
+                    position.set(15f, 15f, 15f)
                 }
                 controls = OrbitControls(camera, window)
 
@@ -238,7 +352,7 @@ class ThreektRenderer : AbstractRenderEngine() {
 
                 window.addKeyListener {
                     if (it.action == KeyAction.PRESS) {
-                        keyListener?.onKeyPressed(it.keyCode)
+//                        keyListener?.onKeyPressed(it.keyCode)
                     }
                 }
 

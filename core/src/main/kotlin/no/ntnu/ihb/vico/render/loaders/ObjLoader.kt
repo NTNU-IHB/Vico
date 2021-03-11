@@ -11,7 +11,8 @@ class ObjLoader {
         get() = "obj"
 
     fun load(source: File): Trimesh {
-        //MeshLoader.testExtension(supportedExtension, source.extension)
+        require(source.exists()) { "No such file: ${source.absolutePath}" }
+        require(source.extension == supportedExtension)
         return load(source.readText(), source)
     }
 

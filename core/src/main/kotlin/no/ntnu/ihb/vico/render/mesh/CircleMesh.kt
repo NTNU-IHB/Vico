@@ -10,7 +10,13 @@ import kotlin.math.sin
 
 class CircleMesh(
     radius: Float
-) : CircularMesh(radius), CircleShape
+) : CircularMesh(radius), CircleShape {
+
+    override fun toMap(): Map<String, Any> {
+        return super<CircleShape>.toMap()
+    }
+
+}
 
 sealed class CircularMesh(
     val radius: Float = 1f,

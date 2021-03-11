@@ -14,6 +14,4 @@ dependencies {
     def gdx_version = '1.9.9'
     implementation group: 'com.badlogicgames.gdx', name: 'gdx-bullet', version: gdx_version
     runtimeOnly "com.badlogicgames.gdx:gdx-bullet-platform:$gdx_version:natives-desktop"
-
-    testImplementation project(':threekt-render')
 }

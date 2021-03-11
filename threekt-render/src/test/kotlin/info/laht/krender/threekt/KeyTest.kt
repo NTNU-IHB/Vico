@@ -4,9 +4,9 @@ fun main() {
 
     ThreektRenderer().apply {
 
-        registerKeyListener {
-            println(it)
-        }
+//        registerKeyListener {
+//            println(it)
+//        }
 
     }
 

@@ -1,19 +1,19 @@
 package no.ntnu.ihb.vico.cli.commands
 
 import info.laht.kts.KtsScriptRunner
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.chart.ChartLoader2
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.dsl.ChartConfig
+import no.ntnu.ihb.vico.dsl.VisualConfig
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
-import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.render.TVisualConfig
 import no.ntnu.ihb.vico.render.VisualLoader
 import no.ntnu.ihb.vico.scenario.parseScenario
 import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.SystemStructure
-import org.joml.Matrix4f
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
@@ -67,6 +67,12 @@ class SimulateSsp : Runnable {
     private var noParallel = false
 
     @CommandLine.Option(
+        names = ["--paused"],
+        description = ["Start simulation paused."]
+    )
+    private var paused = false
+
+    @CommandLine.Option(
         names = ["-chart", "--chartConfig"],
         description = ["Path to a chart configuration XML file. Path relative to the .ssd"]
     )
@@ -96,6 +102,12 @@ class SimulateSsp : Runnable {
     )
     private var resultDir: File = File("results")
 
+    @CommandLine.Option(
+        names = ["-port"],
+        description = ["Enable the web server the given port"]
+    )
+    val port: Int? = null
+
     @CommandLine.Parameters(
         arity = "1",
         paramLabel = "SSP_CONFIG",
@@ -116,24 +128,9 @@ class SimulateSsp : Runnable {
 
         require(start < stop) { "stop=$stop > start=$start!" }
 
-        val visualConfig = relativeVisualConfigPath?.let { configPath ->
-            var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
-            if (!configFile.exists()) configFile = File(configPath).absoluteFile
-            if (!configFile.exists()) throw NoSuchFileException(configFile)
-            JAXB.unmarshal(configFile, TVisualConfig::class.java)
-        }
-
-        val renderer = visualConfig?.let {
-            val cls = ClassLoader.getSystemClassLoader().loadClass("info.laht.krender.threekt.ThreektRenderer")
-            (cls.newInstance() as RenderEngine).apply {
-                setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
-            }
-        }
-
         Engine.Builder()
             .startTime(start)
             .stepSize(baseStepSize)
-            .renderer(renderer)
             .build().use { engine ->
 
                 if (!disableLogging) {
@@ -183,9 +180,29 @@ class SimulateSsp : Runnable {
                     scenario.applyScenario(engine)
                 }
 
-                visualConfig?.also { VisualLoader.load(it, engine) }
+                port?.also {
+                    engine.addSystem(KtorServer(it))
+                }
 
-                runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, LOG)
+                relativeVisualConfigPath?.also { configPath ->
+                    var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
+                    if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                    if (!configFile.exists()) throw NoSuchFileException(configFile)
+                    when (configFile.extension) {
+                        "xml" -> {
+                            val visualConfig = JAXB.unmarshal(configFile, TVisualConfig::class.java)
+                            VisualLoader.load(visualConfig, engine)
+                        }
+                        "kts" -> {
+                            @Suppress("UNCHECKED_CAST")
+                            (KtsScriptRunner().eval(configFile) as VisualConfig?)?.also {
+                                it.apply(engine)
+                            }
+                        }
+                    }
+                }
+
+                runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, paused, LOG)
 
             }
 

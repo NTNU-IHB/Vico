@@ -1,23 +1,26 @@
 package no.ntnu.ihb.vico.render
 
 import info.laht.krender.threekt.ThreektRenderer
-import no.ntnu.ihb.vico.core.EngineBuilder
-import org.joml.Matrix4f
+import no.ntnu.ihb.vico.KtorServer
+import no.ntnu.ihb.vico.components.Transform
+import no.ntnu.ihb.vico.core.Engine
 
 fun main() {
 
-    val renderer = ThreektRenderer().apply {
-        setCameraTransform(Matrix4f().setTranslation(50f, 50f, 50f))
-    }
+    Engine().use { engine ->
 
-    val engine = EngineBuilder().renderer(renderer).build()
-    engine.use {
-
-        engine.addSystem(WaterRenderer())
+        engine.createEntity("camera").apply {
+            add<Camera>()
+            add<Transform>().apply {
+                setLocalTranslation(50.0, 25.0, 50.0)
+            }
+        }
 
         engine.createEntity("water").apply {
             add(Water(100f, 100f))
         }
+        engine.addSystem(KtorServer(8000, false))
+        engine.addSystem(ThreektRenderer())
 
         engine.runner.startAndWait()
 

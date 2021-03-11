@@ -4,7 +4,6 @@ import no.ntnu.ihb.vico.components.Controllable
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.SimulationSystem
-import no.ntnu.ihb.vico.input.KeyStroke
 
 class MovementController : SimulationSystem(
     Family.all(Transform::class.java, Controllable::class.java).build()
@@ -16,16 +15,16 @@ class MovementController : SimulationSystem(
             val transform = e.get<Transform>()
             val controllable = e.get<Controllable>()
 
-            if (engine.isKeyPressed(KeyStroke.KEY_W)) {
+            if (engine.isKeyPressed("w")) {
                 transform.localTranslateZ(controllable.movementSpeed * stepSize)
             }
-            if (engine.isKeyPressed(KeyStroke.KEY_S)) {
+            if (engine.isKeyPressed("s")) {
                 transform.localTranslateZ(-controllable.movementSpeed * stepSize)
             }
-            if (engine.isKeyPressed(KeyStroke.KEY_A)) {
+            if (engine.isKeyPressed("a")) {
                 transform.localTranslateX(controllable.movementSpeed * stepSize)
             }
-            if (engine.isKeyPressed(KeyStroke.KEY_D)) {
+            if (engine.isKeyPressed("d")) {
                 transform.localTranslateX(-controllable.movementSpeed * stepSize)
             }
         }

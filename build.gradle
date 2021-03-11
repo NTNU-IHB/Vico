@@ -14,9 +14,6 @@ version = rootProject.file("VERSION").readLines()[0]
 println "Gradle version is ${gradle.getGradleVersion()}"
 println("Building ${rootProject.name} v$version")
 
-apply from: project.file("gradle/fmuproxy.gradle")
-
-
 subprojects { sub ->
 
     apply plugin: 'java'
@@ -25,11 +22,10 @@ subprojects { sub ->
     sub.version = rootProject.version
 
     repositories {
+        jcenter()
         mavenCentral()
         maven { url "https://dl.bintray.com/laht/mvn" }
         maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
-        maven { url "https://dl.bintray.com/open-simulation-platform/maven" }
-        maven { url "https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }
     }
 
     dependencies {

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.physics.bullet
 
-import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.EngineBuilder
 import no.ntnu.ihb.vico.core.RealConnection
@@ -10,18 +9,13 @@ import no.ntnu.ihb.vico.physics.MotionControl
 import no.ntnu.ihb.vico.physics.RigidBodyComponent
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
-import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
 import no.ntnu.ihb.vico.render.mesh.SphereMesh
-import org.joml.Matrix4f
 import kotlin.random.Random
 
 fun main() {
 
-    val renderer = ThreektRenderer().apply {
-        setCameraTransform(Matrix4f().setTranslation(0f, 0f, 20f))
-    }
-    EngineBuilder().stepSize(1.0 / 100).renderer(renderer).build().use { engine ->
+    EngineBuilder().stepSize(1.0 / 100).build().use { engine ->
 
         engine.createEntity("plane").apply {
             add(Transform()).apply {
@@ -67,7 +61,6 @@ fun main() {
         engine.addConnection(RealConnection(source, sink))
 
         engine.addSystem(BulletSystem())
-        engine.addSystem(GeometryRenderer())
 
         engine.runner.apply {
             startAndWait(false)

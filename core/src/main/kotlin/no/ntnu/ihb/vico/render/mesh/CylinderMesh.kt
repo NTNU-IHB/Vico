@@ -11,7 +11,13 @@ import kotlin.math.sin
 class CylinderMesh(
     override val radius: Float = 0.5f,
     height: Float = 1f
-) : CylindricalMesh(radius, radius, height), CylinderShape
+) : CylindricalMesh(radius, radius, height), CylinderShape {
+
+    override fun toMap(): Map<String, Any> {
+        return super<CylinderShape>.toMap()
+    }
+
+}
 
 class ConeMesh(
     val radius: Float = 0.5f,

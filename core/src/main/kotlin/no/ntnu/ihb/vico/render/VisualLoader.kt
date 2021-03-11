@@ -1,11 +1,10 @@
 package no.ntnu.ihb.vico.render
 
 import no.ntnu.ihb.vico.components.PositionRef
-import no.ntnu.ihb.vico.components.RealRef
 import no.ntnu.ihb.vico.components.RotationRef
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.core.Engine
-import no.ntnu.ihb.vico.core.LinearTransform
+import no.ntnu.ihb.vico.dsl.RealProvider
 import no.ntnu.ihb.vico.math.Angle
 import no.ntnu.ihb.vico.render.loaders.ObjLoader
 import no.ntnu.ihb.vico.render.loaders.StlLoader
@@ -25,32 +24,27 @@ object VisualLoader {
 
     fun load(config: TVisualConfig, engine: Engine) {
 
-        config.cameraConfig?.initialPosition?.also { p ->
-            engine.renderEngine?.also { renderer ->
-                renderer.setCameraTransform(
-                    Matrix4f().setTranslation(
-                        p.getPx(),
-                        p.getPy(),
-                        p.getPz()
-                    )
+        engine.createEntity("camera").apply {
+            add<Camera>()
+            val t = add<Transform>()
+            config.cameraConfig?.initialPosition?.also { p ->
+                t.setLocalTranslation(
+                    p.getPx().toDouble(),
+                    p.getPy().toDouble(),
+                    p.getPz().toDouble()
                 )
-            }
+            } ?: t.setLocalTranslation(15.0, 15.0, 15.0)
         }
 
         config.water?.also { w ->
             engine.createEntity("waterVisual", Water(w.width, w.height))
-            engine.addSystem(WaterRenderer())
         }
 
         config.transform.forEach { t ->
 
-            val e = if (t.name.isNullOrEmpty()) {
-                engine.createEntity(null)
-            } else {
-                engine.getEntityByNameOrNull(t.name) ?: engine.createEntity(t.name)
-            }
+            val e = engine.createEntity(t.name)
 
-            val tc = e.getOrCreate<Transform>()
+            val tc = e.add<Transform>()
             e.add(createGeometry(t.geometry))
 
             t.positionRef?.also { ref ->
@@ -82,9 +76,6 @@ object VisualLoader {
 
             t.trail?.also { trail ->
                 e.add(Trail(trail.length, trail.color?.toColor()))
-                if (!engine.hasSystem<TrailRenderer>()) {
-                    engine.addSystem(TrailRenderer().apply { decimationFactor = config.decimationFactor * 5 })
-                }
             }
 
             t.parent?.also { parent ->
@@ -96,17 +87,15 @@ object VisualLoader {
 
         }
 
-        engine.addSystem(GeometryRenderer().apply {
-            decimationFactor = config.getDecimationFactor()
-        })
     }
 
-    private fun TRealRef?.toRealRef(): RealRef? {
+    private fun TRealRef?.toRealRef(): RealProvider? {
         if (this == null) return null
-        val linearTransformation = this.linearTransformation?.let {
-            LinearTransform(factor = it.getFactor(), offset = it.getOffset())
+        return if (this.linearTransformation != null) {
+            RealProvider(this.name) * this.linearTransformation.getFactor() + this.linearTransformation.getOffset()
+        } else {
+            RealProvider(this.name)
         }
-        return RealRef(this.name, linearTransformation)
     }
 
     private fun String.toColor(): Int {

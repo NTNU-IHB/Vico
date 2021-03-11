@@ -2,8 +2,8 @@ package no.ntnu.ihb.vico.core
 
 @Suppress("unused")
 open class Entity private constructor(
-        name: String? = null,
-        private val mutableComponents: MutableList<Component>
+    name: String? = null,
+    private val mutableComponents: MutableList<Component>
 ) : Iterable<Component> by mutableComponents {
 
     var tag: String? = null
@@ -46,10 +46,10 @@ open class Entity private constructor(
         }
 
         val component = componentMap[componentClass]
-                ?: throw IllegalArgumentException(
-                        "No component of type $componentClass present! " +
-                                "The following components are currently registered: $myComponents"
-                )
+            ?: throw IllegalArgumentException(
+                "No component of type $componentClass present! " +
+                        "The following components are currently registered: $myComponents"
+            )
 
         mutableComponents.remove(component)
         componentMap.remove(componentClass)
@@ -76,7 +76,7 @@ open class Entity private constructor(
     @Suppress("UNCHECKED_CAST")
     fun <E : Component> get(componentClass: Class<E>): E {
         return componentMap[ComponentClazz(componentClass)] as E?
-                ?: throw IllegalStateException("No component of type $componentClass registered with Entity named '$name'!")
+            ?: throw IllegalStateException("No component of type $componentClass registered with Entity named '$name'!")
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -104,7 +104,7 @@ open class Entity private constructor(
 
     fun get(componentName: String): Component {
         return getOrNull(componentName)
-                ?: throw NoSuchElementException("No Component named '$componentName' in entity '$name'!")
+            ?: throw NoSuchElementException("No Component named '$componentName' in entity '$name'!")
     }
 
     fun removeAll() {
@@ -156,7 +156,7 @@ open class Entity private constructor(
 
     fun getIntegerProperty(name: String): IntProperty {
         return getIntegerPropertyOrNull(name)
-                ?: throw NoSuchElementException("No property named '$name' of type Integer could be located!")
+            ?: throw NoSuchElementException("No property named '$name' of type Integer could be located!")
     }
 
     fun getIntegerProperties(): List<IntProperty> {
@@ -165,7 +165,7 @@ open class Entity private constructor(
 
     fun getRealProperty(name: String): RealProperty {
         return getRealPropertyOrNull(name)
-                ?: throw NoSuchElementException("No property named '$name' of type Real could be located!")
+            ?: throw NoSuchElementException("No property named '$name' of type Real could be located!")
     }
 
     fun getRealPropertyOrNull(name: String): RealProperty? {
@@ -196,7 +196,7 @@ open class Entity private constructor(
 
     fun getStringProperty(name: String): StrProperty {
         return getStringPropertyOrNull(name)
-                ?: throw NoSuchElementException("No property named '$name' of type String could be located!")
+            ?: throw NoSuchElementException("No property named '$name' of type String could be located!")
     }
 
     fun getStringProperties(): List<StrProperty> {
@@ -216,16 +216,33 @@ open class Entity private constructor(
 
     fun getBooleanProperty(name: String): BoolProperty {
         return getBooleanPropertyOrNull(name)
-                ?: throw NoSuchElementException("No property named '$name' of type Boolean could be located!")
+            ?: throw NoSuchElementException("No property named '$name' of type Boolean could be located!")
     }
 
     fun getBooleanProperties(): List<BoolProperty> {
         return flatMap { it.properties.bools }
     }
 
+    fun toMap(setup: Boolean): Map<String, Any> {
+
+        val components = componentMap.values.mapNotNull { c ->
+            if (c is Mappable) {
+                c.getData(setup)?.let { c.componentName to it }
+            } else {
+                null
+            }
+        }.associate { it.first to it.second }
+
+        return mapOf(
+            "name" to name,
+            "components" to components
+        )
+
+    }
+
     override fun toString(): String {
-        val componentClasses = map { it.javaClass.simpleName }
-        return "Entity(name='$name', tag=$tag, components=$componentClasses)"
+        val componentNames = map { it.componentName }
+        return "Entity(name='$name', tag=$tag, components=$componentNames)"
     }
 
 }

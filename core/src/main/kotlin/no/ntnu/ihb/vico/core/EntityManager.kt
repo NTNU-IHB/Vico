@@ -25,7 +25,7 @@ class EntityManager internal constructor(
 ) : EntityAccess {
 
     private val componentListener = MyComponentListener()
-    private val entities: MutableSet<Entity> = mutableSetOf()
+    internal val entities: MutableSet<Entity> = mutableSetOf()
     private val families: MutableMap<Family, MutableSet<Entity>> = mutableMapOf()
     private val entityListeners: MutableList<EntityListener> = mutableListOf()
 

@@ -2,9 +2,7 @@ package no.ntnu.ihb.vico.core
 
 import no.ntnu.ihb.vico.input.InputAccess
 import no.ntnu.ihb.vico.input.InputManager
-import no.ntnu.ihb.vico.input.KeyStroke
 import no.ntnu.ihb.vico.math.doublesAreEqual
-import no.ntnu.ihb.vico.render.RenderEngine
 import no.ntnu.ihb.vico.util.PredicateTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,7 +18,6 @@ class Engine private constructor(
     startTime: Double? = null,
     val stopTime: Double? = null,
     baseStepSize: Double? = null,
-    internal val renderEngine: RenderEngine? = null,
     private val inputManager: InputManager = InputManager(),
     private val connectionManager: ConnectionManager = ConnectionManager(),
     private val entityManager: EntityManager = EntityManager(connectionManager),
@@ -54,29 +51,12 @@ class Engine private constructor(
     constructor(baseStepSize: Double) : this(null, null, baseStepSize)
     constructor(startTime: Double, baseStepSize: Double) : this(startTime, null, baseStepSize)
 
-    init {
-
-        renderEngine?.apply {
-            registerCloseListener { this@Engine.close() }
-            registerKeyListener {
-                when (it) {
-                    69 -> runner.togglePause()
-                    82 -> runner.toggleEnableRealTime()
-                }
-            }
-            registerClickListener { _, _ ->
-            }
-        }
-
-    }
-
     fun init() {
         if (!initialized.getAndSet(true)) {
             initTask?.apply { invoke(this@Engine) }
             systemManager.initialize(this)
             connectionManager.update()
             digestQueue()
-            renderEngine?.show()
         }
     }
 
@@ -127,33 +107,31 @@ class Engine private constructor(
         }
     }
 
-    override fun registerKeyPress(keyStroke: KeyStroke) {
-        when (keyStroke) {
-            KeyStroke.KEY_E -> runner.togglePause()
-            KeyStroke.KEY_R -> runner.toggleEnableRealTime()
-            KeyStroke.KEY_Q -> runner.stop()
-            else -> inputManager.registerKeyPress(keyStroke)
+    override fun registerKeyPress(key: String) {
+        when (key) {
+            "e" -> runner.togglePause()
+            "r" -> runner.toggleEnableRealTime()
+            "q" -> runner.stop()
+            else -> inputManager.registerKeyPress(key)
         }
     }
 
-    fun <E : SimulationSystem> hasSystem(systemClazz: Class<E>) = systemManager.hasSystem(systemClazz)
-    inline fun <reified E : SimulationSystem> hasSystem() = hasSystem(E::class.java)
+    fun toMap(setup: Boolean): Map<String, Any> {
+        return mapOf(
+            "simInfo" to mapOf(
+                "currentTime" to currentTime
+            ),
+            "entities" to entityManager.entities.map { it.toMap(setup) }
+        )
+    }
+
+    fun <E : BaseSystem> hasSystem(systemClazz: Class<E>) = systemManager.hasSystem(systemClazz)
+    inline fun <reified E : BaseSystem> hasSystem() = hasSystem(E::class.java)
 
     fun <E : SimulationSystem> getSystem(systemClass: Class<E>) = systemManager.getSystem(systemClass)
     inline fun <reified E : SimulationSystem> getSystem() = getSystem(E::class.java)
 
     fun addSystem(system: BaseSystem) {
-
-        if (renderEngine != null) {
-
-            system.javaClass.declaredFields.firstOrNull {
-                it.getAnnotation(InjectRenderer::class.java) != null && RenderEngine::class.java.isAssignableFrom(it.type)
-            }?.also { field ->
-                field.isAccessible = true
-                field.set(system, renderEngine)
-            }
-
-        }
 
         invokeLater {
             systemManager.addSystem(system)
@@ -240,7 +218,6 @@ class Engine private constructor(
     override fun close() {
         if (!closed.getAndSet(true)) {
             systemManager.close()
-            renderEngine?.close()
             LOG.info("Closed engine..")
         }
     }
@@ -251,14 +228,11 @@ class Engine private constructor(
 
     }
 
-    class Builder(
+    class Builder @JvmOverloads constructor(
         private var startTime: Double? = null,
         private var stopTime: Double? = null,
         private var stepSize: Double? = null,
-        private var renderEngine: RenderEngine? = null
     ) {
-
-        constructor() : this(null, null, null, null)
 
         fun startTime(value: Double?) = apply {
             startTime = value
@@ -272,11 +246,7 @@ class Engine private constructor(
             stepSize = value
         }
 
-        fun renderer(renderEngine: RenderEngine?) = apply {
-            this.renderEngine = renderEngine
-        }
-
-        fun build() = Engine(startTime, stopTime, stepSize, renderEngine)
+        fun build() = Engine(startTime, stopTime, stepSize)
 
     }
 

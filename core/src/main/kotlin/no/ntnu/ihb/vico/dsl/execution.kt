@@ -1,7 +1,6 @@
 package no.ntnu.ihb.vico.dsl
 
 import no.ntnu.ihb.vico.core.*
-import no.ntnu.ihb.vico.render.RenderEngine
 
 
 fun execution(ctx: ExecutionContext.() -> Unit): Engine {
@@ -13,19 +12,13 @@ class ExecutionContext {
     var startTime: Number? = null
     var stopTime: Number? = null
     var baseStepSize: Double? = null
-    var renderEngine: RenderEngine? = null
 
     internal val engine: Engine by lazy {
         EngineBuilder()
             .startTime(startTime?.toDouble())
             .stopTime(stopTime?.toDouble())
             .stepSize(baseStepSize)
-            .renderer(renderEngine)
             .build()
-    }
-
-    fun renderer(renderEngine: RenderEngine) {
-        this.renderEngine = renderEngine
     }
 
     fun entities(ctx: EntitiesContext.() -> Unit) {
@@ -101,7 +94,8 @@ class ConnectionsContext(
         val c1 = Connector.inferConnectorType(p1.component, p1.property)
         val c2 = Connector.inferConnectorType(p2.component, p2.property)
 
-        require(c1.javaClass == c2.javaClass) { "Incompatible connectors" }
+        require(c1.javaClass == c2.javaClass)
+        { "Incompatible connectors: ${c1.javaClass} != ${c2.javaClass}" }
 
         engine.addConnection(
 
