@@ -1,11 +1,12 @@
 package no.ntnu.ihb.vico.cli.commands
 
-import no.ntnu.ihb.vico.KtorServer
 import info.laht.kts.KtsScriptRunner
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.chart.ChartLoader2
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.dsl.ChartConfig
+import no.ntnu.ihb.vico.dsl.VisualConfig
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.model.ModelResolver
@@ -115,13 +116,6 @@ class SimulateFmu : Runnable {
             addComponent(model, modelName)
         }
 
-        val visualConfig = relativeVisualConfigPath?.let { configPath ->
-            var configFile = getConfigPath(fmu, configPath)
-            if (!configFile.exists()) configFile = File(configPath).absoluteFile
-            if (!configFile.exists()) throw NoSuchFileException(configFile)
-            JAXB.unmarshal(configFile, TVisualConfig::class.java)
-        }
-
         Engine.Builder()
             .startTime(startTime)
             .stepSize(baseStepSize)
@@ -177,7 +171,23 @@ class SimulateFmu : Runnable {
                     engine.addSystem(KtorServer(it))
                 }
 
-                visualConfig?.also { VisualLoader.load(it, engine) }
+                relativeVisualConfigPath?.also { configPath ->
+                    var configFile = getConfigPath(fmu, configPath)
+                    if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                    if (!configFile.exists()) throw NoSuchFileException(configFile)
+                    when (configFile.extension) {
+                        "xml" -> {
+                            val visualConfig = JAXB.unmarshal(configFile, TVisualConfig::class.java)
+                            VisualLoader.load(visualConfig, engine)
+                        }
+                        "kts" -> {
+                            @Suppress("UNCHECKED_CAST")
+                            (KtsScriptRunner().eval(configFile) as VisualConfig?)?.also {
+                                it.apply(engine)
+                            }
+                        }
+                    }
+                }
 
                 runSimulation(engine, startTime, stopTime, baseStepSize, targetRealtimeFactor, paused, LOG)
 

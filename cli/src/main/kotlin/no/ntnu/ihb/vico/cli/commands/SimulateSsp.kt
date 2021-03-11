@@ -1,11 +1,12 @@
 package no.ntnu.ihb.vico.cli.commands
 
-import no.ntnu.ihb.vico.KtorServer
 import info.laht.kts.KtsScriptRunner
+import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.chart.ChartLoader2
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.dsl.ChartConfig
+import no.ntnu.ihb.vico.dsl.VisualConfig
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.render.TVisualConfig
@@ -127,13 +128,6 @@ class SimulateSsp : Runnable {
 
         require(start < stop) { "stop=$stop > start=$start!" }
 
-        val visualConfig = relativeVisualConfigPath?.let { configPath ->
-            var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
-            if (!configFile.exists()) configFile = File(configPath).absoluteFile
-            if (!configFile.exists()) throw NoSuchFileException(configFile)
-            JAXB.unmarshal(configFile, TVisualConfig::class.java)
-        }
-
         Engine.Builder()
             .startTime(start)
             .stepSize(baseStepSize)
@@ -190,7 +184,23 @@ class SimulateSsp : Runnable {
                     engine.addSystem(KtorServer(it))
                 }
 
-                visualConfig?.also { VisualLoader.load(it, engine) }
+                relativeVisualConfigPath?.also { configPath ->
+                    var configFile = getConfigPath(loader.ssdFile.parentFile, configPath)
+                    if (!configFile.exists()) configFile = File(configPath).absoluteFile
+                    if (!configFile.exists()) throw NoSuchFileException(configFile)
+                    when (configFile.extension) {
+                        "xml" -> {
+                            val visualConfig = JAXB.unmarshal(configFile, TVisualConfig::class.java)
+                            VisualLoader.load(visualConfig, engine)
+                        }
+                        "kts" -> {
+                            @Suppress("UNCHECKED_CAST")
+                            (KtsScriptRunner().eval(configFile) as VisualConfig?)?.also {
+                                it.apply(engine)
+                            }
+                        }
+                    }
+                }
 
                 runSimulation(engine, start, stop, baseStepSize, targetRealtimeFactor, paused, LOG)
 
