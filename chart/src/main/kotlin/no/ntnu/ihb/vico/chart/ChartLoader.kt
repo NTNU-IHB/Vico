@@ -31,9 +31,9 @@ object ChartLoader {
             title = chart.title,
             label = chart.label
         ).apply {
-            width(chart.width)
-            height(chart.height)
-            decimationFactor(chart.decimationFactor)
+            width(chart.getWidth())
+            height(chart.getHeight())
+            decimationFactor(chart.getDecimationFactor())
             isLive(chart.isLive)
             maxDuration(chart.maxDuration)
             chart.series.component.forEach { component ->
@@ -56,10 +56,9 @@ object ChartLoader {
             xLabel = chart.xLabel,
             yLabel = chart.yLabel
         ).apply {
-            maxLength(chart.maxLength)
-            width(chart.width)
-            height(chart.height)
-            decimationFactor(chart.decimationFactor)
+            width(chart.getWidth())
+            height(chart.getHeight())
+            decimationFactor(chart.getDecimationFactor())
             isLive(chart.isLive)
             maxLength(chart.maxLength)
             chart.series.forEach {
