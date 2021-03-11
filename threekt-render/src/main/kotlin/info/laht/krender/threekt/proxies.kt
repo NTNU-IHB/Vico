@@ -460,10 +460,6 @@ class ThreektAxisProxy(
         }
     }
 
-    fun setSize(size: Float) {
-        throw UnsupportedOperationException()
-    }
-
 }
 
 class ThreektArrowProxy(
@@ -478,10 +474,6 @@ class ThreektArrowProxy(
             attachChild(arrow)
         }
     }
-
-//    override fun setColor(color: Int) {
-//        arrow.setColor(color)
-//    }
 
     fun setLength(length: Float) {
         arrow.setLength(length)

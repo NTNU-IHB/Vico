@@ -131,9 +131,9 @@ class ThreektRenderer : ObserverSystem(Family.all) {
         entity.getOrNull<Water>()?.also { w ->
             internalRenderer.water = createWater(w.width, w.height)
         }
-        entity.getOrNull<Trail>()?.also { t ->
+        entity.getOrNull<Trail>()?.also { trail ->
             val proxy = createLine(emptyList()).apply {
-                setColor(t.color)
+                setColor(trail.color)
             }
             trailProxies[entity] = proxy to mutableListOf()
         }
@@ -194,7 +194,7 @@ class ThreektRenderer : ObserverSystem(Family.all) {
         }
     }
 
-    fun createMesh(source: File, scale: Float, offset: Matrix4fc? = null): ThreektTrimeshProxy {
+    fun createMesh(source: File, scale: Float): ThreektTrimeshProxy {
         return ThreektTrimeshProxy(ctx, source, scale).also {
             ctx.invokeLater {
                 scene.add(it.parentNode)
