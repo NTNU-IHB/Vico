@@ -13,6 +13,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 import javax.swing.JFrame
@@ -33,9 +34,10 @@ class ChartDrawer(
     private val config: ChartConfig
 ) : ObserverSystem(Family.all) {
 
-    private val mutex = Unit
+    private var lastUpdate: Long = 0L
     private var queue: BlockingQueue<Unit>? = null
-    private val data: MutableMap<String, Pair<MutableList<Double>, MutableList<Double>>> = mutableMapOf()
+    private val data: MutableMap<String, Pair<MutableList<Double>, MutableList<Double>>> =
+        Collections.synchronizedMap(mutableMapOf())
 
     private val chart: XYChart by lazy {
         XYChartBuilder()
@@ -56,33 +58,45 @@ class ChartDrawer(
         priority = Int.MAX_VALUE
 
         config.series.forEach {
-            data[it.name] = mutableListOf<Double>() to mutableListOf<Double>()
-
+            data[it.name] = mutableListOf<Double>() to mutableListOf()
         }
     }
 
     override fun postInit() {
         updateData()
+        if (config.live) {
+            display()
+        }
     }
 
     override fun observe(currentTime: Double) {
-        updateData()
+        if (engine.iterations % config.decimationFactor == 0L) {
+            updateData()
+        }
+        if (config.live && (System.currentTimeMillis() - lastUpdate) > 250L) {
+            updateChart()
+            lastUpdate = System.currentTimeMillis()
+        }
     }
 
     private fun updateData() {
-        config.series.forEach { series ->
-            data[series.name]?.apply {
-                first.add(series.xGetter.get(engine))
-                second.add(series.yGetter.get(engine))
-            } ?: throw IllegalStateException("No series with name '${series.name}' registered")
+        synchronized(data) {
+            config.series.forEach { series ->
+                data[series.name]?.apply {
+                    first.add(series.xGetter.get(engine))
+                    second.add(series.yGetter.get(engine))
+                } ?: throw IllegalStateException("No series with name '${series.name}' registered")
+            }
         }
     }
 
     private fun display() {
 
-        data.forEach {
-            val series = chart.addSeries(it.key, it.value.first, it.value.second, null)
-            series.marker = SeriesMarkers.NONE
+        synchronized(data) {
+            data.forEach {
+                val series = chart.addSeries(it.key, it.value.first, it.value.second, null)
+                series.marker = SeriesMarkers.NONE
+            }
         }
 
         queue = ArrayBlockingQueue(1)
@@ -98,11 +112,15 @@ class ChartDrawer(
 
     private fun updateChart() {
         SwingUtilities.invokeLater {
-            synchronized(mutex) {
-                data.forEach {
-                    chart.updateXYSeries(it.key, it.value.first, it.value.second, null)
+            try {
+                synchronized(data) {
+                    data.forEach {
+                        chart.updateXYSeries(it.key, it.value.first, it.value.second, null)
+                    }
+                    sw.repaintChart()
                 }
-                sw.repaintChart()
+            } catch (ex: InterruptedException) {
+                //ignore
             }
         }
     }
@@ -110,9 +128,9 @@ class ChartDrawer(
     override fun close() {
         if (!config.live) {
             display()
-        } else {
-            updateChart()
         }
+        updateChart()
+
         queue?.also {
             LOG.info("Waiting for chart '${config.title}' to close..")
             try {

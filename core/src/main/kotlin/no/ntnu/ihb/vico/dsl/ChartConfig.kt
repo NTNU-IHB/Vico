@@ -48,6 +48,7 @@ sealed class ChartConfig(
 }
 
 
+@Scoped
 class ChartsContext : ArrayList<ChartConfig>() {
 
     fun xyChart(title: String, ctx: XYChartContext.() -> Unit) {
@@ -63,7 +64,6 @@ class ChartsContext : ArrayList<ChartConfig>() {
     }
 
 }
-
 
 class XYChartContext(
     title: String
@@ -102,36 +102,44 @@ sealed class AbstractSeriesContext(
     open lateinit var xGetter: ValueProvider
     lateinit var yGetter: ValueProvider
 
-    fun realRef(name: String) = RealProvider(name)
-    fun constant(value: Number) = ConstantProvider(value.toDouble())
-
 }
 
+@Scoped
 class XYSeriesContext(
     name: String
 ) : AbstractSeriesContext(name) {
 
-    fun x(ctx: () -> ValueProvider) {
-        xGetter = ctx.invoke()
+    fun x(ctx: DataContext.() -> ValueProvider) {
+        xGetter = DataContext.let(ctx)
     }
 
-    fun y(ctx: () -> ValueProvider) {
-        yGetter = ctx.invoke()
+    fun y(ctx: DataContext.() -> ValueProvider) {
+        yGetter = DataContext.let(ctx)
     }
 
 }
 
+@Scoped
 class TimeSeriesContext(
     name: String
 ) : AbstractSeriesContext(name) {
 
     override var xGetter: ValueProvider = TimeProvider()
 
-    fun data(ctx: () -> ValueProvider) {
-        yGetter = ctx.invoke()
+    fun data(ctx: DataContext.() -> ValueProvider) {
+        yGetter = DataContext.let(ctx)
     }
 
 }
+
+@Scoped
+object DataContext {
+
+    fun realRef(name: String) = RealProvider(name)
+    fun constant(value: Number) = ConstantProvider(value.toDouble())
+
+}
+
 
 class RealProvider(
     val name: String,
@@ -187,26 +195,5 @@ class RealProvider(
         return "RealContext(name='$name', mod=$mod)"
     }
 
-
-}
-
-
-fun main() {
-
-    charts {
-
-        xyChart("Title") {
-
-            series("title") {
-
-                x {
-                    realRef("dsad.asd") * 10.0 * realRef("lol")
-                }
-
-            }
-
-        }
-
-    }
 
 }

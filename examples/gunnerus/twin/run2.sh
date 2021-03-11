@@ -2,7 +2,7 @@ vico simulate-ssp \
 -dt "0.05" \
 --stopTime "2000" \
 -log "LogConfig2.xml" \
--chart "ChartConfig2.xml" \
+-chart "chart.main.kts" \
 -s "scenario.main.kts" \
 -p "initialValues" \
 -res "results/data2" \
