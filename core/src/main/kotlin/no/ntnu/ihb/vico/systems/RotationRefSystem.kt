@@ -6,7 +6,6 @@ import no.ntnu.ihb.vico.core.Entity
 import no.ntnu.ihb.vico.core.Family
 import no.ntnu.ihb.vico.core.RealProperty
 import no.ntnu.ihb.vico.core.SimulationSystem
-import no.ntnu.ihb.vico.math.Angle
 import no.ntnu.ihb.vico.math.Euler
 import no.ntnu.ihb.vico.math.setFromEuler
 import org.joml.Quaterniond
@@ -55,15 +54,15 @@ class RotationRefSystem : SimulationSystem(
 
                 ref.xRef?.also {
                     val read = map.getValue(it.name).read(tmpArray).first()
-                    tmpEuler.x = ensureRadians(it.linearTransform?.invoke(read) ?: read, ref.repr)
+                    tmpEuler.x = ref.repr.ensureRadians(it.linearTransform?.invoke(read) ?: read)
                 }
                 ref.yRef?.also {
                     val read = map.getValue(it.name).read(tmpArray).first()
-                    tmpEuler.y = ensureRadians(it.linearTransform?.invoke(read) ?: read, ref.repr)
+                    tmpEuler.y = ref.repr.ensureRadians(it.linearTransform?.invoke(read) ?: read)
                 }
                 ref.zRef?.also {
                     val read = map.getValue(it.name).read(tmpArray).first()
-                    tmpEuler.z = ensureRadians(it.linearTransform?.invoke(read) ?: read, ref.repr)
+                    tmpEuler.z = ref.repr.ensureRadians(it.linearTransform?.invoke(read) ?: read)
                 }
 
             }
@@ -72,10 +71,6 @@ class RotationRefSystem : SimulationSystem(
             entity.get<Transform>().setQuaternion(tmpQuat)
 
         }
-    }
-
-    private fun ensureRadians(value: Double, unit: Angle.Unit): Double {
-        return if (unit == Angle.Unit.RAD) value else Math.toRadians(value)
     }
 
 }
