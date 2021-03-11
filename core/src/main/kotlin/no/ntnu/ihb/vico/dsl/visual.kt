@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.dsl
 
+import no.ntnu.ihb.vico.components.PositionRef
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.math.Angle
 import no.ntnu.ihb.vico.render.ColorConstants
@@ -47,6 +48,7 @@ class TransformContext(
 ) {
 
     internal lateinit var geometry: Geometry
+    internal var positionRef: PositionRef? = null
 
     fun geometry(ctx: GeometryContext.() -> Unit) {
         GeometryContext().apply(ctx).also { g ->
@@ -57,15 +59,38 @@ class TransformContext(
         }
     }
 
-    fun positionRef() {
-
-    }
-
-    fun rotationRef() {
-
+    fun positionRef(ctx: PositionRefContext.() -> Unit) {
+        PositionRefContext().apply(ctx).also { ref ->
+//            positionRef = PositionRef(
+//                ref.xGetter,
+//                ref.yGetter,
+//                ref.zGetter
+//            )
+        }
     }
 
 }
+
+class PositionRefContext {
+
+    internal var xGetter: ValueProvider? = null
+    internal var yGetter: ValueProvider? = null
+    internal var zGetter: ValueProvider? = null
+
+    fun x(ctx: DataContext.() -> ValueProvider) {
+        xGetter = DataContext.let(ctx)
+    }
+
+    fun y(ctx: DataContext.() -> ValueProvider) {
+        yGetter = DataContext.let(ctx)
+    }
+
+    fun z(ctx: DataContext.() -> ValueProvider) {
+        zGetter = DataContext.let(ctx)
+    }
+
+}
+
 
 @Scoped
 class GeometryContext {
