@@ -6,6 +6,8 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.math.Angle
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
+import no.ntnu.ihb.vico.render.Trail
+import no.ntnu.ihb.vico.render.Water
 import no.ntnu.ihb.vico.render.loaders.ObjLoader
 import no.ntnu.ihb.vico.render.loaders.StlLoader
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
@@ -15,7 +17,7 @@ import no.ntnu.ihb.vico.render.mesh.SphereMesh
 import org.joml.Matrix4f
 import java.io.File
 
-fun visual(ctx: VisualConfig.() -> Unit): VisualConfig {
+fun visualConfig(ctx: VisualConfig.() -> Unit): VisualConfig {
     return VisualConfig().apply(ctx)
 }
 
@@ -43,7 +45,12 @@ class VisualConfig {
                     }
                 }
             }
+
             e.add(t.geometry)
+
+            t.trail?.also { e.add(it) }
+            t.water?.also { e.add(it) }
+
         }
     }
 }
@@ -55,6 +62,8 @@ class TransformContext(
     val parent: String? = null
 ) {
 
+    internal var water: Water? = null
+    internal var trail: Trail? = null
     internal lateinit var geometry: Geometry
     internal var positionRef: PositionRef? = null
 
@@ -75,6 +84,18 @@ class TransformContext(
                 ref.zGetter
             )
         }
+    }
+
+    fun trail(color: Int? = null) {
+        this.trail = Trail(color = color)
+    }
+
+    fun water(size: Number) {
+        this.water = Water(size)
+    }
+
+    fun water(width: Number, height: Number) {
+        this.water = Water(width, height)
     }
 
 }
@@ -101,11 +122,12 @@ class PositionRefContext {
 
 
 @Scoped
-class GeometryContext {
+class GeometryContext(
+    val wireframe: Boolean = false,
+    val color: Int = ColorConstants.gray
+) {
 
-    lateinit var shape: Shape
-    var wireframe: Boolean = false
-    var color: Int = ColorConstants.gray
+    internal lateinit var shape: Shape
     internal var offset: Matrix4f? = null
 
     fun offsetPosition(x: Number, y: Number, z: Number) {
@@ -138,7 +160,11 @@ class GeometryContext {
 @Scoped
 class ShapeContext {
 
-    lateinit var shape: Shape
+    internal lateinit var shape: Shape
+
+    fun box(size: Number) {
+        shape = BoxMesh(size.toFloat())
+    }
 
     fun box(x: Number, y: Number, z: Number) {
         shape = BoxMesh(x.toFloat(), y.toFloat(), z.toFloat())
@@ -154,6 +180,7 @@ class ShapeContext {
 
     fun mesh(source: String) {
         val file = File(source)
+        require(file.exists())
         shape = when (val ext = file.extension) {
             "obj" -> ObjLoader().load(file)
             "stl" -> StlLoader().load(file)
