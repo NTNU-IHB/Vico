@@ -4,6 +4,7 @@ import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.components.Controllable
 import no.ntnu.ihb.vico.components.Transform
 import no.ntnu.ihb.vico.dsl.execution
+import no.ntnu.ihb.vico.render.Camera
 import no.ntnu.ihb.vico.render.ColorConstants
 import no.ntnu.ihb.vico.render.Geometry
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
@@ -28,7 +29,7 @@ object MovementControllerSystemTest {
                             localTranslateX(spacing * 0.5)
                         }
                     }
-                    component { Geometry(SphereMesh()).apply { color = ColorConstants.greenyellow } }
+                    component { Geometry(SphereMesh()).apply { color = ColorConstants.green } }
                     component { Controllable() }
                 }
 
@@ -38,7 +39,7 @@ object MovementControllerSystemTest {
                             localTranslateX(-spacing * 0.5)
                         }
                     }
-                    component { Geometry(BoxMesh()).apply { color = ColorConstants.lemonchiffon } }
+                    component { Geometry(BoxMesh()).apply { color = ColorConstants.yellow } }
                 }
 
                 entity("e3") {
@@ -47,6 +48,7 @@ object MovementControllerSystemTest {
                             setLocalTranslation(0.0, 0.0, -10.0)
                         }
                     }
+                    component(Camera())
                 }
 
             }
@@ -57,7 +59,7 @@ object MovementControllerSystemTest {
             }
 
             scenario {
-                invokeAt(2.0) {
+                invokeAt(10.0) {
                     removeComponent<Controllable>("e1")
                     addComponent<Controllable>("e2")
                 }
