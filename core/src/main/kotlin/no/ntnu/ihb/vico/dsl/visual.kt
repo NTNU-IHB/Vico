@@ -50,6 +50,7 @@ class VisualConfig {
 
             t.trail?.also { e.add(it) }
             t.water?.also { e.add(it) }
+            t.positionRef?.also { e.add(it) }
 
         }
     }
