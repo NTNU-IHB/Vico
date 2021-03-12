@@ -1,9 +1,5 @@
 package no.ntnu.ihb.vico.core
 
-class ComponentExport(
-    val type: String,
-    val data: Any? = null
-)
 
 interface Mappable {
 
