@@ -1,3 +1,4 @@
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id 'kotlin'
@@ -16,9 +17,60 @@ dependencies {
     api group: "no.ntnu.ihb.fmi4j", name: "fmi-import", version: fmi4j_version
 
     implementation group: "no.ntnu.ihb.fmuproxy", name: "fmu-proxy-clients", version: "0.2.0"
+    implementation group: 'org.apache.thrift', name: 'libthrift', version: "0.13.0"
 
     testImplementation project(':web')
     testImplementation project(':chart')
     testImplementation project(':test-data')
     
+}
+
+tasks.create('generateThrift') {
+
+    def definitions = project.file("build/thrift")
+    def generatedSrcDir = project.file("src/main/java")
+
+    def os = OperatingSystem.current()
+
+    File thriftCompiler = null
+    if (os.isWindows()) {
+        thriftCompiler = project.file('thrift.exe')
+    } else {
+        thriftCompiler = project.file("thrift")
+    }
+
+    if (!thriftCompiler.exists()) {
+        throw new GradleException("Could not locate thrift-compiler!")
+    } else {
+        println("Found thrift-compiler: $thriftCompiler")
+    }
+
+    doLast {
+
+        generatedSrcDir.mkdirs()
+
+        try {
+
+            exec {
+                workingDir(projectDir)
+                executable thriftCompiler
+                args '-r', '-out', generatedSrcDir, '--gen', 'java:private-members,fullcamel',
+                        "$definitions/defs.thrift"
+            }
+            exec {
+                workingDir(projectDir)
+                executable thriftCompiler
+                args '-r', '-out', generatedSrcDir, '--gen', 'java:private-members,fullcamel',
+                        "$definitions/service.thrift"
+            }
+
+        } catch (Exception ex) {
+            println ex
+        }
+
+    }
+
+    group 'thrift'
+    compileJava.dependsOn generateThrift
+
 }

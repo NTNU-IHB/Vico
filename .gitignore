@@ -54,3 +54,5 @@ local.properties
 /examples/**/plots
 
 log.out
+
+thrift*
