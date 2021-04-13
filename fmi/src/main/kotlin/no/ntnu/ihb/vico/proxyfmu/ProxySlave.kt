@@ -15,7 +15,6 @@ import org.apache.thrift.transport.TSocket
 import java.io.File
 import java.io.FileOutputStream
 import java.net.ServerSocket
-import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -47,16 +46,10 @@ class ProxySlave(
             }
             val proxyFileName = "proxy_server.exe"
             val proxy = ProxySlave::class.java.classLoader.getResourceAsStream(proxyFileName)!!
-            val tmp = Files.createTempDirectory("vico_").toFile().apply {
-                mkdir()
-            }
-            val proxyFile = File(tmp, proxyFileName)
+            val proxyFile = File(proxyFileName)
             FileOutputStream(proxyFile).use { fos ->
                 proxy.copyTo(fos)
             }
-
-            proxyFile.deleteOnExit()
-            tmp.deleteOnExit()
 
             val cmd = arrayOf(
                 proxyFile.absolutePath,
