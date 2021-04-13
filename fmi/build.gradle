@@ -46,8 +46,6 @@ tasks.create('runConan') {
                     }
                 }
 
-
-
             } catch (Exception ex) {
                 println ex
             }
@@ -57,6 +55,6 @@ tasks.create('runConan') {
     }
 
     group 'conan'
-    compileKotlin.dependsOn runConan
+    compileJava.dependsOn runConan
 
 }

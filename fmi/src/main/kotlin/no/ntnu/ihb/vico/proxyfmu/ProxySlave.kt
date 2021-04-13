@@ -1,7 +1,7 @@
 package no.ntnu.ihb.vico.proxyfmu
 
-import com.opensimulationplatform.thrift.FmuService
-import com.opensimulationplatform.thrift.Status
+import com.opensimulationplatform.proxyfmu.thrift.FmuService
+import com.opensimulationplatform.proxyfmu.thrift.Status
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.FmuState
 import no.ntnu.ihb.fmi4j.SlaveInstance
