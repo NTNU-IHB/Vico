@@ -16,10 +16,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.ServerSocket
 import java.nio.file.Files
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 class ProxySlave(
-    private val remoteInfo: RemoteInfo,
+    remoteInfo: RemoteInfo,
+    fmuFile: File,
     override val instanceName: String,
     override val modelDescription: CoSimulationModelDescription
 ) : SlaveInstance {
@@ -32,7 +34,7 @@ class ProxySlave(
         get() = FmiStatus.OK
     override var simulationTime: Double = 0.0
 
-    private var thread: Thread? = null
+    private var process: Process? = null
 
     init {
 
@@ -40,28 +42,41 @@ class ProxySlave(
         val port = if (remoteInfo.isLoopback && remoteInfo.hasPort) {
             remoteInfo.port!!
         } else {
-            ServerSocket(0).localPort.also { availablePort ->
-
-                thread = thread(true) {
-                    val proxyFileName = "proxy_server.exe"
-                    val proxy = ProxySlave::class.java.getResourceAsStream(proxyFileName)
-                    val tmp = Files.createTempDirectory("vico_").toFile().apply {
-                        mkdir()
-                    }
-                    val proxyFile = File(tmp, proxyFileName)
-                    proxy.copyTo(FileOutputStream(proxyFile))
-                    Runtime.getRuntime().exec(
-                        arrayOf(
-                            "proxyFileName",
-                            "--port",
-                            "$availablePort"
-                        )
-                    )
-                    proxyFile.deleteOnExit()
-                    tmp.deleteOnExit()
-                }
-
+            val availablePort = ServerSocket(0).use {
+                it.localPort
             }
+            val proxyFileName = "proxy_server.exe"
+            val proxy = ProxySlave::class.java.classLoader.getResourceAsStream(proxyFileName)!!
+            val tmp = Files.createTempDirectory("vico_").toFile().apply {
+                mkdir()
+            }
+            val proxyFile = File(tmp, proxyFileName)
+            FileOutputStream(proxyFile).use { fos ->
+                proxy.copyTo(fos)
+            }
+
+            proxyFile.deleteOnExit()
+            tmp.deleteOnExit()
+
+            val cmd = arrayOf(
+                proxyFile.absolutePath,
+                "--fmu", fmuFile.absolutePath,
+                "--port", "$availablePort",
+                "--instanceName", instanceName
+            )
+            val pb = ProcessBuilder().apply {
+                command(*cmd)
+            }
+            process = pb.start()
+            thread(true) {
+                val br = process!!.inputStream.bufferedReader()
+                while (true) {
+                    val read = br.readLine()
+                    if (read == null) break else println(read)
+                }
+            }
+
+            availablePort
         }
 
         val transport = TFramedTransport.Factory().getTransport(TSocket(host, port))
@@ -71,10 +86,11 @@ class ProxySlave(
     }
 
     override fun close() {
-        if (protocol.transport.isOpen) {
-            protocol.transport.close()
+        try {
+            client.freeInstance()
+            process?.waitFor(1000, TimeUnit.MILLISECONDS)
+        } catch (ex: Exception) {
         }
-        thread?.join()
     }
 
     override fun deSerializeFMUstate(state: ByteArray): FmuState {
@@ -126,9 +142,18 @@ class ProxySlave(
     }
 
     override fun terminate(): Boolean {
-        val status = client.terminate()
-        isTerminated = true
-        return status == Status.OK_STATUS
+        return if (!isTerminated) {
+            try {
+                val status = client.terminate()
+                isTerminated = true
+                status == Status.OK_STATUS
+            } catch (ex: Exception) {
+                true
+            }
+        } else {
+            true
+        }
+
     }
 
     override fun doStep(stepSize: Double): Boolean {
@@ -212,6 +237,7 @@ class ProxySlave(
         strVr: ValueReferences?,
         strValues: StringArray?
     ): FmiStatus {
+        println("knut")
         TODO("Not yet implemented")
     }
 

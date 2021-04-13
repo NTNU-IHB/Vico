@@ -8,13 +8,13 @@ import java.io.File
 
 class ProxySlaveProvider(
     private val remoteInfo: RemoteInfo,
-    fmuFile: File
+    private val fmuFile: File
 ) : SlaveProvider {
 
     override val modelDescription: CoSimulationModelDescription =
         AbstractFmu.from(fmuFile).asCoSimulationFmu().modelDescription
 
     override fun instantiate(instanceName: String): SlaveInstance {
-        return ProxySlave(remoteInfo, instanceName, modelDescription)
+        return ProxySlave(remoteInfo, fmuFile, instanceName, modelDescription)
     }
 }

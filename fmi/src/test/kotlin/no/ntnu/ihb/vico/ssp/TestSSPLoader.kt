@@ -58,4 +58,21 @@ internal class TestSSPLoader {
         }
     }
 
+    @Test
+    fun testProxy() {
+        val structure = SSPLoader(TestSsp.get("bouncingBall/fmuproxy")).load()
+        Engine(1e-3).use { engine ->
+
+            structure.apply(engine, parameterSet = "initial_values")
+
+            engine.init()
+
+            val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
+
+            Assertions.assertEquals(2.0, bb.readRealDirect("h").value, 1e-6)
+            Assertions.assertEquals(2.0, bb.readReal("h").value, 1e-3)
+
+        }
+    }
+
 }
