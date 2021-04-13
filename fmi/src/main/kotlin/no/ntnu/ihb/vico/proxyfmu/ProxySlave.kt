@@ -84,11 +84,8 @@ class ProxySlave(
     }
 
     override fun close() {
-        try {
-            client.freeInstance()
-            process?.waitFor(1000, TimeUnit.MILLISECONDS)
-        } catch (ex: Exception) {
-        }
+        client.freeInstance()
+        process?.waitFor(1000, TimeUnit.MILLISECONDS)
     }
 
     override fun deSerializeFMUstate(state: ByteArray): FmuState {
@@ -141,13 +138,9 @@ class ProxySlave(
 
     override fun terminate(): Boolean {
         return if (!isTerminated) {
-            try {
-                val status = client.terminate()
-                isTerminated = true
-                status == Status.OK_STATUS
-            } catch (ex: Exception) {
-                true
-            }
+            val status = client.terminate()
+            isTerminated = true
+            status == Status.OK_STATUS
         } else {
             true
         }
