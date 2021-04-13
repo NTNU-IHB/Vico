@@ -9,6 +9,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.apache.thrift.protocol.TBinaryProtocol
 import org.apache.thrift.transport.TFramedTransport
 import org.apache.thrift.transport.TSocket
@@ -44,7 +45,11 @@ class ProxySlave(
             val availablePort = ServerSocket(0).use {
                 it.localPort
             }
-            val proxyFileName = "proxy_server.exe"
+            val proxyFileName = if (OsUtil.isWindows) {
+                "proxy_server.exe"
+            } else {
+                "proxy_server"
+            }
             val proxy = ProxySlave::class.java.classLoader.getResourceAsStream(proxyFileName)!!
             val proxyFile = File(proxyFileName)
             FileOutputStream(proxyFile).use { fos ->
