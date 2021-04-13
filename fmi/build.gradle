@@ -27,42 +27,23 @@ dependencies {
 
 tasks.create('generateThrift') {
 
-    def definitions = project.file("build/thrift")
-    def generatedSrcDir = project.file("src/main/java")
-
     def os = OperatingSystem.current()
-
-    File thriftCompiler = null
-    if (os.isWindows()) {
-        thriftCompiler = project.file('thrift.exe')
-    } else {
-        thriftCompiler = project.file("thrift")
-    }
-
-    if (!thriftCompiler.exists()) {
-        throw new GradleException("Could not locate thrift-compiler!")
-    } else {
-        println("Found thrift-compiler: $thriftCompiler")
-    }
+    def generatedSrcDir = project.file("build/thrift/java")
 
     doLast {
-
-        generatedSrcDir.mkdirs()
 
         try {
 
             exec {
                 workingDir(projectDir)
-                executable thriftCompiler
-                args '-r', '-out', generatedSrcDir, '--gen', 'java:private-members,fullcamel',
-                        "$definitions/defs.thrift"
+                if (os.isWindows()) {
+                    commandLine "cmd", "/c", "fetch_proxyfmu.bat"
+                } else {
+                    commandLine "./fetch_proxyfmu.sh"
+                }
             }
-            exec {
-                workingDir(projectDir)
-                executable thriftCompiler
-                args '-r', '-out', generatedSrcDir, '--gen', 'java:private-members,fullcamel',
-                        "$definitions/service.thrift"
-            }
+
+            sourceSets.main.java.srcDirs += generatedSrcDir
 
         } catch (Exception ex) {
             println ex

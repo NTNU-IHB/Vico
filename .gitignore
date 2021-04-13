@@ -56,3 +56,4 @@ local.properties
 log.out
 
 thrift*
+proxy_server*
