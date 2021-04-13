@@ -46,8 +46,7 @@ tasks.create('runConan') {
                     if (os.isWindows()) {
                         commandLine "cmd", "/c", "fetch_proxyfmu.bat"
                     } else {
-                        Runtime.getRuntime().exec("sh", "-c", "sudo chmod +x fetch_proxyfmu.sh")
-                        commandLine "./fetch_proxyfmu.sh"
+                        commandLine "sh", "-c", "sudo chmod +x fetch_proxyfmu.sh", "&", "./fetch_proxyfmu.sh"
                     }
                 }
 
