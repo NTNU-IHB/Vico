@@ -7,6 +7,7 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -59,6 +60,7 @@ internal class TestSSPLoader {
     }
 
     @Test
+    @Disabled
     fun testProxy() {
         val structure = SSPLoader(TestSsp.get("bouncingBall/fmuproxy")).load()
         Engine(1e-3).use { engine ->
