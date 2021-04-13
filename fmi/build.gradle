@@ -57,6 +57,6 @@ tasks.create('runConan') {
     }
 
     group 'conan'
-    compileJava.dependsOn runConan
+    compileKotlin.dependsOn runConan
 
 }
