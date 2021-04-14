@@ -62,12 +62,9 @@ that you may use Vico as a dependency in your script. kts is bundled with the vi
 
 Simple execute `./gradlew build` in a shell. The CLI will be located under `cli/build/install`. <br>
 
-Conan is required. Install by running `pip3 install conan`.
-
 ### Development
 
 As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is the recommended IDE for development.
-
 
 
 > Want to simplify creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
