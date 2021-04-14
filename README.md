@@ -68,9 +68,6 @@ Conan is required. Install by running `pip3 install conan`.
 
 As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is the recommended IDE for development.
 
-Currently, JDK8 is required.
-
-
 
 
 > Want to simplify creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
