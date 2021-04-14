@@ -9,5 +9,9 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 dependencies {
     implementation project(':core')
 
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.3'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
+
     implementation group: 'org.knowm.xchart', name: 'xchart', version: '3.8.0'
 }

@@ -2,6 +2,7 @@ package no.ntnu.ihb.vico.model
 
 import no.ntnu.ihb.vico.fmi.FmuResolver
 import no.ntnu.ihb.vico.fmuproxy.ProxyResolver
+import no.ntnu.ihb.vico.proxyfmu.ProxyFmuResolver
 import java.io.File
 import java.net.URI
 
@@ -12,7 +13,7 @@ interface ModelResolver {
     companion object {
 
         private val resolvers: MutableSet<ModelResolver> = mutableSetOf(
-            FmuResolver(), ProxyResolver()
+            FmuResolver(), ProxyResolver(), ProxyFmuResolver()
         )
 
         @JvmStatic

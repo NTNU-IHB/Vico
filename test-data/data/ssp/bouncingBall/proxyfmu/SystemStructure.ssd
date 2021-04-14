@@ -11,7 +11,7 @@
 
         <ssd:Elements>
             <ssd:Component name="bouncingBall"
-                           source="fmu-proxy://localhost:9090?file=../../../fmus/1.0/BouncingBall.fmu">
+                           source="proxyfmu://localhost?file=../../../fmus/1.0/BouncingBall.fmu">
 
                 <ssd:Connectors>
                     <ssd:Connector name="h" kind="output">

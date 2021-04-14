@@ -1,0 +1,6 @@
+[requires]
+proxyfmu/0.2.0@osp/testing
+
+[imports]
+bin, proxyfmu.* -> ./../../src/main/resources
+thrift/java, * -> ./../../build/thrift/java

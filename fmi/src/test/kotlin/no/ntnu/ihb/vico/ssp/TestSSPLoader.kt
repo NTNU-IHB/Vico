@@ -7,6 +7,7 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -54,6 +55,24 @@ internal class TestSSPLoader {
             val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
             Assertions.assertEquals(5.0, bb.readRealDirect("h").value, 1e-6)
             Assertions.assertEquals(5.0, bb.readReal("h").value, 1e-6)
+
+        }
+    }
+
+    @Test
+    @Disabled
+    fun testProxyFmu() {
+        val structure = SSPLoader(TestSsp.get("bouncingBall/proxyfmu")).load()
+        Engine(1e-3).use { engine ->
+
+            structure.apply(engine, parameterSet = "initial_values")
+
+            engine.init()
+
+            val bb = engine.getSystem<SlaveSystem>().getSlave("bouncingBall")
+
+            Assertions.assertEquals(2.0, bb.readRealDirect("h").value, 1e-6)
+            Assertions.assertEquals(2.0, bb.readReal("h").value, 1e-3)
 
         }
     }

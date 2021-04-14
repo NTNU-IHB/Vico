@@ -54,3 +54,7 @@ local.properties
 /examples/**/plots
 
 log.out
+
+thrift*
+proxyfmu*
+!/**/resources/proxyfmu*
