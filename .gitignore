@@ -56,4 +56,5 @@ local.properties
 log.out
 
 thrift*
-proxy_server*
+proxyfmu*
+!/**/resources/proxyfmu*

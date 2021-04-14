@@ -61,8 +61,8 @@ internal class TestSSPLoader {
 
     @Test
     @Disabled
-    fun testProxy() {
-        val structure = SSPLoader(TestSsp.get("bouncingBall/fmuproxy")).load()
+    fun testProxyFmu() {
+        val structure = SSPLoader(TestSsp.get("bouncingBall/proxyfmu")).load()
         Engine(1e-3).use { engine ->
 
             structure.apply(engine, parameterSet = "initial_values")

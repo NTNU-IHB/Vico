@@ -29,15 +29,23 @@ dependencies {
     
 }
 
+def generatedThriftSrcDir = project.file("build/thrift/java")
+
+tasks.create("cleanConan") {
+    doLast {
+        generatedThriftSrcDir.deleteDir()
+    }
+    group 'conan'
+}
+
 tasks.create('runConan') {
 
     def os = OperatingSystem.current()
-    def generatedSrcDir = project.file("build/thrift/java")
-    sourceSets.main.java.srcDirs += generatedSrcDir
+    sourceSets.main.java.srcDirs += generatedThriftSrcDir
 
     doLast {
 
-        if (!generatedSrcDir.exists()) {
+        if (!generatedThriftSrcDir.exists()) {
 
             try {
 

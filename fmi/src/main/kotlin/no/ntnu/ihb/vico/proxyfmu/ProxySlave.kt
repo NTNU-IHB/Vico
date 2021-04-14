@@ -46,9 +46,9 @@ class ProxySlave(
                 it.localPort
             }
             val proxyFileName = if (OsUtil.isWindows) {
-                "proxy_server.exe"
+                "proxyfmu.exe"
             } else {
-                "proxy_server"
+                "proxyfmu"
             }
             val proxy = ProxySlave::class.java.classLoader.getResourceAsStream(proxyFileName)!!
             val proxyFile = File(proxyFileName)

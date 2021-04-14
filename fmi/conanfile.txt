@@ -2,5 +2,5 @@
 proxyfmu/0.2.0@osp/testing
 
 [imports]
-bin, proxy_server.* -> ./../../src/main/resources
-thrift, * -> ./../../build/thrift
+bin, proxyfmu.* -> ./../../src/main/resources
+thrift/java, * -> ./../../build/thrift/java
