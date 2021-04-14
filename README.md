@@ -70,5 +70,5 @@ As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) i
 > Want to simplify creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
 > Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j) <br>
 > Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) <br>
-> Want to distrubute your FMUs? Check out [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy) <br>
+> Want to distribute your FMUs? Check out [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy) <br>
 
