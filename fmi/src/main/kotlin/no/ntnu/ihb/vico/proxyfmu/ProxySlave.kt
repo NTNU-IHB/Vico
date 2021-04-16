@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.proxyfmu
 
+import com.opensimulationplatform.proxyfmu.thrift.BootService
 import com.opensimulationplatform.proxyfmu.thrift.FmuService
 import com.opensimulationplatform.proxyfmu.thrift.Status
 import no.ntnu.ihb.fmi4j.FmiStatus
@@ -16,6 +17,7 @@ import org.apache.thrift.transport.TSocket
 import java.io.File
 import java.io.FileOutputStream
 import java.net.ServerSocket
+import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -40,7 +42,15 @@ class ProxySlave(
 
         val host = remoteInfo.host
         val port = if (remoteInfo.isLoopback && remoteInfo.hasPort) {
-            remoteInfo.port!!
+            val transport = TFramedTransport.Factory().getTransport(TSocket(host, remoteInfo.port!!))
+            val protocol = TBinaryProtocol(transport)
+            transport.open()
+            val client = BootService.Client(protocol)
+            val bytes = fmuFile.readBytes()
+            val buf = ByteBuffer.wrap(bytes)
+            client.loadFromBinaryData(fmuFile.nameWithoutExtension, instanceName, buf).also {
+                transport.close()
+            }
         } else {
             val availablePort = ServerSocket(0).use {
                 it.localPort
