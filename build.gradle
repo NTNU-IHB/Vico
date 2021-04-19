@@ -1,6 +1,5 @@
 plugins {
     id 'base'
-    id "com.jfrog.bintray" version "1.8.4" apply(false)
     id 'org.jetbrains.kotlin.jvm' version '1.4.30' apply(false)
 }
 
@@ -18,14 +17,13 @@ subprojects { sub ->
 
     apply plugin: 'java'
 
-    sub.group = 'no.ntnu.ihb.vico'
+    sub.group = 'info.laht.vico'
     sub.version = rootProject.version
 
     repositories {
         jcenter()
         mavenCentral()
-        maven { url "https://dl.bintray.com/laht/mvn" }
-        maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+        maven { url "https://repo.repsy.io/mvn/laht/threekt" }
     }
 
     dependencies {
@@ -76,7 +74,8 @@ tasks.create('cleanTemp') {
                         name.startsWith("libcosim") ||
                         name.startsWith("vesselFmu") ||
                         name.startsWith("vico") ||
-                        name.startsWith("fmu_proxy")
+                        name.startsWith("fmu_proxy") ||
+                        name.startsWith("proxy_fmu")
             }
         }).each {
             it.deleteDir()

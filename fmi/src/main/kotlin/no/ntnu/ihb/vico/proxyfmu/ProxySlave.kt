@@ -34,7 +34,6 @@ class ProxySlave(
     override var isTerminated: Boolean = false
     override val lastStatus: FmiStatus
         get() = FmiStatus.OK
-    override var simulationTime: Double = 0.0
 
     private var process: Process? = null
 
@@ -141,7 +140,6 @@ class ProxySlave(
     }
 
     override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
-        simulationTime = start
         val status = client.setupExperiment(start, stop, tolerance)
         return status == Status.OK_STATUS
     }
@@ -154,26 +152,11 @@ class ProxySlave(
         } else {
             true
         }
-
     }
 
-    override fun doStep(stepSize: Double): Boolean {
-        val status = client.step(simulationTime, stepSize)
-        simulationTime += stepSize
+    override fun doStep(currentTime: Double, stepSize: Double): Boolean {
+        val status = client.step(currentTime, stepSize)
         return status == Status.OK_STATUS
-    }
-
-    override fun readAll(
-        intVr: ValueReferences?,
-        intRefs: IntArray?,
-        realVr: ValueReferences?,
-        realRefs: DoubleArray?,
-        boolVr: ValueReferences?,
-        boolRefs: BooleanArray?,
-        strVr: ValueReferences?,
-        strRefs: StringArray?
-    ): FmiStatus {
-        TODO("Not yet implemented")
     }
 
     override fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus {
@@ -226,20 +209,6 @@ class ProxySlave(
         } else {
             FmiStatus.Error
         }
-    }
-
-    override fun writeAll(
-        intVr: ValueReferences?,
-        intValues: IntArray?,
-        realVr: ValueReferences?,
-        realValues: DoubleArray?,
-        boolVr: ValueReferences?,
-        boolValues: BooleanArray?,
-        strVr: ValueReferences?,
-        strValues: StringArray?
-    ): FmiStatus {
-        println("knut")
-        TODO("Not yet implemented")
     }
 
     override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {

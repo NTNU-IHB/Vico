@@ -1,6 +1,5 @@
 #!vico eval
 
-@file:Repository("https://dl.bintray.com/laht/mvn")
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
 
 @file:DependsOn("no.ntnu.ihb.vico:core:0.4.0")

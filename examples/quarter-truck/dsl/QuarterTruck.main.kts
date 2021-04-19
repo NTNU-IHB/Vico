@@ -1,14 +1,13 @@
 #!vico eval
 
 @file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-@file:Repository("https://dl.bintray.com/jmonkeyengine/org.jmonkeyengine")
 
-@file:DependsOn("no.ntnu.ihb.vico:core:0.3.3")
-@file:DependsOn("no.ntnu.ihb.vico:fmi:0.3.3")
-@file:DependsOn("no.ntnu.ihb.vico:chart:0.3.3")
-@file:DependsOn("no.ntnu.ihb.vico:jme-render:0.3.3")
+@file:DependsOn("no.ntnu.ihb.vico:core:0.4.0")
+@file:DependsOn("no.ntnu.ihb.vico:fmi:0.4.0")
+@file:DependsOn("no.ntnu.ihb.vico:chart:0.4.0")
+@file:DependsOn("no.ntnu.ihb.vico:threekt-render:0.4.0")
 
-import info.laht.krender.jme.JmeRenderEngine
+import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.SlaveComponent
 import no.ntnu.ihb.vico.SlaveSystem
 import no.ntnu.ihb.vico.chart.TimeSeriesDrawer
@@ -30,9 +29,9 @@ import java.io.File
 execution {
 
     baseStepSize = 1.0 / 100
-    renderer(JmeRenderEngine().apply {
-        setCameraTransform(Matrix4f().setTranslation(0f, 2f, -10f))
-    })
+//    renderer(JmeRenderEngine().apply {
+//        setCameraTransform(Matrix4f().setTranslation(0f, 2f, -10f))
+//    })
 
     entities {
 
@@ -105,7 +104,9 @@ execution {
                 .build()
         }
         system {
-            GeometryRenderer()
+            ThreektRenderer().apply {
+                setCameraTransform(Matrix4f().setTranslation(0f, 2f, -10f))
+            }
         }
         system {
             PositionRefSystem()

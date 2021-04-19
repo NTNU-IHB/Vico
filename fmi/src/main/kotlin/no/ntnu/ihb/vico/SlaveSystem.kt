@@ -136,8 +136,8 @@ class FmiSlave(
         }
     }
 
-    override fun doStep(stepSize: Double): Boolean {
-        return slave.doStep(stepSize).also { status ->
+    override fun doStep(currentTime: Double, stepSize: Double): Boolean {
+        return slave.doStep(currentTime, stepSize).also { status ->
             if (status) {
                 component.stepCount++
             }
