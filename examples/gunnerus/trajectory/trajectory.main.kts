@@ -1,5 +1,4 @@
-@file:Repository("https://jitpack.io")
-@file:DependsOn("com.github.NTNU-IHB.sspgen:dsl:v0.5.1")
+@file:DependsOn("info.laht.sspgen:dsl:0.5.1")
 
 import no.ntnu.ihb.sspgen.dsl.ssp
 import kotlin.math.PI

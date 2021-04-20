@@ -1,5 +1,4 @@
-@file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-@file:DependsOn("no.ntnu.ihb.vico:core:0.4.0")
+@file:DependsOn("info.laht.vico:core:0.4.1")
 
 import no.ntnu.ihb.vico.dsl.charts
 

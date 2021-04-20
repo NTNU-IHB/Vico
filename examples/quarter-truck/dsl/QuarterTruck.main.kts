@@ -1,11 +1,9 @@
 #!vico eval
 
-@file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-
-@file:DependsOn("no.ntnu.ihb.vico:core:0.4.0")
-@file:DependsOn("no.ntnu.ihb.vico:fmi:0.4.0")
-@file:DependsOn("no.ntnu.ihb.vico:chart:0.4.0")
-@file:DependsOn("no.ntnu.ihb.vico:threekt-render:0.4.0")
+@file:DependsOn("info.laht.vico:core:0.4.1")
+@file:DependsOn("info.laht.vico:fmi:0.4.1")
+@file:DependsOn("info.laht.vico:chart:0.4.1")
+@file:DependsOn("info.laht.vico:threekt-render:0.4.1")
 
 import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.SlaveComponent
@@ -18,7 +16,6 @@ import no.ntnu.ihb.vico.log.LogConfigBuilder
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import no.ntnu.ihb.vico.render.Geometry
-import no.ntnu.ihb.vico.render.GeometryRenderer
 import no.ntnu.ihb.vico.render.mesh.BoxMesh
 import no.ntnu.ihb.vico.render.mesh.PlaneMesh
 import no.ntnu.ihb.vico.structure.RealParameter
@@ -29,9 +26,6 @@ import java.io.File
 execution {
 
     baseStepSize = 1.0 / 100
-//    renderer(JmeRenderEngine().apply {
-//        setCameraTransform(Matrix4f().setTranslation(0f, 2f, -10f))
-//    })
 
     entities {
 

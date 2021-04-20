@@ -1,7 +1,5 @@
-@file:Repository("https://jitpack.io")
-@file:DependsOn("com.github.NTNU-IHB.sspgen:dsl:v0.5.1")
-@file:DependsOn("com.github.NTNU-IHB.fmi4j:fmi-import:v0.37.0")
-
+@file:DependsOn("info.laht.sspgen:dsl:0.5.1")
+@file:DependsOn("info.laht.fmi4j:fmi-import:0.37.0")
 import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.fmi4j.writeString
