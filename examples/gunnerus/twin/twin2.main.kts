@@ -1,6 +1,5 @@
-@file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-@file:DependsOn("no.ntnu.ihb.sspgen:dsl:0.5.0")
-@file:DependsOn("no.ntnu.ihb.fmi4j:fmi-import:0.36.7")
+@file:DependsOn("info.laht.sspgen:dsl:0.5.1")
+@file:DependsOn("info.laht.fmi4j:fmi-import:0.37.0")
 
 import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import no.ntnu.ihb.fmi4j.readReal

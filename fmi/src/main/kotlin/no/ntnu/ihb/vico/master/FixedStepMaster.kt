@@ -49,7 +49,7 @@ class FixedStepMaster @JvmOverloads constructor(
             val decimationFactor = decimationMap[slave] ?: 1L
             if (stepNumber % decimationFactor == 0L) {
                 slave.transferCachedSets()
-                slave.doStep(stepSize * decimationFactor)
+                slave.doStep(currentTime, stepSize * decimationFactor)
                 slave.retrieveCachedGets()
                 slaveStepCallback.invoke(tNext to slave.component)
             }

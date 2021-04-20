@@ -1,10 +1,7 @@
 #!vico eval
 
-@file:Repository("https://dl.bintray.com/laht/mvn")
-@file:Repository("https://dl.bintray.com/ntnu-ihb/mvn")
-
-@file:DependsOn("no.ntnu.ihb.vico:core:0.4.0")
-@file:DependsOn("no.ntnu.ihb.vico:threekt-render:0.4.0")
+@file:DependsOn("info.laht.vico:core:0.4.1")
+@file:DependsOn("info.laht.vico:threekt-render:0.4.1")
 
 @file:CompilerOptions("-jvm-target", "1.8")
 

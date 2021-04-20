@@ -5,7 +5,8 @@ import info.laht.threekt.WindowClosingCallback
 import info.laht.threekt.cameras.PerspectiveCamera
 import info.laht.threekt.controls.OrbitControls
 import info.laht.threekt.core.Clock
-import info.laht.threekt.input.KeyAction
+import info.laht.threekt.input.KeyAdapter
+import info.laht.threekt.input.KeyEvent
 import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.math.Color
 import info.laht.threekt.math.Matrix4
@@ -350,11 +351,11 @@ class ThreektRenderer : ObserverSystem(Family.all) {
                     renderer.setSize(width, height)
                 }
 
-                window.addKeyListener {
-                    if (it.action == KeyAction.PRESS) {
-//                        keyListener?.onKeyPressed(it.keyCode)
+                window.addKeyListener (object: KeyAdapter(){
+                    override fun onKeyPressed(event: KeyEvent) {
+
                     }
-                }
+                })
 
                 val clock = Clock()
                 window.animate {

@@ -3,8 +3,7 @@ plugins {
     id 'java-library'
 }
 
-apply from: rootProject.file("gradle/mavenpublish.gradle")
-apply from: rootProject.file("gradle/bintraypublish.gradle")
+apply from: rootProject.file("gradle/publisher.gradle")
 
 dependencies {
     api "org.joml:joml:1.9.25"
@@ -28,14 +27,14 @@ sourceSets.main.kotlin.srcDirs += generatedSourceDir.absolutePath
 
 task injectVersion() {
     doLast {
-        def packageFolder = project.group.replace(".", "/")
+        def packageFolder = "no/ntnu/ihb/vico"
         def versionFile = new File(generatedSourceDir, "$packageFolder/version.kt")
         if (!versionFile.parentFile.exists()) {
             versionFile.parentFile.mkdirs()
             versionFile.createNewFile()
         }
         versionFile.write(
-                "package ${project.group}\n\n" +
+                "package no.ntnu.ihb.vico\n\n" +
                 "object Vico {\n\n" +
                 "   @JvmField\n" +
                 "   val version = \"${project.version}\"\n\n" +
