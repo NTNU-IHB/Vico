@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/publisher.gradle")
 
 dependencies {
     implementation project(":core")

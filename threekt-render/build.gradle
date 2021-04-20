@@ -3,12 +3,12 @@ plugins {
     id 'kotlin'
 }
 
-apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/publisher.gradle")
 
 dependencies {
 
     api project(':core')
 
-    implementation 'info.laht.threekt:core-jvm:r1-ALPHA-26'
+    implementation 'info.laht.threekt:core:r1-ALPHA-26'
 
 }

@@ -23,7 +23,6 @@ subprojects { sub ->
     repositories {
         jcenter()
         mavenCentral()
-        maven { url "https://repo.repsy.io/mvn/laht/threekt" }
     }
 
     dependencies {
