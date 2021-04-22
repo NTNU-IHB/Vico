@@ -34,7 +34,7 @@ execution {
             component(Transform())
             component(Geometry(PlaneMesh(5f, 2f), Matrix4f().rotateX(-Math.PI.toFloat() / 2f)))
             component {
-                PositionRef(yRef = "zGround")
+                PositionRef(yRef = "ground.zGround")
             }
         }
 
@@ -53,7 +53,7 @@ execution {
             })
 
             component {
-                PositionRef(yRef = "zChassis")
+                PositionRef(yRef = "chassis.zChassis")
             }
         }
 
@@ -72,7 +72,7 @@ execution {
             })
 
             component {
-                PositionRef(yRef = "zWheel")
+                PositionRef(yRef = "wheel.zWheel")
             }
         }
 
