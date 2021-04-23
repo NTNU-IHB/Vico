@@ -66,6 +66,7 @@ open class SlaveComponent @JvmOverloads constructor(
 
         val ints = (modelVariables.integers + modelVariables.enumerations).map { v ->
             IntScalarProperty(
+                this,
                 v.name,
                 getter = {
                     variablesMarkedForReading.add(v.name)
@@ -77,6 +78,7 @@ open class SlaveComponent @JvmOverloads constructor(
         }
         val reals = modelVariables.reals.map { v ->
             RealScalarProperty(
+                this,
                 v.name,
                 getter = {
                     variablesMarkedForReading.add(v.name)
@@ -88,6 +90,7 @@ open class SlaveComponent @JvmOverloads constructor(
         }
         val strings = modelVariables.strings.map { v ->
             StrScalarProperty(
+                this,
                 v.name,
                 getter = {
                     variablesMarkedForReading.add(v.name)
@@ -99,6 +102,7 @@ open class SlaveComponent @JvmOverloads constructor(
         }
         val booleans = modelVariables.booleans.map { v ->
             BoolScalarProperty(
+                this,
                 v.name,
                 getter = {
                     variablesMarkedForReading.add(v.name)

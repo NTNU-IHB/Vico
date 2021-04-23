@@ -21,7 +21,7 @@ private data class SineMover(
         private set
 
     init {
-        properties.registerProperties(RealLambdaProperty("value", 1,
+        properties.registerProperties(RealLambdaProperty(this, "value", 1,
             getter = { value }
         ))
     }

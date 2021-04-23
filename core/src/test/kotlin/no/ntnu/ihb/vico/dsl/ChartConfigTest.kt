@@ -15,7 +15,7 @@ private class DataComponent(
 
     init {
         properties.registerProperties(
-            RealLambdaProperty("data", 1, { it[0] = data })
+            RealLambdaProperty(this, "data", 1, { it[0] = data })
         )
     }
 

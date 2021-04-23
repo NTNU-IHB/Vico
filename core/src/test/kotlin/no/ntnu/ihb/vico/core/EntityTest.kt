@@ -11,7 +11,7 @@ internal class EntityTest {
 
         init {
             properties.registerProperties(
-                StrScalarProperty(VALUE_PROP_NAME,
+                StrScalarProperty(this, VALUE_PROP_NAME,
                     getter = { value })
             )
         }

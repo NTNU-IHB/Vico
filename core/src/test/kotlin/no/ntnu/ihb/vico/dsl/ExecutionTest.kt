@@ -78,9 +78,9 @@ class ExecutionTest {
 
             connections {
 
-                "chassis.slaveComponent.p.e" to "wheel.slaveComponent.p1.e"
-                "wheel.slaveComponent.p1.f" to "chassis.slaveComponent.p.f"
-                "wheel.slaveComponent.p.e" to "ground.slaveComponent.p.e"
+                "chassis.p.e" to "wheel.p1.e"
+                "wheel.p1.f" to "chassis.p.f"
+                "wheel.p.e" to "ground.p.e"
                 "ground.slaveComponent.p.f" to "wheel.slaveComponent.p.f"
 
             }

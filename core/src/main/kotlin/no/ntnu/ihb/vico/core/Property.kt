@@ -24,45 +24,8 @@ enum class PropertyType {
     INT, REAL, STRING, BOOLEAN
 }
 
-open class UnboundProperty(
-    val entityName: String,
-    val componentName: String,
-    val propertyName: String
-) {
-
-    fun bounded(engine: Engine) = BoundProperty(engine, entityName, componentName, propertyName)
-
-    companion object {
-
-        fun parse(identifier: String): UnboundProperty {
-            val split = identifier.split(".")
-            require(split.size >= 3) { "Illegal identifier format: $identifier" }
-            val entityName = split[0]
-            val componentName = split[1]
-            val propertyName = split.drop(2).joinToString(".")
-            return UnboundProperty(
-                entityName, componentName, propertyName
-            )
-        }
-
-    }
-
-}
-
-class BoundProperty(
-    val engine: Engine,
-    entityName: String,
-    componentName: String,
-    propertyName: String
-) : UnboundProperty(entityName, componentName, propertyName) {
-
-    val entity by lazy { engine.getEntityByName(entityName) }
-    val component by lazy { entity.get(componentName) }
-    val property by lazy { component.getProperty(propertyName) }
-
-}
-
 sealed class Property(
+    val component: Component,
     val name: String,
     val size: Int,
     causality: Causality? = null
@@ -84,28 +47,32 @@ sealed class Property(
 
 }
 
-abstract class IntProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+abstract class IntProperty(component: Component, name: String, size: Int, causality: Causality? = null) :
+    Property(component, name, size, causality) {
     open fun read(): Int = read(IntArray(size)).first()
     open fun write(value: Int) = write(intArrayOf(value))
     abstract fun read(values: IntArray): IntArray
     abstract fun write(values: IntArray)
 }
 
-abstract class RealProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+abstract class RealProperty(component: Component, name: String, size: Int, causality: Causality? = null) :
+    Property(component, name, size, causality) {
     open fun read(): Double = read(DoubleArray(size)).first()
     open fun write(value: Double) = write(doubleArrayOf(value))
     abstract fun read(values: DoubleArray): DoubleArray
     abstract fun write(values: DoubleArray)
 }
 
-abstract class StrProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+abstract class StrProperty(component: Component, name: String, size: Int, causality: Causality? = null) :
+    Property(component, name, size, causality) {
     open fun read(): String = read(StringArray(size)).first()
     open fun write(value: String) = write(stringArrayOf(value))
     abstract fun read(values: StringArray): StringArray
     abstract fun write(values: StringArray)
 }
 
-abstract class BoolProperty(name: String, size: Int, causality: Causality? = null) : Property(name, size, causality) {
+abstract class BoolProperty(component: Component, name: String, size: Int, causality: Causality? = null) :
+    Property(component, name, size, causality) {
     open fun read(): Boolean = read(BooleanArray(size)).first()
     open fun write(value: Boolean) = write(booleanArrayOf(value))
     abstract fun read(values: BooleanArray): BooleanArray
@@ -113,11 +80,12 @@ abstract class BoolProperty(name: String, size: Int, causality: Causality? = nul
 }
 
 class IntScalarProperty(
+    component: Component,
     name: String,
     private val getter: Getter<Int>,
     private val setter: Setter<Int>? = null,
     causality: Causality? = null
-) : IntProperty(name, 1, causality) {
+) : IntProperty(component, name, 1, causality) {
 
     override fun read(): Int {
         return getter.get()
@@ -140,12 +108,13 @@ class IntScalarProperty(
 }
 
 class IntLambdaProperty(
+    component: Component,
     name: String,
     size: Int,
     private val getter: ReferenceProvider<IntArray>,
     private val setter: ReferenceProvider<IntArray>? = null,
     causality: Causality? = null
-) : IntProperty(name, size, causality) {
+) : IntProperty(component, name, size, causality) {
 
     override fun read(values: IntArray): IntArray {
         require(size == values.size)
@@ -161,11 +130,12 @@ class IntLambdaProperty(
 }
 
 class RealScalarProperty(
+    component: Component,
     name: String,
     private val getter: Getter<Double>,
     private val setter: Setter<Double>? = null,
     causality: Causality? = null
-) : RealProperty(name, 1, causality) {
+) : RealProperty(component, name, 1, causality) {
 
     override fun read(): Double {
         return getter.get()
@@ -188,12 +158,13 @@ class RealScalarProperty(
 }
 
 class RealLambdaProperty(
+    component: Component,
     name: String,
     size: Int,
     private val getter: ReferenceProvider<DoubleArray>,
     private val setter: ReferenceProvider<DoubleArray>? = null,
     causality: Causality? = null
-) : RealProperty(name, size, causality) {
+) : RealProperty(component, name, size, causality) {
 
     override fun read(values: DoubleArray): DoubleArray {
         require(size == values.size)
@@ -210,12 +181,13 @@ class RealLambdaProperty(
 }
 
 class StrLambdaProperty(
+    component: Component,
     name: String,
     size: Int,
     private val getter: ReferenceProvider<StringArray>,
     private val setter: ReferenceProvider<StringArray>? = null,
     causality: Causality? = null
-) : StrProperty(name, size, causality) {
+) : StrProperty(component, name, size, causality) {
 
     override fun read(values: StringArray): StringArray {
         require(size == values.size)
@@ -232,11 +204,12 @@ class StrLambdaProperty(
 }
 
 class StrScalarProperty(
+    component: Component,
     name: String,
     private val getter: Getter<String>,
     private val setter: Setter<String>? = null,
     causality: Causality? = null
-) : StrProperty(name, 1, causality) {
+) : StrProperty(component, name, 1, causality) {
 
     override fun read(): String {
         return getter.get()
@@ -259,12 +232,13 @@ class StrScalarProperty(
 }
 
 class BoolLambdaProperty(
+    component: Component,
     name: String,
     size: Int,
     private val getter: ReferenceProvider<BooleanArray>,
     private val setter: ReferenceProvider<BooleanArray>? = null,
     causality: Causality? = null
-) : BoolProperty(name, size, causality) {
+) : BoolProperty(component, name, size, causality) {
 
     override fun read(values: BooleanArray): BooleanArray {
         require(size == values.size)
@@ -281,11 +255,12 @@ class BoolLambdaProperty(
 }
 
 class BoolScalarProperty(
+    component: Component,
     name: String,
     private val getter: Getter<Boolean>,
     private val setter: Setter<Boolean>? = null,
     causality: Causality? = null
-) : BoolProperty(name, 1, causality) {
+) : BoolProperty(component, name, 1, causality) {
 
     override fun read(): Boolean {
         return getter.get()

@@ -14,7 +14,7 @@ internal class ScenarioTest {
         var value = 2.0
 
         init {
-            properties.registerProperties(RealLambdaProperty("value", 1,
+            properties.registerProperties(RealLambdaProperty(this, "value", 1,
                 getter = { it[0] = value },
                 setter = { value = it.first() }
             ))
@@ -27,7 +27,7 @@ internal class ScenarioTest {
         var value = 3.0
 
         init {
-            properties.registerProperties(RealLambdaProperty("value", 1,
+            properties.registerProperties(RealLambdaProperty(this, "value", 1,
                 getter = { it[0] = value },
                 setter = { value = it.first() }
             ))

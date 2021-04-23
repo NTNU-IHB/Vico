@@ -86,13 +86,15 @@ class ConnectionsContext(
     private val engine: Engine
 ) {
 
+    private val pl = PropertyLocator(engine)
+
     infix fun String.to(other: String) {
 
-        val p1 = UnboundProperty.parse(this).bounded(engine)
-        val p2 = UnboundProperty.parse(other).bounded(engine)
+        val p1 = pl.getProperty(this)
+        val p2 = pl.getProperty(other)
 
-        val c1 = Connector.inferConnectorType(p1.component, p1.property)
-        val c2 = Connector.inferConnectorType(p2.component, p2.property)
+        val c1 = Connector.inferConnectorType(p1.component, p1)
+        val c2 = Connector.inferConnectorType(p2.component, p2)
 
         require(c1.javaClass == c2.javaClass)
         { "Incompatible connectors: ${c1.javaClass} != ${c2.javaClass}" }
