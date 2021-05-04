@@ -40,7 +40,7 @@ class ProxySlave(
     init {
 
         val host = remoteInfo.host
-        val port = if (remoteInfo.isLoopback && remoteInfo.hasPort) {
+        val port = if (remoteInfo.hasPort) {
             val transport = TFramedTransport.Factory().getTransport(TSocket(host, remoteInfo.port!!))
             val protocol = TBinaryProtocol(transport)
             transport.open()
@@ -59,10 +59,14 @@ class ProxySlave(
             } else {
                 "proxyfmu"
             }
-            val proxy = ProxySlave::class.java.classLoader.getResourceAsStream(proxyFileName)!!
             val proxyFile = File(proxyFileName)
-            FileOutputStream(proxyFile).use { fos ->
-                proxy.copyTo(fos)
+            if (!proxyFile.exists()) {
+                val proxy = ProxySlave::class.java.classLoader.getResourceAsStream(proxyFileName)!!
+                FileOutputStream(proxyFile).use { fos ->
+                    proxy.use {
+                        it.copyTo(fos)
+                    }
+                }
             }
 
             val cmd = arrayOf(
@@ -86,19 +90,18 @@ class ProxySlave(
             availablePort
         }
 
+        Thread.sleep(1000)
+
         val transport = TFramedTransport.Factory().getTransport(TSocket(host, port))
         protocol = TBinaryProtocol(transport)
         transport.open()
         client = FmuService.Client(protocol)
+        client.instantiate()
     }
 
-    override fun close() {
-        client.freeInstance()
-        process?.waitFor(1000, TimeUnit.MILLISECONDS)
-    }
-
-    override fun deSerializeFMUstate(state: ByteArray): FmuState {
-        TODO("Not yet implemented")
+    override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
+        val status = client.setupExperiment(start, stop, tolerance)
+        return status == Status.OK_STATUS
     }
 
     override fun enterInitializationMode(): Boolean {
@@ -108,39 +111,6 @@ class ProxySlave(
 
     override fun exitInitializationMode(): Boolean {
         val status = client.exitInitializationMode()
-        return status == Status.OK_STATUS
-    }
-
-    override fun freeFMUstate(state: FmuState): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun getDirectionalDerivative(
-        vUnknownRef: ValueReferences,
-        vKnownRef: ValueReferences,
-        dvKnown: RealArray
-    ): RealArray {
-        TODO("Not yet implemented")
-    }
-
-    override fun getFMUstate(): FmuState {
-        TODO("Not yet implemented")
-    }
-
-    override fun reset(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun serializeFMUstate(state: FmuState): ByteArray {
-        TODO("Not yet implemented")
-    }
-
-    override fun setFMUstate(state: FmuState): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
-        val status = client.setupExperiment(start, stop, tolerance)
         return status == Status.OK_STATUS
     }
 
@@ -250,4 +220,42 @@ class ProxySlave(
             FmiStatus.Error
         }
     }
+
+    override fun deSerializeFMUstate(state: ByteArray): FmuState {
+        TODO("Not yet implemented")
+    }
+
+    override fun freeFMUstate(state: FmuState): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDirectionalDerivative(
+        vUnknownRef: ValueReferences,
+        vKnownRef: ValueReferences,
+        dvKnown: RealArray
+    ): RealArray {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFMUstate(): FmuState {
+        TODO("Not yet implemented")
+    }
+
+    override fun reset(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun serializeFMUstate(state: FmuState): ByteArray {
+        TODO("Not yet implemented")
+    }
+
+    override fun setFMUstate(state: FmuState): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun close() {
+        client.freeInstance()
+        process?.waitFor(1000, TimeUnit.MILLISECONDS)
+    }
+
 }

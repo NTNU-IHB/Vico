@@ -9,7 +9,7 @@ ssp("gunnerus-trajectory") {
 
     resources {
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/VesselFmu2.fmu")
-        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth-proxy.fmu")
+        url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PMAzimuth.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/PowerPlant.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/ThrusterDrive2.fmu")
         url("https://github.com/gunnerus-case/gunnerus-fmus-bin/raw/master/TrajectoryController.fmu")
@@ -57,7 +57,7 @@ ssp("gunnerus-trajectory") {
                     }
                 }
 
-                component("azimuth0", "resources/PMAzimuth-proxy.fmu") {
+                component("azimuth0", "proxyfmu://localhost?file=resources/PMAzimuth.fmu") {
                     connectors {
                         real("input_act_revs", input)
                         real("input_act_angle", input)
@@ -90,7 +90,7 @@ ssp("gunnerus-trajectory") {
                     }
                 }
 
-                component("azimuth1", "resources/PMAzimuth-proxy.fmu") {
+                component("azimuth1", "proxyfmu://localhost?file=resources/PMAzimuth.fmu") {
                     connectors {
                         copyFrom("azimuth0")
                     }
