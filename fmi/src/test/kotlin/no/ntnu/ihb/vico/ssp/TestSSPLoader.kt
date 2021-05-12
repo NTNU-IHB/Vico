@@ -7,14 +7,16 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import no.ntnu.ihb.vico.master.FixedStepMaster
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 
 internal class TestSSPLoader {
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testControlledDriveTrain() {
 
         val resultDir = File("build/results/ControlledDriveTrain").also {
