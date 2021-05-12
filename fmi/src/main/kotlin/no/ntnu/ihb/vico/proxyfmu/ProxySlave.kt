@@ -18,6 +18,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.ServerSocket
 import java.nio.ByteBuffer
+import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -51,9 +52,7 @@ class ProxySlave(
                 transport.close()
             }
         } else {
-            val availablePort = ServerSocket(0).use {
-                it.localPort
-            }
+
             val proxyFileName = if (OsUtil.isWindows) {
                 "proxyfmu.exe"
             } else {
@@ -72,25 +71,30 @@ class ProxySlave(
             val cmd = arrayOf(
                 proxyFile.absolutePath,
                 "--fmu", fmuFile.absolutePath,
-                "--port", "$availablePort",
                 "--instanceName", instanceName
             )
             val pb = ProcessBuilder().apply {
                 command(*cmd)
             }
             process = pb.start()
+
+            val p = ArrayBlockingQueue<Int>(1)
             thread(true) {
                 val br = process!!.inputStream.bufferedReader()
                 while (true) {
-                    val read = br.readLine()
-                    if (read == null) break else println(read)
+                    val read = br.readLine() ?: break
+
+                    if (read.startsWith("[proxyfmu] port=")) {
+                        p.add(read.substring(16).toInt())
+                    } else {
+                        println(read)
+                    }
+
                 }
             }
 
-            availablePort
+            p.take()
         }
-
-        Thread.sleep(1000)
 
         val transport = TFramedTransport.Factory().getTransport(TSocket(host, port))
         protocol = TBinaryProtocol(transport)
