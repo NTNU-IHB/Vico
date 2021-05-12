@@ -9,6 +9,8 @@ import no.ntnu.ihb.vico.ssp.SSPLoader
 import no.ntnu.ihb.vico.structure.RealParameter
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 internal class SlaveSystemTest {
@@ -47,6 +49,7 @@ internal class SlaveSystemTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testSSP() {
 
         Engine(1e-3).use { engine ->

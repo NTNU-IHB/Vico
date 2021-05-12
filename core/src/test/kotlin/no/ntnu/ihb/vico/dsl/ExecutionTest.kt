@@ -9,11 +9,14 @@ import no.ntnu.ihb.vico.structure.RealParameter
 import no.ntnu.ihb.vico.systems.PositionRefSystem
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 class ExecutionTest {
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testQuarterTruck() {
 
         val fmuDir = File("../examples/quarter-truck/fmus")
