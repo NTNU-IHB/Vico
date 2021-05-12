@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-18.04, windows-latest]
         jvm-version: [ 8, 11 ]
 
     steps:
