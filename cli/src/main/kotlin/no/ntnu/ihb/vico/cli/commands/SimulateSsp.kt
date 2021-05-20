@@ -1,5 +1,6 @@
 package no.ntnu.ihb.vico.cli.commands
 
+import info.laht.krender.threekt.ThreektRenderer
 import info.laht.kts.KtsScriptRunner
 import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.chart.ChartLoader
@@ -71,6 +72,12 @@ class SimulateSsp : Runnable {
         description = ["Start simulation paused."]
     )
     private var paused = false
+
+    @CommandLine.Option(
+        names = ["--use-legacy-visuals"],
+        description = ["Display legacy 3D graphics on dekstop."]
+    )
+    private var useLegacyVisuals = false
 
     @CommandLine.Option(
         names = ["-chart", "--chartConfig"],
@@ -208,6 +215,9 @@ class SimulateSsp : Runnable {
                                 config.applyConfiguration(engine)
                             }
                         }
+                    }
+                    if (useLegacyVisuals) {
+                        engine.addSystem(ThreektRenderer())
                     }
                 }
 

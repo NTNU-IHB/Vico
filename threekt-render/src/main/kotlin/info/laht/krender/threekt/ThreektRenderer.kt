@@ -353,7 +353,15 @@ class ThreektRenderer : ObserverSystem(Family.all) {
 
                 window.addKeyListener (object: KeyAdapter(){
                     override fun onKeyPressed(event: KeyEvent) {
-
+                        val key = when (event.keyCode) {
+                            65 -> "a"
+                            69 -> "e"
+                            68 -> "d"
+                            87 -> "w"
+                            83 -> "s"
+                            else -> null
+                        }
+                        key?.also { engine.registerKeyPress(it) }
                     }
                 })
 
