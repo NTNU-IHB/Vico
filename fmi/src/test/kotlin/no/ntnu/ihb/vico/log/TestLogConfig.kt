@@ -15,8 +15,8 @@ internal class TestLogConfig {
     fun testLogConfigBuilder() {
 
         val logConfig = File(
-            TestLogConfig::class.java.classLoader
-                .getResource("logconfig/LogConfig1.xml")!!.file
+                TestLogConfig::class.java.classLoader
+                .getResource("logconfig/LogConfig1.xml")!!.file.replace("%20", " ")
         )
 
         Assertions.assertTrue(logConfig.exists())

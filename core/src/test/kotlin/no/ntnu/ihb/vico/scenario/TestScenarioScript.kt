@@ -32,7 +32,7 @@ class TestScenarioScript {
 
     private companion object {
         private val cl = TestScenarioScript::class.java.classLoader
-        val scenarioFile = File(cl.getResource("scenario/scenario.main.kts")!!.file)
+        val scenarioFile = File(cl.getResource("scenario/scenario.main.kts")!!.file.replace("%20", " "))
         val scenarioText by lazy { scenarioFile.readText() }
     }
 
