@@ -3,6 +3,7 @@ package no.ntnu.ihb.vico.scenario
 import no.ntnu.ihb.vico.core.AbstractComponent
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.core.RealLambdaProperty
+import no.ntnu.ihb.vico.dsl.ActionContext
 import no.ntnu.ihb.vico.dsl.scenario
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -70,6 +71,41 @@ internal class ScenarioTest {
 
         engine.stepUntil(55.0)
         Assertions.assertEquals(99.0, e1.get<TestComponent1>().value, 1e-6)
+
+    }
+
+    @Test
+    fun testDynamicInvokeAt() {
+
+        val scenario = scenario {
+
+            val maxRecursion = 5
+            var recursionLevel = 0
+
+            fun demo(timePoint: Double, ctx: ActionContext) {
+                println("Hello at t=$timePoint")
+
+                if (recursionLevel++ < maxRecursion) {
+                    ctx.invokeAt(timePoint) {
+                        val t = timePoint+1
+                        demo(t, ctx)
+                    }
+                }
+            }
+
+            init {
+
+                demo(5.0, this)
+            }
+
+        }
+
+        Engine().use { engine ->
+
+            scenario.applyScenario(engine)
+            engine.stepUntil(100)
+
+        }
 
     }
 
