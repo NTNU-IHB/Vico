@@ -4,11 +4,11 @@ import no.ntnu.ihb.vico.core.*
 import no.ntnu.ihb.vico.util.PredicateTask
 import java.util.function.Predicate
 
-
 fun scenario(init: ScenarioContext.() -> Unit): ScenarioContext {
     return ScenarioContext().apply(init)
 }
 
+@Scoped
 class ScenarioContext {
 
     private var initAction: ((Engine) -> Unit)? = null
@@ -56,6 +56,7 @@ class ScenarioContext {
 
 }
 
+@Scoped
 open class ActionContext(
     private val engine: Engine
 ) {
@@ -110,6 +111,11 @@ open class ActionContext(
 
     inline fun <reified E : BaseSystem> removeSystem() = removeSystem(E::class.java)
 
+    fun invokeAt(timePoint: Number, action: ActionContext.() -> Unit) {
+        engine.invokeAt(timePoint.toDouble()) {
+            action.invoke(ActionContext(engine))
+        }
+    }
 
     inner class IntContext internal constructor(
         val name: String
