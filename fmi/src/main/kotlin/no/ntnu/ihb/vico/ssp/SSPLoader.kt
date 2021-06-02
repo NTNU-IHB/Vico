@@ -13,6 +13,7 @@ import org.w3c.dom.Element
 import java.io.File
 import java.net.URI
 import java.nio.file.Files
+import java.util.*
 import java.util.stream.Collectors
 import javax.xml.bind.JAXB
 
@@ -78,20 +79,20 @@ class SSPLoader @JvmOverloads constructor(
                     val connector = when {
                         sspConnector.integer != null -> IntegerConnectorInfo(
                             sspConnector.name,
-                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                            ConnectorKind.valueOf(sspConnector.kind.uppercase(Locale.getDefault()))
                         )
                         sspConnector.real != null -> RealConnectorInfo(
                             sspConnector.name,
-                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase()),
+                            ConnectorKind.valueOf(sspConnector.kind.uppercase(Locale.getDefault())),
                             sspConnector.real.unit
                         )
                         sspConnector.boolean != null -> BooleanConnectorInfo(
                             sspConnector.name,
-                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                            ConnectorKind.valueOf(sspConnector.kind.uppercase(Locale.getDefault()))
                         )
                         sspConnector.string != null -> StringConnectorInfo(
                             sspConnector.name,
-                            ConnectorKind.valueOf(sspConnector.kind.toUpperCase())
+                            ConnectorKind.valueOf(sspConnector.kind.uppercase(Locale.getDefault()))
                         )
                         sspConnector.binary != null -> {
                             throw UnsupportedOperationException("Binary connector is currently unsupported!")

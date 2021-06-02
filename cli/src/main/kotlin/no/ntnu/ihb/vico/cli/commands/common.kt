@@ -4,6 +4,7 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.util.formatForOutput
 import org.slf4j.Logger
 import java.io.File
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
@@ -60,7 +61,7 @@ internal fun runSimulation(
         val targetRTF: Any = if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded"
         LOG.info(
             "Simulation finished. " +
-                    "Simulated ${engine.currentTime.formatForOutput()}s in ${t.inSeconds.formatForOutput()}s, " +
+                    "Simulated ${engine.currentTime.formatForOutput()}s in ${t.toDouble(DurationUnit.SECONDS).formatForOutput()}s, " +
                     "RTF: target=$targetRTF, actual=${runner.actualRealTimeFactor.formatForOutput()}"
         )
     }

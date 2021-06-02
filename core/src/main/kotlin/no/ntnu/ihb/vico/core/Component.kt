@@ -1,5 +1,7 @@
 package no.ntnu.ihb.vico.core
 
+import java.util.*
+
 
 interface Mappable {
 
@@ -12,7 +14,7 @@ typealias ComponentClass = Class<out Component>
 interface Component {
 
     val componentName: String
-        get() = javaClass.simpleName.decapitalize()
+        get() = javaClass.simpleName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
 
     val properties: PropertyAccessor
         get() = Properties()

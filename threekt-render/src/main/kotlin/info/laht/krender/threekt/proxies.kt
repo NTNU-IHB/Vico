@@ -31,6 +31,7 @@ import org.joml.Matrix4fc
 import org.joml.Quaternionfc
 import org.joml.Vector3fc
 import java.io.File
+import java.util.*
 import kotlin.math.PI
 
 open class ThreektProxy(
@@ -265,7 +266,7 @@ class ThreektTrimeshProxy private constructor(
     }
 
     private fun loadFromFile(source: File, scale: Float) {
-        val mesh = when (val ext = source.extension.toLowerCase()) {
+        val mesh = when (val ext = source.extension.lowercase(Locale.getDefault())) {
             "obj" -> OBJLoader().load(source.absolutePath)
             "stl" -> Mesh(STLLoader().load(source.absolutePath))
             else -> throw UnsupportedOperationException("Unsupported extension: $ext")
