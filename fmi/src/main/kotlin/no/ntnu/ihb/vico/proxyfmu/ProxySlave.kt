@@ -12,11 +12,10 @@ import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.apache.thrift.protocol.TBinaryProtocol
-import org.apache.thrift.transport.TFramedTransport
 import org.apache.thrift.transport.TSocket
+import org.apache.thrift.transport.layered.TFramedTransport
 import java.io.File
 import java.io.FileOutputStream
-import java.net.ServerSocket
 import java.nio.ByteBuffer
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -46,18 +45,17 @@ class ProxySlave(
             val protocol = TBinaryProtocol(transport)
             transport.open()
             val client = BootService.Client(protocol)
-            val bytes = fmuFile.readBytes()
-            val buf = ByteBuffer.wrap(bytes)
+            val buf = ByteBuffer.wrap(fmuFile.readBytes())
             client.loadFromBinaryData(fmuFile.nameWithoutExtension, instanceName, buf).also {
                 transport.close()
             }
         } else {
 
-            val proxyFileName = if (OsUtil.isWindows) {
-                "proxyfmu.exe"
-            } else {
-                "proxyfmu"
+            var proxyFileName = "proxyfmu"
+            if (OsUtil.isWindows) {
+                proxyFileName += ".exe"
             }
+
             val proxyFile = File(proxyFileName)
             if (!proxyFile.exists()) {
                 val proxy = ProxySlave::class.java.classLoader.getResourceAsStream(proxyFileName)!!

@@ -5,6 +5,8 @@ import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import java.io.File
+import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
@@ -39,7 +41,7 @@ fun main() {
             }
 
         }.also {
-            println("Simulation took ${it.inSeconds}s")
+            println("Simulation took ${it.toDouble(TimeUnit.SECONDS)}s")
         }
 
     }

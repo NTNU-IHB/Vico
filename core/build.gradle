@@ -9,8 +9,8 @@ dependencies {
     api "org.joml:joml:1.9.25"
 
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.3'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-core', version: '2.3.0.1'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.3'
 
     testImplementation project(":web")
     testImplementation project(':fmi')

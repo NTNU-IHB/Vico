@@ -9,6 +9,6 @@ dependencies {
 
     api project(':core')
 
-    implementation 'info.laht.threekt:core:r1-ALPHA-26'
+    implementation 'info.laht.threekt:core:r1-ALPHA-27'
 
 }

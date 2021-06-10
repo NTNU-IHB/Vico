@@ -64,7 +64,7 @@ class StlLoader {
             val normalY = reader.getFloat(start + 4)
             val normalZ = reader.getFloat(start + 8)
             if (hasColors) {
-                val packedColor = reader.getChar(start + 48).toInt()
+                val packedColor = reader.getChar(start + 48).code
                 if (packedColor and 0x8000 == 0) {
 
                     // facet has its own unique color

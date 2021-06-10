@@ -13,6 +13,7 @@ import no.ntnu.ihb.vico.systems.PositionRefSystem
 import no.ntnu.ihb.vico.systems.RotationRefSystem
 import org.joml.Matrix4f
 import java.io.File
+import java.util.*
 import javax.xml.bind.JAXB
 
 object VisualLoader {
@@ -160,7 +161,7 @@ object VisualLoader {
     }
 
     private fun createShape(c: TMesh): Trimesh {
-        val source = File(c.source.toLowerCase())
+        val source = File(c.source.lowercase(Locale.getDefault()))
         require(source.exists()) { "No such file: ${source.absolutePath}" }
         return when (source.extension) {
             "obj" -> ObjLoader().load((source))
