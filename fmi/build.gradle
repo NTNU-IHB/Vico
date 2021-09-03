@@ -14,7 +14,7 @@ dependencies {
     api group: "info.laht.fmi4j", name: "fmi-export", version: fmi4j_version
     api group: "info.laht.fmi4j", name: "fmi-import", version: fmi4j_version
 
-    implementation group: 'org.apache.thrift', name: 'libthrift', version: "0.14.1"
+    implementation group: 'org.apache.thrift', name: 'libthrift', version: "0.13.0"
 
     testImplementation project(':web')
     testImplementation project(':chart')

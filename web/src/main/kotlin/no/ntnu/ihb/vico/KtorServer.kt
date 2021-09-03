@@ -51,7 +51,6 @@ class KtorServer @JvmOverloads constructor(
         }
     }
 
-    @ExperimentalPathApi
     override fun postInit() {
 
         app = embeddedServer(Netty, port = port) {

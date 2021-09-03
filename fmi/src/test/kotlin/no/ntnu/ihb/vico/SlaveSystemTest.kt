@@ -42,7 +42,7 @@ internal class SlaveSystemTest {
             engine.step(100)
             Assertions.assertEquals(1.0, slave.readReal("h").value, 0.1)
 
-            Assertions.assertTrue(resultDir.listFiles()?.size ?: 0 > 0)
+            Assertions.assertTrue((resultDir.listFiles()?.size ?: 0) > 0)
 
         }
 

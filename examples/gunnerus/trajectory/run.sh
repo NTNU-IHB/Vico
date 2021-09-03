@@ -9,6 +9,5 @@ vico simulate-ssp \
 -res "results" \
 -port 8000 \
 --paused \
---use-legacy-visuals \
 "gunnerus-trajectory.ssp"
 read -p "Press enter to continue"

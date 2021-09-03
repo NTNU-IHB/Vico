@@ -12,8 +12,8 @@ import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.apache.thrift.protocol.TBinaryProtocol
+import org.apache.thrift.transport.TFramedTransport
 import org.apache.thrift.transport.TSocket
-import org.apache.thrift.transport.layered.TFramedTransport
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
