@@ -34,13 +34,8 @@ Support for plotting is provided by the __chart__ module.
 
 #### 3D rendering
 
-Generic 3D visualization components are provided by the __render-components__ module.
-An implementation of a rendering system, relying on JMonkeyEngine, is provided by the __jme-renderer__ module.
-
-#### Physics
-
-Generic physics components are provided by the __physics-components__ module.
-An implementation of a physics engine, relying on Bullet, is provided by the __bullet-physics__ module. 
+Vico simulations can be visualized in the browser, altough poorly documented, 
+for reference see: https://github.com/NTNU-IHB/Vico/blob/master/examples/gunnerus/trajectory/VisualConfig.xml
 
 ### Command line interface
 ````bash
@@ -68,7 +63,7 @@ As Vico is written in Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) i
 
 
 > Want to simplify creation of SSP archives? Check out [sspgen](https://github.com/NTNU-IHB/sspgen) <br>
-> Want to develop FMUs in Java? Check out [FMI4j](https://github.com/NTNU-IHB/FMI4j) <br>
+> Want to develop FMUs in Java? Check out [FMU4j](https://github.com/markaren/FMU4j) <br>
 > Want to develop FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU) <br>
 > Want to distribute your FMUs? Check out [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy) <br>
 
