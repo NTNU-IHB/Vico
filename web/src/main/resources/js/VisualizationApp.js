@@ -24,7 +24,7 @@ class VisualizationApp {
         this.scene.background = new THREE.Color("aliceblue")
         this.scene.add(new THREE.AmbientLight())
 
-        this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 10000);
         this.camera.position.set(50, 50, 50)
 
         this.renderer = new THREE.WebGLRenderer({antialiasing: true});
