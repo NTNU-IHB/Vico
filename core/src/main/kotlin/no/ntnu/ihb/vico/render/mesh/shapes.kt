@@ -119,7 +119,7 @@ interface HeightmapShape : Shape {
                 "width" to width,
                 "height" to height,
                 "widthSegments" to widthSegments,
-                "widthSegments" to widthSegments,
+                "heightSegments" to heightSegments,
                 "heights" to heights
             )
         )
