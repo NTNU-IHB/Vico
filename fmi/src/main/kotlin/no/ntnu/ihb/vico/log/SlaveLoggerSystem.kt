@@ -91,7 +91,7 @@ class SlaveLoggerSystem(
         }
     }
 
-    override fun close() {
+    override fun preClose() {
         loggers.values.forEach { it.close() }
     }
 

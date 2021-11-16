@@ -52,6 +52,8 @@ sealed class BaseSystem(
 
     open fun postInit() {}
 
+    open fun preClose() {}
+
     override fun close() {}
 
     override fun compareTo(other: BaseSystem): Int {

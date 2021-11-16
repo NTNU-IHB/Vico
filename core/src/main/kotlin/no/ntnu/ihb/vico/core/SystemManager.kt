@@ -84,6 +84,9 @@ class SystemManager internal constructor() : Closeable {
 
     override fun close() {
         systems.forEach { system ->
+            system.preClose()
+        }
+        systems.forEach { system ->
             LOG.debug("Closing system ${system::class.java}")
             system.close()
         }
