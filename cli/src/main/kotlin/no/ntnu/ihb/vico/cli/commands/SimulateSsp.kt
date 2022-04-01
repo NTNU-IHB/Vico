@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
 import javax.xml.bind.JAXB
-import kotlin.time.ExperimentalTime
 
 @CommandLine.Command(
     name = "simulate-ssp",
@@ -128,7 +127,6 @@ class SimulateSsp : Runnable {
     )
     private lateinit var sspFile: File
 
-    @ExperimentalTime
     override fun run() {
 
         require(baseStepSize > 0) { "baseStepSize must be greater than 0, was $baseStepSize.." }

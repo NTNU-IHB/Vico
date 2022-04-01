@@ -5,12 +5,14 @@ import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.log.SlaveLoggerSystem
 import java.io.File
-import java.util.concurrent.TimeUnit
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
-@ExperimentalTime
+internal fun measureTime(f: () -> Unit): Double {
+    val start = System.currentTimeMillis()
+    f()
+    val stop = System.currentTimeMillis()
+    return ((stop - start).toDouble())/1000
+}
+
 fun main() {
 
     val resultDir = File("build/results/quarter-truck").also {
@@ -41,7 +43,7 @@ fun main() {
             }
 
         }.also {
-            println("Simulation took ${it.toDouble(TimeUnit.SECONDS)}s")
+            println("Simulation took ${it}s")
         }
 
     }

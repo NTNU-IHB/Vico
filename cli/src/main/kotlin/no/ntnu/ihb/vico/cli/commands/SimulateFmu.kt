@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
 import javax.xml.bind.JAXB
-import kotlin.time.ExperimentalTime
 
 
 @CommandLine.Command(name = "simulate-fmu", description = ["Simulate a single FMU"])
@@ -117,7 +116,6 @@ class SimulateFmu : Runnable {
     )
     private lateinit var fmu: File
 
-    @ExperimentalTime
     override fun run() {
 
         require(baseStepSize > 0) { "baseStepSize must be greater than 0, was $baseStepSize.." }

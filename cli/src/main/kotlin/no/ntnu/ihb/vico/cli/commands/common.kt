@@ -4,9 +4,13 @@ import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.util.formatForOutput
 import org.slf4j.Logger
 import java.io.File
-import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
+
+internal fun measureTime(f: () -> Unit): Double {
+    val start = System.currentTimeMillis()
+    f()
+    val stop = System.currentTimeMillis()
+    return ((stop - start).toDouble())/1000
+}
 
 internal fun getConfigPath(parent: File, config: String): File {
     val file = File(config)
@@ -17,7 +21,6 @@ internal fun getConfigPath(parent: File, config: String): File {
     }
 }
 
-@ExperimentalTime
 internal fun runSimulation(
     engine: Engine,
     startTime: Double,
@@ -61,7 +64,7 @@ internal fun runSimulation(
         val targetRTF: Any = if (runner.enableRealTimeTarget) runner.targetRealTimeFactor else "unbounded"
         LOG.info(
             "Simulation finished. " +
-                    "Simulated ${engine.currentTime.formatForOutput()}s in ${t.toDouble(DurationUnit.SECONDS).formatForOutput()}s, " +
+                    "Simulated ${engine.currentTime.formatForOutput()}s in ${t.formatForOutput()}s, " +
                     "RTF: target=$targetRTF, actual=${runner.actualRealTimeFactor.formatForOutput()}"
         )
     }
