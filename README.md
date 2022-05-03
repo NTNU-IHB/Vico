@@ -42,16 +42,10 @@ for reference see: https://github.com/NTNU-IHB/Vico/blob/master/examples/gunneru
 Usage: vico [-h] [COMMAND]
   -h, --help   display a help message
 Commands:
-  eval Interpret kotlin script using kts.
   simulate-fmu  Simulate a single FMU.
   simulate-ssp  Simulate a co-simulation system described using SSP.
 ````
 To see the input arguments for the sub-commands, run the respective command providing no arguments.
-
-### Scripting
-
-[kts](https://github.com/markaren/kts) can be used to run arbitrary Kotlin code with maven dependencies, which means
-that you may use Vico as a dependency in your script. kts is bundled with the vico CLI for convenience (`vico eval`).
 
 ### How to build
 

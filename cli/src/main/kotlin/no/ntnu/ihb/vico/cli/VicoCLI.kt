@@ -1,13 +1,12 @@
 package no.ntnu.ihb.vico.cli
 
 import no.ntnu.ihb.vico.Vico
-import no.ntnu.ihb.vico.cli.commands.Eval
 import no.ntnu.ihb.vico.cli.commands.SimulateFmu
 import no.ntnu.ihb.vico.cli.commands.SimulateSsp
 import picocli.CommandLine
 
 @CommandLine.Command(
-    subcommands = [SimulateFmu::class, SimulateSsp::class, Eval::class]
+    subcommands = [SimulateFmu::class, SimulateSsp::class]
 )
 class VicoCLI : Runnable {
 

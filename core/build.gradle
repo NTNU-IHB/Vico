@@ -6,7 +6,7 @@ plugins {
 apply from: rootProject.file("gradle/publisher.gradle")
 
 dependencies {
-    api "org.joml:joml:1.9.25"
+    api 'org.joml:joml:1.10.4'
 
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-core', version: '2.3.0.1'
@@ -17,7 +17,9 @@ dependencies {
     testImplementation project(':chart')
     testImplementation project(':test-data')
     testImplementation project(":threekt-render")
-    testImplementation('info.laht.kts:host:0.4.2')
+
+    testRuntimeOnly("org.jetbrains.kotlin:kotlin-main-kts")
+    testRuntimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223")
 
 }
 
@@ -42,6 +44,10 @@ task injectVersion() {
         )
 
     }
+}
+
+repositories {
+    mavenCentral()
 }
 
 compileKotlin.dependsOn injectVersion

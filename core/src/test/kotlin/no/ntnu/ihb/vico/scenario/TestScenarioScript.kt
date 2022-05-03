@@ -1,18 +1,23 @@
 package no.ntnu.ihb.vico.scenario
 
-import info.laht.kts.KtsScriptRunner
 import no.ntnu.ihb.vico.core.Engine
 import no.ntnu.ihb.vico.dsl.ScenarioContext
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.io.FileReader
+import javax.script.ScriptEngineManager
 
 class TestScenarioScript {
+
+    private val scriptEngine by lazy {
+        ScriptEngineManager().getEngineByExtension("main.kts")
+    }
 
     @Test
     fun testInline() {
 
         Engine().use { engine ->
-            (KtsScriptRunner().eval(scenarioText) as ScenarioContext?)
+            (scriptEngine.eval(scenarioText) as ScenarioContext?)
                 ?.applyScenario(engine)
             engine.stepUntil(2.0)
         }
@@ -23,7 +28,7 @@ class TestScenarioScript {
     fun testFile() {
 
         Engine().use { engine ->
-            (KtsScriptRunner().eval(scenarioFile) as ScenarioContext?)
+            (scriptEngine.eval(FileReader(scenarioFile)) as ScenarioContext?)
                 ?.applyScenario(engine)
             engine.stepUntil(2.0)
         }
