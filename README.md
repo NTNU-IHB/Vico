@@ -42,6 +42,7 @@ for reference see: https://github.com/NTNU-IHB/Vico/blob/master/examples/gunneru
 Usage: vico [-h] [COMMAND]
   -h, --help   display a help message
 Commands:
+  eval Interpret kotlin script using kotlin-main-kts.
   simulate-fmu  Simulate a single FMU.
   simulate-ssp  Simulate a co-simulation system described using SSP.
 ````
