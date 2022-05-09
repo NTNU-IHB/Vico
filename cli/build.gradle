@@ -16,7 +16,6 @@ dependencies {
     implementation project(':fmi')
     implementation project(':chart')
     implementation project(":web")
-    implementation project(":threekt-render")
 
     runtimeOnly("org.jetbrains.kotlin:kotlin-main-kts")
     runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223")
