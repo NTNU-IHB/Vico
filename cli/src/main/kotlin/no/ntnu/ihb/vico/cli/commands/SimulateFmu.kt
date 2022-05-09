@@ -1,6 +1,5 @@
 package no.ntnu.ihb.vico.cli.commands
 
-import info.laht.krender.threekt.ThreektRenderer
 import no.ntnu.ihb.vico.KtorServer
 import no.ntnu.ihb.vico.chart.ChartLoader
 import no.ntnu.ihb.vico.chart.ChartLoader2
@@ -97,12 +96,6 @@ class SimulateFmu : Runnable {
     )
     private var paused = false
 
-    @CommandLine.Option(
-        names = ["--use-legacy-visuals"],
-        description = ["Display legacy 3D graphics on dekstop."]
-    )
-    private var useLegacyVisuals = false
-
     @CommandLine.Parameters(
         arity = "1",
         paramLabel = "FMU_FILE",
@@ -194,9 +187,6 @@ class SimulateFmu : Runnable {
                                 config.applyConfiguration(engine)
                             }
                         }
-                    }
-                    if (useLegacyVisuals) {
-                        engine.addSystem(ThreektRenderer())
                     }
                 }
 

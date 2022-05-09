@@ -16,7 +16,6 @@ dependencies {
     testImplementation project(':fmi')
     testImplementation project(':chart')
     testImplementation project(':test-data')
-    testImplementation project(":threekt-render")
 
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-main-kts")
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223")
